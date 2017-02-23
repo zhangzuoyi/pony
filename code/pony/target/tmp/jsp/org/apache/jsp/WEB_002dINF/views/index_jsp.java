@@ -160,6 +160,18 @@ public final class index_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("\" iframe=\"1\">课程安排</a></li>\r\n");
       out.write("                </ul>\r\n");
       out.write("            </div>\r\n");
+      out.write("            <div title=\"选课管理\" data-options=\"iconCls:'icon-application-form-edit'\" style=\"padding:5px;\">  \t\r\n");
+      out.write("    \t\t\t<ul class=\"easyui-tree my-side-tree\">\r\n");
+      out.write("                    <li iconCls=\"icon-users\"><a href=\"javascript:void(0)\" data-icon=\"icon-users\" data-link=\"");
+      if (_jspx_meth_s_url_18(_jspx_page_context))
+        return;
+      out.write("\" iframe=\"1\">可选课程设置</a></li>\r\n");
+      out.write("                    <li iconCls=\"icon-users\"><a href=\"javascript:void(0)\" data-icon=\"icon-users\" data-link=\"");
+      if (_jspx_meth_s_url_19(_jspx_page_context))
+        return;
+      out.write("\" iframe=\"1\">学生选课</a></li>\r\n");
+      out.write("                </ul>\r\n");
+      out.write("            </div>\r\n");
       out.write("        </div>\r\n");
       out.write("    </div>\t\r\n");
       out.write("    <!-- end of sidebar -->    \r\n");
@@ -267,7 +279,7 @@ public final class index_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("\t\t\r\n");
       out.write("\t\t/* function logout(){\r\n");
       out.write("\t\t\t$(\"#mypage\").href=\"");
-      if (_jspx_meth_s_url_18(_jspx_page_context))
+      if (_jspx_meth_s_url_20(_jspx_page_context))
         return;
       out.write("\";\r\n");
       out.write("\t\t} */\r\n");
@@ -780,7 +792,7 @@ public final class index_jsp extends org.apache.jasper.runtime.HttpJspBase
     org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_18 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
     _jspx_th_s_url_18.setPageContext(_jspx_page_context);
     _jspx_th_s_url_18.setParent(null);
-    _jspx_th_s_url_18.setValue("logout");
+    _jspx_th_s_url_18.setValue("/lessonSelectArrange/main/");
     int[] _jspx_push_body_count_s_url_18 = new int[] { 0 };
     try {
       int _jspx_eval_s_url_18 = _jspx_th_s_url_18.doStartTag();
@@ -794,6 +806,58 @@ public final class index_jsp extends org.apache.jasper.runtime.HttpJspBase
     } finally {
       _jspx_th_s_url_18.doFinally();
       _jspx_tagPool_s_url_value_nobody.reuse(_jspx_th_s_url_18);
+    }
+    return false;
+  }
+
+  private boolean _jspx_meth_s_url_19(PageContext _jspx_page_context)
+          throws Throwable {
+    PageContext pageContext = _jspx_page_context;
+    JspWriter out = _jspx_page_context.getOut();
+    //  s:url
+    org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_19 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
+    _jspx_th_s_url_19.setPageContext(_jspx_page_context);
+    _jspx_th_s_url_19.setParent(null);
+    _jspx_th_s_url_19.setValue("/lessonSelect/main/");
+    int[] _jspx_push_body_count_s_url_19 = new int[] { 0 };
+    try {
+      int _jspx_eval_s_url_19 = _jspx_th_s_url_19.doStartTag();
+      if (_jspx_th_s_url_19.doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE) {
+        return true;
+      }
+    } catch (Throwable _jspx_exception) {
+      while (_jspx_push_body_count_s_url_19[0]-- > 0)
+        out = _jspx_page_context.popBody();
+      _jspx_th_s_url_19.doCatch(_jspx_exception);
+    } finally {
+      _jspx_th_s_url_19.doFinally();
+      _jspx_tagPool_s_url_value_nobody.reuse(_jspx_th_s_url_19);
+    }
+    return false;
+  }
+
+  private boolean _jspx_meth_s_url_20(PageContext _jspx_page_context)
+          throws Throwable {
+    PageContext pageContext = _jspx_page_context;
+    JspWriter out = _jspx_page_context.getOut();
+    //  s:url
+    org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_20 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
+    _jspx_th_s_url_20.setPageContext(_jspx_page_context);
+    _jspx_th_s_url_20.setParent(null);
+    _jspx_th_s_url_20.setValue("logout");
+    int[] _jspx_push_body_count_s_url_20 = new int[] { 0 };
+    try {
+      int _jspx_eval_s_url_20 = _jspx_th_s_url_20.doStartTag();
+      if (_jspx_th_s_url_20.doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE) {
+        return true;
+      }
+    } catch (Throwable _jspx_exception) {
+      while (_jspx_push_body_count_s_url_20[0]-- > 0)
+        out = _jspx_page_context.popBody();
+      _jspx_th_s_url_20.doCatch(_jspx_exception);
+    } finally {
+      _jspx_th_s_url_20.doFinally();
+      _jspx_tagPool_s_url_value_nobody.reuse(_jspx_th_s_url_20);
     }
     return false;
   }
