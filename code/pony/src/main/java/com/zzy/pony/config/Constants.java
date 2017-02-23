@@ -8,8 +8,11 @@ public class Constants {
 	public static final String STUDENT_STATUS_LEAVE="1";//学生状态，离校
 	public static final String CURRENT_FLAG_TRUE="0";//当前标志，是
 	public static final String CURRENT_FLAG_FALSE="1";//当前标志，否
+	public static final String USER_TYPE_TEACHER="t";
+	public static final String USER_TYPE_STUDENT="s";
 	public static final Map<String, String> WEEKDAYS;
 	public static final Map<Integer, String> SUBJECT_TYPES;
+	public static final Map<String, String> USER_TYPES;
 	
 	static{
 		WEEKDAYS=new LinkedHashMap<String, String>();
@@ -24,5 +27,9 @@ public class Constants {
 		SUBJECT_TYPES.put(1, "上课科目");
 		SUBJECT_TYPES.put(2, "选修科目");
 		SUBJECT_TYPES.put(3, "考试科目");
+		
+		USER_TYPES=new LinkedHashMap<String, String>();
+		USER_TYPES.put(USER_TYPE_TEACHER, "老师");
+		USER_TYPES.put(USER_TYPE_STUDENT, "学生");
 	}
 }

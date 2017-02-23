@@ -8,12 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zzy.pony.dao.SchoolClassDao;
+import com.zzy.pony.model.Grade;
 import com.zzy.pony.model.SchoolClass;
+import com.zzy.pony.model.SchoolYear;
+import com.zzy.pony.model.Teacher;
 @Service
 @Transactional
 public class SchoolClassServiceImpl implements SchoolClassService {
 	@Autowired
 	private SchoolClassDao dao;
+	@Autowired
+	private SchoolYearService yearService;
 
 	@Override
 	public void add(SchoolClass sy) {
@@ -36,6 +41,7 @@ public class SchoolClassServiceImpl implements SchoolClassService {
 		SchoolClass old=dao.findOne(sy.getClassId());
 		old.setGrade(sy.getGrade());
 		old.setName(sy.getName());
+		old.setTeacher(sy.getTeacher());
 		old.setUpdateUser(sy.getUpdateUser());
 		old.setUpdateTime(sy.getUpdateTime());
 		
@@ -46,6 +52,24 @@ public class SchoolClassServiceImpl implements SchoolClassService {
 	public void delete(int id) {
 		dao.delete(id);
 		
+	}
+
+	@Override
+	public List<SchoolClass> findByGrade(int gradeId) {
+		Grade grade=new Grade();
+		grade.setGradeId(gradeId);
+		return dao.findByGrade(grade);
+	}
+
+	@Override
+	public List<SchoolClass> findByYearIdAndTeacher(Integer yearId, Teacher teacher) {
+		return dao.findByYearIdAndTeacher(yearId, teacher);
+	}
+
+	@Override
+	public List<SchoolClass> findCurrentByTeacher(Teacher teacher) {
+		SchoolYear year=yearService.getCurrent();
+		return dao.findByYearIdAndTeacher(year.getYearId(), teacher);
 	}
 
 }

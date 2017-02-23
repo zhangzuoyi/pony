@@ -55,3 +55,6 @@ input[type="checkbox"] { cursor: pointer;}
 .my-footer { height:20px; padding:5px; text-align:center; overflow:hidden; background:#e0ecff;}
 
 .my-select {height:20px;width:260px;}
+
+.tiny-text { height:14px; line-height:14px; width:160px;}
+.tiny-select {height:20px;width:160px;}

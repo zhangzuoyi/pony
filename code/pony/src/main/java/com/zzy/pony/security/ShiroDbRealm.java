@@ -1,6 +1,8 @@
 package com.zzy.pony.security;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -12,19 +14,33 @@ import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
-import org.apache.shiro.crypto.hash.Md5Hash;
+import org.apache.shiro.crypto.hash.Sha1Hash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zzy.pony.config.Constants;
+import com.zzy.pony.model.Role;
+import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.Teacher;
+import com.zzy.pony.model.TeacherSubject;
+import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.TeacherService;
+import com.zzy.pony.service.TeacherSubjectService;
+import com.zzy.pony.service.UserService;
+import com.zzy.pony.vo.UserVo;
 
 
 public class ShiroDbRealm extends AuthorizingRealm {
 	@Autowired
 	private TeacherService teacherService;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private TeacherSubjectService tsService;
+	@Autowired
+	private SchoolClassService classService;
 	
 	/**
 	 * 认证回调函数,登录时调用.
@@ -41,26 +57,49 @@ public class ShiroDbRealm extends AuthorizingRealm {
 //		initCredentialsMatcher(isAutoLogin);
 //		StaffDict sd=staffDao.findByUserName(token.getUsername());
 //		StaffDict sd=staffDao.findOne(token.getUsername());//改用empNo登录
-		Teacher teacher=teacherService.findByTeacherNo(token.getUsername());
-		if(teacher != null){
-			ShiroUser shUser=new ShiroUser(teacher.getTeacherId(), teacher.getTeacherNo(), teacher.getName());
-			return new SimpleAuthenticationInfo(shUser, token.getPassword(), getName());
+//		Teacher teacher=teacherService.findByTeacherNo(token.getUsername());
+		UserVo vo=userService.findVo(token.getUsername());
+		if(vo != null){
+			ShiroUser shUser=new ShiroUser(vo.getUserId(), vo.getLoginName(), vo.getShowName(), vo.getUserType());
+			if(Constants.USER_TYPE_TEACHER.equals(vo.getUserType())){
+				Teacher teacher=new Teacher();
+				teacher.setTeacherId(vo.getTeacherId());
+				List<TeacherSubject> list=tsService.findCurrentByTeacher(teacher);
+				if(list.size()>0){
+					List<Integer> tsIds=new ArrayList<Integer>();
+					for(TeacherSubject ts: list){
+						tsIds.add(ts.getTsId());
+					}
+					shUser.tsIds=tsIds;
+				}
+				List<SchoolClass> sclasses=classService.findCurrentByTeacher(teacher);
+				if(sclasses.size()>0){
+					List<Integer> classIds=new ArrayList<Integer>();
+					for(SchoolClass sc: sclasses){
+						classIds.add(sc.getClassId());
+					}
+					shUser.classIds=classIds;
+				}
+			}
+			return new SimpleAuthenticationInfo(shUser, vo.getPsw(), getName());
 		}else{
 			return null;
 		}
 	}
 	
-	/**
-	 * 设定Password校验的Hash算法与迭代次数.
-	 * 
-	 */
-	//@PostConstruct
-	public void initCredentialsMatcher(Boolean isAutoLogin){
-		if(isAutoLogin == true){//普通校验
+	/** 
+	* 设定Password校验的Hash算法与迭代次数. 
+	* 
+	*/ 
+	//@PostConstruct 
+	public void initCredentialsMatcher(Boolean isAutoLogin) {
+		if (isAutoLogin == true) {// 普通校验
 			setCredentialsMatcher(new SimpleCredentialsMatcher());
-		}else{//MD5对密码加密后校验
-			HashedCredentialsMatcher matcher = new HashedCredentialsMatcher(Md5Hash.ALGORITHM_NAME);
-			//	matcher.setHashIterations(1);
+		} else {// sha1对密码加密后校验
+			// HashedCredentialsMatcher matcher = new
+			// HashedCredentialsMatcher(Md5Hash.ALGORITHM_NAME);
+			HashedCredentialsMatcher matcher = new HashedCredentialsMatcher(Sha1Hash.ALGORITHM_NAME);
+
 			setCredentialsMatcher(matcher);
 		}
 	}
@@ -73,9 +112,9 @@ public class ShiroDbRealm extends AuthorizingRealm {
 		ShiroUser shiroUser = (ShiroUser) principals.getPrimaryPrincipal();
 //		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 //		info.addRole("common");
-		return authorize(shiroUser.getTeacherNo());
+		return authorize(shiroUser);
 	}
-	private AuthorizationInfo authorize(String loginName){
+	private AuthorizationInfo authorize(ShiroUser su){
 //		User user=userService.findByEmpNo(loginName);
 		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 //		if(user !=null){
@@ -85,7 +124,21 @@ public class ShiroDbRealm extends AuthorizingRealm {
 //				info.addStringPermission(res.getResKey());
 //			}
 //		}
-		info.addRole("teacher");
+		List<Role> roles=userService.findRoles(su.getId());
+		for(Role role: roles){
+			info.addRole(role.getRoleCode());
+		}
+		if(Constants.USER_TYPE_STUDENT.equals(su.getUserType())){
+			info.addRole("student");//学生
+		}else if(Constants.USER_TYPE_TEACHER.equals(su.getUserType())){
+			info.addRole("staff");//教职工
+			if(su.getTsIds() !=null && su.getTsIds().size()>0){
+				info.addRole("teacher");//任课教师
+			}
+			if(su.getClassIds() !=null && su.getClassIds().size()>0){
+				info.addRole("headteacher");//班主任
+			}
+		}
 
 		return info;
 	}
@@ -97,25 +150,41 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	public static class ShiroUser implements Serializable {
 		private static final long serialVersionUID = -1373760761780840081L;
 		private Integer id;
-		private String teacherNo;
-		private String name;
+		private String loginName;
+		private String showName;
+		private String userType;
+		private List<Integer> tsIds;//老师任课表的ID
+		private List<Integer> classIds;//担任班主任的班级列表
 		
-		public ShiroUser(Integer id, String teacherNo, String name) {
+		public ShiroUser(Integer id, String loginName, String showName, String userType) {
 			this.id=id;
-			this.teacherNo=teacherNo;
-			this.name = name;
-		}
-
-		public String getTeacherNo() {
-			return teacherNo;
-		}
-
-		public String getName() {
-			return name;
+			this.loginName=loginName;
+			this.showName = showName;
+			this.userType=userType;
 		}
 
 		public Integer getId() {
 			return id;
+		}
+
+		public String getLoginName() {
+			return loginName;
+		}
+
+		public String getShowName() {
+			return showName;
+		}
+
+		public String getUserType() {
+			return userType;
+		}
+		
+		public List<Integer> getTsIds() {
+			return tsIds;
+		}
+
+		public List<Integer> getClassIds() {
+			return classIds;
 		}
 
 		/**
@@ -123,7 +192,7 @@ public class ShiroDbRealm extends AuthorizingRealm {
 		 */
 		@Override
 		public String toString() {
-			return name;
+			return showName;
 		}
 
 		/**

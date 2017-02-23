@@ -58,6 +58,10 @@ public class SchoolClass implements Serializable {
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="GRADE_ID")
 	private Grade grade;
+	
+	@ManyToOne
+	@JoinColumn(name="TEACHER_ID")
+	private Teacher teacher;
 
 	public SchoolClass() {
 	}
@@ -124,6 +128,14 @@ public class SchoolClass implements Serializable {
 
 	public void setGrade(Grade grade) {
 		this.grade = grade;
+	}
+
+	public Teacher getTeacher() {
+		return teacher;
+	}
+
+	public void setTeacher(Teacher teacher) {
+		this.teacher = teacher;
 	}
 
 }

@@ -20,62 +20,98 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
-import com.zzy.pony.model.LessonArrange;
-import com.zzy.pony.service.LessonArrangeService;
-import com.zzy.pony.service.SchoolClassService;
-import com.zzy.pony.vo.LessonArrangeVo;
-
+import com.zzy.pony.config.Constants;
+import com.zzy.pony.model.LessonPeriod;
+import com.zzy.pony.model.LessonSelectArrange;
+import com.zzy.pony.model.SchoolYear;
+import com.zzy.pony.model.Term;
+import com.zzy.pony.service.GradeService;
+import com.zzy.pony.service.LessonPeriodService;
+import com.zzy.pony.service.LessonSelectArrangeService;
+import com.zzy.pony.service.SchoolYearService;
+import com.zzy.pony.service.SubjectService;
+import com.zzy.pony.service.TeacherService;
+import com.zzy.pony.service.TermService;
+import com.zzy.pony.vo.LessonSelectArrangeVo;
+import com.zzy.pony.vo.LessonSelectTimeVo;
+/**
+ * 可选课程设置
+ * @author zhangzuoyi
+ *
+ */
 @Controller
-@RequestMapping(value = "/lessonArrange")
+@RequestMapping(value = "/lessonSelectArrange")
 public class LessonSelectArrangeController {
 	@Autowired
-	private LessonArrangeService service;
+	private LessonSelectArrangeService service;
 	@Autowired
-	private SchoolClassService scService;
+	private SubjectService subjectService;
+	@Autowired
+	private TeacherService teacherService;
+	@Autowired
+	private SchoolYearService yearService;
+	@Autowired
+	private TermService termService;
+	@Autowired
+	private GradeService gradeService;
+	@Autowired
+	private LessonPeriodService periodService;
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
 	public String main(Model model){
-		model.addAttribute("classes",scService.findAll());
-		return "lessonArrange/main";
+		SchoolYear currentYear=yearService.getCurrent();
+		Term term=termService.getCurrent();
+		model.addAttribute("subjects",subjectService.findSelectiveSubject());
+		model.addAttribute("teachers",teacherService.findAll());
+		model.addAttribute("currentYear",currentYear);
+		model.addAttribute("currentTerm",term);
+		model.addAttribute("grades",gradeService.findAll());
+		List<LessonPeriod> periods=periodService.findBySchoolYearAndTerm(currentYear, term);
+		model.addAttribute("periods", periods);
+		model.addAttribute("weekdays", Constants.WEEKDAYS);
+		return "lessonSelectArrange/main";
 	}
 	@RequestMapping(value="list",method = RequestMethod.GET)
 	@ResponseBody
-	public List<LessonArrange> list(Model model){
-		List<LessonArrange> list=service.findAll();
-		for(LessonArrange g: list){
-//			g.setSchoolClasses(null);
-		}
-		return list;
+	public List<LessonSelectArrangeVo> list(Model model){
+		return service.findCurrent();
 	}
-	@RequestMapping(value="findByClass",method = RequestMethod.GET)
-	@ResponseBody
-	public LessonArrangeVo findByClass(@RequestParam(value="classId") Integer classId, Model model){
-		return service.findArrangeVo(classId);
-	}
+//	@RequestMapping(value="findByClass",method = RequestMethod.GET)
+//	@ResponseBody
+//	public LessonSelectArrangeVo findByClass(@RequestParam(value="classId") Integer classId, Model model){
+//		return service.findArrangeVo(classId);
+//	}
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody
-	public String add(@RequestBody LessonArrange sy, Model model){
+	public String add(LessonSelectArrangeVo sy, Model model){
+//		service.add(sy);
+		System.out.println(sy.getPeriod());
+		for(Integer gradeId: sy.getGradeIds()){
+			System.out.println(gradeId);
+		}
+		for(LessonSelectTimeVo timeVo: sy.getLessonSelectTimes()){
+			System.out.println(timeVo.getWeekday());
+			System.out.println(timeVo.getPeriodId());
+		}
 		service.add(sy);
 		return "success";
 	}
 	@RequestMapping(value="edit",method = RequestMethod.POST)
 	@ResponseBody
-	public String edit(@RequestBody LessonArrange sy, Model model){
+	public String edit(@RequestBody LessonSelectArrange sy, Model model){
 		service.update(sy);
 		return "success";
 	}
-	@RequestMapping(value="delete/{id}",method = RequestMethod.POST)
+	@RequestMapping(value="delete",method = RequestMethod.POST)
 	@ResponseBody
-	public String delete(@PathVariable("id") int id, Model model){
+	public String delete(@RequestParam(value="id") int id, Model model){
 		service.delete(id);
 		return "success";
 	}
 	@RequestMapping(value="get",method = RequestMethod.GET)
 	@ResponseBody
-	public LessonArrange get(@RequestParam(value="id") int id, Model model){
-		LessonArrange g=service.get(id);
-//		g.setSchoolClasses(null);
-		return g;
+	public LessonSelectArrangeVo get(@RequestParam(value="id") int id, Model model){
+		return service.findById(id);
 	}
 
 	@InitBinder

@@ -27,7 +27,7 @@ public class LessonSelectArrange implements Serializable {
 	@Column(name="LOWER_LIMIT")
 	private int lowerLimit;
 
-	private int peroid;
+	private int period;
 
 	@Column(name="UPPER_LIMIT")
 	private int upperLimit;
@@ -70,7 +70,7 @@ public class LessonSelectArrange implements Serializable {
 	private List<LessonSelectStudent> students;
 
 	//bi-directional many-to-one association to LessonSelectTime
-	@OneToMany(mappedBy="lessonSelectArrange")
+	@OneToMany(mappedBy="lessonSelectArrange",cascade=CascadeType.ALL)
 	private List<LessonSelectTime> lessonSelectTimes;
 
 	public LessonSelectArrange() {
@@ -108,12 +108,12 @@ public class LessonSelectArrange implements Serializable {
 		this.lowerLimit = lowerLimit;
 	}
 
-	public int getPeroid() {
-		return this.peroid;
+	public int getPeriod() {
+		return period;
 	}
 
-	public void setPeroid(int peroid) {
-		this.peroid = peroid;
+	public void setPeriod(int period) {
+		this.period = period;
 	}
 
 	public int getUpperLimit() {

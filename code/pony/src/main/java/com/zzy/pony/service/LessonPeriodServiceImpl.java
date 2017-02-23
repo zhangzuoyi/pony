@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.zzy.pony.dao.LessonPeriodDao;
 import com.zzy.pony.model.LessonPeriod;
+import com.zzy.pony.model.SchoolYear;
+import com.zzy.pony.model.Term;
 @Service
 @Transactional
 public class LessonPeriodServiceImpl implements LessonPeriodService {
@@ -47,6 +49,11 @@ public class LessonPeriodServiceImpl implements LessonPeriodService {
 	public void delete(int id) {
 		dao.delete(id);
 		
+	}
+
+	@Override
+	public List<LessonPeriod> findBySchoolYearAndTerm(SchoolYear year, Term term) {
+		return dao.findBySchoolYearAndTermOrderBySeq(year, term);
 	}
 
 }

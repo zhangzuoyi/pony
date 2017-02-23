@@ -56,4 +56,9 @@ public class SubjectServiceImpl implements SubjectService {
 		return dao.findByTypeIn(types);
 	}
 
+	@Override
+	public List<Subject> findSelectiveSubject() {
+		return dao.findByType(2);
+	}
+
 }

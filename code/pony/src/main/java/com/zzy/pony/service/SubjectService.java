@@ -15,4 +15,9 @@ public interface SubjectService {
 	 * @return
 	 */
 	List<Subject> findClassSubject();
+	/**
+	 * 查找选修科目
+	 * @return
+	 */
+	List<Subject> findSelectiveSubject();
 }

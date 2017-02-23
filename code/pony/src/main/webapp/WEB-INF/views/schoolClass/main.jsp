@@ -34,6 +34,10 @@
 		<input type="hidden" name="classId" />
         <table>
         	<tr>
+                <td width="60" align="right">学年:</td>
+                <td><input type="hidden" name="yearId" value="${schoolYear.yearId }" class="my-text" />${schoolYear.name }</td>
+            </tr>
+        	<tr>
                 <td width="60" align="right">年级:</td>
                 <td>
                 	<select name="grade.gradeId" class="my-select">
@@ -46,6 +50,16 @@
             <tr>
                 <td width="60" align="right">名称:</td>
                 <td><input type="text" name="name" class="my-text" /></td>
+            </tr>
+            <tr>
+                <td width="60" align="right">班主任:</td>
+                <td>
+                	<select name="teacher.teacherId" class="my-select">
+                		<c:forEach items="${teachers }" var="g">
+                			<option value="${g.teacherId }">${g.name }</option>
+                		</c:forEach>
+                	</select>
+                </td>
             </tr>
         </table>
     </form>
@@ -156,6 +170,7 @@
 				if(data){
 					//绑定值
 					data['grade.gradeId']=data.grade.gradeId;
+					data['teacher.teacherId']=data.teacher.teacherId;
 					$('#my-form-2').form('load', data);
 					//$("select[name='grade.gradeId'] option[value='"+data.grade.gradeId+"']").attr("selected","selected");
 				}
@@ -238,7 +253,15 @@
 				   return rec.grade.name;
 				}
 			},
-			{ field:'name',title:'名称',width:180,sortable:true}
+			{ field:'name',title:'名称',width:180,sortable:true},
+			{ field:'teacher',title:'班主任',width:180,sortable:true,
+				formatter:function(value,rec){
+					if(rec.teacher == null){
+						return "";
+					}
+				   return rec.teacher.name;
+				}
+			}
 		]]
 	});
 	

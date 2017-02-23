@@ -21,6 +21,8 @@ import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.SchoolClassService;
+import com.zzy.pony.service.SchoolYearService;
+import com.zzy.pony.service.TeacherService;
 
 @Controller
 @RequestMapping(value = "/schoolClass")
@@ -29,10 +31,16 @@ public class SchoolClassController {
 	private SchoolClassService service;
 	@Autowired
 	private GradeService gradeService;
+	@Autowired
+	private TeacherService teacherService;
+	@Autowired
+	private SchoolYearService yearService;
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
 	public String main(Model model){
 		model.addAttribute("grades", gradeService.findAll());
+		model.addAttribute("teachers",teacherService.findAll());
+		model.addAttribute("schoolYear",yearService.getCurrent());
 		return "schoolClass/main";
 	}
 	@RequestMapping(value="list",method = RequestMethod.GET)
@@ -43,6 +51,11 @@ public class SchoolClassController {
 //			sc.getGrade().setSchoolClasses(null);
 		}
 		return list;
+	}
+	@RequestMapping(value="findByGrade",method = RequestMethod.GET)
+	@ResponseBody
+	public List<SchoolClass> findByGrade(@RequestParam(value="gradeId") int gradeId,Model model){
+		return service.findByGrade(gradeId);
 	}
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody

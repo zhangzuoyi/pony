@@ -47,6 +47,12 @@
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/lessonArrange/main/' />" iframe="1">课程安排</a></li>
                 </ul>
             </div>
+            <div title="选课管理" data-options="iconCls:'icon-application-form-edit'" style="padding:5px;">  	
+    			<ul class="easyui-tree my-side-tree">
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/lessonSelectArrange/main/' />" iframe="1">可选课程设置</a></li>
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/lessonSelect/main/' />" iframe="1">学生选课</a></li>
+                </ul>
+            </div>
         </div>
     </div>	
     <!-- end of sidebar -->    

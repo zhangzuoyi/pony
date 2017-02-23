@@ -14,11 +14,13 @@ import com.zzy.pony.model.Teacher;
 public class TeacherServiceImpl implements TeacherService {
 	@Autowired
 	private TeacherDao dao;
+	@Autowired
+	private UserService userService;
 
 	@Override
 	public void add(Teacher sy) {
 		dao.save(sy);
-
+		userService.addFromTeacher(sy);
 	}
 
 	@Override

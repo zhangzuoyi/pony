@@ -8,12 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zzy.pony.dao.TeacherSubjectDao;
+import com.zzy.pony.model.SchoolYear;
+import com.zzy.pony.model.Teacher;
 import com.zzy.pony.model.TeacherSubject;
+import com.zzy.pony.model.Term;
 @Service
 @Transactional
 public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 	@Autowired
 	private TeacherSubjectDao dao;
+	@Autowired
+	private SchoolYearService yearService;
+	@Autowired
+	private TermService termService;
 
 	@Override
 	public void add(TeacherSubject sy) {
@@ -45,6 +52,14 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 	public void delete(int id) {
 		dao.delete(id);
 		
+	}
+
+	@Override
+	public List<TeacherSubject> findCurrentByTeacher(Teacher teacher) {
+		SchoolYear year=yearService.getCurrent();
+		Term term=termService.getCurrent();
+		
+		return dao.findByTeacherAndYearAndTerm(teacher, year, term);
 	}
 
 }

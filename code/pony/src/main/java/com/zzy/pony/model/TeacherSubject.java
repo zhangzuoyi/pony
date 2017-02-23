@@ -33,6 +33,14 @@ public class TeacherSubject implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="CLASS_ID")
 	private SchoolClass schoolClass;
+	
+	@ManyToOne
+	@JoinColumn(name="YEAR_ID")
+	private SchoolYear year;
+	
+	@ManyToOne
+	@JoinColumn(name="TERM_ID")
+	private Term term;
 
 	public TeacherSubject() {
 	}
@@ -67,6 +75,22 @@ public class TeacherSubject implements Serializable {
 
 	public void setSchoolClass(SchoolClass schoolClass) {
 		this.schoolClass = schoolClass;
+	}
+
+	public SchoolYear getYear() {
+		return year;
+	}
+
+	public void setYear(SchoolYear year) {
+		this.year = year;
+	}
+
+	public Term getTerm() {
+		return term;
+	}
+
+	public void setTerm(Term term) {
+		this.term = term;
 	}
 
 }
