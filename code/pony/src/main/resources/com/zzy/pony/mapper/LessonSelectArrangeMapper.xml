@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.mapper.LessonSelectArrangeMapper">
+	<sql id="base_select">
+		select a.ARRANGE_ID arrangeId,a.YEAR_ID yearId,sc.NAME yearName,
+		a.term_id termId,term.NAME termName,a.SUBJECT_ID subjectId,sub.name subjectName,
+		a.period,credit,upper_limit upperLimit,LOWER_LIMIT lowerLimit,classroom,
+		a.TEACHER_ID teacherId,te.NAME teacherName,
+		(select group_concat(g.grade_id) from t_lesson_select_grade g where g.arrange_id=a.arrange_id) gradeIdsStr from t_lesson_select_arrange a 
+		left join t_school_year sc on a.year_id=sc.YEAR_ID
+		left join t_term term on term.TERM_ID=a.TERM_ID
+		left join t_subject sub on sub.SUBJECT_ID=a.SUBJECT_ID 
+		left join t_teacher te on te.TEACHER_ID=a.TEACHER_ID
+	</sql>
+	<sql id="time_base_select">
+		select st.time_id timeId,st.ARRANGE_ID arrangeId,st.PERIOD_ID periodId,lp.SEQ periodSeq,st.WEEK_DAY weekDay 
+		from t_lesson_select_time st 
+		left join t_lesson_select_arrange a on st.ARRANGE_ID=a.ARRANGE_ID
+		left join t_lesson_period lp on st.PERIOD_ID=lp.PERIOD_ID
+	</sql>
+	<select id="findBySchoolYearAndTerm" resultType="com.zzy.pony.vo.LessonSelectArrangeVo">
+		<include refid="base_select"></include>
+		where a.YEAR_ID=#{0} and a.TERM_ID=#{1} 
+		<if test="param3 != null">
+		and exists (select 1 from t_lesson_select_grade g where g.ARRANGE_ID=a.ARRANGE_ID and g.GRADE_ID=#{2})
+		</if>
+	</select>
+	<select id="findById" resultType="com.zzy.pony.vo.LessonSelectArrangeVo">
+		<include refid="base_select"></include>
+		where a.ARRANGE_ID=#{0} 
+	</select>
+	<select id="findTimeBySchoolYearAndTerm" resultType="com.zzy.pony.vo.LessonSelectTimeVo">
+		<include refid="time_base_select"></include>
+		where a.YEAR_ID=#{0} and a.TERM_ID=#{1} 
+		<if test="param3 != null">
+		and exists (select 1 from t_lesson_select_grade g where g.ARRANGE_ID=a.ARRANGE_ID and g.GRADE_ID=#{2})
+		</if>
+	</select>
+	<select id="findByArrangeId" resultType="com.zzy.pony.vo.LessonSelectTimeVo">
+		<include refid="time_base_select"></include>
+		where st.ARRANGE_ID=#{0} 
+	</select>
+</mapper>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.mapper.UserMapper">
+	<sql id="base_select">
+		select t.USER_ID userId,t.STUDENT_ID studentId,st.NAME student,t.TEACHER_ID teacherId,te.NAME teacher,
+		t.LOGIN_NAME loginName,t.USER_TYPE userType,t.LAST_LOGIN_TIME lastLoginTime,t.psw from t_user t
+		left join t_teacher te on te.TEACHER_ID=t.TEACHER_ID
+		left join t_student st on st.STUDENT_ID=t.STUDENT_ID
+	</sql>
+	<select id="findByLoginName" resultType="com.zzy.pony.vo.UserVo">
+		<include refid="base_select"></include>
+		where t.LOGIN_NAME=#{0}
+	</select>
+	
+</mapper>
