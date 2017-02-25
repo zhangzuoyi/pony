@@ -13,6 +13,7 @@ public final class index_jsp extends org.apache.jasper.runtime.HttpJspBase
 
   private org.apache.jasper.runtime.TagHandlerPool _jspx_tagPool_s_url_value_nobody;
   private org.apache.jasper.runtime.TagHandlerPool _jspx_tagPool_shiro_principal_nobody;
+  private org.apache.jasper.runtime.TagHandlerPool _jspx_tagPool_shiro_hasRole_name;
 
   private org.glassfish.jsp.api.ResourceInjector _jspx_resourceInjector;
 
@@ -23,11 +24,13 @@ public final class index_jsp extends org.apache.jasper.runtime.HttpJspBase
   public void _jspInit() {
     _jspx_tagPool_s_url_value_nobody = org.apache.jasper.runtime.TagHandlerPool.getTagHandlerPool(getServletConfig());
     _jspx_tagPool_shiro_principal_nobody = org.apache.jasper.runtime.TagHandlerPool.getTagHandlerPool(getServletConfig());
+    _jspx_tagPool_shiro_hasRole_name = org.apache.jasper.runtime.TagHandlerPool.getTagHandlerPool(getServletConfig());
   }
 
   public void _jspDestroy() {
     _jspx_tagPool_s_url_value_nobody.release();
     _jspx_tagPool_shiro_principal_nobody.release();
+    _jspx_tagPool_shiro_hasRole_name.release();
   }
 
   public void _jspService(HttpServletRequest request, HttpServletResponse response)
@@ -172,6 +175,10 @@ public final class index_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("\" iframe=\"1\">学生选课</a></li>\r\n");
       out.write("                </ul>\r\n");
       out.write("            </div>\r\n");
+      out.write("            ");
+      if (_jspx_meth_shiro_hasRole_0(_jspx_page_context))
+        return;
+      out.write("\r\n");
       out.write("        </div>\r\n");
       out.write("    </div>\t\r\n");
       out.write("    <!-- end of sidebar -->    \r\n");
@@ -279,7 +286,7 @@ public final class index_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("\t\t\r\n");
       out.write("\t\t/* function logout(){\r\n");
       out.write("\t\t\t$(\"#mypage\").href=\"");
-      if (_jspx_meth_s_url_20(_jspx_page_context))
+      if (_jspx_meth_s_url_22(_jspx_page_context))
         return;
       out.write("\";\r\n");
       out.write("\t\t} */\r\n");
@@ -836,15 +843,54 @@ public final class index_jsp extends org.apache.jasper.runtime.HttpJspBase
     return false;
   }
 
-  private boolean _jspx_meth_s_url_20(PageContext _jspx_page_context)
+  private boolean _jspx_meth_shiro_hasRole_0(PageContext _jspx_page_context)
+          throws Throwable {
+    PageContext pageContext = _jspx_page_context;
+    JspWriter out = _jspx_page_context.getOut();
+    //  shiro:hasRole
+    org.apache.shiro.web.tags.HasRoleTag _jspx_th_shiro_hasRole_0 = (org.apache.shiro.web.tags.HasRoleTag) _jspx_tagPool_shiro_hasRole_name.get(org.apache.shiro.web.tags.HasRoleTag.class);
+    _jspx_th_shiro_hasRole_0.setPageContext(_jspx_page_context);
+    _jspx_th_shiro_hasRole_0.setParent(null);
+    _jspx_th_shiro_hasRole_0.setName("teacher");
+    int _jspx_eval_shiro_hasRole_0 = _jspx_th_shiro_hasRole_0.doStartTag();
+    if (_jspx_eval_shiro_hasRole_0 != javax.servlet.jsp.tagext.Tag.SKIP_BODY) {
+      do {
+        out.write("\r\n");
+        out.write("            <div title=\"任课管理\" data-options=\"iconCls:'icon-application-form-edit'\" style=\"padding:5px;\">  \t\r\n");
+        out.write("    \t\t\t<ul class=\"easyui-tree my-side-tree\">\r\n");
+        out.write("                \t<li iconCls=\"icon-users\"><a href=\"javascript:void(0)\" data-icon=\"icon-users\" data-link=\"");
+        if (_jspx_meth_s_url_20((javax.servlet.jsp.tagext.JspTag) _jspx_th_shiro_hasRole_0, _jspx_page_context))
+          return true;
+        out.write("\" iframe=\"1\">我的任课</a></li>\r\n");
+        out.write("                    <li iconCls=\"icon-users\"><a href=\"javascript:void(0)\" data-icon=\"icon-users\" data-link=\"");
+        if (_jspx_meth_s_url_21((javax.servlet.jsp.tagext.JspTag) _jspx_th_shiro_hasRole_0, _jspx_page_context))
+          return true;
+        out.write("\" iframe=\"1\">成绩管理</a></li>\r\n");
+        out.write("                </ul>\r\n");
+        out.write("            </div>\r\n");
+        out.write("            ");
+        int evalDoAfterBody = _jspx_th_shiro_hasRole_0.doAfterBody();
+        if (evalDoAfterBody != javax.servlet.jsp.tagext.BodyTag.EVAL_BODY_AGAIN)
+          break;
+      } while (true);
+    }
+    if (_jspx_th_shiro_hasRole_0.doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE) {
+      _jspx_tagPool_shiro_hasRole_name.reuse(_jspx_th_shiro_hasRole_0);
+      return true;
+    }
+    _jspx_tagPool_shiro_hasRole_name.reuse(_jspx_th_shiro_hasRole_0);
+    return false;
+  }
+
+  private boolean _jspx_meth_s_url_20(javax.servlet.jsp.tagext.JspTag _jspx_th_shiro_hasRole_0, PageContext _jspx_page_context)
           throws Throwable {
     PageContext pageContext = _jspx_page_context;
     JspWriter out = _jspx_page_context.getOut();
     //  s:url
     org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_20 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
     _jspx_th_s_url_20.setPageContext(_jspx_page_context);
-    _jspx_th_s_url_20.setParent(null);
-    _jspx_th_s_url_20.setValue("logout");
+    _jspx_th_s_url_20.setParent((javax.servlet.jsp.tagext.Tag) _jspx_th_shiro_hasRole_0);
+    _jspx_th_s_url_20.setValue("/lessonPeriod/main/");
     int[] _jspx_push_body_count_s_url_20 = new int[] { 0 };
     try {
       int _jspx_eval_s_url_20 = _jspx_th_s_url_20.doStartTag();
@@ -858,6 +904,58 @@ public final class index_jsp extends org.apache.jasper.runtime.HttpJspBase
     } finally {
       _jspx_th_s_url_20.doFinally();
       _jspx_tagPool_s_url_value_nobody.reuse(_jspx_th_s_url_20);
+    }
+    return false;
+  }
+
+  private boolean _jspx_meth_s_url_21(javax.servlet.jsp.tagext.JspTag _jspx_th_shiro_hasRole_0, PageContext _jspx_page_context)
+          throws Throwable {
+    PageContext pageContext = _jspx_page_context;
+    JspWriter out = _jspx_page_context.getOut();
+    //  s:url
+    org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_21 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
+    _jspx_th_s_url_21.setPageContext(_jspx_page_context);
+    _jspx_th_s_url_21.setParent((javax.servlet.jsp.tagext.Tag) _jspx_th_shiro_hasRole_0);
+    _jspx_th_s_url_21.setValue("/lessonArrange/main/");
+    int[] _jspx_push_body_count_s_url_21 = new int[] { 0 };
+    try {
+      int _jspx_eval_s_url_21 = _jspx_th_s_url_21.doStartTag();
+      if (_jspx_th_s_url_21.doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE) {
+        return true;
+      }
+    } catch (Throwable _jspx_exception) {
+      while (_jspx_push_body_count_s_url_21[0]-- > 0)
+        out = _jspx_page_context.popBody();
+      _jspx_th_s_url_21.doCatch(_jspx_exception);
+    } finally {
+      _jspx_th_s_url_21.doFinally();
+      _jspx_tagPool_s_url_value_nobody.reuse(_jspx_th_s_url_21);
+    }
+    return false;
+  }
+
+  private boolean _jspx_meth_s_url_22(PageContext _jspx_page_context)
+          throws Throwable {
+    PageContext pageContext = _jspx_page_context;
+    JspWriter out = _jspx_page_context.getOut();
+    //  s:url
+    org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_22 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
+    _jspx_th_s_url_22.setPageContext(_jspx_page_context);
+    _jspx_th_s_url_22.setParent(null);
+    _jspx_th_s_url_22.setValue("logout");
+    int[] _jspx_push_body_count_s_url_22 = new int[] { 0 };
+    try {
+      int _jspx_eval_s_url_22 = _jspx_th_s_url_22.doStartTag();
+      if (_jspx_th_s_url_22.doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE) {
+        return true;
+      }
+    } catch (Throwable _jspx_exception) {
+      while (_jspx_push_body_count_s_url_22[0]-- > 0)
+        out = _jspx_page_context.popBody();
+      _jspx_th_s_url_22.doCatch(_jspx_exception);
+    } finally {
+      _jspx_th_s_url_22.doFinally();
+      _jspx_tagPool_s_url_value_nobody.reuse(_jspx_th_s_url_22);
     }
     return false;
   }

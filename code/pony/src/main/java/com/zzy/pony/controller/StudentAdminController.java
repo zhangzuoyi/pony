@@ -18,49 +18,66 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
-import com.zzy.pony.model.Teacher;
+import com.zzy.pony.config.Constants;
+import com.zzy.pony.model.SchoolClass;
+import com.zzy.pony.model.Student;
 import com.zzy.pony.service.DictService;
-import com.zzy.pony.service.SubjectService;
-import com.zzy.pony.service.TeacherService;
+import com.zzy.pony.service.SchoolClassService;
+import com.zzy.pony.service.StudentService;
 
 @Controller
-@RequestMapping(value = "/teacher")
-public class TeacherController {
+@RequestMapping(value = "/studentAdmin")
+public class StudentAdminController {
 	@Autowired
-	private TeacherService service;
+	private StudentService service;
+	@Autowired
+	private SchoolClassService classService;
 	@Autowired
 	private DictService dictService;
-	@Autowired
-	private SubjectService subjectService;
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
 	public String main(Model model){
-		model.addAttribute("degrees", dictService.findEducationDegrees());
+		List<SchoolClass> list=classService.findAll();
+		for(SchoolClass sc: list){
+//			sc.getGrade().setSchoolClasses(null);
+		}
+		model.addAttribute("classes", list);
 		model.addAttribute("sexes", dictService.findSexes());
 		model.addAttribute("credentials", dictService.findCredentials());
-		model.addAttribute("subjects", subjectService.findAll());
-		return "teacher/main";
+		return "studentAdmin/main";
 	}
 	@RequestMapping(value="list",method = RequestMethod.GET)
 	@ResponseBody
-	public List<Teacher> list(Model model){
-		List<Teacher> list=service.findAll();
-
+	public List<Student> list(Model model){
+		List<Student> list=service.findAll();
+		for(Student g: list){
+			g.setSchoolClasses(null);
+		}
+		return list;
+	}
+	@RequestMapping(value="findByClass",method = RequestMethod.GET)
+	@ResponseBody
+	public List<Student> findByClass(@RequestParam(value="classId") int classId, Model model){
+		List<Student> list=service.findBySchoolClass(classId);
+		for(Student g: list){
+			g.setSchoolClasses(null);
+		}
 		return list;
 	}
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody
-	public String add(Teacher sy, Model model){
+	public String add(Student sy, Model model){
 		sy.setCreateTime(new Date());
 		sy.setCreateUser("test");
 		sy.setUpdateTime(new Date());
 		sy.setUpdateUser("test");
+		sy.setStatus(Constants.STUDENT_STATUS_DEFAULT);
 		service.add(sy);
 		return "success";
 	}
 	@RequestMapping(value="edit",method = RequestMethod.POST)
 	@ResponseBody
-	public String edit(Teacher sy, Model model){
+	public String edit(Student sy, Model model){
 		sy.setUpdateTime(new Date());
 		sy.setUpdateUser("test");
 		service.update(sy);
@@ -74,8 +91,9 @@ public class TeacherController {
 	}
 	@RequestMapping(value="get",method = RequestMethod.GET)
 	@ResponseBody
-	public Teacher get(@RequestParam(value="id") int id, Model model){
-		Teacher g=service.get(id);
+	public Student get(@RequestParam(value="id") int id, Model model){
+		Student g=service.get(id);
+		g.setSchoolClasses(null);
 		return g;
 	}
 

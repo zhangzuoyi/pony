@@ -12,6 +12,6 @@ import com.zzy.pony.model.User;
 
 public interface UserDao extends JpaRepository<User,Integer>{
 	User findByLoginName(String loginName);
-	@Query("select roles from User where userId=?1")
+	@Query("select t.roles from User t where t.userId=?1")
 	List<Role> findRoles(Integer userId);
 }

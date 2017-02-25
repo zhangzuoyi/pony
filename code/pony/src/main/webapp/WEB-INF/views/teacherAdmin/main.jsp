@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>学生管理</title>
+<title>教师管理</title>
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/easyui/themes/default/easyui.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/style.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/icon.css' />" />
@@ -24,62 +24,18 @@
             <a href="#" class="easyui-linkbutton" iconCls="icon-remove" onclick="removeItem()" plain="true">删除</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-reload" onclick="reload()" plain="true">刷新</a>
         </div>
-        <div class="my-toolbar-search">
-            <label>班级：</label> 
-            <select name="schoolClass" class="my-select" panelHeight="auto" style="width:100px">
-            	<c:forEach items="${classes }" var="g">
-           			<option value="${g.classId }">${g.name }</option>
-           		</c:forEach>
-            </select>
-            <a href="#" id="searchButton" class="easyui-linkbutton" iconCls="icon-search">查询</a>
-        </div>
     </div>
     <!-- End of toolbar -->
-    <table id="my-datagrid-2" class="easyui-datagrid" toolbar="#my-toolbar-2" data-options="singleSelect:true,fitColumns:true,fit:true">
-    <!-- columns:[[
-			/* { checkbox:true}, */
-			{ field:'studentNo',title:'学号',width:100,sortable:true},
-			{ field:'name',title:'姓名',width:100,sortable:true},
-			{ field:'sex',title:'性别',width:100,sortable:true},
-			{ field:'birthday',title:'生日',width:100,sortable:true},
-			{ field:'nativePlace',title:'籍贯',width:100,sortable:true},
-			{ field:'phone',title:'联系电话',width:100,sortable:true},
-			{ field:'entranceDate',title:'入学日期',width:100,sortable:true},
-			{ field:'entranceType',title:'入学类型',width:100,sortable:true},
-			{ field:'schoolClass',title:'班级',width:180,sortable:true,
-				formatter:function(value,rec){
-					if(rec.schoolClass){
-						return rec.schoolClass.name;
-					}else{
-						return "";
-					}
-				   
-				}
-			}
-		]] -->
-    	<thead> 
-            <tr> 
-                <th data-options="field:'studentNo',width:100">学号</th> 
-                <th data-options="field:'name',width:100">姓名</th> 
-                <th data-options="field:'sex',width:100">性别</th> 
-                <th data-options="field:'birthday',width:100">生日</th> 
-                <th data-options="field:'nativePlace',width:100">籍贯</th> 
-                <th data-options="field:'phone',width:100">联系电话</th> 
-                <th data-options="field:'entranceDate',width:100">入学日期</th> 
-                <th data-options="field:'entranceType',width:100">入学类型</th> 
-                <th data-options="field:'schoolClass',width:100,formatter:classFormatter">班级</th> 
-            </tr> 
-        </thead>
-    </table>
+    <table id="my-datagrid-2" class="easyui-datagrid" toolbar="#my-toolbar-2"></table>
 </div>
 <!-- Begin of easyui-dialog -->
 <div id="my-dialog-2" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:800px; padding:10px;">
 	<form id="my-form-2" method="post">
-		<input type="hidden" name="studentId" />
+		<input type="hidden" name="teacherId" />
         <table>
             <tr>
-                <td width="60" align="right">学号:</td>
-                <td><input type="text" name="studentNo" class="my-text" /></td>
+                <td width="60" align="right">教师编号:</td>
+                <td><input type="text" name="teacherNo" class="my-text" /></td>
                 <td width="60" align="right">姓名:</td>
                 <td><input type="text" name="name" class="my-text" /></td>
             </tr>
@@ -132,29 +88,45 @@
                 <td colspan="3"><input type="text" name="email" class="my-text" /></td>
             </tr>
             <tr>
-                <td width="60" align="right">入学日期:</td>
-                <td><input type="text" name="entranceDate"  class="my-text easyui-datebox" data-options="formatter:myformatter,parser:myparser" /></td>
-                <td width="60" align="right">入学类型:</td>
+                <td width="60" align="right">参加工作日期:</td>
+                <td><input type="text" name="startWorkDate"  class="my-text easyui-datebox" data-options="formatter:myformatter,parser:myparser" /></td>
+                <td width="60" align="right">工龄:</td>
                 <td>
-                	<select name="entranceType" class="my-select">
-                	</select>
+                	<input type="text" name="workLength" class="my-text" />
                 </td>
             </tr>
             <tr>
                 <td width="60" align="right">毕业日期:</td>
                 <td><input type="text" name="graduateDate"  class="my-text easyui-datebox" data-options="formatter:myformatter,parser:myparser" /></td>
-                <td width="60" align="right">毕业类型:</td>
+                <td width="60" align="right">毕业学校:</td>
                 <td>
-                	<select name="graduateType" class="my-select">
+                	<input type="text" name="graduateSchool" class="my-text" />
+                </td>
+            </tr>
+            <tr>
+            	<td width="60" align="right">专业:</td>
+                <td>
+                	<input type="text" name="major" class="my-text" />
+                </td>
+                <td width="60" align="right">学历:</td>
+                <td colspan="3">
+                	<select name="degree" class="my-select">
+                		<c:forEach items="${degrees }" var="g">
+                			<option value="${g.code }">${g.value }</option>
+                		</c:forEach>
                 	</select>
                 </td>
             </tr>
             <tr>
-                <td width="60" align="right">班级:</td>
+            	<td width="60" align="right">职称:</td>
+                <td>
+                	<input type="text" name="title" class="my-text" />
+                </td>
+                <td width="60" align="right">任教科目:</td>
                 <td colspan="3">
-                	<select name="schoolClass.classId" class="my-select">
-                		<c:forEach items="${classes }" var="g">
-                			<option value="${g.classId }">${g.name }</option>
+                	<select name="subject.subjectId" class="my-select">
+                		<c:forEach items="${subjects }" var="g">
+                			<option value="${g.subjectId }">${g.name }</option>
                 		</c:forEach>
                 	</select>
                 </td>
@@ -169,11 +141,10 @@
 	*/
 	function add(){
 		$('#my-form-2').form('submit', {
-			url:"<s:url value='/student/add' />",
+			url:"<s:url value='/teacherAdmin/add' />",
 			success:function(data){
 				if(data){
 					$.messager.alert('信息提示','提交成功！','info');
-					reload();
 					$('#my-dialog-2').dialog('close');
 				}
 				else
@@ -189,11 +160,10 @@
 	*/
 	function edit(){
 		$('#my-form-2').form('submit', {
-			url:"<s:url value='/student/edit' />",
+			url:"<s:url value='/teacherAdmin/edit' />",
 			success:function(data){
 				if(data){
 					$.messager.alert('信息提示','提交成功！','info');
-					reload();
 					$('#my-dialog-2').dialog('close');
 				}
 				else
@@ -212,13 +182,12 @@
 			if(result){
 				var item = $('#my-datagrid-2').datagrid('getSelected');
 				$.ajax({
-					url:"<s:url value='/student/delete' />",
+					url:"<s:url value='/teacherAdmin/delete' />",
 					data:{id: item.classId},
 					method:"POST",
 					success:function(data){
 						if(data){
 							$.messager.alert('信息提示','删除成功！','info');		
-							reload();
 						}
 						else
 						{
@@ -261,15 +230,14 @@
 		var item = $('#my-datagrid-2').datagrid('getSelected');
 		//alert(item.productid);return;
 		$.ajax({
-			url:"<s:url value='/student/get' />",
-			data:{id: item.studentId},
+			url:"<s:url value='/teacherAdmin/get' />",
+			data:{id: item.teacherId},
 			dataType:'json',
 			success:function(data){
 				if(data){
 					//绑定值
-					data['schoolClass.classId']=data.schoolClass.classId;
 					$('#my-form-2').form('load', data);
-					//$("select[name='schoolClass.classId'] option[value='"+data.schoolClass.classId+"']").attr("selected","selected");
+					$("select[name='subject.subjectId'] option[value='"+data.subject.subjectId+"']").attr("selected","selected");
 				}
 				else{
 					$('#my-dialog-2').dialog('close');
@@ -294,72 +262,70 @@
         });
 	}	
 	
+	/**
+	* Name 分页过滤器
+	*/
+	function pagerFilter(data){            
+		if (typeof data.length == 'number' && typeof data.splice == 'function'){// is array                
+			data = {                   
+				total: data.length,                   
+				rows: data               
+			}            
+		}        
+		var dg = $(this);         
+		var opts = dg.datagrid('options');          
+		var pager = dg.datagrid('getPager');          
+		pager.pagination({                
+			onSelectPage:function(pageNum, pageSize){                 
+				opts.pageNumber = pageNum;                   
+				opts.pageSize = pageSize;                
+				pager.pagination('refresh',{pageNumber:pageNum,pageSize:pageSize});                  
+				dg.datagrid('loadData',data);                
+			}          
+		});           
+		if (!data.originalRows){               
+			data.originalRows = (data.rows);       
+		}         
+		var start = (opts.pageNumber-1)*parseInt(opts.pageSize);          
+		var end = start + parseInt(opts.pageSize);        
+		data.rows = (data.originalRows.slice(start, end));         
+		return data;       
+	}
+	
 	function reload(){
-		//$('#my-datagrid-2').datagrid('reload');
-		$("#searchButton").click();
+		$('#my-datagrid-2').datagrid('reload');
 	}
 	
 	/**
 	* Name 载入数据
 	*/
-	/* $('#my-datagrid-2').datagrid({
-		url:"<s:url value='/student/list' />",
+	$('#my-datagrid-2').datagrid({
+		url:"<s:url value='/teacherAdmin/list' />",
 		method:'get',
+		loadFilter:pagerFilter,		
 		rownumbers:true,
 		singleSelect:true,
+		pageSize:20,           
+		pagination:true,
+		multiSort:true,
 		fitColumns:true,
 		fit:true,
 		columns:[[
-			{ field:'studentNo',title:'学号',width:100,sortable:true},
+			/* { checkbox:true}, */
+			{ field:'teacherNo',title:'教师编号',width:100,sortable:true},
 			{ field:'name',title:'姓名',width:100,sortable:true},
 			{ field:'sex',title:'性别',width:100,sortable:true},
 			{ field:'birthday',title:'生日',width:100,sortable:true},
-			{ field:'nativePlace',title:'籍贯',width:100,sortable:true},
 			{ field:'phone',title:'联系电话',width:100,sortable:true},
-			{ field:'entranceDate',title:'入学日期',width:100,sortable:true},
-			{ field:'entranceType',title:'入学类型',width:100,sortable:true},
-			{ field:'schoolClass',title:'班级',width:180,sortable:true,
+			{ field:'graduateDate',title:'毕业日期',width:100,sortable:true},
+			{ field:'major',title:'专业',width:100,sortable:true},
+			{ field:'title',title:'职称',width:100,sortable:true},
+			{ field:'subject',title:'任教科目',width:180,sortable:true,
 				formatter:function(value,rec){
-					if(rec.schoolClass){
-						return rec.schoolClass.name;
-					}else{
-						return "";
-					}
-				   
+				   return rec.subject.name;
 				}
 			}
 		]]
-	}); */
-	
-	function classFormatter(value,rec){
-		if(rec.schoolClass){
-			return rec.schoolClass.name;
-		}else{
-			return "";
-		}
-	}
-	
-	$(document).ready(function(){
-		$("#searchButton").click(function(){
-			var classId=$("select[name='schoolClass']").children('option:selected').val();
-			if(classId){
-				$.ajax({
-					url:"<s:url value='/student/findByClass' />",
-					data:{classId: classId},
-					method:"GET",
-					dataType:"json",
-					success:function(data){
-						$('#my-datagrid-2').datagrid({
-							data: data
-						});
-					}	
-				});
-			}else{
-				alert("empty");
-			}
-			
-		});
-		$("#searchButton").click();
 	});
 	
 </script>
