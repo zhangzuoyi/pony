@@ -10,6 +10,7 @@ import com.zzy.pony.vo.UserVo;
 
 public interface UserService {
 	User findByLoginName(String loginName);
+	User findById(Integer userId);
 	UserVo findVo(String loginName);
 	List<Role> findRoles(Integer userId);
 	void addFromTeacher(Teacher teacher);

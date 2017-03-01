@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.zzy.pony.model.Teacher;
 import com.zzy.pony.model.TeacherSubject;
+import com.zzy.pony.vo.TeacherSubjectVo;
 
 public interface TeacherSubjectService {
 	void add(TeacherSubject sy);
@@ -17,4 +18,5 @@ public interface TeacherSubjectService {
 	 * @return
 	 */
 	List<TeacherSubject> findCurrentByTeacher(Teacher teacher);
+	List<TeacherSubjectVo> findCurrentVoByTeacher(Teacher teacher);
 }

@@ -11,10 +11,20 @@ public final class login_jsp extends org.apache.jasper.runtime.HttpJspBase
 
   private static java.util.Vector _jspx_dependants;
 
+  private org.apache.jasper.runtime.TagHandlerPool _jspx_tagPool_s_url_value_nobody;
+
   private org.glassfish.jsp.api.ResourceInjector _jspx_resourceInjector;
 
   public Object getDependants() {
     return _jspx_dependants;
+  }
+
+  public void _jspInit() {
+    _jspx_tagPool_s_url_value_nobody = org.apache.jasper.runtime.TagHandlerPool.getTagHandlerPool(getServletConfig());
+  }
+
+  public void _jspDestroy() {
+    _jspx_tagPool_s_url_value_nobody.release();
   }
 
   public void _jspService(HttpServletRequest request, HttpServletResponse response)
@@ -48,40 +58,42 @@ public final class login_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write(" \r\n");
       out.write("<!DOCTYPE html>\r\n");
       out.write("<html>\r\n");
-      out.write("<head lang=\"en\">\r\n");
-      out.write("    <meta charset=\"UTF-8\">\r\n");
-      out.write("    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\r\n");
-      out.write("    <title>登录</title>\r\n");
-      out.write("    ");
-      out.write("\r\n");
+      out.write("<head>\r\n");
+      out.write("\t<!-- Basics -->\r\n");
+      out.write("\t<meta charset=\"utf-8\">\r\n");
+      out.write("\t<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\">\r\n");
+      out.write("\t<title>登录</title>\r\n");
+      out.write("\t<!-- CSS -->\r\n");
+      out.write("\t<link rel=\"stylesheet\" href=\"");
+      if (_jspx_meth_s_url_0(_jspx_page_context))
+        return;
+      out.write("\" />\r\n");
+      out.write("\t<link rel=\"stylesheet\" href=\"");
+      if (_jspx_meth_s_url_1(_jspx_page_context))
+        return;
+      out.write("\" />\r\n");
+      out.write("\t<link rel=\"stylesheet\" href=\"");
+      if (_jspx_meth_s_url_2(_jspx_page_context))
+        return;
+      out.write("\" />\r\n");
       out.write("</head>\r\n");
+      out.write("\t<!-- Main HTML -->\r\n");
       out.write("<body>\r\n");
-      out.write("    <div class=\"login-main\">\r\n");
-      out.write("        <div class=\"container\">\r\n");
-      out.write("            <h1 class=\"login-title\">管理系统</h1>\r\n");
-      out.write("        </div>\r\n");
-      out.write("        <div class=\"login-content\">\r\n");
-      out.write("            <div class=\"container\">\r\n");
-      out.write("            <form class=\"form-signin\" role=\"form\" method=\"post\">\r\n");
-      out.write("                   <div class=\"login-box\">\r\n");
-      out.write("                       <ul class=\"login-list\">\r\n");
-      out.write("                           <li><div class=\"input-box\"><input placeholder=\"用户名\" type=\"text\" name=\"username\" /><i class=\"icon-login-user\"></i></div></li>\r\n");
-      out.write("                           <li><div class=\"input-box\"><input placeholder=\"密码\" type=\"password\" name=\"password\" /><i class=\"icon-login-password\"></i></div></li>\r\n");
-      out.write("                           <li class=\"yzm-tool\"><input type=\"checkbox\" name=\"rememberMe\" />记住我</li>\r\n");
-      out.write("                           <!--<li class=\"yzm-tool\"><div class=\"input-box\"><input placeholder=\"验证码\" type=\"text\" /></div><a class=\"yzm\" title=\"点击切换验证码\" href=\"\"><img src=\"images/yzm-pic.gif\" /></a></li>-->\r\n");
-      out.write("                           <li>\r\n");
-      out.write("                               <button class=\"login-btn\" type=\"submit\">登 录</button>\r\n");
-      out.write("                               <!-- <a class=\"login-btn\" href=\"\">登 录</a> -->\r\n");
-      out.write("                           </li>\r\n");
-      out.write("                       </ul>\r\n");
-      out.write("                   </div>\r\n");
-      out.write("            </form>\r\n");
-      out.write("            </div>\r\n");
-      out.write("        </div>\r\n");
-      out.write("        <p class=\"copyright\">\r\n");
-      out.write("              版权所有\r\n");
-      out.write("        </p>\r\n");
-      out.write("    </div>\r\n");
+      out.write("\t<!-- Begin Page Content -->\r\n");
+      out.write("\t<div id=\"container\">\r\n");
+      out.write("\t\t<form method=\"post\">\r\n");
+      out.write("\t\t<label for=\"name\">用户名:</label>\r\n");
+      out.write("\t\t<input placeholder=\"用户名\" type=\"name\" name=\"username\" />\r\n");
+      out.write("\t\t<label for=\"username\">密码:</label>\r\n");
+      out.write("\t\t<!-- <p><a href=\"#\">Forgot your password?</a> -->\r\n");
+      out.write("\t\t<input placeholder=\"密码\" type=\"password\" name=\"password\" />\r\n");
+      out.write("\t\t<div id=\"lower\">\r\n");
+      out.write("\t\t<input type=\"checkbox\" name=\"rememberMe\" /><label class=\"check\" for=\"checkbox\">记住我</label>\r\n");
+      out.write("\t\t<input type=\"submit\" value=\"登录\">\r\n");
+      out.write("\t\t</div>\r\n");
+      out.write("\t\t</form>\r\n");
+      out.write("\t</div>\r\n");
+      out.write("\t<!-- End Page Content -->\r\n");
       out.write("</body>\r\n");
       out.write("</html>");
     } catch (Throwable t) {
@@ -95,5 +107,83 @@ public final class login_jsp extends org.apache.jasper.runtime.HttpJspBase
     } finally {
       _jspxFactory.releasePageContext(_jspx_page_context);
     }
+  }
+
+  private boolean _jspx_meth_s_url_0(PageContext _jspx_page_context)
+          throws Throwable {
+    PageContext pageContext = _jspx_page_context;
+    JspWriter out = _jspx_page_context.getOut();
+    //  s:url
+    org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_0 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
+    _jspx_th_s_url_0.setPageContext(_jspx_page_context);
+    _jspx_th_s_url_0.setParent(null);
+    _jspx_th_s_url_0.setValue("/static/login/css/reset.css ");
+    int[] _jspx_push_body_count_s_url_0 = new int[] { 0 };
+    try {
+      int _jspx_eval_s_url_0 = _jspx_th_s_url_0.doStartTag();
+      if (_jspx_th_s_url_0.doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE) {
+        return true;
+      }
+    } catch (Throwable _jspx_exception) {
+      while (_jspx_push_body_count_s_url_0[0]-- > 0)
+        out = _jspx_page_context.popBody();
+      _jspx_th_s_url_0.doCatch(_jspx_exception);
+    } finally {
+      _jspx_th_s_url_0.doFinally();
+      _jspx_tagPool_s_url_value_nobody.reuse(_jspx_th_s_url_0);
+    }
+    return false;
+  }
+
+  private boolean _jspx_meth_s_url_1(PageContext _jspx_page_context)
+          throws Throwable {
+    PageContext pageContext = _jspx_page_context;
+    JspWriter out = _jspx_page_context.getOut();
+    //  s:url
+    org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_1 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
+    _jspx_th_s_url_1.setPageContext(_jspx_page_context);
+    _jspx_th_s_url_1.setParent(null);
+    _jspx_th_s_url_1.setValue("/static/login/css/animate.css ");
+    int[] _jspx_push_body_count_s_url_1 = new int[] { 0 };
+    try {
+      int _jspx_eval_s_url_1 = _jspx_th_s_url_1.doStartTag();
+      if (_jspx_th_s_url_1.doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE) {
+        return true;
+      }
+    } catch (Throwable _jspx_exception) {
+      while (_jspx_push_body_count_s_url_1[0]-- > 0)
+        out = _jspx_page_context.popBody();
+      _jspx_th_s_url_1.doCatch(_jspx_exception);
+    } finally {
+      _jspx_th_s_url_1.doFinally();
+      _jspx_tagPool_s_url_value_nobody.reuse(_jspx_th_s_url_1);
+    }
+    return false;
+  }
+
+  private boolean _jspx_meth_s_url_2(PageContext _jspx_page_context)
+          throws Throwable {
+    PageContext pageContext = _jspx_page_context;
+    JspWriter out = _jspx_page_context.getOut();
+    //  s:url
+    org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_2 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
+    _jspx_th_s_url_2.setPageContext(_jspx_page_context);
+    _jspx_th_s_url_2.setParent(null);
+    _jspx_th_s_url_2.setValue("/static/login/css/styles.css ");
+    int[] _jspx_push_body_count_s_url_2 = new int[] { 0 };
+    try {
+      int _jspx_eval_s_url_2 = _jspx_th_s_url_2.doStartTag();
+      if (_jspx_th_s_url_2.doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE) {
+        return true;
+      }
+    } catch (Throwable _jspx_exception) {
+      while (_jspx_push_body_count_s_url_2[0]-- > 0)
+        out = _jspx_page_context.popBody();
+      _jspx_th_s_url_2.doCatch(_jspx_exception);
+    } finally {
+      _jspx_th_s_url_2.doFinally();
+      _jspx_tagPool_s_url_value_nobody.reuse(_jspx_th_s_url_2);
+    }
+    return false;
   }
 }

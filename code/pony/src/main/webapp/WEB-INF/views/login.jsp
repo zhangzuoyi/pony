@@ -5,40 +5,32 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> 
 <!DOCTYPE html>
 <html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>登录</title>
-    <%-- <link rel="stylesheet" href="<s:url value='/static/login/css/reset.css' />" type="text/css">
-    <link rel="stylesheet" href="<s:url value='/static/login/css/tool.css' />" type="text/css">
-    <link rel="stylesheet" href="<s:url value='/static/login/css/login.css' />" type="text/css"> --%>
+<head>
+	<!-- Basics -->
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>登录</title>
+	<!-- CSS -->
+	<link rel="stylesheet" href="<s:url value='/static/login/css/reset.css '/>" />
+	<link rel="stylesheet" href="<s:url value='/static/login/css/animate.css '/>" />
+	<link rel="stylesheet" href="<s:url value='/static/login/css/styles.css '/>" />
 </head>
+	<!-- Main HTML -->
 <body>
-    <div class="login-main">
-        <div class="container">
-            <h1 class="login-title">管理系统</h1>
-        </div>
-        <div class="login-content">
-            <div class="container">
-            <form class="form-signin" role="form" method="post">
-                   <div class="login-box">
-                       <ul class="login-list">
-                           <li><div class="input-box"><input placeholder="用户名" type="text" name="username" /><i class="icon-login-user"></i></div></li>
-                           <li><div class="input-box"><input placeholder="密码" type="password" name="password" /><i class="icon-login-password"></i></div></li>
-                           <li class="yzm-tool"><input type="checkbox" name="rememberMe" />记住我</li>
-                           <!--<li class="yzm-tool"><div class="input-box"><input placeholder="验证码" type="text" /></div><a class="yzm" title="点击切换验证码" href=""><img src="images/yzm-pic.gif" /></a></li>-->
-                           <li>
-                               <button class="login-btn" type="submit">登 录</button>
-                               <!-- <a class="login-btn" href="">登 录</a> -->
-                           </li>
-                       </ul>
-                   </div>
-            </form>
-            </div>
-        </div>
-        <p class="copyright">
-              版权所有
-        </p>
-    </div>
+	<!-- Begin Page Content -->
+	<div id="container">
+		<form method="post">
+		<label for="name">用户名:</label>
+		<input placeholder="用户名" type="name" name="username" />
+		<label for="username">密码:</label>
+		<!-- <p><a href="#">Forgot your password?</a> -->
+		<input placeholder="密码" type="password" name="password" />
+		<div id="lower">
+		<input type="checkbox" name="rememberMe" /><label class="check" for="checkbox">记住我</label>
+		<input type="submit" value="登录">
+		</div>
+		</form>
+	</div>
+	<!-- End Page Content -->
 </body>
 </html>

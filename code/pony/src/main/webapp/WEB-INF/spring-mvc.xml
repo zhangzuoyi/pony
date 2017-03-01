@@ -15,7 +15,7 @@
 	<!-- <mvc:annotation-driven/> -->
 	<!-- Customize ObjectMapper for XSS -->
     <mvc:annotation-driven>
-        <mvc:message-converters>
+        <!-- <mvc:message-converters>对excel导出产生副作用
             <bean
                 class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
                 <property name="supportedMediaTypes">
@@ -28,7 +28,7 @@
                     <bean class="com.zzy.pony.util.CustomObjectMapper" />
                 </property>
             </bean>
-        </mvc:message-converters>
+        </mvc:message-converters> -->
     </mvc:annotation-driven>
 	
 	<!-- SpringMVC上传文件时，需要配置MultipartResolver处理器 -->  

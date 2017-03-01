@@ -591,7 +591,7 @@ public final class index_jsp extends org.apache.jasper.runtime.HttpJspBase
     org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_10 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
     _jspx_th_s_url_10.setPageContext(_jspx_page_context);
     _jspx_th_s_url_10.setParent(null);
-    _jspx_th_s_url_10.setValue("/student/main/");
+    _jspx_th_s_url_10.setValue("/studentAdmin/main/");
     int[] _jspx_push_body_count_s_url_10 = new int[] { 0 };
     try {
       int _jspx_eval_s_url_10 = _jspx_th_s_url_10.doStartTag();
@@ -643,7 +643,7 @@ public final class index_jsp extends org.apache.jasper.runtime.HttpJspBase
     org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_12 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
     _jspx_th_s_url_12.setPageContext(_jspx_page_context);
     _jspx_th_s_url_12.setParent(null);
-    _jspx_th_s_url_12.setValue("/teacher/main/");
+    _jspx_th_s_url_12.setValue("/teacherAdmin/main/");
     int[] _jspx_push_body_count_s_url_12 = new int[] { 0 };
     try {
       int _jspx_eval_s_url_12 = _jspx_th_s_url_12.doStartTag();
@@ -890,7 +890,7 @@ public final class index_jsp extends org.apache.jasper.runtime.HttpJspBase
     org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_20 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
     _jspx_th_s_url_20.setPageContext(_jspx_page_context);
     _jspx_th_s_url_20.setParent((javax.servlet.jsp.tagext.Tag) _jspx_th_shiro_hasRole_0);
-    _jspx_th_s_url_20.setValue("/lessonPeriod/main/");
+    _jspx_th_s_url_20.setValue("/teacher/courses/");
     int[] _jspx_push_body_count_s_url_20 = new int[] { 0 };
     try {
       int _jspx_eval_s_url_20 = _jspx_th_s_url_20.doStartTag();
@@ -916,7 +916,7 @@ public final class index_jsp extends org.apache.jasper.runtime.HttpJspBase
     org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_21 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
     _jspx_th_s_url_21.setPageContext(_jspx_page_context);
     _jspx_th_s_url_21.setParent((javax.servlet.jsp.tagext.Tag) _jspx_th_shiro_hasRole_0);
-    _jspx_th_s_url_21.setValue("/lessonArrange/main/");
+    _jspx_th_s_url_21.setValue("/teacher/examresult/");
     int[] _jspx_push_body_count_s_url_21 = new int[] { 0 };
     try {
       int _jspx_eval_s_url_21 = _jspx_th_s_url_21.doStartTag();

@@ -265,7 +265,8 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("\t\t\t\tif(data){\r\n");
       out.write("\t\t\t\t\t//绑定值\r\n");
       out.write("\t\t\t\t\tdata['grade.gradeId']=data.grade.gradeId;\r\n");
-      out.write("\t\t\t\t\tdata['teacher.teacherId']=data.teacher.teacherId;\r\n");
+      out.write("\t\t\t\t\tif(data.teacher != null)\r\n");
+      out.write("\t\t\t\t\t\tdata['teacher.teacherId']=data.teacher.teacherId;\r\n");
       out.write("\t\t\t\t\t$('#my-form-2').form('load', data);\r\n");
       out.write("\t\t\t\t\t//$(\"select[name='grade.gradeId'] option[value='\"+data.grade.gradeId+\"']\").attr(\"selected\",\"selected\");\r\n");
       out.write("\t\t\t\t}\r\n");

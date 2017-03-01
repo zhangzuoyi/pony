@@ -10,7 +10,10 @@ import org.springframework.stereotype.Service;
 import com.zzy.pony.dao.ExamDao;
 import com.zzy.pony.dao.SchoolClassDao;
 import com.zzy.pony.model.Exam;
+import com.zzy.pony.model.SchoolClass;
+import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Subject;
+import com.zzy.pony.model.Term;
 @Service
 @Transactional
 public class ExamServiceImpl implements ExamService {
@@ -18,6 +21,10 @@ public class ExamServiceImpl implements ExamService {
 	private ExamDao dao;
 	@Autowired
 	private SchoolClassDao classDao;
+	@Autowired
+	private SchoolYearService yearService;
+	@Autowired
+	private TermService termService;
 
 	@Override
 	public void add(Exam sy) {
@@ -63,6 +70,14 @@ public class ExamServiceImpl implements ExamService {
 	@Override
 	public List<Exam> findBySubject(Subject subject) {
 		return dao.findBySubject(subject);
+	}
+
+	@Override
+	public List<Exam> findCurrentBySubjectAndClass(Subject subject, SchoolClass schoolClass) {
+		SchoolYear year=yearService.getCurrent();
+		Term term=termService.getCurrent();
+		
+		return dao.findBySchoolYearAndTermAndSubjectAndSchoolClasses(year, term, subject, schoolClass);
 	}
 
 }

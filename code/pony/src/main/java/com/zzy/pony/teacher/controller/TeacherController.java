@@ -1,6 +1,7 @@
 package com.zzy.pony.teacher.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,10 +19,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
-import com.zzy.pony.model.Teacher;
-import com.zzy.pony.service.DictService;
-import com.zzy.pony.service.SubjectService;
+import com.zzy.pony.model.Exam;
+import com.zzy.pony.model.SchoolClass;
+import com.zzy.pony.model.Subject;
+import com.zzy.pony.model.TeacherSubject;
+import com.zzy.pony.model.User;
+import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.service.TeacherService;
+import com.zzy.pony.service.TeacherSubjectService;
+import com.zzy.pony.service.UserService;
+import com.zzy.pony.vo.TeacherSubjectVo;
 
 @Controller
 @RequestMapping(value = "/teacher")
@@ -29,55 +36,43 @@ public class TeacherController {
 	@Autowired
 	private TeacherService service;
 	@Autowired
-	private DictService dictService;
+	private TeacherSubjectService tsService;
 	@Autowired
-	private SubjectService subjectService;
+	private UserService userService;
 	
-	@RequestMapping(value="main",method = RequestMethod.GET)
-	public String main(Model model){
-		model.addAttribute("degrees", dictService.findEducationDegrees());
-		model.addAttribute("sexes", dictService.findSexes());
-		model.addAttribute("credentials", dictService.findCredentials());
-		model.addAttribute("subjects", subjectService.findAll());
-		return "teacher/main";
+	@RequestMapping(value="courses",method = RequestMethod.GET)
+	public String courses(Model model){
+		User user=userService.findById(ShiroUtil.getLoginUser().getId());
+		List<TeacherSubjectVo> subjects=tsService.findCurrentVoByTeacher(user.getTeacher());
+		model.addAttribute("courses", subjects);
+		return "teacher/courses";
 	}
-	@RequestMapping(value="list",method = RequestMethod.GET)
+	@RequestMapping(value="examresult",method = RequestMethod.GET)
+	public String examresult(Model model){
+		User user=userService.findById(ShiroUtil.getLoginUser().getId());
+		List<TeacherSubject> subjects=tsService.findCurrentByTeacher(user.getTeacher());
+		List<Subject> result=new ArrayList<Subject>();
+		for(TeacherSubject ts: subjects){
+			result.add(ts.getSubject());
+		}
+		model.addAttribute("subjects", result);
+		return "teacher/examresult";
+	}
+	@RequestMapping(value="findClassBySubject",method = RequestMethod.GET)
 	@ResponseBody
-	public List<Teacher> list(Model model){
-		List<Teacher> list=service.findAll();
-
+	public List<SchoolClass> findClassBySubject(@RequestParam(value="subjectId") int subjectId,Model model){
+		User user=userService.findById(ShiroUtil.getLoginUser().getId());
+		List<TeacherSubject> subjects=tsService.findCurrentByTeacher(user.getTeacher());
+		List<SchoolClass> list=new ArrayList<SchoolClass>();
+		for(TeacherSubject ts: subjects){
+			if(ts.getSubject().getSubjectId() == subjectId){
+				list.add(ts.getSchoolClass());
+			}
+		}
 		return list;
 	}
-	@RequestMapping(value="add",method = RequestMethod.POST)
-	@ResponseBody
-	public String add(Teacher sy, Model model){
-		sy.setCreateTime(new Date());
-		sy.setCreateUser("test");
-		sy.setUpdateTime(new Date());
-		sy.setUpdateUser("test");
-		service.add(sy);
-		return "success";
-	}
-	@RequestMapping(value="edit",method = RequestMethod.POST)
-	@ResponseBody
-	public String edit(Teacher sy, Model model){
-		sy.setUpdateTime(new Date());
-		sy.setUpdateUser("test");
-		service.update(sy);
-		return "success";
-	}
-	@RequestMapping(value="delete",method = RequestMethod.POST)
-	@ResponseBody
-	public String delete(@RequestParam(value="id") int id, Model model){
-		service.delete(id);
-		return "success";
-	}
-	@RequestMapping(value="get",method = RequestMethod.GET)
-	@ResponseBody
-	public Teacher get(@RequestParam(value="id") int id, Model model){
-		Teacher g=service.get(id);
-		return g;
-	}
+	//examresult 成绩管理 按科目，班级，考试做为查询条件
+	//resultAnalysis 成绩分析
 
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) throws ServletException {

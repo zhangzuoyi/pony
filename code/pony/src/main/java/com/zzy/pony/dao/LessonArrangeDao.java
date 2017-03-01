@@ -7,10 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.zzy.pony.model.LessonArrange;
 import com.zzy.pony.model.SchoolYear;
+import com.zzy.pony.model.Subject;
 import com.zzy.pony.model.Term;
 
 
 public interface LessonArrangeDao extends JpaRepository<LessonArrange,Integer>{
 	List<LessonArrange> findByClassIdAndSchoolYearAndTerm(Integer classId, SchoolYear year, Term term);
-
+	List<LessonArrange> findByClassIdAndSchoolYearAndTermAndSubject(Integer classId, SchoolYear year, Term term, Subject subject);
 }

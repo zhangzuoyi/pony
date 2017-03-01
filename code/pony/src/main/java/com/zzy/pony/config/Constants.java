@@ -10,6 +10,7 @@ public class Constants {
 	public static final String CURRENT_FLAG_FALSE="1";//当前标志，否
 	public static final String USER_TYPE_TEACHER="t";
 	public static final String USER_TYPE_STUDENT="s";
+	public static final String ID_TYPE_DEFAULT="01";//默认证件类型，就是身份证
 	public static final Map<String, String> WEEKDAYS;
 	public static final Map<Integer, String> SUBJECT_TYPES;
 	public static final Map<String, String> USER_TYPES;

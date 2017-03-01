@@ -3,6 +3,8 @@ package com.zzy.pony.model;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import com.zzy.pony.config.Constants;
+
 
 /**
  * The persistent class for the t_lesson_arrange database table.
@@ -49,7 +51,13 @@ public class LessonArrange implements Serializable {
 
 	public LessonArrange() {
 	}
-
+	/**
+	 * 上课时间的显示名称
+	 * @return
+	 */
+	public String getTimeShowName(){
+		return Constants.WEEKDAYS.get(weekDay)+"第"+lessonPeriod.getSeq()+"节";
+	}
 	public Integer getArrangeId() {
 		return this.arrangeId;
 	}

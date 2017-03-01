@@ -13,7 +13,6 @@
 <script type="text/javascript" src="<s:url value='/static/easyui/jquery.easyui.min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/easyui/locale/easyui-lang-zh_CN.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/easyui/dateFormat.js' />"></script>
-<script type="text/javascript" src="<s:url value='/static/echarts/echarts.common.min.js' />"></script>
 </head>
 <body class="easyui-layout">
 <div class="easyui-layout" data-options="fit:true">
@@ -22,7 +21,7 @@
         <div class="my-toolbar-button">
             <a href="#" class="easyui-linkbutton" iconCls="icon-save" onclick="saveResult()" plain="true">保存</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="openAdd()" plain="true">导入</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="openAnalysis()" plain="true">分析</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="exportResult()" plain="true">导出</a>
         </div>
         <div class="my-toolbar-search">
             <label>科目：</label> 
@@ -32,11 +31,11 @@
           			<option value="${g.subjectId }">${g.name }</option>
           		</c:forEach>
             </select>
-            <label>考试：</label> 
-            <select name="exam" class="my-select" panelHeight="auto" style="width:100px">
-            </select>
             <label>班级：</label> 
             <select name="schoolClass" class="my-select" panelHeight="auto" style="width:100px">
+            </select>
+            <label>考试：</label> 
+            <select name="exam" class="my-select" panelHeight="auto" style="width:100px">
             </select>
             <a href="#" id="searchButton" class="easyui-linkbutton" iconCls="icon-search">查询</a>
         </div>
@@ -76,9 +75,6 @@
         </table>
     </form>
 </div>
-<div id="my-dialog-3" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:800px; padding:10px;">
-	<div id="main" style="width: 600px;height:400px;"></div>
-</div>
 <!-- End of easyui-dialog -->
 <script type="text/javascript" src="<s:url value='/static/easyui/datagrid-cellediting.js' />"></script>
 <script type="text/javascript">
@@ -90,8 +86,31 @@
 				$("select[name='schoolClass']").empty();
 			}else{
 				$.ajax({
-					url:"<s:url value='/exam/findBySubject' />",
+					url:"<s:url value='/teacher/findClassBySubject' />",
 					data:{subjectId: subject},
+					method:"GET",
+					dataType:"json",
+					success:function(data){
+						$("select[name='schoolClass']").empty();
+						$("select[name='schoolClass']").append("<option value=''>请选择</option>");
+						var len=data.length;
+						for(var i=0;i<len;i++){
+							var item=data[i];
+							$("select[name='schoolClass']").append("<option value='"+item.classId+"'>"+item.name+"</option>");
+						}
+					}	
+				});
+			}
+		});
+		$("select[name='schoolClass']").change(function(){
+			var schoolClass=$(this).children('option:selected').val();
+			var subject=$("#subjectSelect").children('option:selected').val();
+			if(schoolClass == ""){
+				$("select[name='exam']").empty();
+			}else{
+				$.ajax({
+					url:"<s:url value='/exam/findBySubjectAndClass' />",
+					data:{classId: schoolClass, subjectId: subject},
 					method:"GET",
 					dataType:"json",
 					success:function(data){
@@ -106,53 +125,6 @@
 				});
 			}
 		});
-		$("select[name='exam']").change(function(){
-			var exam=$(this).children('option:selected').val();
-			if(exam == ""){
-				$("select[name='schoolClass']").empty();
-			}else{
-				$.ajax({
-					url:"<s:url value='/exam/get' />",
-					data:{id: exam},
-					method:"GET",
-					dataType:"json",
-					success:function(data){
-						$("select[name='schoolClass']").empty();
-						$("select[name='schoolClass']").append("<option value=''>请选择</option>");
-						var len=data.schoolClasses.length;
-						for(var i=0;i<len;i++){
-							var item=data.schoolClasses[i];
-							$("select[name='schoolClass']").append("<option value='"+item.classId+"'>"+item.name+"</option>");
-						}
-					}	
-				});
-			}
-		});
-		// 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('main'));
-
-        // 指定图表的配置项和数据
-        var option = {
-            title: {
-                text: 'ECharts 入门示例'
-            },
-            tooltip: {},
-            legend: {
-                data:['销量']
-            },
-            xAxis: {
-                data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-            },
-            yAxis: {},
-            series: [{
-                name: '销量',
-                type: 'bar',
-                data: [5, 20, 36, 10, 10, 20]
-            }]
-        };
-
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
 	});
 	/**
 	* Name 添加记录
@@ -254,6 +226,15 @@
 	}
 	
 	/**
+	* 导出成绩
+	*/
+	function exportResult(){
+		var examId=$("select[name='exam']").children('option:selected').val();
+		var classId=$("select[name='schoolClass']").children('option:selected').val();
+		window.open("<s:url value='/examResult/export' />?examId="+examId+"&classId="+classId);
+	}
+	
+	/**
 	* Name 打开修改窗口
 	*/
 	function openEdit(){
@@ -291,10 +272,6 @@
             }]
         });
 	}	
-	
-	function openAnalysis(){
-		$('#my-dialog-3').dialog('open');
-	}
 	
 	function reload(){
 		$('#my-datagrid-2').datagrid('reload');

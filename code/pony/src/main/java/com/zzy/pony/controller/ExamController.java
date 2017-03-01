@@ -70,6 +70,19 @@ public class ExamController {
 		}
 		return list;
 	}
+	@RequestMapping(value="findBySubjectAndClass",method = RequestMethod.GET)
+	@ResponseBody
+	public List<Exam> findBySubjectAndClass(@RequestParam(value="subjectId") int subjectId,@RequestParam(value="classId") int classId,Model model){
+		Subject subject=new Subject();
+		subject.setSubjectId(subjectId);
+		SchoolClass schoolClass=new SchoolClass();
+		schoolClass.setClassId(classId);
+		List<Exam> list=service.findCurrentBySubjectAndClass(subject, schoolClass);
+		for(Exam g: list){
+			g.setSchoolClasses(null);
+		}
+		return list;
+	}
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody
 	public String add(Exam sy, Integer[] classIds, Model model){

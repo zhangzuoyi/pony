@@ -1,5 +1,6 @@
 package com.zzy.pony.service;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -70,6 +71,41 @@ public class StudentServiceImpl implements StudentService {
 		SchoolClass sc=new SchoolClass();
 		sc.setClassId(classId);
 		return dao.findBySchoolClass(sc);
+	}
+
+	@Override
+	public void upload(List<Student> students, String loginUser) {
+		Date now=new Date();
+		for(Student stu: students){
+			Student old=dao.findByStudentNo(stu.getStudentNo());
+			if(old == null){
+				stu.setCreateTime(now);
+				stu.setCreateUser(loginUser);
+				stu.setUpdateTime(now);
+				stu.setUpdateUser(loginUser);
+				
+				dao.save(stu);
+			}else{
+				old.setBirthday(stu.getBirthday());
+				old.setEmail(stu.getEmail());
+				old.setEntranceDate(stu.getEntranceDate());
+				old.setHomeAddr(stu.getHomeAddr());
+				old.setHomeZipcode(stu.getHomeZipcode());
+				old.setIdNo(stu.getIdNo());
+				old.setIdType(stu.getIdType());
+				old.setName(stu.getName());
+				old.setNation(stu.getNation());
+				old.setNativeAddr(stu.getNativeAddr());
+				old.setNativePlace(stu.getNativePlace());
+				old.setPhone(stu.getPhone());
+				old.setSchoolClass(stu.getSchoolClass());
+				old.setSex(stu.getSex());
+				old.setUpdateTime(now);
+				old.setUpdateUser(loginUser);
+				
+				dao.save(old);
+			}
+		}
 	}
 
 }

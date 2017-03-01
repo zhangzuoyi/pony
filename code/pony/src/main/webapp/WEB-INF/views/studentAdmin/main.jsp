@@ -22,6 +22,7 @@
             <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="openAdd()" plain="true">添加</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit" onclick="openEdit()" plain="true">修改</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-remove" onclick="removeItem()" plain="true">删除</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="openUpload()" plain="true">导入</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-reload" onclick="reload()" plain="true">刷新</a>
         </div>
         <div class="my-toolbar-search">
@@ -61,7 +62,7 @@
             <tr> 
                 <th data-options="field:'studentNo',width:100">学号</th> 
                 <th data-options="field:'name',width:100">姓名</th> 
-                <th data-options="field:'sex',width:100">性别</th> 
+                <th data-options="field:'sex',width:100,formatter:sexFormatter">性别</th> 
                 <th data-options="field:'birthday',width:100">生日</th> 
                 <th data-options="field:'nativePlace',width:100">籍贯</th> 
                 <th data-options="field:'phone',width:100">联系电话</th> 
@@ -162,6 +163,20 @@
         </table>
     </form>
 </div>
+<div id="my-dialog-3" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:400px; padding:10px;">
+	<form id="my-form-3" method="post" enctype="multipart/form-data">
+        <table>
+            <tr>
+                <td width="60" align="right">班级:</td>
+                <td><input type="hidden" name="classId" /><input type="text" readonly="readonly" name="className" class="my-text" /></td>
+            </tr>
+            <tr>
+                <td width="60" align="right">文件:</td>
+                <td><input type="file" name="file" /></td>
+            </tr>
+        </table>
+    </form>
+</div>
 <!-- End of easyui-dialog -->
 <script type="text/javascript">
 	/**
@@ -195,6 +210,23 @@
 					$.messager.alert('信息提示','提交成功！','info');
 					reload();
 					$('#my-dialog-2').dialog('close');
+				}
+				else
+				{
+					$.messager.alert('信息提示','提交失败！','info');
+				}
+			}
+		});
+	}
+	
+	function upload(){
+		$('#my-form-3').form('submit', {
+			url:"<s:url value='/studentAdmin/upload' />",
+			success:function(data){
+				if(data){
+					$.messager.alert('信息提示','提交成功！','info');
+					$("#searchButton").click();
+					$('#my-dialog-3').dialog('close');
 				}
 				else
 				{
@@ -294,6 +326,30 @@
         });
 	}	
 	
+	function openUpload(){
+		$('#my-form-3').form('clear');
+		var classId=$("select[name='schoolClass']").children('option:selected').val();
+		var className=$("select[name='schoolClass']").children('option:selected').html();
+		$('#my-form-3').find("input[name='classId']").val(classId);
+		$('#my-form-3').find("input[name='className']").val(className);
+		$('#my-dialog-3').dialog({
+			closed: false,
+			modal:true,
+            title: "导入学生",
+            buttons: [{
+                text: '确定',
+                iconCls: 'icon-ok',
+                handler: upload
+            }, {
+                text: '取消',
+                iconCls: 'icon-cancel',
+                handler: function () {
+                    $('#my-dialog-3').dialog('close');                    
+                }
+            }]
+        });
+	}
+	
 	function reload(){
 		//$('#my-datagrid-2').datagrid('reload');
 		$("#searchButton").click();
@@ -337,6 +393,14 @@
 		}else{
 			return "";
 		}
+	}
+	function sexFormatter(value,rec){
+		if(rec.sex == 'M'){
+			return "男";
+		}else if(rec.sex == 'F'){
+			return "女";
+		}
+		return "";
 	}
 	
 	$(document).ready(function(){
