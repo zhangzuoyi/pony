@@ -2,6 +2,7 @@ package com.zzy.pony.service;
 
 import java.util.List;
 
+import com.zzy.pony.vo.LessonSelectArrangeStudentVo;
 import com.zzy.pony.vo.LessonSelectArrangeVo;
 
 public interface LessonSelectService {
@@ -29,4 +30,10 @@ public interface LessonSelectService {
 	 * @param arrangeId
 	 */
 	void deleteSelect(Integer studentId, Integer arrangeId);
+	/**
+	 * 学生可选课程以及当前选择情况
+	 * @param studentId
+	 * @return
+	 */
+	List<LessonSelectArrangeStudentVo> findByStudent(Integer studentId);
 }

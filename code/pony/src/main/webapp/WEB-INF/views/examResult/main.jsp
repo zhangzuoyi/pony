@@ -76,12 +76,15 @@
         </table>
     </form>
 </div>
-<div id="my-dialog-3" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:800px; padding:10px;">
+<div id="my-dialog-3" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save',title:'成绩分析'" style="width:800px; padding:10px;">
 	<div id="main" style="width: 600px;height:400px;"></div>
 </div>
 <!-- End of easyui-dialog -->
 <script type="text/javascript" src="<s:url value='/static/easyui/datagrid-cellediting.js' />"></script>
 <script type="text/javascript">
+	//基于准备好的dom，初始化echarts实例
+	var myChart = echarts.init(document.getElementById('main'));
+	
 	$(document).ready(function(){
 		$("#subjectSelect").change(function(){
 			var subject=$(this).children('option:selected').val();
@@ -128,24 +131,22 @@
 				});
 			}
 		});
-		// 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('main'));
 
         // 指定图表的配置项和数据
         var option = {
             title: {
-                text: 'ECharts 入门示例'
+                text: '成绩分析'
             },
             tooltip: {},
             legend: {
-                data:['销量']
+                data:['成绩']
             },
             xAxis: {
                 data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
             },
             yAxis: {},
             series: [{
-                name: '销量',
+                name: '成绩',
                 type: 'bar',
                 data: [5, 20, 36, 10, 10, 20]
             }]
@@ -329,16 +330,33 @@
 				method:"GET",
 				dataType:"json",
 				success:function(data){
-					/* var len=data.length;
+					var len=data.length;
+					var names=[];
 					var mydata=[];
 					for(var i=0;i<len;i++){
 						mydata[i]={};
 						var item=data[i];
-						mydata[i].studentId=item.studentId;
-						mydata[i].studentNo=item.studentNo;
-						mydata[i].name=item.name;
-						//mydata[i].score=0;
-					} */
+						names[i]=item.studentName;
+						mydata[i]=item.score;
+					}
+					myChart.setOption({
+				        title: {
+				            text: '成绩分析'
+				        },
+				        tooltip: {},
+				        legend: {
+				            data:['成绩']
+				        },
+				        xAxis: {
+				            data: names
+				        },
+				        yAxis: {},
+				        series: [{
+				            name: '成绩',
+				            type: 'bar',
+				            data: mydata
+				        }]
+				    });
 					$('#my-datagrid-2').datagrid({
 						data: data
 					});

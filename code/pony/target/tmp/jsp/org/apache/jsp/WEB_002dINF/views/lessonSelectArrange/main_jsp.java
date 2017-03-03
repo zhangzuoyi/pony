@@ -357,7 +357,6 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("\t\t\t\t\t\t//alert(data.gradeIds[i]);\r\n");
       out.write("\t\t\t\t\t\t$(\"input.gradeCheck\").each(function(){\r\n");
       out.write("\t\t\t\t\t\t\tif($(this).val() == data.gradeIds[i]){\r\n");
-      out.write("\t\t\t\t\t\t\t\talert($(this).val());\r\n");
       out.write("\t\t\t\t\t\t\t\t$(this).attr(\"checked\",\"true\");\r\n");
       out.write("\t\t\t\t\t\t\t}\r\n");
       out.write("\t\t\t\t\t\t});\r\n");

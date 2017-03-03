@@ -13,6 +13,7 @@ import com.zzy.pony.dao.StudentDao;
 import com.zzy.pony.model.LessonSelectArrange;
 import com.zzy.pony.model.LessonSelectStudent;
 import com.zzy.pony.model.Student;
+import com.zzy.pony.vo.LessonSelectArrangeStudentVo;
 import com.zzy.pony.vo.LessonSelectArrangeVo;
 @Service
 @Transactional
@@ -72,6 +73,22 @@ public class LessonSelectServiceImpl implements LessonSelectService {
 		arrange.setArrangeId(arrangeId);
 		LessonSelectStudent ss=dao.findByStudentAndLessonSelectArrange(student, arrange);
 		dao.delete(ss);
+	}
+
+	@Override
+	public List<LessonSelectArrangeStudentVo> findByStudent(Integer studentId) {
+		List<LessonSelectArrangeStudentVo> result=new ArrayList<LessonSelectArrangeStudentVo>();
+		Student student=studentDao.findOne(studentId);
+		List<LessonSelectArrangeVo> allLessons=arrangeService.findCurrentByGrade(student.getSchoolClass().getGrade().getGradeId());
+		List<Integer> selectIds=dao.findArrangeIdsByStudent(student);
+		for(LessonSelectArrangeVo vo: allLessons){
+			if( ! selectIds.contains(vo.getArrangeId())){
+				result.add(LessonSelectArrangeStudentVo.valueOf(vo, studentId, false));
+			}else{
+				result.add(LessonSelectArrangeStudentVo.valueOf(vo, studentId, true));
+			}
+		}
+		return result;
 	}
 
 }

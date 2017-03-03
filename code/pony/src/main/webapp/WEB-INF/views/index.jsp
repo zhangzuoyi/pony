@@ -61,6 +61,15 @@
                 </ul>
             </div>
             </shiro:hasRole>
+            <shiro:hasRole name="student">
+            <div title="学生菜单" data-options="iconCls:'icon-application-form-edit'" style="padding:5px;">  	
+    			<ul class="easyui-tree my-side-tree">
+                	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/student/chooseCourseMain/' />" iframe="1">选课</a></li>
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/teacher/examresult/' />" iframe="1">我的课表</a></li>
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/teacher/examresult/' />" iframe="1">我的成绩</a></li>
+                </ul>
+            </div>
+            </shiro:hasRole>
         </div>
     </div>	
     <!-- end of sidebar -->    

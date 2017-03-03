@@ -46,6 +46,7 @@ public class ExamResultServiceImpl implements ExamResultService {
 			vo.setExamId(examId);
 			vo.setExamName(exam.getName());
 			vo.setSubjectName(exam.getSubject().getName());
+			vo.setScore(0f);
 			vos.add(vo);
 		}
 		List<ExamResultVo> results=mapper.find(examId, classId);
