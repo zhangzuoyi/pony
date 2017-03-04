@@ -117,4 +117,9 @@ public class ExamResultServiceImpl implements ExamResultService {
 		
 	}
 
+	@Override
+	public List<ExamResultVo> findByStudent(Integer studentId) {
+		return mapper.findByStudent(studentId);
+	}
+
 }

@@ -23,10 +23,14 @@ import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.TeacherSubject;
 import com.zzy.pony.model.User;
 import com.zzy.pony.security.ShiroUtil;
+import com.zzy.pony.service.ExamResultService;
+import com.zzy.pony.service.LessonArrangeService;
 import com.zzy.pony.service.LessonSelectService;
 import com.zzy.pony.service.TeacherService;
 import com.zzy.pony.service.TeacherSubjectService;
 import com.zzy.pony.service.UserService;
+import com.zzy.pony.vo.ExamResultVo;
+import com.zzy.pony.vo.LessonArrangeVo;
 import com.zzy.pony.vo.LessonSelectArrangeStudentVo;
 import com.zzy.pony.vo.TeacherSubjectVo;
 
@@ -41,6 +45,10 @@ public class StudentController {
 	private UserService userService;
 	@Autowired
 	private LessonSelectService selectService;
+	@Autowired
+	private LessonArrangeService arrangeService;
+	@Autowired
+	private ExamResultService resultService;
 	
 	@RequestMapping(value="chooseCourseMain",method = RequestMethod.GET)
 	public String chooseCourseMain(Model model){
@@ -56,8 +64,28 @@ public class StudentController {
 		
 		return selectService.findByStudent(user.getStudent().getStudentId());
 	}
-	//examresult 成绩管理 按科目，班级，考试做为查询条件
-	//resultAnalysis 成绩分析
+	@RequestMapping(value="mycourseMain",method = RequestMethod.GET)
+	public String mycourseMain(Model model){
+		return "student/mycourse";
+	}
+	@RequestMapping(value="mycourse",method = RequestMethod.GET)
+	@ResponseBody
+	public LessonArrangeVo mycourse(Model model){
+		User user=userService.findById(ShiroUtil.getLoginUser().getId());
+		Integer classId=user.getStudent().getSchoolClass().getClassId();
+		return arrangeService.findArrangeVo(classId);
+	}
+	@RequestMapping(value="myresultsMain",method = RequestMethod.GET)
+	public String myresultsMain(Model model){
+		return "student/myresults";
+	}
+	@RequestMapping(value="myresults",method = RequestMethod.GET)
+	@ResponseBody
+	public List<ExamResultVo> myresults(Model model){
+		User user=userService.findById(ShiroUtil.getLoginUser().getId());
+		Integer studentId=user.getStudent().getStudentId();
+		return resultService.findByStudent(studentId);
+	}
 
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) throws ServletException {

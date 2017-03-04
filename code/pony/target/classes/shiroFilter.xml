@@ -47,7 +47,7 @@
 				/data/** = perms[YGTBXT_ZBSJTB]
 				/query/toQuery = perms[YGTBXT_ZBTBTJ]
 				/query/toQueryJg = perms[YGTBXT_ZBTBTJJG]
-				/** = anon
+				/** = authc
 			</value>
 		</property>
 	</bean>
