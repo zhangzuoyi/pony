@@ -45,6 +45,10 @@ public class ExamResult implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="EXAM_ID")
 	private Exam exam;
+	
+	@ManyToOne
+	@JoinColumn(name="SUBJECT_ID")
+	private Subject subject;
 
 	public ExamResult() {
 	}
@@ -111,6 +115,14 @@ public class ExamResult implements Serializable {
 
 	public void setExam(Exam exam) {
 		this.exam = exam;
+	}
+
+	public Subject getSubject() {
+		return subject;
+	}
+
+	public void setSubject(Subject subject) {
+		this.subject = subject;
 	}
 
 }

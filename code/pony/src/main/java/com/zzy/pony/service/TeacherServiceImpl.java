@@ -1,5 +1,6 @@
 package com.zzy.pony.service;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -78,4 +79,47 @@ public class TeacherServiceImpl implements TeacherService {
 		return null;
 	}
 
+	@Override
+	public void upload(List<Teacher> teachers, String loginUser) {
+		Date now=new Date();
+		for(Teacher tea: teachers){
+			List<Teacher> list=dao.findByTeacherNo(tea.getTeacherNo());
+			Teacher old=null;
+			if(list.size()>0){
+				old=list.get(0);
+			}
+			if(old == null){
+				tea.setCreateTime(now);
+				tea.setCreateUser(loginUser);
+				tea.setUpdateTime(now);
+				tea.setUpdateUser(loginUser);
+				
+				add(tea);
+			}else{
+				old.setBirthday(tea.getBirthday());
+				old.setEmail(tea.getEmail());
+//				old.setEntranceDate(stu.getEntranceDate());
+				old.setHomeAddr(tea.getHomeAddr());
+				old.setHomeZipcode(tea.getHomeZipcode());
+				old.setIdNo(tea.getIdNo());
+				old.setIdType(tea.getIdType());
+				old.setName(tea.getName());
+				old.setNation(tea.getNation());
+				old.setNativeAddr(tea.getNativeAddr());
+				old.setNativePlace(tea.getNativePlace());
+				old.setPhone(tea.getPhone());
+				old.setSex(tea.getSex());
+				old.setUpdateTime(now);
+				old.setUpdateUser(loginUser);
+				old.setDegree(tea.getDegree());
+				old.setGraduateDate(tea.getGraduateDate());
+				old.setGraduateSchool(tea.getGraduateSchool());
+				old.setMajor(tea.getMajor());
+				old.setSubject(tea.getSubject());
+				old.setTitle(tea.getTitle());
+				
+				dao.save(old);
+			}
+		}
+	}
 }

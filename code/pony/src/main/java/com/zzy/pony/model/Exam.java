@@ -1,9 +1,24 @@
 package com.zzy.pony.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import com.zzy.pony.vo.ExamVo;
 
 
 /**
@@ -36,6 +51,10 @@ public class Exam implements Serializable {
 
 	@Column(name="UPDATE_USER")
 	private String updateUser;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="EXAM_DATE")
+	private Date examDate;
 
 	//bi-directional many-to-many association to SchoolClass
 	@ManyToMany
@@ -50,11 +69,6 @@ public class Exam implements Serializable {
 		)
 	private List<SchoolClass> schoolClasses;
 
-	//bi-directional many-to-one association to Subject
-	@ManyToOne
-	@JoinColumn(name="SUBJECT_ID")
-	private Subject subject;
-
 	//uni-directional many-to-one association to Term
 	@ManyToOne
 	@JoinColumn(name="TERM_ID")
@@ -64,7 +78,24 @@ public class Exam implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="YEAR_ID")
 	private SchoolYear schoolYear;
+	
+	@ManyToOne
+	@JoinColumn(name="TYPE_ID")
+	private ExamType type;
 
+	public ExamVo toVo() {
+		ExamVo vo = new ExamVo();
+		vo.setExamId(examId);
+		vo.setName(name);
+		vo.setSchoolClasses(schoolClasses);
+		vo.setSchoolYear(schoolYear);
+		vo.setTerm(term);
+		vo.setType(type);
+		vo.setExamDate(examDate);
+
+		return vo;
+	}
+	
 	public Exam() {
 	}
 
@@ -124,14 +155,6 @@ public class Exam implements Serializable {
 		this.schoolClasses = schoolClasses;
 	}
 
-	public Subject getSubject() {
-		return this.subject;
-	}
-
-	public void setSubject(Subject subject) {
-		this.subject = subject;
-	}
-
 	public Term getTerm() {
 		return this.term;
 	}
@@ -146,6 +169,22 @@ public class Exam implements Serializable {
 
 	public void setSchoolYear(SchoolYear schoolYear) {
 		this.schoolYear = schoolYear;
+	}
+
+	public ExamType getType() {
+		return type;
+	}
+
+	public void setType(ExamType type) {
+		this.type = type;
+	}
+
+	public Date getExamDate() {
+		return examDate;
+	}
+
+	public void setExamDate(Date examDate) {
+		this.examDate = examDate;
 	}
 
 }

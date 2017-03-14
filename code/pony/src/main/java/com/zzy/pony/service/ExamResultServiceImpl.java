@@ -45,7 +45,7 @@ public class ExamResultServiceImpl implements ExamResultService {
 			vo.setStudentNo(stu.getStudentNo());
 			vo.setExamId(examId);
 			vo.setExamName(exam.getName());
-			vo.setSubjectName(exam.getSubject().getName());
+//			vo.setSubjectName(exam.getSubject().getName());
 			vo.setScore(0f);
 			vos.add(vo);
 		}

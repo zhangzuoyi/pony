@@ -36,19 +36,23 @@
         	<tr>
                 <td width="60" align="right">学年:</td>
                 <td>
-                	<select name="schoolYear.yearId" class="my-select">
-                		<c:forEach items="${years }" var="g">
-                			<option value="${g.yearId }">${g.name }</option>
-                		</c:forEach>
-                	</select>
+                	${year.name }
+                	<input type="hidden" name="schoolYear.yearId" value="${year.yearId }" />
                 </td>
             </tr>
             <tr>
                 <td width="60" align="right">学期:</td>
                 <td>
-                	<select name="term.termId" class="my-select">
-                		<c:forEach items="${terms }" var="g">
-                			<option value="${g.termId }">${g.name }</option>
+                	${term.name }
+                	<input type="hidden" name="term.termId" value="${term.termId }" />
+                </td>
+            </tr>
+            <tr>
+                <td width="60" align="right">考试类型:</td>
+                <td>
+                	<select name="type.typeId" class="my-select">
+                		<c:forEach items="${types }" var="g">
+                			<option value="${g.typeId }">${g.name }</option>
                 		</c:forEach>
                 	</select>
                 </td>
@@ -56,11 +60,16 @@
             <tr>
                 <td width="60" align="right">科目:</td>
                 <td>
-                	<select name="subject.subjectId" class="my-select">
-                		<c:forEach items="${subjects }" var="g">
-                			<option value="${g.subjectId }">${g.name }</option>
-                		</c:forEach>
-                	</select>
+                	<input class="easyui-combobox" style="width:200px"
+						name="subjectIds"
+						data-options="
+								url:'<s:url value='/subject/list' />',
+								method:'get',
+								valueField:'subjectId',
+								textField:'name',
+								multiple:true,
+								panelHeight:'auto'
+						" />
                 </td>
             </tr>
             <tr>
@@ -70,7 +79,7 @@
             <tr>
                 <td width="60" align="right">班级:</td>
                 <td>
-                	<input class="easyui-combobox" 
+                	<input class="easyui-combobox" style="width:200px"
 						name="classIds"
 						data-options="
 								url:'<s:url value='/schoolClass/list' />',
@@ -154,7 +163,7 @@
 	* Name 打开添加窗口
 	*/
 	function openAdd(){
-		$('#my-form-2').form('clear');
+		//$('#my-form-2').form('clear');
 		$('#my-dialog-2').dialog({
 			closed: false,
 			modal:true,
@@ -275,12 +284,6 @@
 		columns:[[
 			/* { checkbox:true}, */
 			{ field:'examId',title:'ID',width:100,sortable:true},
-			{ field:'name',title:'名称',width:180,sortable:true},
-			{ field:'subject',title:'科目',width:180,sortable:true,
-				formatter:function(value,rec){
-				   return rec.subject.name;
-				}
-			},
 			{ field:'schoolYear',title:'学年',width:180,sortable:true,
 				formatter:function(value,rec){
 				   return rec.schoolYear.name;
@@ -289,6 +292,22 @@
 			{ field:'term',title:'学期',width:180,sortable:true,
 				formatter:function(value,rec){
 				   return rec.term.name;
+				}
+			},
+			{ field:'name',title:'名称',width:180,sortable:true},
+			{ field:'type',title:'考试类型',width:180,sortable:true,
+				formatter:function(value,rec){
+				   return rec.type.name;
+				}
+			},
+			{ field:'subjects',title:'科目',width:180,sortable:true,
+				formatter:function(value,rec){
+					var len=rec.subjects.length;
+					var results=[];
+					for(var i=0;i<len;i++){
+						results[i]=rec.subjects[i].subject.name;
+					}
+				   return results.join(",");
 				}
 			},
 			{ field:'schoolClasses',title:'班级',width:180,sortable:true,
