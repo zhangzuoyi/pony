@@ -11,5 +11,6 @@ import com.zzy.pony.model.ExamSubject;
 
 public interface ExamSubjectDao extends JpaRepository<ExamSubject,Integer>{
 	List<ExamSubject> findByExamIn(List<Exam> exams); 
-
+	List<ExamSubject> findByExam(Exam exam); 
+	void deleteByExam(Exam exam);
 }

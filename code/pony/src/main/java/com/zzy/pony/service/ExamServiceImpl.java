@@ -64,22 +64,57 @@ public class ExamServiceImpl implements ExamService {
 	}
 
 	@Override
-	public void update(Exam sy, List<Integer> classIds) {
+	public void update(Exam sy, List<Integer> classIds, Integer[] subjectIds) {
 		Exam old=dao.findOne(sy.getExamId());
 		old.setName(sy.getName());
+		old.setExamDate(sy.getExamDate());
+		old.setType(sy.getType());
 		old.getSchoolClasses().clear();
 		old.getSchoolClasses().addAll(classDao.findByClassIdIn(classIds));
 //		old.setSubject(sy.getSubject());
 		old.setUpdateTime(sy.getUpdateTime());
 		old.setUpdateUser(sy.getUpdateUser());
 		
+		List<ExamSubject> list=esDao.findByExam(old);
+		for(ExamSubject es: list){//删除移除的对象
+			boolean isFind=false;
+			for(Integer sid: subjectIds){
+				if(es.getSubject().getSubjectId() == sid){
+					isFind=true;
+					break;
+				}
+			}
+			if(! isFind){
+				esDao.delete(es);
+			}
+		}
+		for(Integer sid: subjectIds){//保存新增的对象
+			boolean isFind=false;
+			for(ExamSubject es: list){
+				if(sid == es.getSubject().getSubjectId()){
+					isFind=true;
+					break;
+				}
+			}
+			if( ! isFind){
+				ExamSubject newEs=new ExamSubject();
+				newEs.setExam(old);
+				Subject subject=new Subject();
+				subject.setSubjectId(sid);
+				newEs.setSubject(subject);
+				newEs.setWeight(ExamSubject.DEFAULT_WEIGHT);
+				esDao.save(newEs);
+			}
+		}
+		
 		dao.save(old);
 	}
 
 	@Override
 	public void delete(int id) {
-		dao.delete(id);
-		
+		Exam exam=dao.findOne(id);
+		esDao.deleteByExam(exam);
+		dao.delete(exam);
 	}
 
 	@Override
@@ -119,5 +154,19 @@ public class ExamServiceImpl implements ExamService {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public ExamVo getVo(int id) {
+		Exam exam=dao.findOne(id);
+		exam.getSchoolClasses().size();
+		List<ExamSubject> list=esDao.findByExam(exam);
+		List<ExamSubjectVo> result = new ArrayList<ExamSubjectVo>();
+		for (ExamSubject es : list) {
+			result.add(es.toVo());
+		}
+		ExamVo vo=exam.toVo();
+		vo.setSubjects(result);
+		return vo;
 	}
 }

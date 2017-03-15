@@ -107,13 +107,41 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("</div>\r\n");
       out.write("<!-- Begin of easyui-dialog -->\r\n");
       out.write("<div id=\"my-dialog-2\" class=\"easyui-dialog\" data-options=\"closed:true,iconCls:'icon-save'\" style=\"width:400px; padding:10px;\">\r\n");
+      out.write("\t<input type=\"hidden\" id=\"yearId\" value=\"");
+      out.write((java.lang.String) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${year.yearId }", java.lang.String.class, (PageContext)_jspx_page_context, null));
+      out.write("\" />\r\n");
+      out.write("\t<input type=\"hidden\" name=\"termId\" value=\"");
+      out.write((java.lang.String) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${term.termId }", java.lang.String.class, (PageContext)_jspx_page_context, null));
+      out.write("\" />\r\n");
       out.write("\t<form id=\"my-form-2\" method=\"post\">\r\n");
       out.write("\t\t<input type=\"hidden\" name=\"examId\" />\r\n");
       out.write("        <table>\r\n");
       out.write("        \t<tr>\r\n");
       out.write("                <td width=\"60\" align=\"right\">学年:</td>\r\n");
       out.write("                <td>\r\n");
-      out.write("                \t<select name=\"schoolYear.yearId\" class=\"my-select\">\r\n");
+      out.write("                \t");
+      out.write((java.lang.String) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${year.name }", java.lang.String.class, (PageContext)_jspx_page_context, null));
+      out.write("\r\n");
+      out.write("                \t<input type=\"hidden\" name=\"schoolYear.yearId\" value=\"");
+      out.write((java.lang.String) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${year.yearId }", java.lang.String.class, (PageContext)_jspx_page_context, null));
+      out.write("\" />\r\n");
+      out.write("                </td>\r\n");
+      out.write("            </tr>\r\n");
+      out.write("            <tr>\r\n");
+      out.write("                <td width=\"60\" align=\"right\">学期:</td>\r\n");
+      out.write("                <td>\r\n");
+      out.write("                \t");
+      out.write((java.lang.String) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${term.name }", java.lang.String.class, (PageContext)_jspx_page_context, null));
+      out.write("\r\n");
+      out.write("                \t<input type=\"hidden\" name=\"term.termId\" value=\"");
+      out.write((java.lang.String) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${term.termId }", java.lang.String.class, (PageContext)_jspx_page_context, null));
+      out.write("\" />\r\n");
+      out.write("                </td>\r\n");
+      out.write("            </tr>\r\n");
+      out.write("            <tr>\r\n");
+      out.write("                <td width=\"60\" align=\"right\">考试类型:</td>\r\n");
+      out.write("                <td>\r\n");
+      out.write("                \t<select name=\"type.typeId\" class=\"my-select\">\r\n");
       out.write("                \t\t");
       if (_jspx_meth_c_forEach_0(_jspx_page_context))
         return;
@@ -122,25 +150,21 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("                </td>\r\n");
       out.write("            </tr>\r\n");
       out.write("            <tr>\r\n");
-      out.write("                <td width=\"60\" align=\"right\">学期:</td>\r\n");
-      out.write("                <td>\r\n");
-      out.write("                \t<select name=\"term.termId\" class=\"my-select\">\r\n");
-      out.write("                \t\t");
-      if (_jspx_meth_c_forEach_1(_jspx_page_context))
-        return;
-      out.write("\r\n");
-      out.write("                \t</select>\r\n");
-      out.write("                </td>\r\n");
-      out.write("            </tr>\r\n");
-      out.write("            <tr>\r\n");
       out.write("                <td width=\"60\" align=\"right\">科目:</td>\r\n");
       out.write("                <td>\r\n");
-      out.write("                \t<select name=\"subject.subjectId\" class=\"my-select\">\r\n");
-      out.write("                \t\t");
-      if (_jspx_meth_c_forEach_2(_jspx_page_context))
+      out.write("                \t<input class=\"easyui-combobox\" style=\"width:200px\"\r\n");
+      out.write("\t\t\t\t\t\tname=\"subjectIds\"\r\n");
+      out.write("\t\t\t\t\t\tdata-options=\"\r\n");
+      out.write("\t\t\t\t\t\t\t\turl:'");
+      if (_jspx_meth_s_url_7(_jspx_page_context))
         return;
-      out.write("\r\n");
-      out.write("                \t</select>\r\n");
+      out.write("',\r\n");
+      out.write("\t\t\t\t\t\t\t\tmethod:'get',\r\n");
+      out.write("\t\t\t\t\t\t\t\tvalueField:'subjectId',\r\n");
+      out.write("\t\t\t\t\t\t\t\ttextField:'name',\r\n");
+      out.write("\t\t\t\t\t\t\t\tmultiple:true,\r\n");
+      out.write("\t\t\t\t\t\t\t\tpanelHeight:'auto'\r\n");
+      out.write("\t\t\t\t\t\t\" />\r\n");
       out.write("                </td>\r\n");
       out.write("            </tr>\r\n");
       out.write("            <tr>\r\n");
@@ -150,11 +174,11 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("            <tr>\r\n");
       out.write("                <td width=\"60\" align=\"right\">班级:</td>\r\n");
       out.write("                <td>\r\n");
-      out.write("                \t<input class=\"easyui-combobox\" \r\n");
+      out.write("                \t<input class=\"easyui-combobox\" style=\"width:200px\"\r\n");
       out.write("\t\t\t\t\t\tname=\"classIds\"\r\n");
       out.write("\t\t\t\t\t\tdata-options=\"\r\n");
       out.write("\t\t\t\t\t\t\t\turl:'");
-      if (_jspx_meth_s_url_7(_jspx_page_context))
+      if (_jspx_meth_s_url_8(_jspx_page_context))
         return;
       out.write("',\r\n");
       out.write("\t\t\t\t\t\t\t\tmethod:'get',\r\n");
@@ -165,6 +189,10 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("\t\t\t\t\t\t\" />\r\n");
       out.write("                </td>\r\n");
       out.write("            </tr>\r\n");
+      out.write("            <tr>\r\n");
+      out.write("                <td width=\"60\" align=\"right\">考试日期:</td>\r\n");
+      out.write("                <td><input type=\"text\" name=\"examDate\"  class=\"my-text easyui-datebox\" data-options=\"formatter:myformatter,parser:myparser\" /></td>\r\n");
+      out.write("            </tr>\r\n");
       out.write("        </table>\r\n");
       out.write("    </form>\r\n");
       out.write("</div>\r\n");
@@ -174,9 +202,11 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("\t* Name 添加记录\r\n");
       out.write("\t*/\r\n");
       out.write("\tfunction add(){\r\n");
+      out.write("\t\t$(\"input[name='schoolYear.yearId']\").val($(\"#yearId\").val());\r\n");
+      out.write("\t\t$(\"input[name='term.termId']\").val($(\"#termId\").val());\r\n");
       out.write("\t\t$('#my-form-2').form('submit', {\r\n");
       out.write("\t\t\turl:\"");
-      if (_jspx_meth_s_url_8(_jspx_page_context))
+      if (_jspx_meth_s_url_9(_jspx_page_context))
         return;
       out.write("\",\r\n");
       out.write("\t\t\tsuccess:function(data){\r\n");
@@ -196,9 +226,11 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("\t* Name 修改记录\r\n");
       out.write("\t*/\r\n");
       out.write("\tfunction edit(){\r\n");
+      out.write("\t\t$(\"input[name='schoolYear.yearId']\").val($(\"#yearId\").val());\r\n");
+      out.write("\t\t$(\"input[name='term.termId']\").val($(\"#termId\").val());\r\n");
       out.write("\t\t$('#my-form-2').form('submit', {\r\n");
       out.write("\t\t\turl:\"");
-      if (_jspx_meth_s_url_9(_jspx_page_context))
+      if (_jspx_meth_s_url_10(_jspx_page_context))
         return;
       out.write("\",\r\n");
       out.write("\t\t\tsuccess:function(data){\r\n");
@@ -223,7 +255,7 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("\t\t\t\tvar item = $('#my-datagrid-2').datagrid('getSelected');\r\n");
       out.write("\t\t\t\t$.ajax({\r\n");
       out.write("\t\t\t\t\turl:\"");
-      if (_jspx_meth_s_url_10(_jspx_page_context))
+      if (_jspx_meth_s_url_11(_jspx_page_context))
         return;
       out.write("\",\r\n");
       out.write("\t\t\t\t\tdata:{id: item.examId},\r\n");
@@ -274,7 +306,7 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("\t\t//alert(item.productid);return;\r\n");
       out.write("\t\t$.ajax({\r\n");
       out.write("\t\t\turl:\"");
-      if (_jspx_meth_s_url_11(_jspx_page_context))
+      if (_jspx_meth_s_url_12(_jspx_page_context))
         return;
       out.write("\",\r\n");
       out.write("\t\t\tdata:{id: item.examId},\r\n");
@@ -285,9 +317,17 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("\t\t\t\t\tvar formdata={};\r\n");
       out.write("\t\t\t\t\tformdata[\"examId\"]=data.examId;\r\n");
       out.write("\t\t\t\t\tformdata[\"name\"]=data.name;\r\n");
-      out.write("\t\t\t\t\tformdata[\"schoolYear.yearId\"]=data.schoolYear.yearId;\r\n");
-      out.write("\t\t\t\t\tformdata[\"term.termId\"]=data.term.termId;\r\n");
-      out.write("\t\t\t\t\tformdata[\"subject.subjectId\"]=data.subject.subjectId;\r\n");
+      out.write("\t\t\t\t\tformdata[\"examDate\"]=data.examDate;\r\n");
+      out.write("\t\t\t\t\tformdata[\"type.typeId\"]=data.type.typeId;\r\n");
+      out.write("\t\t\t\t\t//formdata[\"schoolYear.yearId\"]=data.schoolYear.yearId;\r\n");
+      out.write("\t\t\t\t\t//formdata[\"term.termId\"]=data.term.termId;\r\n");
+      out.write("\t\t\t\t\t//formdata[\"subject.subjectId\"]=data.subject.subjectId;\r\n");
+      out.write("\t\t\t\t\tvar subjects=data.subjects;\r\n");
+      out.write("\t\t\t\t\tvar subIds=[];\r\n");
+      out.write("\t\t\t\t\tfor(var i=0;i<subjects.length;i++){\r\n");
+      out.write("\t\t\t\t\t\tsubIds[i]=subjects[i].subject.subjectId;\r\n");
+      out.write("\t\t\t\t\t}\r\n");
+      out.write("\t\t\t\t\tformdata[\"subjectIds\"]=subIds.join(\",\");\r\n");
       out.write("\t\t\t\t\tvar classes=data.schoolClasses;\r\n");
       out.write("\t\t\t\t\tvar clsIds=[];\r\n");
       out.write("\t\t\t\t\tfor(var i=0;i<classes.length;i++){\r\n");
@@ -358,7 +398,7 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("\t*/\r\n");
       out.write("\t$('#my-datagrid-2').datagrid({\r\n");
       out.write("\t\turl:\"");
-      if (_jspx_meth_s_url_12(_jspx_page_context))
+      if (_jspx_meth_s_url_13(_jspx_page_context))
         return;
       out.write("\",\r\n");
       out.write("\t\tmethod:'get',\r\n");
@@ -373,12 +413,6 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("\t\tcolumns:[[\r\n");
       out.write("\t\t\t/* { checkbox:true}, */\r\n");
       out.write("\t\t\t{ field:'examId',title:'ID',width:100,sortable:true},\r\n");
-      out.write("\t\t\t{ field:'name',title:'名称',width:180,sortable:true},\r\n");
-      out.write("\t\t\t{ field:'subject',title:'科目',width:180,sortable:true,\r\n");
-      out.write("\t\t\t\tformatter:function(value,rec){\r\n");
-      out.write("\t\t\t\t   return rec.subject.name;\r\n");
-      out.write("\t\t\t\t}\r\n");
-      out.write("\t\t\t},\r\n");
       out.write("\t\t\t{ field:'schoolYear',title:'学年',width:180,sortable:true,\r\n");
       out.write("\t\t\t\tformatter:function(value,rec){\r\n");
       out.write("\t\t\t\t   return rec.schoolYear.name;\r\n");
@@ -387,6 +421,22 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("\t\t\t{ field:'term',title:'学期',width:180,sortable:true,\r\n");
       out.write("\t\t\t\tformatter:function(value,rec){\r\n");
       out.write("\t\t\t\t   return rec.term.name;\r\n");
+      out.write("\t\t\t\t}\r\n");
+      out.write("\t\t\t},\r\n");
+      out.write("\t\t\t{ field:'name',title:'名称',width:180,sortable:true},\r\n");
+      out.write("\t\t\t{ field:'type',title:'考试类型',width:180,sortable:true,\r\n");
+      out.write("\t\t\t\tformatter:function(value,rec){\r\n");
+      out.write("\t\t\t\t   return rec.type.name;\r\n");
+      out.write("\t\t\t\t}\r\n");
+      out.write("\t\t\t},\r\n");
+      out.write("\t\t\t{ field:'subjects',title:'科目',width:180,sortable:true,\r\n");
+      out.write("\t\t\t\tformatter:function(value,rec){\r\n");
+      out.write("\t\t\t\t\tvar len=rec.subjects.length;\r\n");
+      out.write("\t\t\t\t\tvar results=[];\r\n");
+      out.write("\t\t\t\t\tfor(var i=0;i<len;i++){\r\n");
+      out.write("\t\t\t\t\t\tresults[i]=rec.subjects[i].subject.name;\r\n");
+      out.write("\t\t\t\t\t}\r\n");
+      out.write("\t\t\t\t   return results.join(\",\");\r\n");
       out.write("\t\t\t\t}\r\n");
       out.write("\t\t\t},\r\n");
       out.write("\t\t\t{ field:'schoolClasses',title:'班级',width:180,sortable:true,\r\n");
@@ -398,7 +448,8 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("\t\t\t\t\t}\r\n");
       out.write("\t\t\t\t   return results.join(\",\");\r\n");
       out.write("\t\t\t\t}\r\n");
-      out.write("\t\t\t}\r\n");
+      out.write("\t\t\t},\r\n");
+      out.write("\t\t\t{ field:'examDate',title:'考试日期',width:100,sortable:true}\r\n");
       out.write("\t\t]]\r\n");
       out.write("\t});\r\n");
       out.write("\t\r\n");
@@ -608,7 +659,7 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
     org.apache.taglibs.standard.tag.rt.core.ForEachTag _jspx_th_c_forEach_0 = (org.apache.taglibs.standard.tag.rt.core.ForEachTag) _jspx_tagPool_c_forEach_var_items.get(org.apache.taglibs.standard.tag.rt.core.ForEachTag.class);
     _jspx_th_c_forEach_0.setPageContext(_jspx_page_context);
     _jspx_th_c_forEach_0.setParent(null);
-    _jspx_th_c_forEach_0.setItems((java.lang.Object) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${years }", java.lang.Object.class, (PageContext)_jspx_page_context, null));
+    _jspx_th_c_forEach_0.setItems((java.lang.Object) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${types }", java.lang.Object.class, (PageContext)_jspx_page_context, null));
     _jspx_th_c_forEach_0.setVar("g");
     int[] _jspx_push_body_count_c_forEach_0 = new int[] { 0 };
     try {
@@ -617,7 +668,7 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
         do {
           out.write("\r\n");
           out.write("                \t\t\t<option value=\"");
-          out.write((java.lang.String) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${g.yearId }", java.lang.String.class, (PageContext)_jspx_page_context, null));
+          out.write((java.lang.String) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${g.typeId }", java.lang.String.class, (PageContext)_jspx_page_context, null));
           out.write('"');
           out.write('>');
           out.write((java.lang.String) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${g.name }", java.lang.String.class, (PageContext)_jspx_page_context, null));
@@ -642,90 +693,6 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
     return false;
   }
 
-  private boolean _jspx_meth_c_forEach_1(PageContext _jspx_page_context)
-          throws Throwable {
-    PageContext pageContext = _jspx_page_context;
-    JspWriter out = _jspx_page_context.getOut();
-    //  c:forEach
-    org.apache.taglibs.standard.tag.rt.core.ForEachTag _jspx_th_c_forEach_1 = (org.apache.taglibs.standard.tag.rt.core.ForEachTag) _jspx_tagPool_c_forEach_var_items.get(org.apache.taglibs.standard.tag.rt.core.ForEachTag.class);
-    _jspx_th_c_forEach_1.setPageContext(_jspx_page_context);
-    _jspx_th_c_forEach_1.setParent(null);
-    _jspx_th_c_forEach_1.setItems((java.lang.Object) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${terms }", java.lang.Object.class, (PageContext)_jspx_page_context, null));
-    _jspx_th_c_forEach_1.setVar("g");
-    int[] _jspx_push_body_count_c_forEach_1 = new int[] { 0 };
-    try {
-      int _jspx_eval_c_forEach_1 = _jspx_th_c_forEach_1.doStartTag();
-      if (_jspx_eval_c_forEach_1 != javax.servlet.jsp.tagext.Tag.SKIP_BODY) {
-        do {
-          out.write("\r\n");
-          out.write("                \t\t\t<option value=\"");
-          out.write((java.lang.String) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${g.termId }", java.lang.String.class, (PageContext)_jspx_page_context, null));
-          out.write('"');
-          out.write('>');
-          out.write((java.lang.String) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${g.name }", java.lang.String.class, (PageContext)_jspx_page_context, null));
-          out.write("</option>\r\n");
-          out.write("                \t\t");
-          int evalDoAfterBody = _jspx_th_c_forEach_1.doAfterBody();
-          if (evalDoAfterBody != javax.servlet.jsp.tagext.BodyTag.EVAL_BODY_AGAIN)
-            break;
-        } while (true);
-      }
-      if (_jspx_th_c_forEach_1.doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE) {
-        return true;
-      }
-    } catch (Throwable _jspx_exception) {
-      while (_jspx_push_body_count_c_forEach_1[0]-- > 0)
-        out = _jspx_page_context.popBody();
-      _jspx_th_c_forEach_1.doCatch(_jspx_exception);
-    } finally {
-      _jspx_th_c_forEach_1.doFinally();
-      _jspx_tagPool_c_forEach_var_items.reuse(_jspx_th_c_forEach_1);
-    }
-    return false;
-  }
-
-  private boolean _jspx_meth_c_forEach_2(PageContext _jspx_page_context)
-          throws Throwable {
-    PageContext pageContext = _jspx_page_context;
-    JspWriter out = _jspx_page_context.getOut();
-    //  c:forEach
-    org.apache.taglibs.standard.tag.rt.core.ForEachTag _jspx_th_c_forEach_2 = (org.apache.taglibs.standard.tag.rt.core.ForEachTag) _jspx_tagPool_c_forEach_var_items.get(org.apache.taglibs.standard.tag.rt.core.ForEachTag.class);
-    _jspx_th_c_forEach_2.setPageContext(_jspx_page_context);
-    _jspx_th_c_forEach_2.setParent(null);
-    _jspx_th_c_forEach_2.setItems((java.lang.Object) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${subjects }", java.lang.Object.class, (PageContext)_jspx_page_context, null));
-    _jspx_th_c_forEach_2.setVar("g");
-    int[] _jspx_push_body_count_c_forEach_2 = new int[] { 0 };
-    try {
-      int _jspx_eval_c_forEach_2 = _jspx_th_c_forEach_2.doStartTag();
-      if (_jspx_eval_c_forEach_2 != javax.servlet.jsp.tagext.Tag.SKIP_BODY) {
-        do {
-          out.write("\r\n");
-          out.write("                \t\t\t<option value=\"");
-          out.write((java.lang.String) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${g.subjectId }", java.lang.String.class, (PageContext)_jspx_page_context, null));
-          out.write('"');
-          out.write('>');
-          out.write((java.lang.String) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${g.name }", java.lang.String.class, (PageContext)_jspx_page_context, null));
-          out.write("</option>\r\n");
-          out.write("                \t\t");
-          int evalDoAfterBody = _jspx_th_c_forEach_2.doAfterBody();
-          if (evalDoAfterBody != javax.servlet.jsp.tagext.BodyTag.EVAL_BODY_AGAIN)
-            break;
-        } while (true);
-      }
-      if (_jspx_th_c_forEach_2.doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE) {
-        return true;
-      }
-    } catch (Throwable _jspx_exception) {
-      while (_jspx_push_body_count_c_forEach_2[0]-- > 0)
-        out = _jspx_page_context.popBody();
-      _jspx_th_c_forEach_2.doCatch(_jspx_exception);
-    } finally {
-      _jspx_th_c_forEach_2.doFinally();
-      _jspx_tagPool_c_forEach_var_items.reuse(_jspx_th_c_forEach_2);
-    }
-    return false;
-  }
-
   private boolean _jspx_meth_s_url_7(PageContext _jspx_page_context)
           throws Throwable {
     PageContext pageContext = _jspx_page_context;
@@ -734,7 +701,7 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
     org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_7 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
     _jspx_th_s_url_7.setPageContext(_jspx_page_context);
     _jspx_th_s_url_7.setParent(null);
-    _jspx_th_s_url_7.setValue("/schoolClass/list");
+    _jspx_th_s_url_7.setValue("/subject/list");
     int[] _jspx_push_body_count_s_url_7 = new int[] { 0 };
     try {
       int _jspx_eval_s_url_7 = _jspx_th_s_url_7.doStartTag();
@@ -760,7 +727,7 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
     org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_8 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
     _jspx_th_s_url_8.setPageContext(_jspx_page_context);
     _jspx_th_s_url_8.setParent(null);
-    _jspx_th_s_url_8.setValue("/exam/add");
+    _jspx_th_s_url_8.setValue("/schoolClass/list");
     int[] _jspx_push_body_count_s_url_8 = new int[] { 0 };
     try {
       int _jspx_eval_s_url_8 = _jspx_th_s_url_8.doStartTag();
@@ -786,7 +753,7 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
     org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_9 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
     _jspx_th_s_url_9.setPageContext(_jspx_page_context);
     _jspx_th_s_url_9.setParent(null);
-    _jspx_th_s_url_9.setValue("/exam/edit");
+    _jspx_th_s_url_9.setValue("/exam/add");
     int[] _jspx_push_body_count_s_url_9 = new int[] { 0 };
     try {
       int _jspx_eval_s_url_9 = _jspx_th_s_url_9.doStartTag();
@@ -812,7 +779,7 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
     org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_10 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
     _jspx_th_s_url_10.setPageContext(_jspx_page_context);
     _jspx_th_s_url_10.setParent(null);
-    _jspx_th_s_url_10.setValue("/exam/delete");
+    _jspx_th_s_url_10.setValue("/exam/edit");
     int[] _jspx_push_body_count_s_url_10 = new int[] { 0 };
     try {
       int _jspx_eval_s_url_10 = _jspx_th_s_url_10.doStartTag();
@@ -838,7 +805,7 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
     org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_11 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
     _jspx_th_s_url_11.setPageContext(_jspx_page_context);
     _jspx_th_s_url_11.setParent(null);
-    _jspx_th_s_url_11.setValue("/exam/get");
+    _jspx_th_s_url_11.setValue("/exam/delete");
     int[] _jspx_push_body_count_s_url_11 = new int[] { 0 };
     try {
       int _jspx_eval_s_url_11 = _jspx_th_s_url_11.doStartTag();
@@ -864,7 +831,7 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
     org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_12 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
     _jspx_th_s_url_12.setPageContext(_jspx_page_context);
     _jspx_th_s_url_12.setParent(null);
-    _jspx_th_s_url_12.setValue("/exam/list");
+    _jspx_th_s_url_12.setValue("/exam/get");
     int[] _jspx_push_body_count_s_url_12 = new int[] { 0 };
     try {
       int _jspx_eval_s_url_12 = _jspx_th_s_url_12.doStartTag();
@@ -878,6 +845,32 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
     } finally {
       _jspx_th_s_url_12.doFinally();
       _jspx_tagPool_s_url_value_nobody.reuse(_jspx_th_s_url_12);
+    }
+    return false;
+  }
+
+  private boolean _jspx_meth_s_url_13(PageContext _jspx_page_context)
+          throws Throwable {
+    PageContext pageContext = _jspx_page_context;
+    JspWriter out = _jspx_page_context.getOut();
+    //  s:url
+    org.springframework.web.servlet.tags.UrlTag _jspx_th_s_url_13 = (org.springframework.web.servlet.tags.UrlTag) _jspx_tagPool_s_url_value_nobody.get(org.springframework.web.servlet.tags.UrlTag.class);
+    _jspx_th_s_url_13.setPageContext(_jspx_page_context);
+    _jspx_th_s_url_13.setParent(null);
+    _jspx_th_s_url_13.setValue("/exam/list");
+    int[] _jspx_push_body_count_s_url_13 = new int[] { 0 };
+    try {
+      int _jspx_eval_s_url_13 = _jspx_th_s_url_13.doStartTag();
+      if (_jspx_th_s_url_13.doEndTag() == javax.servlet.jsp.tagext.Tag.SKIP_PAGE) {
+        return true;
+      }
+    } catch (Throwable _jspx_exception) {
+      while (_jspx_push_body_count_s_url_13[0]-- > 0)
+        out = _jspx_page_context.popBody();
+      _jspx_th_s_url_13.doCatch(_jspx_exception);
+    } finally {
+      _jspx_th_s_url_13.doFinally();
+      _jspx_tagPool_s_url_value_nobody.reuse(_jspx_th_s_url_13);
     }
     return false;
   }

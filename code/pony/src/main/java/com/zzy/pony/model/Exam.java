@@ -52,7 +52,7 @@ public class Exam implements Serializable {
 	@Column(name="UPDATE_USER")
 	private String updateUser;
 	
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column(name="EXAM_DATE")
 	private Date examDate;
 

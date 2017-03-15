@@ -105,7 +105,7 @@ public class ExamController {
 	}
 	@RequestMapping(value="edit",method = RequestMethod.POST)
 	@ResponseBody
-	public String edit(Exam sy, Integer[] classIds, Model model){
+	public String edit(Exam sy, Integer[] classIds,Integer[] subjectIds, Model model){
 		sy.setUpdateTime(new Date());
 		sy.setUpdateUser("test");
 		List<Integer> ids=new ArrayList<Integer>();
@@ -113,7 +113,7 @@ public class ExamController {
 			if(cid != null)
 				ids.add(cid);
 		}
-		service.update(sy, ids);
+		service.update(sy, ids, subjectIds);
 		return "success";
 	}
 	@RequestMapping(value="delete",method = RequestMethod.POST)
@@ -124,10 +124,8 @@ public class ExamController {
 	}
 	@RequestMapping(value="get",method = RequestMethod.GET)
 	@ResponseBody
-	public Exam get(@RequestParam(value="id") int id, Model model){
-		Exam g=service.get(id);
-//		g.setSchoolClasses(null);
-		return g;
+	public ExamVo get(@RequestParam(value="id") int id, Model model){
+		return service.getVo(id);
 	}
 
 	@InitBinder

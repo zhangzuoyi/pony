@@ -30,6 +30,8 @@
 </div>
 <!-- Begin of easyui-dialog -->
 <div id="my-dialog-2" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:400px; padding:10px;">
+	<input type="hidden" id="yearId" value="${year.yearId }" />
+	<input type="hidden" name="termId" value="${term.termId }" />
 	<form id="my-form-2" method="post">
 		<input type="hidden" name="examId" />
         <table>
@@ -91,6 +93,10 @@
 						" />
                 </td>
             </tr>
+            <tr>
+                <td width="60" align="right">考试日期:</td>
+                <td><input type="text" name="examDate"  class="my-text easyui-datebox" data-options="formatter:myformatter,parser:myparser" /></td>
+            </tr>
         </table>
     </form>
 </div>
@@ -100,6 +106,8 @@
 	* Name 添加记录
 	*/
 	function add(){
+		$("input[name='schoolYear.yearId']").val($("#yearId").val());
+		$("input[name='term.termId']").val($("#termId").val());
 		$('#my-form-2').form('submit', {
 			url:"<s:url value='/exam/add' />",
 			success:function(data){
@@ -119,6 +127,8 @@
 	* Name 修改记录
 	*/
 	function edit(){
+		$("input[name='schoolYear.yearId']").val($("#yearId").val());
+		$("input[name='term.termId']").val($("#termId").val());
 		$('#my-form-2').form('submit', {
 			url:"<s:url value='/exam/edit' />",
 			success:function(data){
@@ -163,7 +173,7 @@
 	* Name 打开添加窗口
 	*/
 	function openAdd(){
-		//$('#my-form-2').form('clear');
+		$('#my-form-2').form('clear');
 		$('#my-dialog-2').dialog({
 			closed: false,
 			modal:true,
@@ -199,9 +209,17 @@
 					var formdata={};
 					formdata["examId"]=data.examId;
 					formdata["name"]=data.name;
-					formdata["schoolYear.yearId"]=data.schoolYear.yearId;
-					formdata["term.termId"]=data.term.termId;
-					formdata["subject.subjectId"]=data.subject.subjectId;
+					formdata["examDate"]=data.examDate;
+					formdata["type.typeId"]=data.type.typeId;
+					//formdata["schoolYear.yearId"]=data.schoolYear.yearId;
+					//formdata["term.termId"]=data.term.termId;
+					//formdata["subject.subjectId"]=data.subject.subjectId;
+					var subjects=data.subjects;
+					var subIds=[];
+					for(var i=0;i<subjects.length;i++){
+						subIds[i]=subjects[i].subject.subjectId;
+					}
+					formdata["subjectIds"]=subIds.join(",");
 					var classes=data.schoolClasses;
 					var clsIds=[];
 					for(var i=0;i<classes.length;i++){
@@ -319,7 +337,8 @@
 					}
 				   return results.join(",");
 				}
-			}
+			},
+			{ field:'examDate',title:'考试日期',width:100,sortable:true}
 		]]
 	});
 	
