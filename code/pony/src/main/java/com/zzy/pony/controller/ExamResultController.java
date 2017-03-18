@@ -46,13 +46,17 @@ import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.Student;
+import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.service.ExamResultService;
 import com.zzy.pony.service.ExamService;
 import com.zzy.pony.service.SchoolClassService;
+import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.StudentService;
 import com.zzy.pony.service.SubjectService;
+import com.zzy.pony.service.TermService;
 import com.zzy.pony.util.DateTimeUtil;
 import com.zzy.pony.vo.ExamResultVo;
+import com.zzy.pony.vo.ExamVo;
 
 @Controller
 @RequestMapping(value = "/examResult")
@@ -67,16 +71,28 @@ public class ExamResultController {
 	private ExamService examService;
 	@Autowired
 	private SchoolClassService classService;
+	@Autowired
+	private SchoolYearService yearService;
+	@Autowired
+	private TermService termService;
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
 	public String main(Model model){
-		model.addAttribute("subjects", subjectService.findAll());
+//		model.addAttribute("subjects", subjectService.findAll());
+		model.addAttribute("year",yearService.getCurrent());
+		model.addAttribute("term",termService.getCurrent());
 		return "examResult/main";
+	}
+	@RequestMapping(value="admin",method = RequestMethod.GET)
+	public String admin(Integer examId, Model model){
+		ExamVo vo=examService.getVo(examId);
+		model.addAttribute("vo",vo);
+		return "examResult/admin";
 	}
 	@RequestMapping(value="findByClass",method = RequestMethod.GET)
 	@ResponseBody
-	public List<ExamResultVo> findByClass(Integer examId, Integer classId, Model model){
-		return service.findByClass(examId, classId);
+	public List<ExamResultVo> findByClass(Integer examId, Integer classId, Integer subjectId, Model model){
+		return service.findByClass(examId, classId, subjectId);
 	}
 	@RequestMapping(value="save",method = RequestMethod.POST)
 	@ResponseBody
@@ -90,9 +106,7 @@ public class ExamResultController {
 	@RequestMapping(value="upload",method = RequestMethod.POST)
 	@ResponseBody
 	public String add(@RequestParam(value="examId") Integer examId, @RequestParam(value="classId") Integer classId, 
-			@RequestParam(value="file") MultipartFile file, Model model){
-		System.out.println(examId);
-		System.out.println(classId);
+			@RequestParam(value="subjectId") Integer subjectId, @RequestParam(value="file") MultipartFile file, Model model){
 		List<Student> students=studentService.findBySchoolClass(classId);
 		Map<Student, Float> studentScores=new HashMap<Student, Float>();
 		try {
@@ -120,7 +134,7 @@ public class ExamResultController {
 				}
 				i++;
 			}
-			service.batchSave(studentScores, examId, "test");
+			service.batchSave(studentScores, examId,subjectId, ShiroUtil.getLoginUser().getLoginName());
 		} catch (InvalidFormatException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -130,8 +144,8 @@ public class ExamResultController {
 	}
 	
 	@RequestMapping(value = "export", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> export(Integer examId, Integer classId,Model model) {
-		List<ExamResultVo> vos=service.findByClass(examId, classId);
+	public ResponseEntity<byte[]> export(Integer examId, Integer classId,Integer subjectId,Model model) {
+		List<ExamResultVo> vos=service.findByClass(examId, classId, subjectId);
 		Exam exam=examService.get(examId);
 		SchoolClass sc=classService.get(classId);
 		String reportName = sc.getName()+exam.getName()+"成绩";

@@ -5,6 +5,7 @@ public class ExamResultVo {
 	private Integer studentId;
 	private String studentNo;
 	private String studentName;
+	private Integer subjectId;
 	private String subjectName;
 	private Integer examId;
 	private String examName;
@@ -57,6 +58,12 @@ public class ExamResultVo {
 	}
 	public void setResultId(Long resultId) {
 		this.resultId = resultId;
+	}
+	public Integer getSubjectId() {
+		return subjectId;
+	}
+	public void setSubjectId(Integer subjectId) {
+		this.subjectId = subjectId;
 	}
 	
 	

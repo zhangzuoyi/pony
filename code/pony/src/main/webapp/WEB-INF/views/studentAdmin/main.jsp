@@ -13,6 +13,7 @@
 <script type="text/javascript" src="<s:url value='/static/easyui/jquery.easyui.min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/easyui/locale/easyui-lang-zh_CN.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/easyui/dateFormat.js' />"></script>
+<script type="text/javascript" src="<s:url value='/static/easyui/datagrid-cellediting.js' />"></script>
 </head>
 <body class="easyui-layout">
 <div class="easyui-layout" data-options="fit:true">
@@ -416,6 +417,7 @@
 						$('#my-datagrid-2').datagrid({
 							data: data
 						});
+						
 					}	
 				});
 			}else{

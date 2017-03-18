@@ -110,7 +110,7 @@ public final class main_jsp extends org.apache.jasper.runtime.HttpJspBase
       out.write("\t<input type=\"hidden\" id=\"yearId\" value=\"");
       out.write((java.lang.String) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${year.yearId }", java.lang.String.class, (PageContext)_jspx_page_context, null));
       out.write("\" />\r\n");
-      out.write("\t<input type=\"hidden\" name=\"termId\" value=\"");
+      out.write("\t<input type=\"hidden\" id=\"termId\" value=\"");
       out.write((java.lang.String) org.apache.jasper.runtime.PageContextImpl.evaluateExpression("${term.termId }", java.lang.String.class, (PageContext)_jspx_page_context, null));
       out.write("\" />\r\n");
       out.write("\t<form id=\"my-form-2\" method=\"post\">\r\n");

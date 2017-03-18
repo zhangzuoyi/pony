@@ -5,6 +5,6 @@ import java.util.List;
 import com.zzy.pony.vo.ExamResultVo;
 
 public interface ExamResultMapper {
-	List<ExamResultVo> find(Integer examId, Integer classId);
+	List<ExamResultVo> find(Integer examId, Integer classId, Integer subjectId);
 	List<ExamResultVo> findByStudent(Integer studentId);
 }

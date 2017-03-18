@@ -13,11 +13,13 @@ import org.springframework.stereotype.Service;
 import com.zzy.pony.dao.ExamDao;
 import com.zzy.pony.dao.ExamResultDao;
 import com.zzy.pony.dao.StudentDao;
+import com.zzy.pony.dao.SubjectDao;
 import com.zzy.pony.mapper.ExamResultMapper;
 import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.ExamResult;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.Student;
+import com.zzy.pony.model.Subject;
 import com.zzy.pony.vo.ExamResultVo;
 @Service
 @Transactional
@@ -30,9 +32,12 @@ public class ExamResultServiceImpl implements ExamResultService {
 	private ExamDao examDao;
 	@Autowired
 	private ExamResultDao dao;
+	@Autowired
+	private SubjectDao subjectDao;
 
 	@Override
-	public List<ExamResultVo> findByClass(Integer examId, Integer classId) {
+	public List<ExamResultVo> findByClass(Integer examId, Integer classId, Integer subjectId) {
+		Subject subject=subjectDao.findOne(subjectId);
 		Exam exam=examDao.findOne(examId);
 		List<ExamResultVo> vos=new ArrayList<ExamResultVo>();
 		SchoolClass sc=new SchoolClass();
@@ -45,11 +50,12 @@ public class ExamResultServiceImpl implements ExamResultService {
 			vo.setStudentNo(stu.getStudentNo());
 			vo.setExamId(examId);
 			vo.setExamName(exam.getName());
-//			vo.setSubjectName(exam.getSubject().getName());
+			vo.setSubjectName(subject.getName());
+			vo.setSubjectId(subjectId);
 			vo.setScore(0f);
 			vos.add(vo);
 		}
-		List<ExamResultVo> results=mapper.find(examId, classId);
+		List<ExamResultVo> results=mapper.find(examId, classId, subjectId);
 		for(ExamResultVo vo: vos){
 			for(ExamResultVo result: results){
 				if(result.getStudentId().equals(vo.getStudentId())){
@@ -76,6 +82,9 @@ public class ExamResultServiceImpl implements ExamResultService {
 				Student student=new Student();
 				student.setStudentId(vo.getStudentId());
 				er.setStudent(student);
+				Subject subject=new Subject();
+				subject.setSubjectId(vo.getSubjectId());
+				er.setSubject(subject);
 				er.setUpdateTime(new Date());
 				er.setUpdateUser("test");
 				dao.save(er);
@@ -92,17 +101,20 @@ public class ExamResultServiceImpl implements ExamResultService {
 	}
 
 	@Override
-	public void batchSave(Map<Student, Float> scores, Integer examId, String loginName) {
+	public void batchSave(Map<Student, Float> scores, Integer examId,Integer subjectId, String loginName) {
 		Exam exam=new Exam();
 		exam.setExamId(examId);
+		Subject subject=new Subject();
+		subject.setSubjectId(subjectId);
 		Date now=new Date();
 		for(Map.Entry<Student, Float> entry: scores.entrySet()){
-			ExamResult result=dao.findByExamAndStudent(exam, entry.getKey());
+			ExamResult result=dao.findByExamAndSubjectAndStudent(exam, subject, entry.getKey());
 			if(result == null){
 				result=new ExamResult();
 				result.setCreateTime(now);
 				result.setCreateUser(loginName);
 				result.setExam(exam);
+				result.setSubject(subject);
 				result.setScore(entry.getValue());
 				result.setStudent(entry.getKey());
 				result.setUpdateTime(now);

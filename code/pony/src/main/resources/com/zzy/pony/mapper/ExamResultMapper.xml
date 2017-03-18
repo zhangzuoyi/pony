@@ -8,11 +8,11 @@
 		r.SCORE,e.EXAM_ID examId,e.NAME examName,sub.NAME subjectName from t_student s 
 		left join t_exam_result r on s.STUDENT_ID=r.STUDENT_ID 
 		left join t_exam e on r.EXAM_ID=e.EXAM_ID
-		left join t_subject sub on e.SUBJECT_ID=sub.SUBJECT_ID
+		left join t_subject sub on r.SUBJECT_ID=sub.SUBJECT_ID
 	</sql>
 	<select id="find" resultType="com.zzy.pony.vo.ExamResultVo">
 		<include refid="base_select"></include>
-		 where s.class_id=#{1} and e.EXAM_ID=#{0}
+		 where s.class_id=#{1} and e.EXAM_ID=#{0} and r.subject_id=#{2}
 	</select>
 	<select id="findByStudent" resultType="com.zzy.pony.vo.ExamResultVo">
 		<include refid="base_select"></include>

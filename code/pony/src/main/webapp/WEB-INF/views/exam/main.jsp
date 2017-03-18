@@ -31,7 +31,7 @@
 <!-- Begin of easyui-dialog -->
 <div id="my-dialog-2" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:400px; padding:10px;">
 	<input type="hidden" id="yearId" value="${year.yearId }" />
-	<input type="hidden" name="termId" value="${term.termId }" />
+	<input type="hidden" id="termId" value="${term.termId }" />
 	<form id="my-form-2" method="post">
 		<input type="hidden" name="examId" />
         <table>
