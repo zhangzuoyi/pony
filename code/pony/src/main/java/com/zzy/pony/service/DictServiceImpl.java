@@ -33,4 +33,9 @@ public class DictServiceImpl implements DictService {
 		return dao.findByDictType("edu_degree");
 	}
 
+	@Override
+	public List<CommonDict> findStudentRemarkLevels() {
+		return dao.findByDictType("stu_remark_level");
+	}
+
 }

@@ -9,4 +9,9 @@ public interface DictService {
 	List<CommonDict> findCredentials();
 	List<CommonDict> findStudentStatus();
 	List<CommonDict> findEducationDegrees();
+	/**
+	 * 学生评价等级
+	 * @return
+	 */
+	List<CommonDict> findStudentRemarkLevels();
 }

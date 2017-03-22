@@ -46,6 +46,13 @@
             </div>
             </shiro:hasRole>
             <shiro:hasRole name="admin">
+        	<div title="学籍管理" data-options="iconCls:'icon-application-cascade'" style="padding:5px;">  	
+    			<ul class="easyui-tree my-side-tree">
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/studentRemark/main/' />" iframe="1">学生评语管理</a></li>
+                </ul>
+            </div>
+            </shiro:hasRole>
+            <shiro:hasRole name="admin">
             <div title="排课管理" data-options="iconCls:'icon-application-form-edit'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/lessonPeriod/main/' />" iframe="1">上课时段管理</a></li>
