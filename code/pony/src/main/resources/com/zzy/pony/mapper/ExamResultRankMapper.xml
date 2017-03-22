@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.mapper.ExamResultRankMapper">
+	<sql id="base_select">
+		select 
+		t.RESULT_ID resultId,        
+		c.CLASS_ID classId,
+        c.name 	   className,
+        b.STUDENT_ID  studentId,
+        b.STUDENT_NO studentNo,
+        b.name	   studentName,
+        t.SCORE     score,
+        d.SUBJECT_ID subjectId,
+        d.name 		subjectName,
+        a.EXAM_ID   examId,
+        a.name       examName,
+        e.YEAR_ID   yearId,
+        e.name      yearName,
+        f.TERM_ID	termId,
+        f.name       termName,
+        g.GRADE_ID	gradeId,
+        g.name      gradeName,
+        h.TYPE_ID    typeId,
+        h.NAME       typeName
+ from t_exam_result t 
+left join t_exam a on t.EXAM_ID=a.EXAM_ID
+left join t_student b on t.STUDENT_ID=b.student_id 
+left join t_school_class c on  b.CLASS_ID=c.CLASS_ID
+left join t_subject d on t.SUBJECT_ID=d.SUBJECT_ID
+left join t_school_year e on a.YEAR_ID=e.NAME
+left join t_term f on a.TERM_ID=f.TERM_ID
+left join t_grade g on c.GRADE_ID=g.GRADE_ID
+left join t_exam_type h on a.TYPE_ID = h.TYPE_ID
+	</sql>
+	<select id="findByCondition" resultType="com.zzy.pony.vo.ExamResultRankVo">
+		
+		<include refid="base_select"></include>
+		 where e.YEAR_ID=#{yearId} and f.TERM_ID=#{termId} and g.GRADE_ID=#{gradeId} and h.TYPE_ID=#{examTypeId} 
+		 <if test="schoolClasses != null">
+		 	and  c.CLASS_ID in  
+     		<foreach item="item" index="index" collection="schoolClasses" open="(" separator="," close=")">  
+     		 #{item}  
+     		</foreach> 
+		 </if>
+		 <if test="subjects != null">
+		 	and  d.SUBJECT_ID in  
+     		<foreach item="item" index="index" collection="subjects" open="(" separator="," close=")">  
+     		 #{item}  
+     		</foreach> 
+		 </if> 
+	</select>
+	
+	
+	
+</mapper>

@@ -14,6 +14,8 @@ public class Constants {
 	public static final Map<String, String> WEEKDAYS;
 	public static final Map<Integer, String> SUBJECT_TYPES;
 	public static final Map<String, String> USER_TYPES;
+	public static final Map<Integer, String> SUBJETCS;
+
 	
 	static{
 		WEEKDAYS=new LinkedHashMap<String, String>();
@@ -32,5 +34,14 @@ public class Constants {
 		USER_TYPES=new LinkedHashMap<String, String>();
 		USER_TYPES.put(USER_TYPE_TEACHER, "老师");
 		USER_TYPES.put(USER_TYPE_STUDENT, "学生");
+		
+		SUBJETCS=new LinkedHashMap<Integer, String>();
+		SUBJETCS.put(1, "语文");
+		SUBJETCS.put(2, "数学");
+		SUBJETCS.put(3, "英语");
+		SUBJETCS.put(4, "体育");
+		SUBJETCS.put(5, "物理");
+		SUBJETCS.put(6, "化学");
+		
 	}
 }
