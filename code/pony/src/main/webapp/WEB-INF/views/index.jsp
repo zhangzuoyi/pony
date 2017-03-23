@@ -5,7 +5,8 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>学校管理系统</title>
+<!-- <title>学校管理系统</title> -->
+<title>系统实施管理工具</title>
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/easyui/themes/default/easyui.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/style.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/icon.css' />" />
@@ -42,6 +43,13 @@
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examResult/main/' />" iframe="1">成绩管理</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examResultRank/main/' />" iframe="1">成绩排名管理</a></li>
                     
+                </ul>
+            </div>
+            </shiro:hasRole>
+            <shiro:hasRole name="admin">
+        	<div title="成绩分析" data-options="iconCls:'icon-application-cascade'" style="padding:5px;">  	
+    			<ul class="easyui-tree my-side-tree">
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/studentComprehensiveTrack/main/' />" iframe="1">学生综合成绩追踪</a></li>                          
                 </ul>
             </div>
             </shiro:hasRole>

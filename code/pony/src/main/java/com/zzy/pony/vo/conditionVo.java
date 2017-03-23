@@ -7,8 +7,11 @@ public class conditionVo {
 	private int examTypeId;
 	private String[] schoolClasses;
 	private String[] subjects;
-	//private String schoolClasses;
-	//private String subjects;
+	
+	private int classId;
+	private int studentId;
+	private String[] examTypeIds;
+	
 	public conditionVo(){
 		
 	}
@@ -57,18 +60,32 @@ public class conditionVo {
 	public void setSubjects(String[] subjects) {
 		this.subjects = subjects;
 	}
-	/*public String getSchoolClasses() {
-		return schoolClasses;
+
+	public int getClassId() {
+		return classId;
 	}
-	public void setSchoolClasses(String schoolClasses) {
-		this.schoolClasses = schoolClasses;
+
+	public void setClassId(int classId) {
+		this.classId = classId;
 	}
-	public String getSubjects() {
-		return subjects;
+
+	public int getStudentId() {
+		return studentId;
 	}
-	public void setSubjects(String subjects) {
-		this.subjects = subjects;
-	}*/
+
+	public void setStudentId(int studentId) {
+		this.studentId = studentId;
+	}
+
+	public String[] getExamTypeIds() {
+		return examTypeIds;
+	}
+
+	public void setExamTypeIds(String[] examTypeIds) {
+		this.examTypeIds = examTypeIds;
+	}
+	
+	
 	
 	
 	

@@ -37,7 +37,25 @@ left join t_exam_type h on a.TYPE_ID = h.TYPE_ID
 	<select id="findByCondition" resultType="com.zzy.pony.vo.ExamResultRankVo">
 		
 		<include refid="base_select"></include>
-		 where e.YEAR_ID=#{yearId} and f.TERM_ID=#{termId} and g.GRADE_ID=#{gradeId} and h.TYPE_ID=#{examTypeId} 
+		 where 1=1
+		 <if test=" yearId != null and yearId != 0">
+		 	and  e.YEAR_ID=#{yearId}
+		 </if>
+		 <if test=" termId != null and termId != 0">
+		 	and f.TERM_ID=#{termId}
+		 </if>
+		 <if test=" gradeId != null and gradeId != 0">
+		 	and g.GRADE_ID=#{gradeId}
+		 </if>
+		 <if test=" examTypeId != null and examTypeId != 0">
+		 	and h.TYPE_ID=#{examTypeId}
+		 </if>
+		 <if test=" classId != null and classId != 0">
+		 	and c.CLASS_ID=#{classId}
+		 </if>
+		 <if test=" studentId != null and studentId != 0">
+		 	and b.student_id =#{studentId}
+		 </if>		 		    
 		 <if test="schoolClasses != null">
 		 	and  c.CLASS_ID in  
      		<foreach item="item" index="index" collection="schoolClasses" open="(" separator="," close=")">  
@@ -47,6 +65,12 @@ left join t_exam_type h on a.TYPE_ID = h.TYPE_ID
 		 <if test="subjects != null">
 		 	and  d.SUBJECT_ID in  
      		<foreach item="item" index="index" collection="subjects" open="(" separator="," close=")">  
+     		 #{item}  
+     		</foreach> 
+		 </if> 
+		 <if test="examTypeIds != null">
+		 	and  h.TYPE_ID in  
+     		<foreach item="item" index="index" collection="examTypeIds" open="(" separator="," close=")">  
      		 #{item}  
      		</foreach> 
 		 </if> 
