@@ -20,4 +20,9 @@ public interface SubjectService {
 	 * @return
 	 */
 	List<Subject> findSelectiveSubject();
+	/**
+	 * 查找主修科目
+	 * @return
+	 */
+	List<Subject> findMajorSubject();
 }

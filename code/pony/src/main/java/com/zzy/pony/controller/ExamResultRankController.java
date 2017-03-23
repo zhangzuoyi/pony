@@ -65,7 +65,7 @@ public class ExamResultRankController {
 		List<Grade> grades = gradeService.findAll();
 		List<ExamType> examTypes = examTypeDao.findAll();
 		List<SchoolClass> schoolClasses = schoolClassService.findAll();
-		List<Subject> subjects = subjectService.findClassSubject();//查询主修科目
+		List<Subject> subjects = subjectService.findMajorSubject();//查询主修科目
 		model.addAttribute("schoolYears", schoolYears);
 		model.addAttribute("terms", terms);
 		model.addAttribute("grades", grades);

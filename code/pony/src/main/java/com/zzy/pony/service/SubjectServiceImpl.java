@@ -61,4 +61,16 @@ public class SubjectServiceImpl implements SubjectService {
 		return dao.findByType(2);
 	}
 
+	@Override
+	public List<Subject> findMajorSubject() {
+		// TODO Auto-generated method stub
+		List<Integer> types=new ArrayList<Integer>();
+		types.add(0);
+		
+		
+		return dao.findByTypeIn(types);
+	}
+	
+	
+
 }

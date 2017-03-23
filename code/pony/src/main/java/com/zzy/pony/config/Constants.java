@@ -36,12 +36,12 @@ public class Constants {
 		USER_TYPES.put(USER_TYPE_STUDENT, "学生");
 		
 		SUBJETCS=new LinkedHashMap<Integer, String>();
-		SUBJETCS.put(1, "语文");
-		SUBJETCS.put(2, "数学");
-		SUBJETCS.put(3, "英语");
-		SUBJETCS.put(4, "体育");
-		SUBJETCS.put(5, "物理");
-		SUBJETCS.put(6, "化学");
+		SUBJETCS.put(1, "Chinese");
+		SUBJETCS.put(2, "Math");
+		SUBJETCS.put(3, "English");
+		SUBJETCS.put(4, "PE");
+		SUBJETCS.put(5, "Physics");
+		SUBJETCS.put(6, "Chemistry");
 		
 	}
 }
