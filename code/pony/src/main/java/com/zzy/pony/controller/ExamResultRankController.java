@@ -77,10 +77,28 @@ public class ExamResultRankController {
 		
 		return "examResultRank/main";
 	}
-	@SuppressWarnings("serial")
 	@RequestMapping(value="findByCondition",method = RequestMethod.POST)
 	@ResponseBody
 	public String findByCondition(@RequestBody conditionVo cv) {
+		//新增默认全选功能
+		if (cv.getSchoolClasses()==null || cv.getSchoolClasses().length == 0) {
+			List<SchoolClass> schoolClasses = schoolClassService.findByGrade(cv.getGradeId());
+			String[] schoolClassArray = new String[schoolClasses.size()] ;
+			for (int i = 0; i < schoolClasses.size(); i++) {
+				schoolClassArray[i] = schoolClasses.get(i).getClassId()+"";
+			}
+			cv.setSchoolClasses(schoolClassArray);
+		}
+		if (cv.getSubjects()==null || cv.getSubjects().length == 0) {
+			List<Subject> subjects = subjectService.findMajorSubject();
+			String[] subjectArray = new String[subjects.size()] ;
+			for (int i = 0; i < subjects.size(); i++) {
+				subjectArray[i] = subjects.get(i).getSubjectId()+"";
+			}				
+			cv.setSubjects(subjectArray);				
+		}
+		
+		
 			StringBuilder result = new StringBuilder();
 			List<Map<String, Object>> dataList =  examResultRankService.findByCondition(cv);
 			List<Map<String, Object>> headList = new ArrayList<Map<String,Object>>();
