@@ -15,7 +15,7 @@ public class Constants {
 	public static final Map<Integer, String> SUBJECT_TYPES;
 	public static final Map<String, String> USER_TYPES;
 	public static final Map<Integer, String> SUBJETCS;
-
+	public static final Map<Integer, String> PP_TYPES;//奖惩类型 
 	
 	static{
 		WEEKDAYS=new LinkedHashMap<String, String>();
@@ -43,5 +43,8 @@ public class Constants {
 		SUBJETCS.put(5, "Physics");
 		SUBJETCS.put(6, "Chemistry");
 		
+		PP_TYPES=new LinkedHashMap<Integer, String>(); 
+		PP_TYPES.put(0, "奖"); 
+		PP_TYPES.put(1, "惩"); 
 	}
 }
