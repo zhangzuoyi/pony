@@ -49,7 +49,9 @@
             <shiro:hasRole name="admin">
         	<div title="成绩分析" data-options="iconCls:'icon-application-cascade'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">
-                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/studentComprehensiveTrack/main/' />" iframe="1">学生综合成绩追踪</a></li>                          
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/studentComprehensiveTrack/main/' />" iframe="1">学生综合成绩追踪</a></li> 
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/studentSingleTrack/main/' />" iframe="1">学生单科成绩追踪</a></li>                          
+                                             
                 </ul>
             </div>
             </shiro:hasRole>

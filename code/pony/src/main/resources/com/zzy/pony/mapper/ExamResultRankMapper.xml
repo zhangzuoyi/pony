@@ -55,6 +55,9 @@ left join t_exam_type h on a.TYPE_ID = h.TYPE_ID
 		 </if>
 		 <if test=" studentId != null and studentId != 0">
 		 	and b.student_id =#{studentId}
+		 </if>
+		 <if test=" subjectId != null and subjectId != 0">
+		 	and d.SUBJECT_ID =#{subjectId}
 		 </if>		 		    
 		 <if test="schoolClasses != null">
 		 	and  c.CLASS_ID in  
