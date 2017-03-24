@@ -8,13 +8,22 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.zzy.pony.dao.ExamDao;
+import com.zzy.pony.dao.ExamSubjectDao;
 import com.zzy.pony.dao.SubjectDao;
+import com.zzy.pony.model.Exam;
+import com.zzy.pony.model.ExamSubject;
 import com.zzy.pony.model.Subject;
 @Service
 @Transactional
 public class SubjectServiceImpl implements SubjectService {
 	@Autowired
 	private SubjectDao dao;
+	@Autowired 
+	private ExamDao examDao;
+	@Autowired
+	private ExamSubjectDao examSubjectDao;
+	
 
 	@Override
 	public void add(Subject sy) {
@@ -70,6 +79,21 @@ public class SubjectServiceImpl implements SubjectService {
 		
 		return dao.findByTypeIn(types);
 	}
+
+	@Override
+	public List<Subject> findByExam(int examId) {
+		// TODO Auto-generated method stub
+		List<Subject> subjects = new ArrayList<Subject>();
+		Exam exam = examDao.findOne(examId);
+		List<ExamSubject> examSubjects =  examSubjectDao.findByExam(exam);
+		for (ExamSubject examSubject : examSubjects) {
+			subjects.add(examSubject.getSubject());
+		}
+		
+		return subjects;
+	}
+	
+	
 	
 	
 

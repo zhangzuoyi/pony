@@ -7,4 +7,5 @@ import com.zzy.pony.vo.conditionVo;
 
 public interface ExamResultRankMapper {
 	List<ExamResultRankVo> findByCondition(conditionVo cv);
+	List<Integer> findExamsByStudentId(int studentId);
 }

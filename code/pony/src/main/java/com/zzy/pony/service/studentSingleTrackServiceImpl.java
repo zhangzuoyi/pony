@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zzy.pony.config.Constants;
+import com.zzy.pony.dao.ExamDao;
 import com.zzy.pony.mapper.ExamResultRankMapper;
+import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Student;
@@ -37,6 +39,10 @@ public class studentSingleTrackServiceImpl implements studentSingleTrackService 
 	private SchoolYearService schoolYearService;
 	@Autowired
 	private TermService termService;
+	@Autowired
+	private ExamResultRankService examResultRankService;
+	@Autowired
+	private ExamDao examDao;
 	
 	@Override
 	public List<Map<String, Object>> findByCondition(conditionVo cv) {
@@ -44,94 +50,109 @@ public class studentSingleTrackServiceImpl implements studentSingleTrackService 
 		//排名以及成绩展示需要处理  学生ID为键		
 		//总成绩为统计所选单一科目成绩			
 		List<Map<String, Object>>  resultList = new ArrayList<Map<String,Object>>();
-		//班级为年级下所有的班级
-		List<SchoolClass> schoolClassList = schoolClassService.findByGrade(cv.getGradeId());
-		String[] schoolClasses = new String[schoolClassList.size()] ;
-		for (int i = 0; i < schoolClassList.size(); i++) {
-			schoolClasses[i] = schoolClassList.get(i).getClassId()+"";
-		}
-		cv.setSchoolClasses(schoolClasses);
 		
-		int classId = cv.getClassId();
-		int studentId = cv.getStudentId();
-		//将classId和studentId置空
-		cv.setClassId(0);
-		cv.setStudentId(0);
-		//所有学年
-		List<SchoolYear> schoolYears = schoolYearService.findAll();
-		for (SchoolYear schoolYear : schoolYears) {
-			cv.setYearId(schoolYear.getYearId());
-			//所有学期
-			List<Term> terms = termService.findAll();
-			for (Term term : terms) {
-				cv.setTermId(term.getTermId());
-				
-				List<ExamResultRankVo> ExamResultRankVos =  examResultRankMapper.findByCondition(cv);
-				
-				Map<Integer,Map<String, Object>> map = new HashMap<Integer, Map<String,Object>>();
+		
+		List<Integer> examIds =	examResultRankService.findExamsByStudentId(cv.getStudentId());
 
-				for (ExamResultRankVo examResultRankVo : ExamResultRankVos) {
-					Map<String, Object>	map2=new HashMap<String, Object>();
-					//第一条
-					if (map == null || map.size() == 0) {	
-						//单科跟踪
-						map2.put("yearName", examResultRankVo.getYearName());
-						map2.put("termName", examResultRankVo.getTermName());
-						map2.put("examName", examResultRankVo.getExamName());
-						
-						
-						//排名
-						map2.put("className", examResultRankVo.getClassName());
-						map2.put("studentNo", examResultRankVo.getStudentNo());
-						map2.put("studentName", examResultRankVo.getStudentName());				
+		if (examIds!= null && examIds.size() >0) {
+			for (Integer examId : examIds) {
+				Exam exam = examDao.findOne(examId);
+				cv.setExamId(examId);
+				
+				//班级为考试下的班级
+				List<SchoolClass> schoolClassList = exam.getSchoolClasses();
+				String[] schoolClasses = new String[schoolClassList.size()] ;
+				for (int i = 0; i < schoolClassList.size(); i++) {
+					schoolClasses[i] = schoolClassList.get(i).getClassId()+"";
+				}
+				cv.setSchoolClasses(schoolClasses);
+				int classId = cv.getClassId();
+				int studentId = cv.getStudentId();
+				//将classId和studentId置空
+				cv.setClassId(0);
+				cv.setStudentId(0);
+				
+				//学年
+				
+				cv.setYearId(exam.getSchoolYear().getYearId());
+				
+				//学期
+				
+				cv.setTermId(exam.getTerm().getTermId());
 					
-						
-						map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
-						map2.put("sum", examResultRankVo.getScore());
+					List<ExamResultRankVo> ExamResultRankVos =  examResultRankMapper.findByCondition(cv);
+					
+					Map<Integer,Map<String, Object>> map = new HashMap<Integer, Map<String,Object>>();
 
-						map.put(examResultRankVo.getStudentId(), map2);	
-					//	lists.add(map);	//需要新增
-					}else {
-						if (map.containsKey(examResultRankVo.getStudentId())) {
-							//包含
-							map2 = map.get(examResultRankVo.getStudentId());
-									
-							map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
-							map2.put("sum", examResultRankVo.getScore()+ Float.valueOf((map2.get("sum").toString())));
-																	
-							map.put(examResultRankVo.getStudentId(), map2);//无需新增到list
-						}else {
+					for (ExamResultRankVo examResultRankVo : ExamResultRankVos) {
+						Map<String, Object>	map2=new HashMap<String, Object>();
+						//第一条
+						if (map == null || map.size() == 0) {	
 							//单科跟踪
 							map2.put("yearName", examResultRankVo.getYearName());
 							map2.put("termName", examResultRankVo.getTermName());
 							map2.put("examName", examResultRankVo.getExamName());
+							
+							
 							//排名
 							map2.put("className", examResultRankVo.getClassName());
 							map2.put("studentNo", examResultRankVo.getStudentNo());
-							map2.put("studentName", examResultRankVo.getStudentName());					
+							map2.put("studentName", examResultRankVo.getStudentName());				
+						
 							
 							map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
 							map2.put("sum", examResultRankVo.getScore());
-									
-							map.put(examResultRankVo.getStudentId(), map2);
-							//lists.add(map);	//需要新增
-							
-						}
+
+							map.put(examResultRankVo.getStudentId(), map2);	
+						//	lists.add(map);	//需要新增
+						}else {
+							if (map.containsKey(examResultRankVo.getStudentId())) {
+								//包含
+								map2 = map.get(examResultRankVo.getStudentId());
 										
-					}									
+								map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
+								map2.put("sum", examResultRankVo.getScore()+ Float.valueOf((map2.get("sum").toString())));
+																		
+								map.put(examResultRankVo.getStudentId(), map2);//无需新增到list
+							}else {
+								//单科跟踪
+								map2.put("yearName", examResultRankVo.getYearName());
+								map2.put("termName", examResultRankVo.getTermName());
+								map2.put("examName", examResultRankVo.getExamName());
+								//排名
+								map2.put("className", examResultRankVo.getClassName());
+								map2.put("studentNo", examResultRankVo.getStudentNo());
+								map2.put("studentName", examResultRankVo.getStudentName());					
+								
+								map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
+								map2.put("sum", examResultRankVo.getScore());
+										
+								map.put(examResultRankVo.getStudentId(), map2);
+								//lists.add(map);	//需要新增
+								
+							}
+											
+						}									
+								
+					}	
+					
+					String[] rankClass ={classId+""};
+					sortByClassRank(map,rankClass);//仅对所选班级进行排序
+					sortByGradeRank(map,schoolClasses);	
+					
+					if (map!=null && map.size()!=0 && map.get(studentId)!= null) {
+						resultList.add(map.get(studentId));
+					}
 							
-				}	
 				
-				String[] rankClass ={classId+""};
-				sortByClassRank(map,rankClass);//仅对所选班级进行排序
-				sortByGradeRank(map,schoolClasses);	
 				
-				if (map!=null && map.size()!=0 && map.get(studentId)!= null) {
-					resultList.add(map.get(studentId));
-				}
-						
-			}		
+				
+			}
 		}
+		
+		
+					
+		
 	
 		return resultList;	
 				

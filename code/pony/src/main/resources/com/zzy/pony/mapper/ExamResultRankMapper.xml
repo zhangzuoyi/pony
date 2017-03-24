@@ -50,6 +50,9 @@ left join t_exam_type h on a.TYPE_ID = h.TYPE_ID
 		 <if test=" examTypeId != null and examTypeId != 0">
 		 	and h.TYPE_ID=#{examTypeId}
 		 </if>
+		 <if test=" examId != null and examId != 0">
+		 	and a.EXAM_ID =#{examId}
+		 </if>	
 		 <if test=" classId != null and classId != 0">
 		 	and c.CLASS_ID=#{classId}
 		 </if>
@@ -77,6 +80,10 @@ left join t_exam_type h on a.TYPE_ID = h.TYPE_ID
      		 #{item}  
      		</foreach> 
 		 </if> 
+	</select>
+	
+	<select id="findExamsByStudentId" resultType="java.lang.Integer">
+		select distinct t.EXAM_ID examId from t_exam_result t where t.STUDENT_ID = #{0}
 	</select>
 	
 	

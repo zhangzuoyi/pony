@@ -4,9 +4,10 @@ public class conditionVo {
 	private int yearId;
 	private int termId;
 	private int gradeId;
-	private int examTypeId;
+	private int examTypeId;//考试类型，由examId替换
 	private String[] schoolClasses;
 	private String[] subjects;
+	private int examId;
 	
 	private int classId;
 	private int studentId;
@@ -94,6 +95,15 @@ public class conditionVo {
 	public void setSubjectId(int subjectId) {
 		this.subjectId = subjectId;
 	}
+
+	public int getExamId() {
+		return examId;
+	}
+
+	public void setExamId(int examId) {
+		this.examId = examId;
+	}
+	
 	
 	
 	

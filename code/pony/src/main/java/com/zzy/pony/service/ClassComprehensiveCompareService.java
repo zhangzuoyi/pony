@@ -5,10 +5,8 @@ import java.util.Map;
 
 import com.zzy.pony.vo.conditionVo;
 
-public interface ExamResultRankService {
+public interface ClassComprehensiveCompareService {
 	List<Map<String, Object>> findByCondition(conditionVo cv);
-	List<Integer> findExamsByStudentId(int studentId);
-	
 	
 	
 }

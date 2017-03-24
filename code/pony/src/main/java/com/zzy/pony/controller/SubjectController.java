@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
 import com.zzy.pony.config.Constants;
+import com.zzy.pony.dao.SubjectDao;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.service.SubjectService;
 
@@ -27,6 +28,7 @@ import com.zzy.pony.service.SubjectService;
 public class SubjectController {
 	@Autowired
 	private SubjectService service;
+	
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
 	public String main(Model model){
@@ -47,6 +49,14 @@ public class SubjectController {
 
 		return list;
 	}
+	@RequestMapping(value="findByExam",method = RequestMethod.GET)
+	@ResponseBody
+	public List<Subject> findByExam(@RequestParam(value="examId") int examId,Model model){
+		List<Subject> subjects = service.findByExam(examId);
+
+		return subjects;
+	}
+	
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody
 	public String add(Subject sy, Model model){

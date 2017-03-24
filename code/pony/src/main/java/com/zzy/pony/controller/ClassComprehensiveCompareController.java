@@ -10,7 +10,6 @@ import java.util.Map;
 
 
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 
 
 
@@ -34,7 +32,6 @@ import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.service.ExamResultRankService;
-import com.zzy.pony.service.ExamService;
 import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.SchoolYearService;
@@ -43,8 +40,8 @@ import com.zzy.pony.service.TermService;
 import com.zzy.pony.vo.conditionVo;
 
 @Controller
-@RequestMapping(value = "/examResultRank")
-public class ExamResultRankController {
+@RequestMapping(value = "/classComprehensiveCompare")
+public class ClassComprehensiveCompareController {
 	@Autowired
 	private SchoolYearService schoolYearService;
 	@Autowired
@@ -57,8 +54,6 @@ public class ExamResultRankController {
 	private SchoolClassService schoolClassService;
 	@Autowired
 	private SubjectService subjectService;
-	@Autowired
-	private ExamResultRankService examResultRankService;
 	
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
@@ -67,35 +62,33 @@ public class ExamResultRankController {
 		List<SchoolYear> schoolYears = schoolYearService.findAll();
 		List<Term> terms = termService.findAll();
 		List<Grade> grades = gradeService.findAll();
-		//List<ExamType> examTypes = examTypeDao.findAll();
+		List<ExamType> examTypes = examTypeDao.findAll();
 		List<SchoolClass> schoolClasses = schoolClassService.findAll();
-		List<Subject> subjects = subjectService.findMajorSubject();//查询主修科目
+	
 		model.addAttribute("schoolYears", schoolYears);
 		model.addAttribute("terms", terms);
 		model.addAttribute("grades", grades);
-		//model.addAttribute("examTypes", examTypes);
+		model.addAttribute("examTypes", examTypes);
 		model.addAttribute("schoolClasses", schoolClasses);
-		model.addAttribute("subjects", subjects);
+		
 
 	
 		
 		return "examResultRank/main";
 	}
-	@RequestMapping(value="findByCondition",method = RequestMethod.POST)
+	/*@RequestMapping(value="findByCondition",method = RequestMethod.POST)
 	@ResponseBody
 	public String findByCondition(@RequestBody conditionVo cv) {
-		
-		
 		//新增默认全选功能
-		
-		if (cv.getSubjects()==null || cv.getSubjects().length == 0) {
-			List<Subject> subjects = subjectService.findByExam(cv.getExamId());
-			String[] subjectArray = new String[subjects.size()] ;
-			for (int i = 0; i < subjects.size(); i++) {
-				subjectArray[i] = subjects.get(i).getSubjectId()+"";
-			}				
-			cv.setSubjects(subjectArray);				
+		if (cv.getSchoolClasses()==null || cv.getSchoolClasses().length == 0) {
+			List<SchoolClass> schoolClasses = schoolClassService.findByGrade(cv.getGradeId());
+			String[] schoolClassArray = new String[schoolClasses.size()] ;
+			for (int i = 0; i < schoolClasses.size(); i++) {
+				schoolClassArray[i] = schoolClasses.get(i).getClassId()+"";
+			}
+			cv.setSchoolClasses(schoolClassArray);
 		}
+		
 		
 		
 			StringBuilder result = new StringBuilder();
@@ -107,17 +100,17 @@ public class ExamResultRankController {
 			classNameMap.put("title", "班级");
 			Map<String, Object> studentNoMap = new HashMap<String, Object>();
 			studentNoMap.put("field", "studentNo");
-			studentNoMap.put("title", "学号");
+			studentNoMap.put("title", "任课教师");
 			Map<String, Object> studentNameMap = new HashMap<String, Object>();
 			studentNameMap.put("field", "studentName");
-			studentNameMap.put("title", "姓名");
+			studentNameMap.put("title", "考生人数");
 			
 			String[] subjects  =   cv.getSubjects();
 			for (String subjectId : subjects) {
 				Map<String, Object> headMap = new HashMap<String, Object>();
 				Subject subject = subjectService.get(Integer.valueOf(subjectId));
 				headMap.put("field", Constants.SUBJETCS.get(subject.getSubjectId()));
-				headMap.put("title", subject.getName());
+				headMap.put("title", subject.getName()+"平均分");
 				headList.add(headMap);
 			}
 			
@@ -155,7 +148,7 @@ public class ExamResultRankController {
             return result.toString();
 			
 
-	}
+	}*/
 	
 	
 }

@@ -20,9 +20,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
 import com.zzy.pony.dao.ExamTypeDao;
+import com.zzy.pony.dao.SchoolYearDao;
+import com.zzy.pony.dao.TermDao;
 import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.SchoolClass;
+import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Subject;
+import com.zzy.pony.model.Term;
 import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.service.ExamService;
 import com.zzy.pony.service.SchoolClassService;
@@ -46,6 +50,10 @@ public class ExamController {
 	private SchoolClassService scService;
 	@Autowired
 	private ExamTypeDao etDao;
+	@Autowired
+	private SchoolYearDao schoolYearDao;
+	@Autowired
+	private TermDao termDao;
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
 	public String main(Model model){
@@ -84,6 +92,14 @@ public class ExamController {
 		for(Exam g: list){
 			g.setSchoolClasses(null);
 		}
+		return list;
+	}
+	@RequestMapping(value="findByYearAndTerm",method = RequestMethod.GET)
+	@ResponseBody
+	public List<ExamVo> findByYearAndTerm(@RequestParam(value="yearId") int yearId,@RequestParam(value="termId") int termId,Model model){
+		SchoolYear schoolYear=  schoolYearDao.findOne(yearId);
+		Term term = termDao.findOne(termId);
+		List<ExamVo> list=service.findByYearAndTerm(schoolYear, term);		
 		return list;
 	}
 	@RequestMapping(value="add",method = RequestMethod.POST)

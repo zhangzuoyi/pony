@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zzy.pony.config.Constants;
+import com.zzy.pony.dao.ExamDao;
 import com.zzy.pony.mapper.ExamResultRankMapper;
+import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.Student;
 import com.zzy.pony.vo.ExamResultRankVo;
@@ -28,13 +30,28 @@ public class ExamResultRankServiceImpl implements ExamResultRankService {
 	private StudentService studentService;
 	@Autowired
 	private SchoolClassService schoolClassService;
+	@Autowired
+	private ExamResultRankService examResultRankService;
+	@Autowired
+	private ExamDao examDao;
 	
 	@Override
 	public List<Map<String, Object>> findByCondition(conditionVo cv) {
 		// TODO Auto-generated method stub
-		List<ExamResultRankVo> ExamResultRankVos =  examResultRankMapper.findByCondition(cv);
+	List<ExamResultRankVo> ExamResultRankVos =  examResultRankMapper.findByCondition(cv);
 		//排名以及成绩展示需要处理  学生ID为键
 		//List<Map<Integer,Map<String, Object>>> lists = new ArrayList<Map<Integer,Map<String,Object>>>();
+		//班级为exam下的班级
+		 Exam exam = examDao.findOne(cv.getExamId());
+		 if (cv.getSchoolClasses()==null || cv.getSchoolClasses().length == 0) {
+				List<SchoolClass> schoolClasses = exam.getSchoolClasses();
+				String[] schoolClassArray = new String[schoolClasses.size()] ;
+				for (int i = 0; i < schoolClasses.size(); i++) {
+					schoolClassArray[i] = schoolClasses.get(i).getClassId()+"";
+				}
+				cv.setSchoolClasses(schoolClassArray);
+			}
+		
 		String[] subjects = cv.getSubjects();
 		Map<Integer,Map<String, Object>> map = new HashMap<Integer, Map<String,Object>>();
 
@@ -103,6 +120,18 @@ public class ExamResultRankServiceImpl implements ExamResultRankService {
 		
 	}
 	
+	
+	
+	
+	@Override
+	public List<Integer> findExamsByStudentId(int studentId) {
+		// TODO Auto-generated method stub
+		return examResultRankMapper.findExamsByStudentId(studentId);
+	}
+
+
+
+
 	//班级排名   
 	private Map<Integer,Map<String, Object>> sortByClassRank(Map<Integer,Map<String, Object>> unsortMap,String[] classes){
 		

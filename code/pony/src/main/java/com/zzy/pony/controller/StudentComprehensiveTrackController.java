@@ -16,6 +16,8 @@ import java.util.Map;
 
 
 
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,12 +35,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
+
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.dao.ExamTypeDao;
 import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.ExamType;
 import com.zzy.pony.model.Grade;
+import com.zzy.pony.service.ExamResultRankService;
+import com.zzy.pony.service.ExamResultService;
 import com.zzy.pony.service.ExamService;
 import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.SchoolYearService;
@@ -56,6 +62,8 @@ public class StudentComprehensiveTrackController {
 	private GradeService gradeService;
 	@Autowired
 	private ExamTypeDao examTypeDao;
+	@Autowired
+	private ExamResultRankService examResultRankService;
 	
 	
 	@Autowired
@@ -91,7 +99,6 @@ public class StudentComprehensiveTrackController {
 			}
 			cv.setExamTypeIds(examTypeArray);
 		}
-		
 		
 		
 			StringBuilder result = new StringBuilder();
@@ -135,9 +142,10 @@ public class StudentComprehensiveTrackController {
 			
 			//新增echarts数据获取xAxis(学年+学期+考试名)yAxis(班级排名+年级排名)
 			Map<String, Object> echartsMap = new HashMap<String, Object>();
-			List<Exam> exams = examService.findAll();
-			for (Exam exam : exams) {
-				ExamVo examVo = examService.getVo(exam.getExamId());
+			 List<Integer> exams= examResultRankService.findExamsByStudentId(cv.getStudentId());
+			
+			for (Integer exam : exams) {
+				ExamVo examVo = examService.getVo(exam);
 				if (dataList!=null&&dataList.size()!=0) {
 					for (Map<String, Object> dataMap : dataList) {
 						
