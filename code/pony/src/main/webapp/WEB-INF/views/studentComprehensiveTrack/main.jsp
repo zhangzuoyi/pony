@@ -178,8 +178,28 @@
 		var xAxis = {type: 'category',
         		boundaryGap: false};
         xAxis.data=[];
+        var classRank = [];
+        var gradeRank = [];
+        $.each(echartsData,function(key,value){
+        	 xAxis.data.push(key);
+        	 var rank = value.split("#");
+        	 classRank.push(rank[0]);
+        	 gradeRank.push(rank[1]);
+        });
         	
-       	var series = []; 		
+       	var series = [
+       		{
+            name:'班级排名',
+            type:'line',           
+            data:classRank
+        },
+        {
+            name:'年级排名',
+            type:'line',           
+            data:gradeRank
+        }
+       	
+       	]; 		
         // 指定图表的配置项和数据
         var option = {
             title : {text : '学生综合成绩追踪图' },
