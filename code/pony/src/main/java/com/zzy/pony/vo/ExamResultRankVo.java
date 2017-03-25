@@ -20,6 +20,11 @@ public class ExamResultRankVo {
 	private String gradeName;
 	private Integer typeId;
 	private String typeName;
+	private Integer teacherId;
+	private String teacherName;
+	private Integer headTeacherId;
+	private String headTeacherName;
+	
 	public ExamResultRankVo(){
 		
 	}
@@ -137,6 +142,31 @@ public class ExamResultRankVo {
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
 	}
+	public Integer getTeacherId() {
+		return teacherId;
+	}
+	public void setTeacherId(Integer teacherId) {
+		this.teacherId = teacherId;
+	}
+	public String getTeacherName() {
+		return teacherName;
+	}
+	public void setTeacherName(String teacherName) {
+		this.teacherName = teacherName;
+	}
+	public Integer getHeadTeacherId() {
+		return headTeacherId;
+	}
+	public void setHeadTeacherId(Integer headTeacherId) {
+		this.headTeacherId = headTeacherId;
+	}
+	public String getHeadTeacherName() {
+		return headTeacherName;
+	}
+	public void setHeadTeacherName(String headTeacherName) {
+		this.headTeacherName = headTeacherName;
+	}
+	
 	
 	
 	

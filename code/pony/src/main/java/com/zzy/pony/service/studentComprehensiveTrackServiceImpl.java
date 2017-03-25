@@ -63,6 +63,7 @@ public class studentComprehensiveTrackServiceImpl implements studentComprehensiv
 						for (int i = 0; i < subjectList.size(); i++) {
 							subjects[i] = subjectList.get(i).getSubjectId()+"";
 						}
+						cv.setSubjects(subjects);
 						//班级为考试下的班级
 						List<SchoolClass> schoolClassList = exam.getSchoolClasses();
 						String[] schoolClasses = new String[schoolClassList.size()] ;

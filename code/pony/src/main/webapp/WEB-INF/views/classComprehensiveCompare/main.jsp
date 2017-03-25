@@ -45,10 +45,10 @@
            		</c:forEach>
             </select>
             <label>考试：</label> 
-            <select name="examType" class="my-select" panelHeight="auto" style="width:100px">
+            <select name="exam" class="my-select" panelHeight="auto" style="width:100px">
             	<option value="">请选择</option>
-            	<c:forEach items="${examTypes }" var="g">
-           			<option value="${g.typeId }">${g.name }</option>
+            	<c:forEach items="${exams }" var="g">
+           			<option value="${g.examId }">${g.name }</option>
            		</c:forEach>
             </select>
             <a href="#" id="searchButton" class="easyui-linkbutton" iconCls="icon-search">查询</a>                      
@@ -82,7 +82,7 @@
 <!-- End of easyui-dialog -->
 <script type="text/javascript">
 
-	$("select[name='grade']").change(function(){
+	/* $("select[name='grade']").change(function(){
 			var gradeId=$(this).children('option:selected').val();
 			if(gradeId == ""){
 				$("#schoolClasses").empty();
@@ -103,6 +103,53 @@
 					}	
 				});
 			}
+		}); */
+	
+	$("select[name='terms']").change(function(){
+		var yearId=$("select[name='schoolYear']").children('option:selected').val();
+		var termId=$("select[name='terms']").children('option:selected').val();
+		if(yearId == "" || termId==""){
+			$("select[name='exam']").empty();
+			
+		}else{
+			$.ajax({
+				url:"<s:url value='/exam/findByYearAndTerm' />",
+				data:{yearId: yearId,termId : termId},
+				method:"GET",
+				dataType:"json",
+				success:function(data){
+					$("select[name='exam']").empty();
+					$("select[name='exam']").append("<option value=''>请选择</option>");
+					var len=data.length;
+					for(var i=0;i<len;i++){
+						var item=data[i];
+						$("select[name='exam']").append("<option value='"+item.examId+"'>"+item.name+"</option>");
+					}
+				}	
+			});
+		}
+	});
+		$("select[name='exam']").change(function(){
+			var examId=$(this).children('option:selected').val();
+			if(examId == ""){				
+				$("#schoolClasses").empty();
+				
+			}else{				
+				$.ajax({
+					url:"<s:url value='/schoolClass/findByExam' />",
+					data:{examId: examId},
+					method:"GET",
+					dataType:"json",
+					success:function(data){
+						$("#schoolClasses").empty();
+						var len=data.length;
+						for(var i=0;i<len;i++){
+							var item=data[i];
+							$("#schoolClasses").append(" <input type='checkbox'  name='schoolClasses' value='"+item.classId+"'/>"+item.name);
+						}
+					}	
+				});
+			}
 		});
 		
 	
@@ -110,26 +157,26 @@
 	* Name 载入数据
 	*/
 	$("#searchButton").click(function(){
-			
-		var gradeId=$("select[name='grade']").children('option:selected').val();		
-		var classId=$("select[name='schoolClasses']").children('option:selected').val();
-		var studentId=$("select[name='students']").children('option:selected').val();
-		
-		
-		var examTypeIds=new Array();  
-			$('input[name="examTypes"]:checked').each(function(){  
-   			 examTypeIds.push($(this).val());//向数组中添加元素  
-			});  
+		var yearId=$("select[name='schoolYear']").children('option:selected').val();
+		var termId=$("select[name='terms']").children('option:selected').val();	
+		var gradeId=$("select[name='grade']").children('option:selected').val();				
+		var examId=$("select[name='exam']").children('option:selected').val();
+		var schoolClasses=new Array();  
+		$('input[name="schoolClasses"]:checked').each(function(){  
+			 schoolClasses.push($(this).val());//向数组中添加元素  
+		});  
 		//var idstr=schoolClasses.join(','); 
 		
-		if(gradeId&&classId&&studentId){				
+		
+		
+		if(yearId&&termId&&gradeId&&examId){				
 		$.ajax({
 				 headers: {
 					'Accept': 'application/json',	               
 	                'Content-Type': 'application/json'
 	            }, 
-				url:"<s:url value='/studentComprehensiveTrack/findByCondition' />",
-				data:JSON.stringify({gradeId: gradeId, classId: classId ,studentId:studentId ,examTypeIds: examTypeIds}),
+				url:"<s:url value='/classComprehensiveCompare/findByCondition' />",
+				data:JSON.stringify({yearId: yearId, termId: termId ,gradeId:gradeId ,examId: examId,schoolClasses:schoolClasses}),
 				type:"POST",
 				dataType:'json',
 				success:function(data){
@@ -161,34 +208,41 @@
 		var xAxis = {type: 'category',
         		boundaryGap: false};
         xAxis.data=[];
-        var classRank = [];
-        var gradeRank = [];
+        var sumAverage = [];
+        var top = [];
+        var bottom=[];
         $.each(echartsData,function(key,value){
         	 xAxis.data.push(key);
         	 var rank = value.split("#");
-        	 classRank.push(rank[0]);
-        	 gradeRank.push(rank[1]);
+        	 sumAverage.push(rank[0]);
+        	 top.push(rank[1]);
+        	 bottom.push(rank[2]);
         });
         	
        	var series = [
        		{
-            name:'班级排名',
+            name:'平均分',
             type:'line',           
-            data:classRank
+            data:sumAverage
         },
         {
-            name:'年级排名',
+            name:'最高分',
             type:'line',           
-            data:gradeRank
+            data:top
+        },
+        {
+            name:'最低分',
+            type:'line',           
+            data:bottom
         }
        	
        	]; 		
         // 指定图表的配置项和数据
         var option = {
-            title : {text : '学生综合成绩追踪图' },
+            title : {text : '班级综合成绩对比图' },
             tooltip: {trigger : 'axis'},
              legend: {
-        		data:['班级排名','年级排名']
+        		data:['平均分','最高分','最低分']
    			 }, 
             grid: {
         			 left: '3%',

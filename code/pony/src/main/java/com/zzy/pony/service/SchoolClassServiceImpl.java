@@ -7,11 +7,14 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.zzy.pony.dao.ExamDao;
 import com.zzy.pony.dao.SchoolClassDao;
+import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.Grade;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Teacher;
+import com.zzy.pony.vo.ExamVo;
 @Service
 @Transactional
 public class SchoolClassServiceImpl implements SchoolClassService {
@@ -19,6 +22,10 @@ public class SchoolClassServiceImpl implements SchoolClassService {
 	private SchoolClassDao dao;
 	@Autowired
 	private SchoolYearService yearService;
+	@Autowired
+	private ExamDao examDao;
+	@Autowired
+	private ExamService examService;
 
 	@Override
 	public void add(SchoolClass sy) {
@@ -71,5 +78,15 @@ public class SchoolClassServiceImpl implements SchoolClassService {
 		SchoolYear year=yearService.getCurrent();
 		return dao.findByYearIdAndTeacher(year.getYearId(), teacher);
 	}
+
+	@Override
+	public List<SchoolClass> findByExam(int examId) {
+		// TODO Auto-generated method stub
+		 ExamVo examVo =  examService.getVo(examId);
+		 examVo.getSchoolClasses().size();
+		 List<SchoolClass> schoolClasses = examVo.getSchoolClasses();
+		return schoolClasses;
+	}
+	
 
 }

@@ -25,4 +25,5 @@ public interface SchoolClassService {
 	 * @return
 	 */
 	List<SchoolClass> findCurrentByTeacher(Teacher teacher);
+	List<SchoolClass> findByExam(int examId);
 }

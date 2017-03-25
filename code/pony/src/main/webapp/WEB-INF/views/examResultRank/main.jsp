@@ -106,11 +106,12 @@
 		});
 		$("select[name='exam']").change(function(){
 			var examId=$(this).children('option:selected').val();
-			if(exam == ""){
+			if(examId == ""){
 				$("#subjects").empty();
+				$("#schoolClasses").empty();
 				
 			}else{
-				$.ajax({
+				 $.ajax({
 					url:"<s:url value='/subject/findByExam' />",
 					data:{examId: examId},
 					method:"GET",
@@ -123,12 +124,26 @@
 							$("#subjects").append(" <input type='checkbox'  name='subjects' value='"+item.subjectId+"'/>"+item.name);
 						}
 					}	
-				});
+				}); 
+				 $.ajax({
+					url:"<s:url value='/schoolClass/findByExam' />",
+					data:{examId: examId},
+					method:"GET",
+					dataType:"json",
+					success:function(data){
+						$("#schoolClasses").empty();
+						var len=data.length;
+						for(var i=0;i<len;i++){
+							var item=data[i];
+							$("#schoolClasses").append(" <input type='checkbox'  name='schoolClasses' value='"+item.classId+"'/>"+item.name);
+						}
+					}	
+				}); 
 			}
 		});
 		
 
-	$("select[name='grade']").change(function(){
+	/* $("select[name='grade']").change(function(){
 			var gradeId=$(this).children('option:selected').val();
 			if(gradeId == ""){
 				$("#schoolClasses").empty();
@@ -149,7 +164,7 @@
 					}	
 				});
 			}
-		});
+		}); */
 
 	
 	/**

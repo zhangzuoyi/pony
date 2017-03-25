@@ -55,7 +55,22 @@ public class SchoolClassController {
 	@RequestMapping(value="findByGrade",method = RequestMethod.GET)
 	@ResponseBody
 	public List<SchoolClass> findByGrade(@RequestParam(value="gradeId") int gradeId,Model model){
-		return service.findByGrade(gradeId);
+		List<SchoolClass> schoolClasses =service.findByGrade(gradeId);
+				for (SchoolClass schoolClass : schoolClasses) {
+					schoolClass.setGrade(null);
+					schoolClass.setTeacher(null);
+				}
+		return schoolClasses;
+	}
+	@RequestMapping(value="findByExam",method = RequestMethod.GET)
+	@ResponseBody
+	public List<SchoolClass> findByExam(@RequestParam(value="examId") int examId,Model model){
+		List<SchoolClass> schoolClasses = service.findByExam(examId);
+		for (SchoolClass schoolClass : schoolClasses) {
+			schoolClass.setGrade(null);
+			schoolClass.setTeacher(null);
+		}
+		return schoolClasses;
 	}
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody

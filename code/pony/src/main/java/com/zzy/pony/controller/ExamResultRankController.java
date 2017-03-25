@@ -27,14 +27,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.dao.ExamTypeDao;
-import com.zzy.pony.model.ExamType;
 import com.zzy.pony.model.Grade;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.service.ExamResultRankService;
-import com.zzy.pony.service.ExamService;
 import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.SchoolYearService;
@@ -68,13 +66,13 @@ public class ExamResultRankController {
 		List<Term> terms = termService.findAll();
 		List<Grade> grades = gradeService.findAll();
 		//List<ExamType> examTypes = examTypeDao.findAll();
-		List<SchoolClass> schoolClasses = schoolClassService.findAll();
+		//List<SchoolClass> schoolClasses = schoolClassService.findAll();
 		List<Subject> subjects = subjectService.findMajorSubject();//查询主修科目
 		model.addAttribute("schoolYears", schoolYears);
 		model.addAttribute("terms", terms);
 		model.addAttribute("grades", grades);
 		//model.addAttribute("examTypes", examTypes);
-		model.addAttribute("schoolClasses", schoolClasses);
+		//model.addAttribute("schoolClasses", schoolClasses);
 		model.addAttribute("subjects", subjects);
 
 	

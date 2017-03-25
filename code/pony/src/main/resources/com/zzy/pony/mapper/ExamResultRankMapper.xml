@@ -23,7 +23,10 @@
         g.GRADE_ID	gradeId,
         g.name      gradeName,
         h.TYPE_ID    typeId,
-        h.NAME       typeName
+        h.NAME       typeName,
+        j.name 		 teacherName,
+        k.TEACHER_ID headTeacherId,
+        k.name		 headTeacherName
  from t_exam_result t 
 left join t_exam a on t.EXAM_ID=a.EXAM_ID
 left join t_student b on t.STUDENT_ID=b.student_id 
@@ -33,6 +36,9 @@ left join t_school_year e on a.YEAR_ID=e.YEAR_ID
 left join t_term f on a.TERM_ID=f.TERM_ID
 left join t_grade g on c.GRADE_ID=g.GRADE_ID
 left join t_exam_type h on a.TYPE_ID = h.TYPE_ID
+left join t_teacher_subject i on a.YEAR_ID= i.YEAR_ID and a.TERM_ID=i.TERM_ID and b.CLASS_ID=i.CLASS_ID and t.SUBJECT_ID=i.SUBJECT_ID
+left join t_teacher j on i.TEACHER_ID=j.TEACHER_ID
+left join t_teacher k on c.TEACHER_ID=k.TEACHER_ID
 	</sql>
 	<select id="findByCondition" resultType="com.zzy.pony.vo.ExamResultRankVo">
 		

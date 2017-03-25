@@ -99,6 +99,7 @@ public class StudentComprehensiveTrackController {
 			}
 			cv.setExamTypeIds(examTypeArray);
 		}
+		   int studentId = cv.getStudentId();
 		
 		
 			StringBuilder result = new StringBuilder();
@@ -142,7 +143,7 @@ public class StudentComprehensiveTrackController {
 			
 			//新增echarts数据获取xAxis(学年+学期+考试名)yAxis(班级排名+年级排名)
 			Map<String, Object> echartsMap = new HashMap<String, Object>();
-			 List<Integer> exams= examResultRankService.findExamsByStudentId(cv.getStudentId());
+			 List<Integer> exams= examResultRankService.findExamsByStudentId(studentId);
 			
 			for (Integer exam : exams) {
 				ExamVo examVo = examService.getVo(exam);
