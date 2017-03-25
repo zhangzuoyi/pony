@@ -19,16 +19,12 @@ public class SchoolYear implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="YEAR_ID")
 	private Integer yearId;
-
-	@Temporal(TemporalType.DATE)
-	@Column(name="END_DATE")
-	private Date endDate;
-
-	private String name;
-
-	@Temporal(TemporalType.DATE)
-	@Column(name="START_DATE")
-	private Date startDate;
+	
+	@Column(name="START_YEAR")
+	private Integer startYear;
+	
+	@Column(name="END_YEAR")
+	private Integer endYear;
 	
 	@Column(name="IS_CURRENT")
 	private String isCurrent;
@@ -36,6 +32,9 @@ public class SchoolYear implements Serializable {
 	public SchoolYear() {
 	}
 
+	public String getName(){
+		return startYear+"-"+endYear+"学年";
+	}
 	public Integer getYearId() {
 		return this.yearId;
 	}
@@ -44,36 +43,28 @@ public class SchoolYear implements Serializable {
 		this.yearId = yearId;
 	}
 
-	public Date getEndDate() {
-		return this.endDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Date getStartDate() {
-		return this.startDate;
-	}
-
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-
 	public String getIsCurrent() {
 		return isCurrent;
 	}
 
 	public void setIsCurrent(String isCurrent) {
 		this.isCurrent = isCurrent;
+	}
+
+	public Integer getStartYear() {
+		return startYear;
+	}
+
+	public void setStartYear(Integer startYear) {
+		this.startYear = startYear;
+	}
+
+	public Integer getEndYear() {
+		return endYear;
+	}
+
+	public void setEndYear(Integer endYear) {
+		this.endYear = endYear;
 	}
 
 }

@@ -47,7 +47,7 @@ public class SchoolClassServiceImpl implements SchoolClassService {
 	public void update(SchoolClass sy) {
 		SchoolClass old=dao.findOne(sy.getClassId());
 		old.setGrade(sy.getGrade());
-		old.setName(sy.getName());
+		old.setSeq(sy.getSeq());
 		old.setTeacher(sy.getTeacher());
 		old.setUpdateUser(sy.getUpdateUser());
 		old.setUpdateTime(sy.getUpdateTime());

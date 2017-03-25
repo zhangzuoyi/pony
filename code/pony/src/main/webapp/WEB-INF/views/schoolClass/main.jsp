@@ -48,8 +48,8 @@
                 </td>
             </tr>
             <tr>
-                <td width="60" align="right">名称:</td>
-                <td><input type="text" name="name" class="my-text" /></td>
+                <td width="60" align="right">序号:</td>
+                <td><input type="text" name="seq" class="my-text" /></td>
             </tr>
             <tr>
                 <td width="60" align="right">班主任:</td>
@@ -66,9 +66,6 @@
 </div>
 <!-- End of easyui-dialog -->
 <script type="text/javascript">
-	/**
-	* Name 添加记录
-	*/
 	function add(){
 		$('#my-form-2').form('submit', {
 			url:"<s:url value='/schoolClass/add' />",
@@ -86,9 +83,6 @@
 		});
 	}
 	
-	/**
-	* Name 修改记录
-	*/
 	function edit(){
 		$('#my-form-2').form('submit', {
 			url:"<s:url value='/schoolClass/edit' />",
@@ -106,9 +100,6 @@
 		});
 	}
 	
-	/**
-	* Name 删除记录
-	*/
 	function removeItem(){
 		$.messager.confirm('信息提示','确定要删除该记录？', function(result){
 			if(result){
@@ -132,9 +123,6 @@
 		});
 	}
 	
-	/**
-	* Name 打开添加窗口
-	*/
 	function openAdd(){
 		$('#my-form-2').form('clear');
 		$('#my-dialog-2').dialog({
@@ -155,9 +143,6 @@
         });
 	}
 	
-	/**
-	* Name 打开修改窗口
-	*/
 	function openEdit(){
 		$('#my-form-2').form('clear');
 		var item = $('#my-datagrid-2').datagrid('getSelected');
@@ -198,47 +183,13 @@
         });
 	}	
 	
-	/**
-	* Name 分页过滤器
-	*/
-	function pagerFilter(data){            
-		if (typeof data.length == 'number' && typeof data.splice == 'function'){// is array                
-			data = {                   
-				total: data.length,                   
-				rows: data               
-			}            
-		}        
-		var dg = $(this);         
-		var opts = dg.datagrid('options');          
-		var pager = dg.datagrid('getPager');          
-		pager.pagination({                
-			onSelectPage:function(pageNum, pageSize){                 
-				opts.pageNumber = pageNum;                   
-				opts.pageSize = pageSize;                
-				pager.pagination('refresh',{pageNumber:pageNum,pageSize:pageSize});                  
-				dg.datagrid('loadData',data);                
-			}          
-		});           
-		if (!data.originalRows){               
-			data.originalRows = (data.rows);       
-		}         
-		var start = (opts.pageNumber-1)*parseInt(opts.pageSize);          
-		var end = start + parseInt(opts.pageSize);        
-		data.rows = (data.originalRows.slice(start, end));         
-		return data;       
-	}
-	
 	function reload(){
 		$('#my-datagrid-2').datagrid('reload');
 	}
 	
-	/**
-	* Name 载入数据
-	*/
 	$('#my-datagrid-2').datagrid({
 		url:"<s:url value='/schoolClass/list' />",
-		method:'get',
-		loadFilter:pagerFilter,		
+		method:'get',	
 		rownumbers:true,
 		singleSelect:true,
 		pageSize:20,           
@@ -254,6 +205,7 @@
 				   return rec.grade.name;
 				}
 			},
+			{ field:'seq',title:'序号',width:180,sortable:true},
 			{ field:'name',title:'名称',width:180,sortable:true},
 			{ field:'teacher',title:'班主任',width:180,sortable:true,
 				formatter:function(value,rec){

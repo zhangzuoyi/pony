@@ -35,9 +35,8 @@ public class SchoolYearServiceImpl implements SchoolYearService {
 	@Override
 	public void update(SchoolYear sy) {
 		SchoolYear old=dao.findOne(sy.getYearId());
-		old.setEndDate(sy.getEndDate());
-		old.setName(sy.getName());
-		old.setStartDate(sy.getStartDate());
+		old.setStartYear(sy.getStartYear());
+		old.setEndYear(sy.getEndYear());
 		
 		dao.save(old);
 	}
