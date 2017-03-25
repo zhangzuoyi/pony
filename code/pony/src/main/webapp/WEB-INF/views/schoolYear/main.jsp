@@ -34,16 +34,12 @@
 		<input type="hidden" name="yearId" />
         <table>
             <tr>
-                <td width="60" align="right">名称:</td>
-                <td><input type="text" name="name" class="my-text" /></td>
+                <td align="right">开始年份:</td>
+                <td><input type="text" name="startYear" class="my-text" /></td>
             </tr>
             <tr>
-                <td align="right">开始日期:</td>
-                <td><input type="text" name="startDate" class="my-text easyui-datebox" data-options="formatter:myformatter,parser:myparser" /></td>
-            </tr>
-            <tr>
-                <td align="right">结束日期:</td>
-                <td><input type="text" name="endDate" class="my-text easyui-datebox" data-options="formatter:myformatter,parser:myparser" /></td>
+                <td align="right">结束年份:</td>
+                <td><input type="text" name="endYear" class="my-text" /></td>
             </tr>
         </table>
     </form>
@@ -139,9 +135,6 @@
 		});
 	}
 	
-	/**
-	* Name 打开添加窗口
-	*/
 	function openAdd(){
 		$('#my-form-2').form('clear');
 		$('#my-dialog-2').dialog({
@@ -162,9 +155,6 @@
         });
 	}
 	
-	/**
-	* Name 打开修改窗口
-	*/
 	function openEdit(){
 		$('#my-form-2').form('clear');
 		var item = $('#my-datagrid-2').datagrid('getSelected');
@@ -219,8 +209,8 @@
 			/* { checkbox:true}, */
 			{ field:'yearId',title:'ID',width:100,sortable:true},
 			{ field:'name',title:'名称',width:180,sortable:true},
-			{ field:'startDate',title:'开始日期',width:100},
-			{ field:'endDate',title:'结束日期',width:100},
+			{ field:'startYear',title:'开始年份',width:100},
+			{ field:'endYear',title:'结束年份',width:100},
 			{ field:'isCurrent',title:'是否当前',width:180,sortable:true,
 				formatter:function(value,rec){
 					if(rec.isCurrent == '0'){

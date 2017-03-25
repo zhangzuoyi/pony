@@ -21,6 +21,8 @@ public class Grade implements Serializable {
 	private Integer gradeId;
 
 	private String name;
+	
+	private Integer seq;
 
 	//bi-directional many-to-one association to SchoolClass
 //	@OneToMany(mappedBy="grade")
@@ -43,6 +45,14 @@ public class Grade implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Integer getSeq() {
+		return seq;
+	}
+
+	public void setSeq(Integer seq) {
+		this.seq = seq;
 	}
 
 //	public List<SchoolClass> getSchoolClasses() {

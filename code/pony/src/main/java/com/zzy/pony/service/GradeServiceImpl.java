@@ -35,6 +35,7 @@ public class GradeServiceImpl implements GradeService {
 	public void update(Grade sy) {
 		Grade old=dao.findOne(sy.getGradeId());
 		old.setName(sy.getName());
+		old.setSeq(sy.getSeq());
 		
 		dao.save(old);
 	}

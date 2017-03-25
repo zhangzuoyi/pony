@@ -42,7 +42,7 @@ public class SchoolClass implements Serializable {
 	@Column(name="CREATE_USER")
 	private String createUser;
 
-	private String name;
+	private Integer seq;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="UPDATE_TIME")
@@ -66,6 +66,9 @@ public class SchoolClass implements Serializable {
 	public SchoolClass() {
 	}
 
+	public String getName(){
+		return grade.getName()+"("+seq+")班";
+	}
 	public Integer getClassId() {
 		return this.classId;
 	}
@@ -88,14 +91,6 @@ public class SchoolClass implements Serializable {
 
 	public void setCreateUser(String createUser) {
 		this.createUser = createUser;
-	}
-
-	public String getName() {
-		return this.name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public Date getUpdateTime() {
@@ -136,6 +131,14 @@ public class SchoolClass implements Serializable {
 
 	public void setTeacher(Teacher teacher) {
 		this.teacher = teacher;
+	}
+
+	public Integer getSeq() {
+		return seq;
+	}
+
+	public void setSeq(Integer seq) {
+		this.seq = seq;
 	}
 
 }
