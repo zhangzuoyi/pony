@@ -11,6 +11,9 @@ import java.util.Map;
 
 
 
+
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,16 +26,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
+
+
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.dao.ExamTypeDao;
+import com.zzy.pony.dao.SchoolClassDao;
 import com.zzy.pony.model.Grade;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.model.Term;
-import com.zzy.pony.service.ExamResultRankService;
+import com.zzy.pony.service.ClassComprehensiveCompareService;
+import com.zzy.pony.service.ClassSingleCompareService;
 import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.SchoolYearService;
@@ -41,8 +49,8 @@ import com.zzy.pony.service.TermService;
 import com.zzy.pony.vo.conditionVo;
 
 @Controller
-@RequestMapping(value = "/examResultRank")
-public class ExamResultRankController {
+@RequestMapping(value = "/classSingleCompare")
+public class ClassSingleCompareController {
 	@Autowired
 	private SchoolYearService schoolYearService;
 	@Autowired
@@ -56,7 +64,9 @@ public class ExamResultRankController {
 	@Autowired
 	private SubjectService subjectService;
 	@Autowired
-	private ExamResultRankService examResultRankService;
+	private SchoolClassDao schoolClassDao;
+	@Autowired
+	private ClassSingleCompareService classSingleCompareService;
 	
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
@@ -67,81 +77,94 @@ public class ExamResultRankController {
 		List<Grade> grades = gradeService.findAll();
 		//List<ExamType> examTypes = examTypeDao.findAll();
 		//List<SchoolClass> schoolClasses = schoolClassService.findAll();
-		List<Subject> subjects = subjectService.findMajorSubject();//查询主修科目
+	
 		model.addAttribute("schoolYears", schoolYears);
 		model.addAttribute("terms", terms);
 		model.addAttribute("grades", grades);
 		//model.addAttribute("examTypes", examTypes);
 		//model.addAttribute("schoolClasses", schoolClasses);
-		model.addAttribute("subjects", subjects);
+		
 
 	
 		
-		return "examResultRank/main";
+		return "classSingleCompare/main";
 	}
 	@RequestMapping(value="findByCondition",method = RequestMethod.POST)
 	@ResponseBody
 	public String findByCondition(@RequestBody conditionVo cv) {
-		
-		
 		//新增默认全选功能
+			List<SchoolClass> schoolClasses = new ArrayList<SchoolClass>();
 		
-		if (cv.getSubjects()==null || cv.getSubjects().length == 0) {
-			List<Subject> subjects = subjectService.findByExam(cv.getExamId());
-			String[] subjectArray = new String[subjects.size()] ;
-			for (int i = 0; i < subjects.size(); i++) {
-				subjectArray[i] = subjects.get(i).getSubjectId()+"";
-			}				
-			cv.setSubjects(subjectArray);				
+		if (cv.getSchoolClasses()==null || cv.getSchoolClasses().length == 0) {
+			schoolClasses = schoolClassService.findByGrade(cv.getGradeId());
+			String[] schoolClassArray = new String[schoolClasses.size()] ;
+			for (int i = 0; i < schoolClasses.size(); i++) {
+				schoolClassArray[i] = schoolClasses.get(i).getClassId()+"";
+			}
+			cv.setSchoolClasses(schoolClassArray);
+		}else {
+			for (String classId : cv.getSchoolClasses()) {
+				schoolClasses.add(schoolClassDao.findOne(Integer.valueOf(classId)));
+			}			
 		}
 		
 		
+		
 			StringBuilder result = new StringBuilder();
-			List<Map<String, Object>> dataList =  examResultRankService.findByCondition(cv);
+			List<Map<String, Object>> dataList =  classSingleCompareService.findByCondition(cv);
 			List<Map<String, Object>> headList = new ArrayList<Map<String,Object>>();
 			
 			Map<String, Object> classNameMap = new HashMap<String, Object>();
 			classNameMap.put("field", "className");
 			classNameMap.put("title", "班级");
-			Map<String, Object> studentNoMap = new HashMap<String, Object>();
-			studentNoMap.put("field", "studentNo");
-			studentNoMap.put("title", "学号");
-			Map<String, Object> studentNameMap = new HashMap<String, Object>();
-			studentNameMap.put("field", "studentName");
-			studentNameMap.put("title", "姓名");
-			
-			String[] subjects  =   cv.getSubjects();
-			for (String subjectId : subjects) {
-				Map<String, Object> headMap = new HashMap<String, Object>();
-				Subject subject = subjectService.get(Integer.valueOf(subjectId));
-				headMap.put("field", Constants.SUBJETCS.get(subject.getSubjectId()));
-				headMap.put("title", subject.getName());
-				headList.add(headMap);
-			}
-			
-			Map<String, Object> sumMap = new HashMap<String, Object>();
-			sumMap.put("field", "sum");
-			sumMap.put("title", "总成绩");
-			Map<String, Object> classRankMap = new HashMap<String, Object>();
-			classRankMap.put("field", "classRank");
-			classRankMap.put("title", "班级排名");
-			classRankMap.put("sortable", "true");
-			Map<String, Object> gradeRankMap = new HashMap<String, Object>();
-			gradeRankMap.put("field", "gradeRank");
-			gradeRankMap.put("title", "年级排名");
-			gradeRankMap.put("sortable", "true");
+			Map<String, Object> teacherNameMap = new HashMap<String, Object>();
+			teacherNameMap.put("field", "teacherName");
+			teacherNameMap.put("title", "任课教师");
+			Map<String, Object> studentCountMap = new HashMap<String, Object>();
+			studentCountMap.put("field", "studentCount");
+			studentCountMap.put("title", "考生人数");
+	
+			Map<String, Object> averageMap = new HashMap<String, Object>();
+			averageMap.put("field", Constants.SUBJETCS.get(cv.getSubjectId())+"Average");
+			averageMap.put("title", "平均分");
+			Map<String, Object> topMap = new HashMap<String, Object>();
+			topMap.put("field", "top");
+			topMap.put("title", "最高分");
+			Map<String, Object> bottomMap = new HashMap<String, Object>();
+			bottomMap.put("field", "bottom");
+			bottomMap.put("title", "最低分");
 			headList.add(classNameMap);
-			headList.add(studentNoMap);
-			headList.add(studentNameMap);
-			headList.add(sumMap);
-			headList.add(classRankMap);
-			headList.add(gradeRankMap);
+			headList.add(teacherNameMap);
+			headList.add(studentCountMap);
+			headList.add(averageMap);
+			headList.add(topMap);
+			headList.add(bottomMap);
 		
 			GsonBuilder gb = new GsonBuilder();
 			Gson gson = gb.create();
 			String data = gson.toJson(dataList);
 			Gson gson2 = gb.create();
 			String head= gson2.toJson(headList);
+			
+			//新增echarts数据获取xAxis(班级)yAxis(平均分最高分最低分)
+			
+			
+			Map<String, Object> echartsMap = new HashMap<String, Object>();
+	
+			for (SchoolClass schoolClass : schoolClasses) {			
+				if (dataList!=null&&dataList.size()!=0) {
+					for (Map<String, Object> dataMap : dataList) {
+						if ( schoolClass.getClassId().toString().equalsIgnoreCase(dataMap.get("classId")+"") ) {
+							echartsMap.put(schoolClass.getName(), dataMap.get(Constants.SUBJETCS.get(cv.getSubjectId())+"Average")+"#"+dataMap.get("top")+"#"+dataMap.get("bottom"));
+						}											
+					}
+				}else {
+					echartsMap.put(schoolClass.getName(), "0"+"#"+"0"+"#"+"0");
+				}			
+			}
+			Gson gson3 = gb.create();
+			String echarts= gson3.toJson(echartsMap);
+			
 			
 			result.append("{\"total\"");
 			result.append(":");
@@ -150,8 +173,15 @@ public class ExamResultRankController {
 			result.append(data);
 			result.append(",\"title\":");
 			result.append(head);
+			result.append(",\"echarts\":");
+			result.append(echarts);	
 			result.append("}");
 		
+			
+			
+			
+			
+			
             return result.toString();
 			
 

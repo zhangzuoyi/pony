@@ -51,6 +51,7 @@
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/studentComprehensiveTrack/main/' />" iframe="1">学生综合成绩追踪</a></li> 
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/studentSingleTrack/main/' />" iframe="1">学生单科成绩追踪</a></li>                          
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/classComprehensiveCompare/main/' />" iframe="1">班级综合成绩对比</a></li>                          
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/classSingleCompare/main/' />" iframe="1">班级单科成绩对比</a></li>                          
                                              
                 </ul>
             </div>

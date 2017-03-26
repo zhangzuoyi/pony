@@ -134,9 +134,13 @@ public class StudentSingleTrackController {
 			Map<String, Object> classRankMap = new HashMap<String, Object>();
 			classRankMap.put("field", "classRank");
 			classRankMap.put("title", "班级排名");
+			classRankMap.put("sortable", "true");
+
 			Map<String, Object> gradeRankMap = new HashMap<String, Object>();
 			gradeRankMap.put("field", "gradeRank");
 			gradeRankMap.put("title", "年级排名");
+			gradeRankMap.put("sortable", "true");
+
 			headList.add(yearNameMap);
 			headList.add(termNameMap);
 			headList.add(examNameMap);

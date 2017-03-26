@@ -1,6 +1,7 @@
 package com.zzy.pony.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.TeacherService;
+import com.zzy.pony.vo.SchoolClassVo;
 
 @Controller
 @RequestMapping(value = "/schoolClass")
@@ -54,23 +56,30 @@ public class SchoolClassController {
 	}
 	@RequestMapping(value="findByGrade",method = RequestMethod.GET)
 	@ResponseBody
-	public List<SchoolClass> findByGrade(@RequestParam(value="gradeId") int gradeId,Model model){
+	public List<SchoolClassVo> findByGrade(@RequestParam(value="gradeId") int gradeId,Model model){
+		List<SchoolClassVo> resultList = new ArrayList<SchoolClassVo>();
 		List<SchoolClass> schoolClasses =service.findByGrade(gradeId);
 				for (SchoolClass schoolClass : schoolClasses) {
-					schoolClass.setGrade(null);
-					schoolClass.setTeacher(null);
+					SchoolClassVo vo = new SchoolClassVo();
+					vo.setClassId(schoolClass.getClassId());
+					vo.setName(schoolClass.getName());
+					resultList.add(vo);;
 				}
-		return schoolClasses;
+		return resultList;
 	}
 	@RequestMapping(value="findByExam",method = RequestMethod.GET)
 	@ResponseBody
-	public List<SchoolClass> findByExam(@RequestParam(value="examId") int examId,Model model){
+	public List<SchoolClassVo> findByExam(@RequestParam(value="examId") int examId,Model model){
+		List<SchoolClassVo> resultList = new ArrayList<SchoolClassVo>();
 		List<SchoolClass> schoolClasses = service.findByExam(examId);
+		
 		for (SchoolClass schoolClass : schoolClasses) {
-			schoolClass.setGrade(null);
-			schoolClass.setTeacher(null);
+			SchoolClassVo vo = new SchoolClassVo();
+			vo.setClassId(schoolClass.getClassId());
+			vo.setName(schoolClass.getName());
+			resultList.add(vo);
 		}
-		return schoolClasses;
+		return resultList;
 	}
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody
