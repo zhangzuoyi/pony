@@ -23,7 +23,7 @@ public class GradeServiceImpl implements GradeService {
 
 	@Override
 	public List<Grade> findAll() {
-		return dao.findAll();
+		return dao.findAllByOrderBySeq();
 	}
 
 	@Override
@@ -44,6 +44,11 @@ public class GradeServiceImpl implements GradeService {
 	public void delete(int id) {
 		dao.delete(id);
 		
+	}
+
+	@Override
+	public List<Grade> findByGradeIdIn(Integer[] gradeIds) {
+		return dao.findByGradeIdIn(gradeIds);
 	}
 
 }

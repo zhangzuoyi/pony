@@ -30,8 +30,8 @@ public class ExamResultRankServiceImpl implements ExamResultRankService {
 	private StudentService studentService;
 	@Autowired
 	private SchoolClassService schoolClassService;
-	@Autowired
-	private ExamResultRankService examResultRankService;
+//	@Autowired
+//	private ExamResultRankService examResultRankService;
 	@Autowired
 	private ExamDao examDao;
 	

@@ -14,4 +14,5 @@ public interface SchoolClassDao extends JpaRepository<SchoolClass,Integer>{
 	List<SchoolClass> findByClassIdIn(List<Integer> ids);
 	List<SchoolClass> findByGrade(Grade grade);
 	List<SchoolClass> findByYearIdAndTeacher(Integer yearId, Teacher teacher);
+	List<SchoolClass> findByYearIdAndGradeIn(Integer yearId, List<Grade> grades);
 }

@@ -61,6 +61,7 @@
     			<ul class="easyui-tree my-side-tree">
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/studentRemark/main/' />" iframe="1">学生评语管理</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/prizePunish/main/' />" iframe="1">学生奖惩管理</a></li>
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/upgrade/main/' />" iframe="1">升级管理</a></li>
                 </ul>
             </div>
             </shiro:hasRole>

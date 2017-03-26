@@ -10,4 +10,5 @@ public interface GradeService {
 	Grade get(int id);
 	void update(Grade sy);
 	void delete(int id);
+	List<Grade> findByGradeIdIn(Integer[] gradeIds);
 }

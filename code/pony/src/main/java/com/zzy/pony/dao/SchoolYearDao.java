@@ -10,5 +10,5 @@ import com.zzy.pony.model.SchoolYear;
 
 public interface SchoolYearDao extends JpaRepository<SchoolYear,Integer>{
 	List<SchoolYear> findByIsCurrent(String isCurrent);
-
+	List<SchoolYear> findByStartYear(int startYear);
 }

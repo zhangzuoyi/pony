@@ -12,4 +12,5 @@ public interface SchoolYearService {
 	void delete(int id);
 	SchoolYear getCurrent();
 	void setCurrent(Integer id);
+	SchoolYear findByStartYear(int startYear);
 }

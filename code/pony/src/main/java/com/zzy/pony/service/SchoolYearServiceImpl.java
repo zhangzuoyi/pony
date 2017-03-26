@@ -69,4 +69,13 @@ public class SchoolYearServiceImpl implements SchoolYearService {
 		
 	}
 
+	@Override
+	public SchoolYear findByStartYear(int startYear) {
+		List<SchoolYear> list=dao.findByStartYear(startYear);
+		if(list.size()>0){
+			return list.get(0);
+		}
+		return null;
+	}
+
 }
