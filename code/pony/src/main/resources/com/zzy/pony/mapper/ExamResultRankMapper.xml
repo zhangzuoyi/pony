@@ -85,7 +85,9 @@ left join t_teacher k on c.TEACHER_ID=k.TEACHER_ID
      		<foreach item="item" index="index" collection="examTypeIds" open="(" separator="," close=")">  
      		 #{item}  
      		</foreach> 
-		 </if> 
+		 </if>
+		 order by e.YEAR_ID,f.TERM_ID,g.GRADE_ID,c.CLASS_ID
+		  
 	</select>
 	
 	<select id="findExamsByStudentId" resultType="java.lang.Integer">

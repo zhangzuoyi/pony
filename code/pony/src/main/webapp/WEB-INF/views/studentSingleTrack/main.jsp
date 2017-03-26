@@ -207,7 +207,7 @@
 					}	
 			});		
 		}else{
-		$.messager.alert('','请输入完整的查询条件!');;
+		$.messager.alert('','请输入完整的查询条件(科目必选)!');;
 		}		
 	});
 	 function  echartsInit(echartsData){

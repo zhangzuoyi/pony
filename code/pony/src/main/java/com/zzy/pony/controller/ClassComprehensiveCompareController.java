@@ -3,8 +3,10 @@ package com.zzy.pony.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 
 
 
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 
 
 
@@ -157,7 +160,7 @@ public class ClassComprehensiveCompareController {
 			//新增echarts数据获取xAxis(班级)yAxis(平均分最高分最低分)
 			
 			
-			Map<String, Object> echartsMap = new HashMap<String, Object>();
+			Map<String, Object> echartsMap = new LinkedHashMap<String, Object>();
 	
 			for (SchoolClass schoolClass : schoolClasses) {			
 				if (dataList!=null&&dataList.size()!=0) {

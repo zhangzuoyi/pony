@@ -3,8 +3,10 @@ package com.zzy.pony.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 
 
 
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 
 
 
@@ -144,7 +147,7 @@ public class StudentComprehensiveTrackController {
 			
 			
 			//新增echarts数据获取xAxis(学年+学期+考试名)yAxis(班级排名+年级排名)
-			Map<String, Object> echartsMap = new HashMap<String, Object>();
+			Map<String, Object> echartsMap = new LinkedHashMap<String, Object>();
 			 List<Integer> exams= examResultRankService.findExamsByStudentId(studentId);
 			
 			for (Integer exam : exams) {
