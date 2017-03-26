@@ -73,7 +73,7 @@
     </div>
 	<div data-options="region:'south'" style="border:0;" >
 	 <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-    <div id="echarts" style="width: 600px;height:400px;"></div>
+    <div id="echarts" style="width: 400px;height:300px;"></div>
 	</div>
 
 </div>
@@ -126,6 +126,36 @@
 				});
 			}
 		});
+		function pagerFilter(data){
+			if (typeof data.length == 'number' && typeof data.splice == 'function'){	// is array
+				data = {
+					total: data.length,
+					rows: data
+				}
+			}
+			var dg = $(this);
+			var opts = dg.datagrid('options');
+			var pager = dg.datagrid('getPager');
+			pager.pagination({
+				onSelectPage:function(pageNum, pageSize){
+					opts.pageNumber = pageNum;
+					opts.pageSize = pageSize;
+					pager.pagination('refresh',{
+						pageNumber:pageNum,
+						pageSize:pageSize
+					});
+					dg.datagrid('loadData',data);
+				}
+			});
+			if (!data.originalRows){
+				data.originalRows = (data.rows);
+			}
+			var start = (opts.pageNumber-1)*parseInt(opts.pageSize);
+			var end = start + parseInt(opts.pageSize);
+			data.rows = (data.originalRows.slice(start, end));
+			return data;
+		}
+		
 
 	
 	/**
@@ -161,8 +191,10 @@
                      $("#my-datagrid-2").datagrid({
                          columns: [data.title]    //动态取标题
                      });
-                     $("#my-datagrid-2").datagrid("loadData", data.rows);  //动态取数据 
-                     echartsInit(data.echarts);
+                    // $("#my-datagrid-2").datagrid("loadData", data.rows);  //动态取数据 
+                    $('#my-datagrid-2').datagrid({loadFilter:pagerFilter}).datagrid('loadData', data.rows);
+
+                    echartsInit(data.echarts);
                      
                      
 				},

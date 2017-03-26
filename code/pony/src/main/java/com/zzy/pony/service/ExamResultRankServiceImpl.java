@@ -30,15 +30,12 @@ public class ExamResultRankServiceImpl implements ExamResultRankService {
 	private StudentService studentService;
 	@Autowired
 	private SchoolClassService schoolClassService;
-//	@Autowired
-//	private ExamResultRankService examResultRankService;
 	@Autowired
 	private ExamDao examDao;
 	
 	@Override
 	public List<Map<String, Object>> findByCondition(conditionVo cv) {
 		// TODO Auto-generated method stub
-	List<ExamResultRankVo> ExamResultRankVos =  examResultRankMapper.findByCondition(cv);
 		//排名以及成绩展示需要处理  学生ID为键
 		//List<Map<Integer,Map<String, Object>>> lists = new ArrayList<Map<Integer,Map<String,Object>>>();
 		//班级为exam下的班级
@@ -51,7 +48,8 @@ public class ExamResultRankServiceImpl implements ExamResultRankService {
 				}
 				cv.setSchoolClasses(schoolClassArray);
 			}
-		
+		List<ExamResultRankVo> ExamResultRankVos =  examResultRankMapper.findByCondition(cv);
+
 		String[] subjects = cv.getSubjects();
 		Map<Integer,Map<String, Object>> map = new HashMap<Integer, Map<String,Object>>();
 

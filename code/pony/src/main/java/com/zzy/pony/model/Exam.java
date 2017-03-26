@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -57,7 +58,7 @@ public class Exam implements Serializable {
 	private Date examDate;
 
 	//bi-directional many-to-many association to SchoolClass
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(
 		name="T_CLASS_EXAM_RELATION"
 		, joinColumns={
@@ -67,6 +68,7 @@ public class Exam implements Serializable {
 			@JoinColumn(name="CLASS_ID")
 			}
 		)
+	
 	private List<SchoolClass> schoolClasses;
 
 	//uni-directional many-to-one association to Term

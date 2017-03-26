@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.mapper.ExamResultRankMapper;
 import com.zzy.pony.model.Student;
+import com.zzy.pony.model.Subject;
 import com.zzy.pony.vo.ExamResultRankVo;
 import com.zzy.pony.vo.conditionVo;
 @Service
@@ -34,73 +35,103 @@ public class ClassComprehensiveCompareServiceImpl implements ClassComprehensiveC
 	@Autowired
 	private TermService termService;
 	
+	
 	@Override
 	public List<Map<String, Object>> findByCondition(conditionVo cv) {
-		// TODO Auto-generated method stub		
-		List<ExamResultRankVo> ExamResultRankVos =  examResultRankMapper.findByCondition(cv);
-		//排名以及成绩展示需要处理  学生ID为键
-		//List<Map<Integer,Map<String, Object>>> lists = new ArrayList<Map<Integer,Map<String,Object>>>();
-		String[] subjects = cv.getSubjects();
-		Map<Integer,Map<String, Object>> map = new HashMap<Integer, Map<String,Object>>();
-
-		for (ExamResultRankVo examResultRankVo : ExamResultRankVos) {
+		// TODO Auto-generated method stub	
+		List<Map<String, Object>> resultList = new ArrayList<Map<String,Object>>();
+		//班级ID为键
+		Map<String,Map<String, Object>> map = new HashMap<String, Map<String,Object>>();
+		
+		
+		for (String classId : cv.getSchoolClasses()) {			
+			//科目为考试下的科目
+			List<Subject> subjectList = subjectService.findByExam(cv.getExamId());		
+			String[] subjects = new String[subjectList.size()] ;
+			for (int i = 0; i < subjectList.size(); i++) {
+				subjects[i] = subjectList.get(i).getSubjectId()+"";
+			}
+			cv.setSubjects(subjects);
+			cv.setClassId(Integer.valueOf(classId));
+			cv.setSchoolClasses(null);
+			List<ExamResultRankVo> ExamResultRankVos =  examResultRankMapper.findByCondition(cv);
+			//学生总分
+			Map<Integer, Float> studentSumMap = new HashMap<Integer, Float>();
 			Map<String, Object>	map2=new HashMap<String, Object>();
+			for (ExamResultRankVo examResultRankVo : ExamResultRankVos) {
 			//第一条
-			if (map == null || map.size() == 0) {	
-		
-				//排名
-				map2.put("className", examResultRankVo.getClassName());
-				map2.put("studentNo", examResultRankVo.getStudentNo());
-				map2.put("studentName", examResultRankVo.getStudentName());				
-				for (int i = 0; i < subjects.length; i++) {
-					if ((examResultRankVo.getSubjectId()+"").equalsIgnoreCase(subjects[i])) {
-						map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
-						map2.put("sum", examResultRankVo.getScore());
-						break;
-					}
-				}
-				map.put(examResultRankVo.getStudentId(), map2);	
-			//	lists.add(map);	//需要新增
-			}else {
-				if (map.containsKey(examResultRankVo.getStudentId())) {
-					//包含
-					map2 = map.get(examResultRankVo.getStudentId());
-					for (int i = 0; i < subjects.length; i++) {
-						if ((examResultRankVo.getSubjectId()+"").equalsIgnoreCase(subjects[i])) {
-							map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
-							map2.put("sum", examResultRankVo.getScore()+ Float.valueOf((map2.get("sum").toString())));
-							break;
-						}
-					}	
-					map.put(examResultRankVo.getStudentId(), map2);//无需新增到list
-				}else {
-					
-					//排名
+				if (map2 == null || map2.size() == 0) {				
+					map2.put("classId", classId);
+					//学生人数   
+					List<Student> list=studentService.findBySchoolClass(Integer.valueOf(classId));						
 					map2.put("className", examResultRankVo.getClassName());
-					map2.put("studentNo", examResultRankVo.getStudentNo());
-					map2.put("studentName", examResultRankVo.getStudentName());					
-					for (int i = 0; i < subjects.length; i++) {
-						if ((examResultRankVo.getSubjectId()+"").equalsIgnoreCase(subjects[i])) {
-							map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
-							map2.put("sum", examResultRankVo.getScore());
-							break;
-						}
-					}	
-					map.put(examResultRankVo.getStudentId(), map2);
-					//lists.add(map);	//需要新增
-					
+					map2.put("headTeacherName", examResultRankVo.getHeadTeacherName());
+					map2.put("studentCount", list.size());	
+					map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );						
+					studentSumMap.put(examResultRankVo.getStudentId(), examResultRankVo.getScore());
+												
+				}else {
+					if (map2.containsKey(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()))) {
+						float sum=  examResultRankVo.getScore() + Float.valueOf(map2.get(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()))+"");
+						map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()), sum);
+					}else{
+						map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );						
+					}
+					if (studentSumMap.containsKey(examResultRankVo.getStudentId())) {
+						float studentSum =  studentSumMap.get(examResultRankVo.getStudentId()) + examResultRankVo.getScore();
+						studentSumMap.put(examResultRankVo.getStudentId(), studentSum);				
+					}else {
+						studentSumMap.put(examResultRankVo.getStudentId(), examResultRankVo.getScore());
+					}
+							
+				}									
+						
+			}	
+			int studentCount =0;
+			if (map2.get("studentCount")!=null) {
+				studentCount =   Integer.valueOf(map2.get("studentCount")+"");
+			}
+			
+			float sumCount = 0F;
+			
+			for (Subject subject : subjectList) {
+				if (map2.get(Constants.SUBJETCS.get(subject.getSubjectId()))!= null) {
+					float subjectSum = Float.valueOf(map2.get(Constants.SUBJETCS.get(subject.getSubjectId()))+"");				
+					//科目平均分
+					if (studentCount!=0) {
+						map2.put(Constants.SUBJETCS.get(subject.getSubjectId())+"Average", subjectSum/studentCount);				
+					}else {
+						map2.put(Constants.SUBJETCS.get(subject.getSubjectId())+"Average", 0);				
+					}
+					sumCount += subjectSum;
 				}
-								
-			}									
-					
-		}		
-		sortByClassRank(map,cv.getSchoolClasses());
-		sortByGradeRank(map,cv.getSchoolClasses());
+				
+			}		
+			//总平均分
+			if (studentCount!=0) {
+				map2.put("sumAverage", sumCount/studentCount);	
+			}else {
+				map2.put("sumAverage", 0);	
+			}
+							
+			//最高分(最低分)
+			map2.putAll(sortBySumScore(studentSumMap));
 		
-		List<Map<String, Object>>  resultList = new ArrayList<Map<String,Object>>();
-		for (Integer key : map.keySet()) {
-			resultList.add(map.get(key));
+			map.put(classId, map2);
+			
+			
+			resultList.add(map.get(classId));
+			
+			
 		}
+		
+		
+		
+		
+		
+		  
+	
+		
 		
 		
 		
@@ -109,25 +140,14 @@ public class ClassComprehensiveCompareServiceImpl implements ClassComprehensiveC
 		
 	}
 	
-	//班级排名   
-		private Map<Integer,Map<String, Object>> sortByClassRank(Map<Integer,Map<String, Object>> unsortMap,String[] classes){
-			
-			for (int i = 0; i < classes.length; i++) {
-				Map<Integer, Float> map = new HashMap<Integer, Float>();
-				List<Student> students = studentService.findBySchoolClass(Integer.valueOf(classes[i]));
-				for (Student student : students) {//班级所有学生
-					
-						if (unsortMap.containsKey(student.getStudentId())) {						
-							map.put(student.getStudentId(),Float.valueOf(unsortMap.get(student.getStudentId()).get("sum")+""));
-							
-						}										
-					
-				
-				}
-				
+	//最高分和最低分   
+		private Map<String, Object> sortBySumScore(Map<Integer, Float>  unsortMap){	
 				//map进行排序
+			Map<String, Object> map = new HashMap<String, Object>();
+
+			if (unsortMap != null && unsortMap.size()>0 ) {
 				// 将map.entrySet()转换成list
-		        List<Map.Entry<Integer, Float>> list = new ArrayList<Map.Entry<Integer, Float>>(map.entrySet());
+		        List<Map.Entry<Integer, Float>> list = new ArrayList<Map.Entry<Integer, Float>>(unsortMap.entrySet());
 		        // 通过比较器来实现排序
 		        Collections.sort(list, new Comparator<Map.Entry<Integer, Float>>() {
 		            @Override
@@ -135,73 +155,19 @@ public class ClassComprehensiveCompareServiceImpl implements ClassComprehensiveC
 		                // 降序排序 分数值越高排名值越小
 		                return o2.getValue().compareTo(o1.getValue());
 		            }
-		        });
-		        for (int j = 0; j < list.size(); j++) {		
-		           // System.out.println("key:"+mapping.getKey() + "  value:" + mapping.getValue());	        					
-						
-						if (unsortMap.containsKey(list.get(j).getKey()) && j != 0) {
-							//新增相同处理逻辑
-							if (Float.valueOf(unsortMap.get(list.get(j).getKey()).get("sum")+"").floatValue() == list.get(j-1).getValue().floatValue() ) {
-								unsortMap.get(list.get(j).getKey()).put("classRank", unsortMap.get(list.get(j-1).getKey()).get("classRank"));															
-							}else {
-								unsortMap.get(list.get(j).getKey()).put("classRank", j+1);												
-							}						
-						}else {
-							unsortMap.get(list.get(j).getKey()).put("classRank", j+1);	
-						}	
-	     	
-		        	
-		        }	
-				}
-			return unsortMap;
+		        });		        		        	
+		        	map.put("top", list.get(0).getValue());
+		        	map.put("bottom", list.get(list.size()-1).getValue());
+			}else {
+				map.put("top", 0);
+	        	map.put("bottom",0);
+			}
+				        	
+				
+			return map;
 			
 			}
-		//年级排名
-		private Map<Integer,Map<String, Object>> sortByGradeRank(Map<Integer,Map<String, Object>> unsortMap,String[] classes){
-				//条件中的class须为同一年级里的班级，页面需要做联动控制
-				List<Student> students = new ArrayList<Student>();
-				for (int i = 0; i < classes.length; i++) {
-					students.addAll(studentService.findBySchoolClass(Integer.valueOf(classes[i])));
-				}
 		
-				Map<Integer, Float> map = new HashMap<Integer, Float>();
-				for (Student student : students) {//年级所有学生
-					
-						if (unsortMap.containsKey(student.getStudentId())) {						
-							map.put(student.getStudentId(),Float.valueOf(unsortMap.get(student.getStudentId()).get("sum")+""));
-							
-						}			
-				}
-				
-				//map进行排序
-				// 将map.entrySet()转换成list
-		        List<Map.Entry<Integer, Float>> list = new ArrayList<Map.Entry<Integer, Float>>(map.entrySet());
-		        // 通过比较器来实现排序
-		        Collections.sort(list, new Comparator<Map.Entry<Integer, Float>>() {
-		            @Override
-		            public int compare(Map.Entry<Integer, Float> o1, Map.Entry<Integer, Float> o2) {
-		                // 降序排序 分数值越高排名值越小
-		                return o2.getValue().compareTo(o1.getValue());
-		            }
-		        });
-		        for (int j = 0; j < list.size(); j++) {		
-		           // System.out.println("key:"+mapping.getKey() + "  value:" + mapping.getValue());
-		        	
-		        		if (unsortMap.containsKey(list.get(j).getKey()) && j != 0) {
-							//新增相同处理逻辑
-							if (Float.valueOf(unsortMap.get(list.get(j).getKey()).get("sum")+"").floatValue() == list.get(j-1).getValue().floatValue() ) {
-								unsortMap.get(list.get(j).getKey()).put("gradeRank", unsortMap.get(list.get(j-1).getKey()).get("gradeRank"));															
-							}else {
-								unsortMap.get(list.get(j).getKey()).put("gradeRank", j+1);												
-							}						
-						}else {
-							unsortMap.get(list.get(j).getKey()).put("gradeRank", j+1);	
-						}								
-		        }	
-				
-			return unsortMap;
-			
-			}
 		
 		
 		

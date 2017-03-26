@@ -99,6 +99,7 @@ public class StudentComprehensiveTrackController {
 			}
 			cv.setExamTypeIds(examTypeArray);
 		}
+		   int studentId = cv.getStudentId();
 		
 		
 			StringBuilder result = new StringBuilder();
@@ -121,9 +122,11 @@ public class StudentComprehensiveTrackController {
 			Map<String, Object> classRankMap = new HashMap<String, Object>();
 			classRankMap.put("field", "classRank");
 			classRankMap.put("title", "班级排名");
+			classRankMap.put("sortable", "true");
 			Map<String, Object> gradeRankMap = new HashMap<String, Object>();
 			gradeRankMap.put("field", "gradeRank");
 			gradeRankMap.put("title", "年级排名");
+			gradeRankMap.put("sortable", "true");
 			headList.add(yearNameMap);
 			headList.add(termNameMap);
 			headList.add(examNameMap);
@@ -142,7 +145,7 @@ public class StudentComprehensiveTrackController {
 			
 			//新增echarts数据获取xAxis(学年+学期+考试名)yAxis(班级排名+年级排名)
 			Map<String, Object> echartsMap = new HashMap<String, Object>();
-			 List<Integer> exams= examResultRankService.findExamsByStudentId(cv.getStudentId());
+			 List<Integer> exams= examResultRankService.findExamsByStudentId(studentId);
 			
 			for (Integer exam : exams) {
 				ExamVo examVo = examService.getVo(exam);

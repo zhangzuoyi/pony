@@ -99,7 +99,11 @@ public class ExamController {
 	public List<ExamVo> findByYearAndTerm(@RequestParam(value="yearId") int yearId,@RequestParam(value="termId") int termId,Model model){
 		SchoolYear schoolYear=  schoolYearDao.findOne(yearId);
 		Term term = termDao.findOne(termId);
-		List<ExamVo> list=service.findByYearAndTerm(schoolYear, term);		
+		List<ExamVo> list=service.findByYearAndTerm(schoolYear, term);
+		for (ExamVo examVo : list) {
+			examVo.setSchoolClasses(null);
+			examVo.setSubjects(null);
+		}
 		return list;
 	}
 	@RequestMapping(value="add",method = RequestMethod.POST)
