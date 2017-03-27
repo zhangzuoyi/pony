@@ -18,6 +18,9 @@ public class TeacherSubject implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="TS_ID")
 	private Integer tsId;
+	
+	@Column(name="WEEK_ARRANGE")
+	private String weekArrange;//每周课时
 
 	//bi-directional many-to-one association to Subject
 	@ManyToOne
@@ -91,6 +94,14 @@ public class TeacherSubject implements Serializable {
 
 	public void setTerm(Term term) {
 		this.term = term;
+	}
+
+	public String getWeekArrange() {
+		return weekArrange;
+	}
+
+	public void setWeekArrange(String weekArrange) {
+		this.weekArrange = weekArrange;
 	}
 
 }

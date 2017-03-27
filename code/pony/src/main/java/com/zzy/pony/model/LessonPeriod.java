@@ -27,6 +27,8 @@ public class LessonPeriod implements Serializable {
 
 	@Column(name="START_TIME")
 	private String startTime;
+	
+	private String stage;//所属时段，1 上午 2 下午 3 晚上
 
 	//bi-directional many-to-one association to LessonArrange
 //	@OneToMany(mappedBy="lessonPeriod")
@@ -113,6 +115,14 @@ public class LessonPeriod implements Serializable {
 
 	public void setSchoolYear(SchoolYear schoolYear) {
 		this.schoolYear = schoolYear;
+	}
+
+	public String getStage() {
+		return stage;
+	}
+
+	public void setStage(String stage) {
+		this.stage = stage;
 	}
 
 }
