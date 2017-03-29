@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.dao.TermDao;
+import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Term;
 @Service
 @Transactional
@@ -55,6 +56,18 @@ public class TermServiceImpl implements TermService {
 			return list.get(0);
 		}
 		return null;
+	}
+	@Override
+	public void setCurrent(Integer id) {
+		List<Term> list=dao.findByIsCurrent(Constants.CURRENT_FLAG_TRUE);
+		for(Term term: list){
+			if(term.getTermId() != id){
+				term.setIsCurrent(Constants.CURRENT_FLAG_FALSE);
+			}
+		}
+		Term term=dao.findOne(id);
+		term.setIsCurrent(Constants.CURRENT_FLAG_TRUE);
+		
 	}
 
 }

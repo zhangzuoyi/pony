@@ -18,34 +18,34 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
-import com.zzy.pony.model.SchoolYear;
-import com.zzy.pony.service.SchoolYearService;
+import com.zzy.pony.model.Term;
+import com.zzy.pony.service.TermService;
 
 @Controller
-@RequestMapping(value = "/schoolYear")
-public class SchoolYearController {
+@RequestMapping(value = "/term")
+public class TermController {
 	@Autowired
-	private SchoolYearService service;
+	private TermService service;
 	
-	@RequestMapping(value="main",method = RequestMethod.GET)
+	/*@RequestMapping(value="main",method = RequestMethod.GET)
 	public String main(Model model){
-		return "schoolYear/main";
-	}
+		return "term/main";
+	}*/
 	@RequestMapping(value="list",method = RequestMethod.GET)
 	@ResponseBody
-	public List<SchoolYear> list(Model model){
+	public List<Term> list(Model model){
 		return service.findAll();
 	}
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody
-	public String add(SchoolYear sy, Model model){
-		service.add(sy);
+	public String add(Term term, Model model){
+		service.add(term);
 		return "success";
 	}
 	@RequestMapping(value="edit",method = RequestMethod.POST)
 	@ResponseBody
-	public String edit(SchoolYear sy, Model model){
-		service.update(sy);
+	public String edit(Term term, Model model){
+		service.update(term);
 		return "success";
 	}
 	@RequestMapping(value="delete",method = RequestMethod.POST)
@@ -62,12 +62,12 @@ public class SchoolYearController {
 	}
 	@RequestMapping(value="get",method = RequestMethod.GET)
 	@ResponseBody
-	public SchoolYear get(@RequestParam(value="id") int id, Model model){
+	public Term get(@RequestParam(value="id") int id, Model model){
 		return service.get(id);
 	}
 	@RequestMapping(value="getCurrent",method = RequestMethod.GET)
 	@ResponseBody
-	public SchoolYear getCurrent(){
+	public Term getCurrent(){
 		return service.getCurrent();
 	}
 

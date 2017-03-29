@@ -11,4 +11,5 @@ public interface TermService {
 	void update(Term sy);
 	void delete(int id);
 	Term getCurrent();
+	void setCurrent(Integer id);
 }
