@@ -26,7 +26,7 @@ import com.zzy.pony.vo.ExamResultRankVo;
 import com.zzy.pony.vo.conditionVo;
 @Service
 @Transactional
-public class studentSingleTrackServiceImpl implements studentSingleTrackService {
+public class StudentSingleTrackServiceImpl implements StudentSingleTrackService {
 	@Autowired
 	private ExamResultRankMapper examResultRankMapper;
 	@Autowired

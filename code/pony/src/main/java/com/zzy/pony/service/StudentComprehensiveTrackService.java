@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.zzy.pony.vo.conditionVo;
 
-public interface studentComprehensiveTrackService {
+public interface StudentComprehensiveTrackService {
 	List<Map<String, Object>> findByCondition(conditionVo cv);
 	
 	
