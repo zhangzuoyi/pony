@@ -52,7 +52,7 @@ import com.zzy.pony.service.ExamService;
 import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.TermService;
-import com.zzy.pony.service.studentComprehensiveTrackService;
+import com.zzy.pony.service.StudentComprehensiveTrackService;
 import com.zzy.pony.vo.ExamVo;
 import com.zzy.pony.vo.conditionVo;
 
@@ -70,7 +70,7 @@ public class StudentComprehensiveTrackController {
 	
 	
 	@Autowired
-	private studentComprehensiveTrackService studentComprehensiveTrackService;
+	private StudentComprehensiveTrackService studentComprehensiveTrackService;
 	@Autowired
 	private ExamService examService;
 	
