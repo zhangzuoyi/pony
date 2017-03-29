@@ -33,7 +33,8 @@ public class StudentCardController {
 	@RequestMapping(value="getCard",method = RequestMethod.GET)
 	@ResponseBody
 	public StudentCard getCard(@RequestParam(value="studentId") int studentId, Model model){
-		
-		return service.get(studentId);
+		StudentCard card=service.get(studentId);
+		card.getStudent().setSchoolClasses(null);
+		return card;
 	}
 }

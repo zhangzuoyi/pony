@@ -19,6 +19,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 /**
  * The persistent class for the t_student database table.
@@ -27,6 +29,7 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name="t_student")
 @NamedQuery(name="Student.findAll", query="SELECT s FROM Student s")
+@JsonIgnoreProperties(value={"schoolClasses"})
 public class Student implements Serializable {
 	private static final long serialVersionUID = 1L;
 
