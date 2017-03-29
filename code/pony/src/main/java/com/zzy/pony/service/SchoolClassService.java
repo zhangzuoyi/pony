@@ -26,4 +26,5 @@ public interface SchoolClassService {
 	 */
 	List<SchoolClass> findCurrentByTeacher(Teacher teacher);
 	List<SchoolClass> findByExam(int examId);
+	List<SchoolClass> findByYearAndGrade(int yearId, int gradeId);
 }

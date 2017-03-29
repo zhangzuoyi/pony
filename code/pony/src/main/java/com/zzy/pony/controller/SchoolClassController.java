@@ -57,14 +57,23 @@ public class SchoolClassController {
 	@RequestMapping(value="findByGrade",method = RequestMethod.GET)
 	@ResponseBody
 	public List<SchoolClassVo> findByGrade(@RequestParam(value="gradeId") int gradeId,Model model){
-		List<SchoolClassVo> resultList = new ArrayList<SchoolClassVo>();
 		List<SchoolClass> schoolClasses =service.findByGrade(gradeId);
-				for (SchoolClass schoolClass : schoolClasses) {
-					SchoolClassVo vo = new SchoolClassVo();
-					vo.setClassId(schoolClass.getClassId());
-					vo.setName(schoolClass.getName());
-					resultList.add(vo);;
-				}
+		return toSimpleVo(schoolClasses);
+	}
+	@RequestMapping(value="findByYearAndGrade",method = RequestMethod.GET)
+	@ResponseBody
+	public List<SchoolClassVo> findByYearAndGrade(@RequestParam(value="yearId") int yearId,@RequestParam(value="gradeId") int gradeId,Model model){
+		List<SchoolClass> schoolClasses =service.findByYearAndGrade(yearId, gradeId);
+		return toSimpleVo(schoolClasses);
+	}
+	private List<SchoolClassVo> toSimpleVo(List<SchoolClass> schoolClasses){
+		List<SchoolClassVo> resultList = new ArrayList<SchoolClassVo>();
+		for (SchoolClass schoolClass : schoolClasses) {
+			SchoolClassVo vo = new SchoolClassVo();
+			vo.setClassId(schoolClass.getClassId());
+			vo.setName(schoolClass.getName());
+			resultList.add(vo);;
+		}
 		return resultList;
 	}
 	@RequestMapping(value="findByExam",method = RequestMethod.GET)

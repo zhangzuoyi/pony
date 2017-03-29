@@ -87,6 +87,13 @@ public class SchoolClassServiceImpl implements SchoolClassService {
 		 List<SchoolClass> schoolClasses = examVo.getSchoolClasses();
 		return schoolClasses;
 	}
+
+	@Override
+	public List<SchoolClass> findByYearAndGrade(int yearId, int gradeId) {
+		Grade grade=new Grade();
+		grade.setGradeId(gradeId);
+		return dao.findByYearIdAndGrade(yearId, grade);
+	}
 	
 
 }
