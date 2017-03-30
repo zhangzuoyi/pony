@@ -94,6 +94,12 @@ public class SchoolClassServiceImpl implements SchoolClassService {
 		grade.setGradeId(gradeId);
 		return dao.findByYearIdAndGrade(yearId, grade);
 	}
+
+	@Override
+	public List<SchoolClass> findCurrent() {
+		SchoolYear year=yearService.getCurrent();
+		return dao.findByYearId(year.getYearId());
+	}
 	
 
 }

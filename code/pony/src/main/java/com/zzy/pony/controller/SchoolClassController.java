@@ -48,7 +48,7 @@ public class SchoolClassController {
 	@RequestMapping(value="list",method = RequestMethod.GET)
 	@ResponseBody
 	public List<SchoolClass> list(Model model){
-		List<SchoolClass> list=service.findAll();
+		List<SchoolClass> list=service.findCurrent();
 		for(SchoolClass sc: list){
 //			sc.getGrade().setSchoolClasses(null);
 		}
