@@ -1,2 +1,6 @@
 /target/
 /zzy/
+/.settings
+/.classpath
+/.gitignore
+/pom.xml

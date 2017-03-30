@@ -5,6 +5,18 @@ import java.util.List;
 import com.zzy.pony.model.Student;
 
 public interface StudentService {
+	String STUDENT_TYPE_TZ="0";//统招
+	String STUDENT_TYPE_JR="1";//借入
+	String STUDENT_STATUS_ZD="0";//在读
+	String STUDENT_STATUS_BY="1";//毕业
+	String STUDENT_STATUS_KC="2";//开除
+	String STUDENT_STATUS_TX="3";//退学
+	String STUDENT_STATUS_CX="4";//辍学
+	String STUDENT_STATUS_YY="5";//肄业
+	String STUDENT_STATUS_ZC="6";//转出
+	String STUDENT_STATUS_JC="7";//借出
+	String STUDENT_STATUS_XX="8";//休学
+	String STUDENT_STATUS_SW="9";//死亡
 	void add(Student sy);
 	List<Student> findAll();
 	Student get(int id);

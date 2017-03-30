@@ -43,15 +43,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.dao.ExamTypeDao;
-import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.ExamType;
 import com.zzy.pony.model.Grade;
 import com.zzy.pony.service.ExamResultRankService;
-import com.zzy.pony.service.ExamResultService;
 import com.zzy.pony.service.ExamService;
 import com.zzy.pony.service.GradeService;
-import com.zzy.pony.service.SchoolYearService;
-import com.zzy.pony.service.TermService;
 import com.zzy.pony.service.StudentComprehensiveTrackService;
 import com.zzy.pony.vo.ExamVo;
 import com.zzy.pony.vo.conditionVo;
@@ -194,3 +190,5 @@ public class StudentComprehensiveTrackController {
 	
 	
 }
+
+

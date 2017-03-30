@@ -47,7 +47,8 @@
 			</select>
 			学生：
 			<!-- <input type="text" class="span3" name="student" data-provide="typeahead" data-items="4" /> -->
-			<select name="studentId" class="selectpicker" v-model="studentId"><!-- 使用bootstrap-select -->
+			<!-- class="selectpicker"  -->
+			<select name="studentId" v-model="studentId"><!-- 使用bootstrap-select -->
 				<option v-for="s in students" v-bind:value="s.studentId">{{s.name}}</option>
 			</select>
 			<button type="button" class="btn btn-default btn-sm" v-on:click="getStudent()">查看</button>
@@ -87,14 +88,14 @@
 		  	</tr>
 		  </table>
 		</div>
-		<div class="panel panel-default">
+		<!-- <div class="panel panel-default">
 		  <div class="panel-heading">变动信息</div>
 		  <table class="table">
 		  	<tr>
 		  		
 		  	</tr>
 		  </table>
-		</div>
+		</div> -->
 		<div class="panel panel-default" v-if="card.results">
 		  <div class="panel-heading">成绩信息</div>
 		  <table class="table">
@@ -152,7 +153,7 @@
 		  		<td>{{r.schoolYear.name}}</td>
 		  		<td>{{r.term.name}}</td>
 		  		<td>{{r.remarkLevel}}</td>
-		  		<td>{{r.remarkTime}}</td>
+		  		<td>{{r.remarkTime | date}}</td>
 		  		<td>{{r.teacher.name}}</td>
 		  		<td>{{r.remark}}</td>
 		  	</tr>
@@ -199,8 +200,10 @@ var app = new Vue({
 	el : '#app', 
 	data : { 
 		condition : {}, 
-		upgradeVos : [], 
-		currentPP : {student:{}}, 
+		card : {}, 
+		schoolClasses : [],
+		students : [],
+		studentId : null,
 		getClassesUrl : "<s:url value='/schoolClass/findByYearAndGrade' />", 
 		getStudentsUrl : "<s:url value='/studentAdmin/findByClass' />",
 		getCardUrl : "<s:url value='/studentCard/getCard' />" 

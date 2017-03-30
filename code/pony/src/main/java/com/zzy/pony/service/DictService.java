@@ -14,4 +14,9 @@ public interface DictService {
 	 * @return
 	 */
 	List<CommonDict> findStudentRemarkLevels();
+	/**
+	 * 学生类型（入学类型）
+	 * @return
+	 */
+	List<CommonDict> findStudentTypes();
 }
