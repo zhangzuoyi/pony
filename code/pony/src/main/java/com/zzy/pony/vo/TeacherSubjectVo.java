@@ -25,6 +25,10 @@ public class TeacherSubjectVo {
 	
 	private List<LessonArrange> arranges;
 	
+	private String teacherNo;
+	private String weekArrange;
+	
+	
 	public static TeacherSubjectVo fromModel(TeacherSubject ts){
 		TeacherSubjectVo vo=new TeacherSubjectVo();
 		vo.setTsId(ts.getTsId());
@@ -38,6 +42,8 @@ public class TeacherSubjectVo {
 		vo.setYearName(ts.getYear().getName());
 		vo.setTermId(ts.getTerm().getTermId());
 		vo.setTermName(ts.getTerm().getName());
+		vo.setTeacherNo(ts.getTeacher().getTeacherNo());
+		vo.setWeekArrange(ts.getWeekArrange());
 		
 		return vo;
 	}
@@ -126,6 +132,19 @@ public class TeacherSubjectVo {
 	public void setArranges(List<LessonArrange> arranges) {
 		this.arranges = arranges;
 	}
+	public String getTeacherNo() {
+		return teacherNo;
+	}
+	public void setTeacherNo(String teacherNo) {
+		this.teacherNo = teacherNo;
+	}
+	public String getWeekArrange() {
+		return weekArrange;
+	}
+	public void setWeekArrange(String weekArrange) {
+		this.weekArrange = weekArrange;
+	}
+	
 	
 	
 }
