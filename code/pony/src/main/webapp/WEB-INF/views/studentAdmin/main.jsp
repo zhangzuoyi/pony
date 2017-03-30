@@ -14,9 +14,13 @@
 <script type="text/javascript" src="<s:url value='/static/easyui/locale/easyui-lang-zh_CN.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/easyui/dateFormat.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/easyui/datagrid-cellediting.js' />"></script>
+<script type="text/javascript" src="<s:url value='/static/vue/vue.js' />"></script>
+<script type="text/javascript" src="<s:url value='/static/vue/vue-resource.min.js' />"></script>
+<script type="text/javascript" src="<s:url value='/static/js/moment.min.js' />"></script>
+<script type="text/javascript" src="<s:url value='/static/vue/myfilters.js' />"></script>
 </head>
 <body class="easyui-layout">
-<div class="easyui-layout" data-options="fit:true">
+<div class="easyui-layout" data-options="fit:true" id="app">
     <!-- Begin of toolbar -->
     <div id="my-toolbar-2">
         <div class="my-toolbar-button">
@@ -27,6 +31,10 @@
             <a href="#" class="easyui-linkbutton" iconCls="icon-reload" onclick="reload()" plain="true">刷新</a>
         </div>
         <div class="my-toolbar-search">
+        	<label>年级：</label> 
+            <select name="gradeId" v-model="gradeId" class="my-select" panelHeight="auto" style="width:100px">
+            	<option v-for="g in grades" v-bind:value="g.gradeId">{{g.name}}</option>
+            </select>
             <label>班级：</label> 
             <select name="schoolClass" class="my-select" panelHeight="auto" style="width:100px">
             	<c:forEach items="${classes }" var="g">
@@ -38,27 +46,6 @@
     </div>
     <!-- End of toolbar -->
     <table id="my-datagrid-2" class="easyui-datagrid" toolbar="#my-toolbar-2" data-options="singleSelect:true,fitColumns:true,fit:true">
-    <!-- columns:[[
-			/* { checkbox:true}, */
-			{ field:'studentNo',title:'学号',width:100,sortable:true},
-			{ field:'name',title:'姓名',width:100,sortable:true},
-			{ field:'sex',title:'性别',width:100,sortable:true},
-			{ field:'birthday',title:'生日',width:100,sortable:true},
-			{ field:'nativePlace',title:'籍贯',width:100,sortable:true},
-			{ field:'phone',title:'联系电话',width:100,sortable:true},
-			{ field:'entranceDate',title:'入学日期',width:100,sortable:true},
-			{ field:'entranceType',title:'入学类型',width:100,sortable:true},
-			{ field:'schoolClass',title:'班级',width:180,sortable:true,
-				formatter:function(value,rec){
-					if(rec.schoolClass){
-						return rec.schoolClass.name;
-					}else{
-						return "";
-					}
-				   
-				}
-			}
-		]] -->
     	<thead> 
             <tr> 
                 <th data-options="field:'studentNo',width:100">学号</th> 
@@ -356,38 +343,6 @@
 		$("#searchButton").click();
 	}
 	
-	/**
-	* Name 载入数据
-	*/
-	/* $('#my-datagrid-2').datagrid({
-		url:"<s:url value='/studentAdmin/list' />",
-		method:'get',
-		rownumbers:true,
-		singleSelect:true,
-		fitColumns:true,
-		fit:true,
-		columns:[[
-			{ field:'studentNo',title:'学号',width:100,sortable:true},
-			{ field:'name',title:'姓名',width:100,sortable:true},
-			{ field:'sex',title:'性别',width:100,sortable:true},
-			{ field:'birthday',title:'生日',width:100,sortable:true},
-			{ field:'nativePlace',title:'籍贯',width:100,sortable:true},
-			{ field:'phone',title:'联系电话',width:100,sortable:true},
-			{ field:'entranceDate',title:'入学日期',width:100,sortable:true},
-			{ field:'entranceType',title:'入学类型',width:100,sortable:true},
-			{ field:'schoolClass',title:'班级',width:180,sortable:true,
-				formatter:function(value,rec){
-					if(rec.schoolClass){
-						return rec.schoolClass.name;
-					}else{
-						return "";
-					}
-				   
-				}
-			}
-		]]
-	}); */
-	
 	function classFormatter(value,rec){
 		if(rec.schoolClass){
 			return rec.schoolClass.name;
@@ -427,7 +382,69 @@
 		});
 		$("#searchButton").click();
 	});
-	
+	var app = new Vue({ 
+		el : '#app', 
+		data : { 
+			condition : {}, 
+			grades : [],
+			allClasses : [],
+			schoolClasses : [],
+			gradeId : null,
+			getGradesUrl : "<s:url value='/grade/list' />", 
+			getAllClassUrl : "<s:url value='/schoolClass/list' />"
+		}, 
+		mounted : function() { 
+			this.grades();
+			this.gradeId=this.grades[0].gradeId;
+			this.allClasses();
+		}, 
+		methods : { 
+			grades : function(){
+				this.$http.get(this.getGradesUrl).then(
+					function(response){
+						this.grades=response.body;
+					}		
+				);
+			},
+			allClasses : function(){
+				this.$http.get(this.getAllClassUrl).then(
+					function(response){
+						this.allClasses=response.body;
+					}		
+				);
+			},
+			changeGrade : function(){
+				
+			},
+			changeCondition : function(){
+				if(this.condition.schoolYear && this.condition.grade){
+					this.$http.get(this.getClassesUrl,{params:{yearId:this.condition.schoolYear, gradeId:this.condition.grade}}).then(
+						function(response){
+							this.schoolClasses=response.body;
+						}		
+					);
+				}
+			},
+			changeClass : function(){
+				if(this.condition.schoolClass){
+					this.$http.get(this.getStudentsUrl,{params:{classId : this.condition.schoolClass}}).then(
+						function(response){
+							this.students=response.body;
+						}		
+					);
+				}
+			},
+			getStudent : function(){
+				if(this.studentId){
+					this.$http.get(this.getCardUrl,{params:{studentId : this.studentId}}).then(
+						function(response){
+							this.card=response.body;
+						}		
+					);
+				}
+			}
+		} 
+	}); 
 </script>
 </body>
 </html>
