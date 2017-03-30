@@ -63,6 +63,7 @@
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/studentRemark/main/' />" iframe="1">学生评语管理</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/prizePunish/main/' />" iframe="1">学生奖惩管理</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/upgrade/main/' />" iframe="1">升级管理</a></li>
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/studentCard/main/' />" iframe="1">学籍卡</a></li>
                 </ul>
             </div>
             </shiro:hasRole>
@@ -72,6 +73,7 @@
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/lessonPeriod/main/' />" iframe="1">上课时段管理</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/lessonArrange/main/' />" iframe="1">课程安排</a></li>
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/teacherLessonArrange/main/' />" iframe="1">老师任课安排</a></li>
+                	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/teacherLesson/main/' />" iframe="1">老师任课列表</a></li>
                 	
                 </ul>
             </div>

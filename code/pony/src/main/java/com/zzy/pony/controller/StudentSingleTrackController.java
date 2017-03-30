@@ -57,8 +57,8 @@ import com.zzy.pony.model.Subject;
 import com.zzy.pony.service.ExamService;
 import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.SubjectService;
-import com.zzy.pony.service.studentComprehensiveTrackService;
-import com.zzy.pony.service.studentSingleTrackService;
+import com.zzy.pony.service.StudentComprehensiveTrackService;
+import com.zzy.pony.service.StudentSingleTrackService;
 import com.zzy.pony.vo.ExamVo;
 import com.zzy.pony.vo.conditionVo;
 
@@ -76,7 +76,7 @@ public class StudentSingleTrackController {
 	@Autowired
 	private SubjectDao subjectDao;
 	@Autowired
-	private studentSingleTrackService studentSingleTrackService;
+	private StudentSingleTrackService studentSingleTrackService;
 	@Autowired
 	private ExamService examService;
 	
