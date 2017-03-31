@@ -1,6 +1,8 @@
 package com.zzy.pony.model;
 
 import java.io.Serializable;
+import java.util.Date;
+
 import javax.persistence.*;
 
 import com.zzy.pony.config.Constants;
@@ -29,6 +31,16 @@ public class LessonArrange implements Serializable {
 
 	@Column(name="WEEK_DAY")
 	private String weekDay;
+	
+	@Column(name="SOURCE_TYPE")
+	private String sourceType;//来源类型 0 预排，1 自动，3 调课
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="CREATE_TIME")
+	private Date createTime;
+
+	@Column(name="CREATE_USER")
+	private String createUser;
 
 	//bi-directional many-to-one association to LessonPeriod
 	@ManyToOne
@@ -120,6 +132,24 @@ public class LessonArrange implements Serializable {
 
 	public void setSubject(Subject subject) {
 		this.subject = subject;
+	}
+	public String getSourceType() {
+		return sourceType;
+	}
+	public void setSourceType(String sourceType) {
+		this.sourceType = sourceType;
+	}
+	public Date getCreateTime() {
+		return createTime;
+	}
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+	public String getCreateUser() {
+		return createUser;
+	}
+	public void setCreateUser(String createUser) {
+		this.createUser = createUser;
 	}
 
 }

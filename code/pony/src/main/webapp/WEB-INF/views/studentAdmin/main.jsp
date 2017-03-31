@@ -32,14 +32,12 @@
         </div>
         <div class="my-toolbar-search">
         	<label>年级：</label> 
-            <select name="gradeId" v-model="gradeId" class="my-select" panelHeight="auto" style="width:100px">
+            <select name="gradeId" v-model="gradeId" v-on:change="changeGrade()" class="my-select" panelHeight="auto" style="width:100px">
             	<option v-for="g in grades" v-bind:value="g.gradeId">{{g.name}}</option>
             </select>
             <label>班级：</label> 
-            <select name="schoolClass" class="my-select" panelHeight="auto" style="width:100px">
-            	<c:forEach items="${classes }" var="g">
-           			<option value="${g.classId }">${g.name }</option>
-           		</c:forEach>
+            <select name="schoolClass" v-model="classId" class="my-select" panelHeight="auto" style="width:100px">
+            	<option v-for="g in schoolClasses" v-bind:value="g.classId">{{g.name}}</option>
             </select>
             <a href="#" id="searchButton" class="easyui-linkbutton" iconCls="icon-search">查询</a>
         </div>
@@ -55,8 +53,9 @@
                 <th data-options="field:'nativePlace',width:100">籍贯</th> 
                 <th data-options="field:'phone',width:100">联系电话</th> 
                 <th data-options="field:'entranceDate',width:100">入学日期</th> 
-                <th data-options="field:'entranceType',width:100">入学类型</th> 
-                <th data-options="field:'schoolClass',width:100,formatter:classFormatter">班级</th> 
+                <th data-options="field:'entranceType',width:100">学生类型</th> 
+                <th data-options="field:'status',width:100">状态</th> 
+                <!-- <th data-options="field:'schoolClass',width:100,formatter:classFormatter">班级</th>  -->
             </tr> 
         </thead>
     </table>
@@ -123,7 +122,7 @@
             <tr>
                 <td width="60" align="right">入学日期:</td>
                 <td><input type="text" name="entranceDate"  class="my-text easyui-datebox" data-options="formatter:myformatter,parser:myparser" /></td>
-                <td width="60" align="right">入学类型:</td>
+                <td width="60" align="right">学生类型:</td>
                 <td>
                 	<select name="entranceType" class="my-select">
                 	</select>
@@ -390,23 +389,25 @@
 			allClasses : [],
 			schoolClasses : [],
 			gradeId : null,
+			classId : null,
 			getGradesUrl : "<s:url value='/grade/list' />", 
 			getAllClassUrl : "<s:url value='/schoolClass/list' />"
 		}, 
 		mounted : function() { 
-			this.grades();
-			this.gradeId=this.grades[0].gradeId;
-			this.allClasses();
+			this.getGrades();
+			//this.gradeId=this.grades[0].gradeId;
+			this.getAllClasses();
 		}, 
 		methods : { 
-			grades : function(){
+			getGrades : function(){
 				this.$http.get(this.getGradesUrl).then(
 					function(response){
 						this.grades=response.body;
+						this.gradeId=this.grades[0].gradeId;
 					}		
 				);
 			},
-			allClasses : function(){
+			getAllClasses : function(){
 				this.$http.get(this.getAllClassUrl).then(
 					function(response){
 						this.allClasses=response.body;
@@ -414,7 +415,12 @@
 				);
 			},
 			changeGrade : function(){
-				
+				this.schoolClasses=[];
+				for(var i=0;i<this.allClasses.length;i++){
+					if(this.gradeId == this.allClasses[i].grade.gradeId){
+						this.schoolClasses.push(this.allClasses[i]);
+					}
+				}
 			},
 			changeCondition : function(){
 				if(this.condition.schoolYear && this.condition.grade){
