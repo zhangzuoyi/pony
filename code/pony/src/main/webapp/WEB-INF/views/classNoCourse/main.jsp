@@ -44,38 +44,20 @@
             
             </el-col>                      
             <el-col :span="20" >                   
-            <el-table
-                    :data="tableData"
+            <el-table  
+           	 		:data="tableData"                 
                     border
                     style="width: 100%">                            
-                 <!-- <el-table-column
-                        prop="seq"
-                        label="序号"
-                        width="120">
-                </el-table-column>               
-                <el-table-column
-                        prop="name"
-                        label="名称"
-                        width="120">
-                </el-table-column>
-                <el-table-column
-               			inline-template                  
-                        label="是否上课"
-                        width="120">
-                        <div>
-                          {{ row.haveClass | filter }}                                                      
-                      </div>
-                </el-table-column>
-                <el-table-column 
-                		inline-template                      
-                        label="操作"
-                        width="200"
-                        >
-                      <div>            
-                        <el-button type="text" v-if="row.haveClass==0 " @click="weekdayUpdate(row.seq)">设为上课</el-button>
-                        <el-button type="text" v-if="row.haveClass==1 " @click="weekdayUpdate(row.seq)">设为不上课</el-button>                       
-                      </div>
-                </el-table-column>    -->                            
+                           
+                  <el-table-column 
+        			v-for="col in cols"
+        			:prop="col.prop" 
+        			:label="col.label"
+        			width="150" 
+        			>
+     		 </el-table-column> 
+     		   
+                                               
             </el-table>
             </el-col>          
             </el-row>   
@@ -94,18 +76,29 @@
 		
 		tableData: [],    
 		schoolClassTreeUrl :"<s:url value='/schoolClass/listTree'/>",	
-		haveClassUrl :"<s:url value='/weekLessonAdmin/listHaveClass'/>",			
-      	treeData: [],    
+		weekdaysUrl :"<s:url value='/weekLessonAdmin/listHaveClass'/>",
+		lessonPeriodsUrl   :"<s:url value='/lessonPeriod/findBySchoolYearAndTerm'/>",
+      	classNoCourseUrl :"<s:url value='/classNoCourse/listVo'/>",
+		treeData: [],    
        	props: {
                     label: 'label',
                     children: 'children'
-                }
+                },
+        weekdays :[],
+        lessonPeriods:[],
+        classNoCourse:[],
+        cols:[{prop: 'period',
+			label:'时间--星期'
+		}]
+                
 	
 		
 	}, 
 	mounted : function() { 	
 		this.getSchoolClassTree();
-		this.getHaveClass();	
+		this.getHaveClass();
+		this.getClassNoCourse();
+		this.getLessonPeriods();
 			
 	}, 
 	methods : { 		
@@ -117,14 +110,44 @@
 			function(response){}  			
 			); 	
 			},
-			getHaveClass : function(){ 			
-			this.$http.get(this.haveClassUrl).then(
+		getHaveClass : function(){ 			
+			this.$http.get(this.weekdaysUrl).then(
 			function(response){
-				//this.treeData  = response.data.treeData;
+				this.weekdays  = response.data;				
+				for(var index in this.weekdays){
+					this.cols.push({prop: this.weekdays[index].seq,
+						label: this.weekdays[index].name
+						});						
+				} 
 			 },
 			function(response){}  			
 			); 	
-			}
+			},
+		getLessonPeriods : function(){ 			
+				this.$http.get(this.lessonPeriodsUrl).then(
+				function(response){
+					this.lessonPeriods  = response.data;
+					/* for(var index in this.lessonPeriods){
+						this.tableData.push({
+							period :  this.lessonPeriods[index].startTime+"--"+this.lessonPeriods[index].endTime	 			
+							});						
+					}  */
+					
+					 			
+				 },
+				function(response){}  			
+				); 	
+				},
+		getClassNoCourse:function(){ 			
+			this.$http.get(this.classNoCourseUrl).then(
+					function(response){
+						this.classNoCourse  = response.data;						 			
+					 },
+					function(response){}  			
+					); 	
+					}		
+				
+				
 			
 		  
         }	        

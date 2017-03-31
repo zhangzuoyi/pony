@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
 import com.zzy.pony.model.LessonPeriod;
+import com.zzy.pony.model.SchoolYear;
+import com.zzy.pony.model.Term;
 import com.zzy.pony.service.LessonPeriodService;
 import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.TermService;
@@ -70,6 +72,16 @@ public class LessonPeriodController {
 		LessonPeriod sc=service.get(id);
 		return sc;
 	}
+	@RequestMapping(value="findBySchoolYearAndTerm",method = RequestMethod.GET)
+	@ResponseBody
+	public List<LessonPeriod> findBySchoolYearAndTerm(Model model){
+		SchoolYear schoolYear =	  yearService.getCurrent();
+		Term term = termService.getCurrent();
+		List<LessonPeriod> lessonPeriods = service.findBySchoolYearAndTerm(schoolYear, term);	
+		return lessonPeriods;
+	}
+	
+	
 
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) throws ServletException {
