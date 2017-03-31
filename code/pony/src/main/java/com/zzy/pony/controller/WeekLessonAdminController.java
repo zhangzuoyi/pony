@@ -35,8 +35,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
+
 import com.zzy.pony.dao.WeekdayDao;
 import com.zzy.pony.model.Weekday;
+import com.zzy.pony.service.WeekdayService;
 import com.zzy.pony.config.Constants;
 
 @Controller
@@ -44,6 +46,8 @@ import com.zzy.pony.config.Constants;
 public class WeekLessonAdminController {
 	@Autowired
 	private WeekdayDao weekdayDao;
+	@Autowired
+	private WeekdayService weekdayService;
 	
 	
 	
@@ -60,6 +64,14 @@ public class WeekLessonAdminController {
 		List<Weekday> resultList =weekdayDao.findAll();					
 		return resultList;
 	}
+	
+	@RequestMapping(value="listHaveClass",method = RequestMethod.GET)
+	@ResponseBody
+	public List<Weekday> findByhaveClass( ){
+		List<Weekday> resultList = weekdayService.findByhaveClass(Constants.HAVECLASS_FLAG_TRUE);					
+		return resultList;
+	}
+	
 	@RequestMapping(value="update",method = RequestMethod.GET)
 	@ResponseBody
 	public void update(Integer id ){

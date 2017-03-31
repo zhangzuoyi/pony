@@ -3,10 +3,13 @@ package com.zzy.pony.controller;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import org.bouncycastle.jce.provider.JDKDSASigner.stdDSA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -19,7 +22,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.zzy.pony.model.Grade;
 import com.zzy.pony.model.SchoolClass;
+import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.SchoolYearService;
@@ -54,6 +61,44 @@ public class SchoolClassController {
 		}
 		return list;
 	}
+	//获取年级班级树结构数据
+	@RequestMapping(value="listTree",method = RequestMethod.GET)
+	@ResponseBody
+	public String listTree(Model model){
+		StringBuilder result = new StringBuilder();
+		SchoolYear currentYear=   yearService.getCurrent();
+		List<Map<String, Object>> lists = new ArrayList<Map<String,Object>>();
+		List<Grade> grades =   gradeService.findAll();
+		
+		for (Grade grade : grades) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("id", grade.getGradeId());
+			map.put("label", grade.getName());
+			List<Map<String, Object>> list2 = new ArrayList<Map<String,Object>>();
+			List<SchoolClass> schoolClasses = service.findByYearAndGrade(currentYear.getYearId(), grade.getGradeId());
+				for (SchoolClass schoolClass : schoolClasses) {
+					Map<String, Object> map2 = new HashMap<String, Object>();
+					map2.put("id", schoolClass.getClassId());
+					map2.put("label", schoolClass.getName());
+					list2.add(map2);
+				}
+			map.put("children", list2);
+			lists.add(map);
+			
+		}
+		GsonBuilder gb = new GsonBuilder();
+		Gson gson = gb.create();
+		String treeDatas= gson.toJson(lists);	
+		result.append("{\"treeData\"");
+		result.append(":");
+		result.append(treeDatas);
+		result.append("}");
+		return result.toString();
+		
+		
+		
+		
+	}
 	@RequestMapping(value="findByGrade",method = RequestMethod.GET)
 	@ResponseBody
 	public List<SchoolClassVo> findByGrade(@RequestParam(value="gradeId") int gradeId,Model model){
@@ -72,6 +117,8 @@ public class SchoolClassController {
 			SchoolClassVo vo = new SchoolClassVo();
 			vo.setClassId(schoolClass.getClassId());
 			vo.setName(schoolClass.getName());
+			vo.setGradeId(schoolClass.getGrade().getGradeId());
+			vo.setGradeName(schoolClass.getGrade().getName());
 			resultList.add(vo);;
 		}
 		return resultList;

@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>星期上课设置</title>
+<title>班级不上课设置</title>
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/easyui/themes/default/easyui.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/style.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/icon.css' />" />
@@ -29,13 +29,26 @@
             <div slot="header" class="clearfix">
               <b>星期上课设置</b>                                           
             </div> 
-            <el-row>             
-            <el-col :span="20" :offset="4">                   
+            <el-row>  
+            <el-col :span="4" >
+            <el-tree
+                    :data="treeData"
+                    default-expand-all
+                    highlight-current
+                    ref="tree"
+                    :props="props"
+                    node-key="id"
+                    show-checkbox
+                   >
+            </el-tree>
+            
+            </el-col>                      
+            <el-col :span="20" >                   
             <el-table
                     :data="tableData"
                     border
                     style="width: 100%">                            
-                 <el-table-column
+                 <!-- <el-table-column
                         prop="seq"
                         label="序号"
                         width="120">
@@ -62,7 +75,7 @@
                         <el-button type="text" v-if="row.haveClass==0 " @click="weekdayUpdate(row.seq)">设为上课</el-button>
                         <el-button type="text" v-if="row.haveClass==1 " @click="weekdayUpdate(row.seq)">设为不上课</el-button>                       
                       </div>
-                </el-table-column>                               
+                </el-table-column>    -->                            
             </el-table>
             </el-col>          
             </el-row>   
@@ -79,34 +92,44 @@
 	el : '#app' ,
 	data : { 		
 		
-		tableData: [],
-        weekdayUrl : "<s:url value='/weekLessonAdmin/list'/>",
-		weekdayUpdateUrl :"<s:url value='/weekLessonAdmin/update'/>"
+		tableData: [],    
+		schoolClassTreeUrl :"<s:url value='/schoolClass/listTree'/>",	
+		haveClassUrl :"<s:url value='/weekLessonAdmin/listHaveClass'/>",			
+      	treeData: [],    
+       	props: {
+                    label: 'label',
+                    children: 'children'
+                }
+	
 		
 	}, 
-	mounted : function() { 
-		this.getWeekday();	
+	mounted : function() { 	
+		this.getSchoolClassTree();
+		this.getHaveClass();	
+			
 	}, 
-	methods : { 
-		 getWeekday : function(){ 
-			this.$http.get(this.weekdayUrl).then(
-			function(response){this.tableData=response.data; },
+	methods : { 		
+		  getSchoolClassTree : function(){ 			
+			this.$http.get(this.schoolClassTreeUrl).then(
+			function(response){
+				this.treeData  = response.data.treeData;
+			 },
 			function(response){}  			
-			); 
-			} ,
-		  weekdayUpdate : function(id){ 
-			this.$http.get(this.weekdayUpdateUrl,{params:{id : id }}).then(
-			function(response){this.getWeekday(); },
-			function(response){}  	 			
-			);
-			}	        
-	} ,
-	filters: {    
-    filter: function (value) {
-      if(value == 1){return "是"; }
-      if(value == 0){return "否"; }
-    }
-  }	
+			); 	
+			},
+			getHaveClass : function(){ 			
+			this.$http.get(this.haveClassUrl).then(
+			function(response){
+				//this.treeData  = response.data.treeData;
+			 },
+			function(response){}  			
+			); 	
+			}
+			
+		  
+        }	        
+	 
+	
 });  
 
 </script>

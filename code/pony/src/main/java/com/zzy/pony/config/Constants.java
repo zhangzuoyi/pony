@@ -11,8 +11,8 @@ public class Constants {
 	public static final String USER_TYPE_TEACHER="t";
 	public static final String USER_TYPE_STUDENT="s";
 	public static final String ID_TYPE_DEFAULT="01";//默认证件类型，就是身份证
-	public static final Integer HAVECLASS_FLAG_TRUE=0;//是否上课，否
-	public static final Integer HAVECLASS_FLAG_FALSE=1;//是否上课，是
+	public static final Integer HAVECLASS_FLAG_FALSE=0;//是否上课，否
+	public static final Integer HAVECLASS_FLAG_TRUE=1;//是否上课，是
 	public static final Map<String, String> WEEKDAYS;
 	public static final Map<Integer, String> SUBJECT_TYPES;
 	public static final Map<String, String> USER_TYPES;
