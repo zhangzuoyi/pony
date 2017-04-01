@@ -9,7 +9,6 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.bouncycastle.jce.provider.JDKDSASigner.stdDSA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -72,7 +71,7 @@ public class SchoolClassController {
 		
 		for (Grade grade : grades) {
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("id", grade.getGradeId());
+			//map.put("id", grade.getGradeId());
 			map.put("label", grade.getName());
 			List<Map<String, Object>> list2 = new ArrayList<Map<String,Object>>();
 			List<SchoolClass> schoolClasses = service.findByYearAndGrade(currentYear.getYearId(), grade.getGradeId());

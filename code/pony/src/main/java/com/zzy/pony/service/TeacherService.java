@@ -12,4 +12,6 @@ public interface TeacherService {
 	void delete(int id);
 	Teacher findByTeacherNo(String teacherNo);
 	void upload(List<Teacher> teachers, String loginUser);
+	List<Teacher> findTeachersByTeacherNo(String teacherNo);
+	List<String>  findAllTeacherNo();
 }

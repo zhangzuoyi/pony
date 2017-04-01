@@ -40,7 +40,7 @@
                 <el-col :span="12">
                     <div class="grid-content bg-purple">
                                                   老师:                  
-					<el-select v-model="teacherId" filterable>
+					<el-select v-model="teacherId" filterable placeholder="请选择..">
                		 <el-option
                         v-for="teacher in teachers" 
                         :label="teacher.name"                      

@@ -14,6 +14,8 @@ public class Constants {
 	public static final Integer HAVECLASS_FLAG_FALSE=0;//是否上课，否
 	public static final Integer HAVECLASS_FLAG_TRUE=1;//是否上课，是
 	public static final Map<String, String> WEEKDAYS;
+	public static final Map<String, String> WEEKDAYMAP;
+
 	public static final Map<Integer, String> SUBJECT_TYPES;
 	public static final Map<String, String> USER_TYPES;
 	public static final Map<Integer, String> SUBJETCS;
@@ -26,6 +28,16 @@ public class Constants {
 		WEEKDAYS.put("3", "星期三");
 		WEEKDAYS.put("4", "星期四");
 		WEEKDAYS.put("5", "星期五");
+		
+		WEEKDAYMAP=new LinkedHashMap<String, String>();
+		WEEKDAYMAP.put("1", "Monday");
+		WEEKDAYMAP.put("2", "Tuesday");
+		WEEKDAYMAP.put("3", "Wednesday");
+		WEEKDAYMAP.put("4", "Thrusday");
+		WEEKDAYMAP.put("5", "Friday");
+		WEEKDAYMAP.put("6", "Saturday");
+		WEEKDAYMAP.put("7", "Sunday");
+		
 		
 		SUBJECT_TYPES=new LinkedHashMap<Integer, String>();
 		SUBJECT_TYPES.put(0, "主科目");

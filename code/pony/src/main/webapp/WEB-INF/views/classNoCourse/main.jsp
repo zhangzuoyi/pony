@@ -27,9 +27,21 @@
   <div>   	           	
         	<el-card class="box-card content-margin">
             <div slot="header" class="clearfix">
-              <b>星期上课设置</b>                                           
+              <el-row>
+              <el-col :span="4">
+              <b>班级不上课设置</b>
+              </el-col>
+              
+              <el-col :span="4" :offset="16">
+               <el-button type="primary" @click="getListTableData()" >查询</el-button>
+               <el-button type="primary" @click="save()" >保存</el-button>             
+              </el-col>
+              
+              </el-row>
+              
+                                                         
             </div> 
-            <el-row>  
+            <el-row>
             <el-col :span="4" >
             <el-tree
                     :data="treeData"
@@ -39,6 +51,7 @@
                     :props="props"
                     node-key="id"
                     show-checkbox
+                    
                    >
             </el-tree>
             
@@ -47,7 +60,11 @@
             <el-table  
            	 		:data="tableData"                 
                     border
-                    style="width: 100%">                            
+                    style="width: 100%"
+                    @cell-click="cellClick"
+                    @cell-mouse-enter="mouseEnter"
+                    @cell-mouse-leave="mouseLeave"
+                    >                            
                            
                   <el-table-column 
         			v-for="col in cols"
@@ -74,11 +91,14 @@
 	el : '#app' ,
 	data : { 		
 		
-		tableData: [],    
+		tableData: [],
+		singleClassId :{},    
 		schoolClassTreeUrl :"<s:url value='/schoolClass/listTree'/>",	
 		weekdaysUrl :"<s:url value='/weekLessonAdmin/listHaveClass'/>",
 		lessonPeriodsUrl   :"<s:url value='/lessonPeriod/findBySchoolYearAndTerm'/>",
       	classNoCourseUrl :"<s:url value='/classNoCourse/listVo'/>",
+      	listTableDataUrl : "<s:url value='/classNoCourse/listTableData'/>",  
+      	saveUrl : "<s:url value='/classNoCourse/save'/>",       	
 		treeData: [],    
        	props: {
                     label: 'label',
@@ -97,8 +117,8 @@
 	mounted : function() { 	
 		this.getSchoolClassTree();
 		this.getHaveClass();
-		this.getClassNoCourse();
-		this.getLessonPeriods();
+		//this.getClassNoCourse();
+		//this.getLessonPeriods();
 			
 	}, 
 	methods : { 		
@@ -110,12 +130,20 @@
 			function(response){}  			
 			); 	
 			},
+		getCheckedKeys : function(){
+			/* console.log(this.$refs.tree.getCheckedKeys());
+			if(this.$refs.tree.getCheckedKeys().length==1){
+			this.singleClassId=this.$refs.tree.getCheckedKeys()[0];
+			this.getListTableData(this.singleClassId); 
+			} */				
+		},
+			
 		getHaveClass : function(){ 			
 			this.$http.get(this.weekdaysUrl).then(
 			function(response){
 				this.weekdays  = response.data;				
 				for(var index in this.weekdays){
-					this.cols.push({prop: this.weekdays[index].seq,
+					this.cols.push({prop: this.weekdays[index].seqName,
 						label: this.weekdays[index].name
 						});						
 				} 
@@ -127,13 +155,12 @@
 				this.$http.get(this.lessonPeriodsUrl).then(
 				function(response){
 					this.lessonPeriods  = response.data;
-					/* for(var index in this.lessonPeriods){
-						this.tableData.push({
-							period :  this.lessonPeriods[index].startTime+"--"+this.lessonPeriods[index].endTime	 			
-							});						
-					}  */
-					
-					 			
+					 /* for(var index in this.lessonPeriods){
+						var colData ={period :  this.lessonPeriods[index].startTime+"--"+this.lessonPeriods[index].endTime};						
+						for(idx in this.weekdays){
+					}						
+						this.tableData.push(colData);																						
+					}  */ 										 			
 				 },
 				function(response){}  			
 				); 	
@@ -141,16 +168,52 @@
 		getClassNoCourse:function(){ 			
 			this.$http.get(this.classNoCourseUrl).then(
 					function(response){
-						this.classNoCourse  = response.data;						 			
+						this.classNoCourse  = response.data;
+						
+												 			
 					 },
 					function(response){}  			
 					); 	
-					}		
-				
-				
-			
-		  
-        }	        
+					},
+		getListTableData:function(classId){
+			this.tableData = [];  //清空表格数据
+		
+			if(this.$refs.tree.getCheckedKeys().length==1){
+			this.singleClassId=this.$refs.tree.getCheckedKeys()[0];			
+			}else{
+			return ;
+			}					 			
+			this.$http.get(this.listTableDataUrl,{params:{classId:this.singleClassId}}).then(
+					function(response){
+						this.tableData  = response.data.tableData;																 			
+					 },
+					function(response){}  			
+					); 	
+					},
+		 save:function(){ 			
+			this.$http.get(this.saveUrl).then(
+					function(response){
+						this.tableData  = response.data.tableData;																 			
+					 },
+					function(response){}  			
+					); 		  
+       			 },
+       	cellClick:function(row,column,cell){
+       		//#F00
+       		cell.style.backgroundColor="#F00";
+       	},
+       	mouseEnter:function(row,column,cell){      		
+       		cell.style.backgroundColor="#F4A460";   		
+       	},
+       	mouseLeave:function(row,column,cell){
+       		cell.style.backgroundColor="";
+       	} 	
+       		
+       		
+       		
+   } 
+       		
+       		        
 	 
 	
 });  

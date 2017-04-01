@@ -38,6 +38,7 @@ import com.zzy.pony.service.DictService;
 import com.zzy.pony.service.SubjectService;
 import com.zzy.pony.service.TeacherService;
 import com.zzy.pony.util.DateTimeUtil;
+import com.zzy.pony.vo.TeacherVo;
 
 @Controller
 @RequestMapping(value = "/teacherAdmin")
@@ -64,6 +65,38 @@ public class TeacherAdminController {
 
 		return list;
 	}
+	
+	//将同一教师按照科目进行合并
+	@RequestMapping(value="listAllVo",method = RequestMethod.GET)
+	@ResponseBody
+	public List<TeacherVo> listAllVo(Model model){
+		List<TeacherVo> result = new ArrayList<TeacherVo>();
+		List<String> list=service.findAllTeacherNo();
+		for (String teacherNo : list) {
+			TeacherVo vo = new TeacherVo();
+			List<Teacher> teachers=   service.findTeachersByTeacherNo(teacherNo);	
+				for (Teacher teacher2 : teachers) {											
+					if (vo.getSubjectName()==null ||"".equalsIgnoreCase(vo.getSubjectName())) {
+						vo.setTeacherId(teacher2.getTeacherId());
+						vo.setName(teacher2.getName());
+						vo.setTeacherNo(teacher2.getTeacherNo());
+						vo.setSubjectName(teacher2.getSubject().getName());
+					}else {
+						vo.setSubjectName(vo.getSubjectName()+","+teacher2.getSubject().getName());
+					}									
+				}
+			 	
+			
+			result.add(vo);
+			
+			
+		}
+
+		return result;
+	}
+	
+	
+	
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody
 	public String add(Teacher sy, Model model){

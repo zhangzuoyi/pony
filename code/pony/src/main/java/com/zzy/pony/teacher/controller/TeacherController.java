@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
-import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.model.TeacherSubject;

@@ -1,5 +1,6 @@
 package com.zzy.pony.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -77,6 +78,37 @@ public class TeacherServiceImpl implements TeacherService {
 			return list.get(0);
 		}
 		return null;
+	}
+	
+	
+
+	@Override
+	public List<Teacher> findTeachersByTeacherNo(String teacherNo) {
+		// TODO Auto-generated method stub
+		return dao.findByTeacherNo(teacherNo);
+	}
+	
+	
+
+	@Override
+	public List<String> findAllTeacherNo() {
+		// TODO Auto-generated method stub
+		List<String> result = new ArrayList<String>();
+		List<Teacher> list = dao.findAll();
+		for (Teacher teacher : list) {
+			if (result!=null && result.size()>0) {
+				if (result.contains(teacher.getTeacherNo())) {	
+					continue;
+				}else {
+					result.add(teacher.getTeacherNo());
+				}		
+			}else{
+				result.add(teacher.getTeacherNo());				
+			}
+				
+		}
+		
+		return result;
 	}
 
 	@Override

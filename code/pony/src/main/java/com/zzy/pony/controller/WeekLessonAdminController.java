@@ -2,6 +2,7 @@ package com.zzy.pony.controller;
 
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +37,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
+
+
 import com.zzy.pony.dao.WeekdayDao;
 import com.zzy.pony.model.Weekday;
 import com.zzy.pony.service.WeekdayService;
+import com.zzy.pony.vo.WeekdayVo;
 import com.zzy.pony.config.Constants;
 
 @Controller
@@ -67,9 +71,18 @@ public class WeekLessonAdminController {
 	
 	@RequestMapping(value="listHaveClass",method = RequestMethod.GET)
 	@ResponseBody
-	public List<Weekday> findByhaveClass( ){
-		List<Weekday> resultList = weekdayService.findByhaveClass(Constants.HAVECLASS_FLAG_TRUE);					
-		return resultList;
+	public List<WeekdayVo> findByhaveClass( ){
+		List<WeekdayVo> result = new ArrayList<WeekdayVo>();
+		List<Weekday> list = weekdayService.findByhaveClass(Constants.HAVECLASS_FLAG_TRUE);
+		for (Weekday weekday : list) {
+			WeekdayVo vo = new WeekdayVo();
+			vo.setHaveClass(weekday.getHaveClass());
+			vo.setName(weekday.getName());
+			vo.setSeq(weekday.getSeq());
+			vo.setSeqName(Constants.WEEKDAYMAP.get(weekday.getSeq()+""));
+			result.add(vo);
+		}
+		return result;
 	}
 	
 	@RequestMapping(value="update",method = RequestMethod.GET)
