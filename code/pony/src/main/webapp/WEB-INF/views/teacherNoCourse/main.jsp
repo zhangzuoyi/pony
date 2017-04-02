@@ -159,7 +159,7 @@
 		       		}
 		       		cell.style.backgroundColor="";
 		       	},
-		 getListTableData:function(classId){
+		 getListTableData:function(){
 					this.tableData = [];  //清空表格数据
 				
 					if(this.teacherId==null){					

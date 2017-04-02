@@ -176,7 +176,7 @@
 					function(response){}  			
 					); 	
 					},
-		getListTableData:function(classId){
+		getListTableData:function(){
 			this.tableData = [];  //清空表格数据
 		
 			if(this.$refs.tree.getCheckedKeys().length==1){

@@ -9,6 +9,8 @@ public class NoCourseVo {
 	
 	private String gradeId; 
 	
+	private String subjectId;
+	
 	
 	
 	public NoCourseVo(){
@@ -64,6 +66,18 @@ public class NoCourseVo {
 	public void setGradeId(String gradeId) {
 		this.gradeId = gradeId;
 	}
+
+
+	public String getSubjectId() {
+		return subjectId;
+	}
+
+
+	public void setSubjectId(String subjectId) {
+		this.subjectId = subjectId;
+	}
+	
+	
 	
 	
 	

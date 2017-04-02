@@ -27,56 +27,83 @@
   <div>   	           	
         	<el-card class="box-card content-margin">
             <div slot="header" class="clearfix">
-              <b>科目不上课设置</b>                                           
+              <el-row>
+              <el-col :span="4">
+              <b>科目不上课设置</b>
+              </el-col>
+              
+              <el-col :span="4" :offset="16">
+               <el-button type="primary" @click="getListTableData()" >查询</el-button>
+               <el-button type="primary" @click="save()" >保存</el-button>             
+              </el-col>
+              
+              </el-row>                                            
             </div> 
-            <el-row>  
+            <el-row> 
+            <el-col :span="6"> 
+            <el-row>           
             <el-col :span="4" >
-            <el-tree
-                    :data="treeData"
-                    default-expand-all
-                    highlight-current
-                    ref="tree"
-                    :props="props"
-                    node-key="id"
-                    show-checkbox
-                   >
-            </el-tree>
+                    <b>年级:</b>                                    
+            </el-col> 
+            <el-col :span="20" >
+            <div class="grid-content bg-purple">                                     
+					<el-select v-model="gradeId" filterable placeholder="请选择..">
+               		 <el-option
+                        v-for="grade in grades" 
+                        :label="grade.name"                      
+                        :value="grade.gradeId">
+                        <span style="float: left">{{grade.name}}</span>
+               		 </el-option>
+           			 </el-select>				
+                    </div>
             
-            </el-col>                      
-            <el-col :span="20" >                   
-            <el-table
-                    :data="tableData"
+            </el-col>
+            </el-row> 
+            <el-row>
+            
+            <el-col :span="4" >
+                    <b>科目:</b>                                    
+            </el-col> 
+            <el-col :span="20" >
+            <div class="grid-content bg-purple">                                     
+					<el-select v-model="subjectId" filterable placeholder="请选择..">
+               		 <el-option
+                        v-for="subject in subjects" 
+                        :label="subject.name"                      
+                        :value="subject.subjectId">
+                        <span style="float: left">{{subject.name}}</span>
+               		 </el-option>
+           			 </el-select>				
+                    </div>
+            
+            </el-col>
+            </el-row> 
+            
+            
+            </el-col>
+                                
+            <el-col :span="18" >                   
+            <el-table  
+           	 		:data="tableData"                 
                     border
-                    style="width: 100%">                            
-                 <!-- <el-table-column
-                        prop="seq"
-                        label="序号"
-                        width="120">
-                </el-table-column>               
-                <el-table-column
-                        prop="name"
-                        label="名称"
-                        width="120">
-                </el-table-column>
-                <el-table-column
-               			inline-template                  
-                        label="是否上课"
-                        width="120">
-                        <div>
-                          {{ row.haveClass | filter }}                                                      
-                      </div>
-                </el-table-column>
-                <el-table-column 
-                		inline-template                      
-                        label="操作"
-                        width="200"
-                        >
-                      <div>            
-                        <el-button type="text" v-if="row.haveClass==0 " @click="weekdayUpdate(row.seq)">设为上课</el-button>
-                        <el-button type="text" v-if="row.haveClass==1 " @click="weekdayUpdate(row.seq)">设为不上课</el-button>                       
-                      </div>
-                </el-table-column>    -->                            
+                    style="width: 100%"
+                    @cell-click="cellClick"
+                    @cell-mouse-enter="mouseEnter"
+                    @cell-mouse-leave="mouseLeave"
+                    >                            
+                           
+                  <el-table-column 
+        			v-for="col in cols"
+        			:prop="col.prop" 
+        			:label="col.label"
+        			width="150" 
+        			>
+     		 </el-table-column> 
+     		   
+                                               
             </el-table>
+            
+            
             </el-col>          
             </el-row>   
         </el-card>       	
@@ -88,43 +115,111 @@
 </div>
 <script type="text/javascript">
 		
- var app = new Vue({ 
+var app = new Vue({ 
 	el : '#app' ,
 	data : { 		
-		
-		tableData: [],    
-		schoolClassTreeUrl :"<s:url value='/schoolClass/listTree'/>",	
-		haveClassUrl :"<s:url value='/weekLessonAdmin/listHaveClass'/>",			
-      	treeData: [],    
-       	props: {
-                    label: 'label',
-                    children: 'children'
-                }
+		gradeId:null,
+		grades : [],
+		subjectId:null,
+		subjects:[],
+		gradesUrl :"<s:url value='/grade/list'/>",
+		subjectsUrl :"<s:url value='/subject/list'/>",
+		weekdaysUrl :"<s:url value='/weekLessonAdmin/listHaveClass'/>",
+		listTableDataUrl :"<s:url value='/subjectNoCourse/listTableData'/>",
+		saveUrl :"<s:url value='/subjectNoCourse/save'/>",
+		weekdays :[],
+		cols:[{prop: 'period',
+			label:'时间--星期'
+		}],
+		tableData: [],
+		selectData:[]
 	
 		
 	}, 
-	mounted : function() { 	
-		this.getSchoolClassTree();
-		this.getHaveClass();	
+	mounted : function() { 
+		this.getSubjects();
+		this.getGrades();
+		this.getHaveClass();
 			
 	}, 
-	methods : { 		
-		  getSchoolClassTree : function(){ 			
-			this.$http.get(this.schoolClassTreeUrl).then(
-			function(response){
-				this.treeData  = response.data.treeData;
-			 },
-			function(response){}  			
-			); 	
+	methods : { 	
+		  getSubjects	:function(){ 
+			this.$http.get(this.subjectsUrl).then(
+			function(response){this.subjects=response.data; },
+			function(response){}  	 			
+			);
 			},
-			getHaveClass : function(){ 			
-			this.$http.get(this.haveClassUrl).then(
-			function(response){
-				//this.treeData  = response.data.treeData;
-			 },
-			function(response){}  			
-			); 	
-			}
+		  getGrades	:function(){ 
+			this.$http.get(this.gradesUrl).then(
+			function(response){this.grades=response.data; },
+			function(response){}  	 			
+			);
+			},
+		getHaveClass : function(){ 			
+				this.$http.get(this.weekdaysUrl).then(
+				function(response){
+					this.weekdays  = response.data;				
+					for(var index in this.weekdays){
+						this.cols.push({prop: this.weekdays[index].seqName,
+							label: this.weekdays[index].name
+							});	//{prop:Monday,label:"星期一"}					
+					} 
+				 },
+				function(response){}  			
+				); 	
+				},
+		cellClick:function(row,column,cell){
+		       		
+		       		//row.period   9:00--9:45
+		       		//column.label  星期一
+		       		if(this.gradeId==null || this.subjectId==null){					
+					return ;
+					}
+		       		if(cell.style.backgroundColor == "rgb(255, 0, 0)" ){
+		       			return;
+		       		}
+		       		//#F00
+		       		cell.style.backgroundColor="#F00";
+		       		this.selectData.push({period:row.period,weekday:column.label,gradeId:this.gradeId,subjectId:this.subjectId});
+		   		
+		       	},
+		 mouseEnter:function(row,column,cell){ 
+		       		if(cell.style.backgroundColor == "rgb(255, 0, 0)" ){
+		       			return;
+		       		}
+		       		cell.style.backgroundColor="#F4A460";   		
+		       	},
+		 mouseLeave:function(row,column,cell){
+		       		if(cell.style.backgroundColor == "rgb(255, 0, 0)" ){
+		       			return;
+		       		}
+		       		cell.style.backgroundColor="";
+		       	},
+		 getListTableData:function(){
+					this.tableData = [];  //清空表格数据
+				
+					if(this.gradeId==null||this.subjectId==null){					
+						return ;
+						}			 			
+					 this.$http.get(this.listTableDataUrl,{params:{gradeId:this.gradeId,subjectId:this.subjectId}}).then(
+							function(response){
+								this.tableData  = response.data.tableData;																 			
+							 },
+							function(response){}  			
+							);  	
+							},
+		save:function(){ 	
+					  if(this.selectData.length ==0){return;}
+					this.$http.post(this.saveUrl, this.selectData).then(
+							function(response){
+								this.selectData = [];		
+								alert("保存成功");
+							 },
+							function(response){}  			
+							);  		  
+		       			 },       	
+		       	
+			
 			
 		  
         }	        

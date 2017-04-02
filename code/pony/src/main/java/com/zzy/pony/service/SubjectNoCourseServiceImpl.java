@@ -14,8 +14,14 @@ import org.springframework.stereotype.Service;
 
 
 
+
+
 import com.zzy.pony.dao.SubjectNoCourseDao;
+import com.zzy.pony.model.Grade;
+import com.zzy.pony.model.SchoolYear;
+import com.zzy.pony.model.Subject;
 import com.zzy.pony.model.SubjectNoCourse;
+import com.zzy.pony.model.Term;
 import com.zzy.pony.vo.SubjectNoCourseVo;
 
 @Service
@@ -60,6 +66,23 @@ public class SubjectNoCourseServiceImpl implements SubjectNoCourseService {
 		sncv.setYearId(snc.getSchoolYear().getYearId());
 		sncv.setYearName(snc.getSchoolYear().getName());
 		return sncv;	
+	}
+	
+	@Override
+	public void deleteByGradeAndSubjectAndYearAndTerm(Grade grade,Subject subject,
+			SchoolYear schoolYear, Term term) {
+		// TODO Auto-generated method stub
+		
+		List<SubjectNoCourse> subjectNoCourses = subjectNoCourseDao.findByGradeAndSubjectAndSchoolYearAndTerm(grade, subject, schoolYear, term);
+		subjectNoCourseDao.delete(subjectNoCourses);
+		
+	}
+
+
+	@Override
+	public void save(SubjectNoCourse subjectNoCourse) {
+		// TODO Auto-generated method stub
+		subjectNoCourseDao.save(subjectNoCourse);
 	}
 	
 	
