@@ -11,6 +11,7 @@ import java.util.List;
 
 
 
+
 import javax.transaction.Transactional;
 
 import org.apache.commons.collections.iterators.ArrayListIterator;
@@ -23,8 +24,12 @@ import org.springframework.stereotype.Service;
 
 
 
+
 import com.zzy.pony.dao.ClassNoCourseDao;
 import com.zzy.pony.model.ClassNoCourse;
+import com.zzy.pony.model.SchoolClass;
+import com.zzy.pony.model.SchoolYear;
+import com.zzy.pony.model.Term;
 import com.zzy.pony.vo.ClassNoCourseVo;
 
 @Service
@@ -63,6 +68,26 @@ public class ClassNoCourseServiceImpl implements ClassNoCourseService {
 	
 		return result;
 	}
+
+	@Override
+	public void deleteByClassAndYearAndTerm(SchoolClass schoolClass,
+			SchoolYear schoolYear, Term term) {
+		// TODO Auto-generated method stub
+		List<ClassNoCourse> classNoCourses = classNoCourseDao.findBySchoolClassAndSchoolYearAndTerm(schoolClass, schoolYear, term);
+		classNoCourseDao.delete(classNoCourses);
+	}
+
+	@Override
+	public void save(ClassNoCourse classNoCourse) {
+		// TODO Auto-generated method stub
+		classNoCourseDao.save(classNoCourse);
+	}
+	
+	
+
+	
+	
+	
 	
 	
 		

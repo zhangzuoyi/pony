@@ -109,7 +109,8 @@
         classNoCourse:[],
         cols:[{prop: 'period',
 			label:'时间--星期'
-		}]
+		}],
+		selectData:[]
                 
 	
 		
@@ -145,7 +146,7 @@
 				for(var index in this.weekdays){
 					this.cols.push({prop: this.weekdays[index].seqName,
 						label: this.weekdays[index].name
-						});						
+						});	//{prop:Monday,label:"星期一"}					
 				} 
 			 },
 			function(response){}  			
@@ -190,22 +191,43 @@
 					function(response){}  			
 					); 	
 					},
-		 save:function(){ 			
-			this.$http.get(this.saveUrl).then(
+		 save:function(){ 	
+			 if(this.selectData.length ==0){return;}
+			this.$http.post(this.saveUrl, this.selectData).then(
 					function(response){
-						this.tableData  = response.data.tableData;																 			
+						this.selectData = [];		
+						alert("保存成功");
 					 },
 					function(response){}  			
 					); 		  
        			 },
        	cellClick:function(row,column,cell){
+       		
+       		//row.period   9:00--9:45
+       		//column.label  星期一
+       		if(this.$refs.tree.getCheckedKeys().length>=1){
+			var selectClassIds=this.$refs.tree.getCheckedKeys();			
+			}else{
+			return ;
+			}
+       		if(cell.style.backgroundColor == "rgb(255, 0, 0)" ){
+       			return;
+       		}
        		//#F00
        		cell.style.backgroundColor="#F00";
+       		this.selectData.push({period:row.period,weekday:column.label,classIds:selectClassIds});
+   		
        	},
-       	mouseEnter:function(row,column,cell){      		
+       	mouseEnter:function(row,column,cell){ 
+       		if(cell.style.backgroundColor == "rgb(255, 0, 0)" ){
+       			return;
+       		}
        		cell.style.backgroundColor="#F4A460";   		
        	},
        	mouseLeave:function(row,column,cell){
+       		if(cell.style.backgroundColor == "rgb(255, 0, 0)" ){
+       			return;
+       		}
        		cell.style.backgroundColor="";
        	} 	
        		

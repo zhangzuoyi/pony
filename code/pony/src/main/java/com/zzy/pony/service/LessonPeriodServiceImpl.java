@@ -56,4 +56,15 @@ public class LessonPeriodServiceImpl implements LessonPeriodService {
 		return dao.findBySchoolYearAndTermOrderBySeq(year, term);
 	}
 
+	@Override
+	public LessonPeriod findByStartTimeAndEndTime(String startTime,
+			String endTime) {
+		// TODO Auto-generated method stub
+		List<LessonPeriod> list = dao.findByStartTimeAndEndTime(startTime, endTime);
+		
+		return list.get(0);
+	}
+	
+	
+
 }

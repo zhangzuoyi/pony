@@ -13,10 +13,15 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+
+
+
 
 
 
@@ -28,15 +33,18 @@ import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.model.ClassNoCourse;
 import com.zzy.pony.model.LessonPeriod;
+import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.model.Weekday;
 import com.zzy.pony.service.ClassNoCourseService;
 import com.zzy.pony.service.LessonPeriodService;
+import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.TermService;
 import com.zzy.pony.service.WeekdayService;
 import com.zzy.pony.vo.ClassNoCourseVo;
+import com.zzy.pony.vo.NoCourseVo;
 
 
 
@@ -53,6 +61,8 @@ public class ClassNoCourseController {
 	private SchoolYearService schoolYearService;
 	@Autowired
 	private TermService termService;
+	@Autowired
+	private SchoolClassService schoolClassService;
 	
 	
 	
@@ -118,6 +128,38 @@ public class ClassNoCourseController {
 		result.append("}");
 		
 		return result.toString();
+	}
+	
+	@RequestMapping(value="save",method = RequestMethod.POST)
+	@ResponseBody
+	public void save(@RequestBody List<NoCourseVo> classNoCourseVos){
+		//保存逻辑,现删除原有班级的不排课，再插入
+		SchoolYear  schoolYear = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();		
+		String[] classIds = classNoCourseVos.get(0).getClassIds();
+		for (String classId : classIds) {
+			SchoolClass schoolClass	=   schoolClassService.get(Integer.valueOf(classId));
+			classNoCourseService.deleteByClassAndYearAndTerm(schoolClass, schoolYear, term);	
+		}
+		for (NoCourseVo noCourseVo : classNoCourseVos) {
+			for (String classId : classIds) {
+				SchoolClass schoolClass	=   schoolClassService.get(Integer.valueOf(classId));
+				/*	classNoCourseService.deleteByClassAndYearAndTerm(schoolClass, schoolYear, term);*/	
+				ClassNoCourse cnc = new ClassNoCourse();
+				cnc.setSchoolYear(schoolYear);
+				cnc.setTerm(term);
+				cnc.setSchoolClass(schoolClass);
+				//weekday-->seq
+				Weekday weekday = weekdayService.findByName(noCourseVo.getWeekday());
+				cnc.setWeekday(weekday);
+				//peroid-->periodId
+				String[] periods = noCourseVo.getPeriod().split("--");
+				LessonPeriod lessonPeriod = lessonPeriodService.findByStartTimeAndEndTime(periods[0], periods[1]);
+				cnc.setLessonPeriod(lessonPeriod);
+				classNoCourseService.save(cnc);				
+			}		
+		}
+		
 	}
 
 	

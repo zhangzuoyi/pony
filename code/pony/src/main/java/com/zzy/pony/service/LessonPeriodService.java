@@ -13,4 +13,5 @@ public interface LessonPeriodService {
 	void update(LessonPeriod sy);
 	void delete(int id);
 	List<LessonPeriod> findBySchoolYearAndTerm(SchoolYear year, Term term);
+	LessonPeriod findByStartTimeAndEndTime(String startTime,String endTime);
 }

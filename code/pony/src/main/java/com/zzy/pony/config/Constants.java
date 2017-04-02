@@ -28,6 +28,8 @@ public class Constants {
 		WEEKDAYS.put("3", "星期三");
 		WEEKDAYS.put("4", "星期四");
 		WEEKDAYS.put("5", "星期五");
+		WEEKDAYS.put("6", "星期六");
+		WEEKDAYS.put("7", "星期七");
 		
 		WEEKDAYMAP=new LinkedHashMap<String, String>();
 		WEEKDAYMAP.put("1", "Monday");

@@ -24,6 +24,15 @@ public class WeekdayServiceImpl implements WeekdayService {
 			// TODO Auto-generated method stub
 			return weekdayDao.findByhaveClass(haveClass);
 		}
+
+		@Override
+		public Weekday findByName(String name) {
+			// TODO Auto-generated method stub
+		 List<Weekday> weekdays =	weekdayDao.findByName(name);
+		 return weekdays.get(0);
+		}
+		
+		
 		
 		
 		
