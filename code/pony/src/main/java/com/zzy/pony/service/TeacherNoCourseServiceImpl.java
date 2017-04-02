@@ -11,8 +11,12 @@ import org.springframework.stereotype.Service;
 
 
 
+
 import com.zzy.pony.dao.TeacherNoCourseDao;
+import com.zzy.pony.model.SchoolYear;
+import com.zzy.pony.model.Teacher;
 import com.zzy.pony.model.TeacherNoCourse;
+import com.zzy.pony.model.Term;
 import com.zzy.pony.vo.TeacherNoCourseVo;
 
 @Service
@@ -56,6 +60,29 @@ public class TeacherNoCourseServiceImpl implements TeacherNoCourseService {
 		tncv.setYearName(tnc.getSchoolYear().getName());		
 		return tncv;	
 	}
+
+
+	@Override
+	public void deleteByTeacherAndYearAndTerm(Teacher teacher,
+			SchoolYear schoolYear, Term term) {
+		// TODO Auto-generated method stub
+		
+		List<TeacherNoCourse> teacherNoCourses = teacherNoCourseDao.findByTeacherAndSchoolYearAndTerm(teacher, schoolYear, term);
+		teacherNoCourseDao.delete(teacherNoCourses);
+		
+	}
+
+
+	@Override
+	public void save(TeacherNoCourse teacherNoCourse) {
+		// TODO Auto-generated method stub
+		teacherNoCourseDao.save(teacherNoCourse);
+	}
+	
+	
+	
+	
+	
 	
 	
 	

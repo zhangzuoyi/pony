@@ -5,6 +5,8 @@ public class NoCourseVo {
 	private String weekday;
 	private String[] classIds;
 	
+	private String teacherId;
+	
 	
 	public NoCourseVo(){
 		
@@ -39,6 +41,18 @@ public class NoCourseVo {
 	public void setClassIds(String[] classIds) {
 		this.classIds = classIds;
 	}
+
+
+	public String getTeacherId() {
+		return teacherId;
+	}
+
+
+	public void setTeacherId(String teacherId) {
+		this.teacherId = teacherId;
+	}
+	
+	
 	
 	
 

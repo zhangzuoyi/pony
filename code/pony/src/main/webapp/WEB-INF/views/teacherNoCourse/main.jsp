@@ -27,12 +27,24 @@
   <div>   	           	
         	<el-card class="box-card content-margin">
             <div slot="header" class="clearfix">
-              <b>老师不上课设置</b>                                           
+              <el-row>
+              <el-col :span="4">
+              <b>班级不上课设置</b>
+              </el-col>
+              
+              <el-col :span="4" :offset="16">
+               <el-button type="primary" @click="getListTableData()" >查询</el-button>
+               <el-button type="primary" @click="save()" >保存</el-button>             
+              </el-col>
+              
+              </el-row>                                          
             </div> 
-            <el-row>  
-            <el-col :span="4" >
-            <div class="grid-content bg-purple">
-                    <b>老师:</b>                  
+            <el-row> 
+            <el-col :span="1" >
+                    <b>老师:</b>                                    
+                   </el-col> 
+            <el-col :span="5" >
+            <div class="grid-content bg-purple">                                     
 					<el-select v-model="teacherId" filterable placeholder="请选择..">
                		 <el-option
                         v-for="teacher in teachers" 
@@ -44,7 +56,27 @@
                     </div>
             
             </el-col>                      
-            <el-col :span="20" >                   
+            <el-col :span="18" >                   
+            <el-table  
+           	 		:data="tableData"                 
+                    border
+                    style="width: 100%"
+                    @cell-click="cellClick"
+                    @cell-mouse-enter="mouseEnter"
+                    @cell-mouse-leave="mouseLeave"
+                    >                            
+                           
+                  <el-table-column 
+        			v-for="col in cols"
+        			:prop="col.prop" 
+        			:label="col.label"
+        			width="150" 
+        			>
+     		 </el-table-column> 
+     		   
+                                               
+            </el-table>
+            
             
             </el-col>          
             </el-row>   
@@ -62,13 +94,22 @@
 	data : { 		
 		teacherId:null,
 		teachers : [],
-		teachersUrl :"<s:url value='/teacherAdmin/listAllVo'/>"
-		
+		teachersUrl :"<s:url value='/teacherAdmin/listAllVo'/>",
+		weekdaysUrl :"<s:url value='/weekLessonAdmin/listHaveClass'/>",
+		listTableDataUrl :"<s:url value='/teacherNoCourse/listTableData'/>",
+		saveUrl :"<s:url value='/teacherNoCourse/save'/>",
+		weekdays :[],
+		cols:[{prop: 'period',
+			label:'时间--星期'
+		}],
+		tableData: [],
+		selectData:[]
 	
 		
 	}, 
 	mounted : function() { 	
 		this.getTeachers();
+		this.getHaveClass();
 			
 	}, 
 	methods : { 		
@@ -77,7 +118,72 @@
 			function(response){this.teachers=response.data; },
 			function(response){}  	 			
 			);
-			}
+			},
+		getHaveClass : function(){ 			
+				this.$http.get(this.weekdaysUrl).then(
+				function(response){
+					this.weekdays  = response.data;				
+					for(var index in this.weekdays){
+						this.cols.push({prop: this.weekdays[index].seqName,
+							label: this.weekdays[index].name
+							});	//{prop:Monday,label:"星期一"}					
+					} 
+				 },
+				function(response){}  			
+				); 	
+				},
+		cellClick:function(row,column,cell){
+		       		
+		       		//row.period   9:00--9:45
+		       		//column.label  星期一
+		       		if(this.teacherId==null){					
+					return ;
+					}
+		       		if(cell.style.backgroundColor == "rgb(255, 0, 0)" ){
+		       			return;
+		       		}
+		       		//#F00
+		       		cell.style.backgroundColor="#F00";
+		       		this.selectData.push({period:row.period,weekday:column.label,teacherId:this.teacherId});
+		   		
+		       	},
+		 mouseEnter:function(row,column,cell){ 
+		       		if(cell.style.backgroundColor == "rgb(255, 0, 0)" ){
+		       			return;
+		       		}
+		       		cell.style.backgroundColor="#F4A460";   		
+		       	},
+		 mouseLeave:function(row,column,cell){
+		       		if(cell.style.backgroundColor == "rgb(255, 0, 0)" ){
+		       			return;
+		       		}
+		       		cell.style.backgroundColor="";
+		       	},
+		 getListTableData:function(classId){
+					this.tableData = [];  //清空表格数据
+				
+					if(this.teacherId==null){					
+						return ;
+						}			 			
+					 this.$http.get(this.listTableDataUrl,{params:{teacherId:this.teacherId}}).then(
+							function(response){
+								this.tableData  = response.data.tableData;																 			
+							 },
+							function(response){}  			
+							);  	
+							},
+		save:function(){ 	
+					  if(this.selectData.length ==0){return;}
+					this.$http.post(this.saveUrl, this.selectData).then(
+							function(response){
+								this.selectData = [];		
+								alert("保存成功");
+							 },
+							function(response){}  			
+							);  		  
+		       			 },       	
+		       	
+			
 			
 		  
         }	        
