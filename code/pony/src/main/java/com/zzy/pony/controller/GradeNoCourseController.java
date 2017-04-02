@@ -19,28 +19,28 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
+import com.zzy.pony.model.Grade;
+import com.zzy.pony.model.GradeNoCourse;
 import com.zzy.pony.model.LessonPeriod;
 import com.zzy.pony.model.SchoolYear;
-import com.zzy.pony.model.Teacher;
-import com.zzy.pony.model.TeacherNoCourse;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.model.Weekday;
+import com.zzy.pony.service.GradeNoCourseService;
+import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.LessonPeriodService;
 import com.zzy.pony.service.SchoolYearService;
-import com.zzy.pony.service.TeacherNoCourseService;
-import com.zzy.pony.service.TeacherService;
 import com.zzy.pony.service.TermService;
 import com.zzy.pony.service.WeekdayService;
+import com.zzy.pony.vo.GradeNoCourseVo;
 import com.zzy.pony.vo.NoCourseVo;
-import com.zzy.pony.vo.TeacherNoCourseVo;
 
 
 @Controller
-@RequestMapping(value = "/teacherNoCourse")
-public class TeacherNoCourseController {
+@RequestMapping(value = "/gradeNoCourse")
+public class GradeNoCourseController {
 	
 	@Autowired
-	private TeacherNoCourseService teacherNoCourseService;
+	private GradeNoCourseService gradeNoCourseService;
 	@Autowired
 	private SchoolYearService schoolYearService;
 	@Autowired
@@ -50,46 +50,46 @@ public class TeacherNoCourseController {
 	@Autowired
 	private LessonPeriodService lessonPeriodService;
 	@Autowired
-	private TeacherService teacherService;
+	private GradeService gradeService;
 	
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
 	public String main(Model model){
 
 	
-		return "teacherNoCourse/main";
+		return "gradeNoCourse/main";
 	}
 
 	@RequestMapping(value="list",method = RequestMethod.GET)
 	@ResponseBody
-	public List<TeacherNoCourse> list( ){
-		List<TeacherNoCourse> resultList =teacherNoCourseService.findAll();					
+	public List<GradeNoCourse> list( ){
+		List<GradeNoCourse> resultList =gradeNoCourseService.findAll();					
 		return resultList;
 	}
 	@RequestMapping(value="listAllVo",method = RequestMethod.GET)
 	@ResponseBody
-	public List<TeacherNoCourseVo> listAllVo( ){
-		List<TeacherNoCourseVo> resultList =teacherNoCourseService.findAllVo();					
+	public List<GradeNoCourseVo> listAllVo( ){
+		List<GradeNoCourseVo> resultList =gradeNoCourseService.findAllVo();					
 		return resultList;
 	}
 	
 	@RequestMapping(value="listTableData",method = RequestMethod.GET)
 	@ResponseBody
-	public String listTableData(@RequestParam(value="teacherId") int teacherId,  Model model){
+	public String listTableData(@RequestParam(value="gradeId") int gradeId,  Model model){
 		StringBuilder result= new StringBuilder();
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();
 		SchoolYear schoolYear = schoolYearService.getCurrent();
 		Term term = termService.getCurrent();
 		List<Weekday> weekdays =   weekdayService.findByhaveClass(Constants.HAVECLASS_FLAG_TRUE);//上课星期数
-		List<TeacherNoCourseVo> teacherNoCourseVos = teacherNoCourseService.findAllVo();
+		List<GradeNoCourseVo> gradeNoCourseVos = gradeNoCourseService.findAllVo();
 		List<LessonPeriod> lessonPeriods= lessonPeriodService.findBySchoolYearAndTerm(schoolYear, term);//上课时段
 		for (LessonPeriod lessonPeriod : lessonPeriods) {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("period", lessonPeriod.getStartTime()+"--"+lessonPeriod.getEndTime());
 			for (Weekday weekday : weekdays) {
 				Boolean  flag = false;
-				for (TeacherNoCourseVo vo : teacherNoCourseVos) {
-					if (teacherId == vo.getTeacherId() 
+				for (GradeNoCourseVo vo : gradeNoCourseVos) {
+					if (gradeId == vo.getGradeId() 
 							&& lessonPeriod.getPeriodId().equals(vo.getLessonPeriodId())
 							&& weekday.getSeq() == vo.getWeekdayId()
 							&& schoolYear.getYearId().equals(vo.getYearId())
@@ -120,17 +120,17 @@ public class TeacherNoCourseController {
 	
 	@RequestMapping(value="save",method = RequestMethod.POST)
 	@ResponseBody
-	public void save(@RequestBody List<NoCourseVo> teacherNoCourseVos){
+	public void save(@RequestBody List<NoCourseVo> gradeNoCourseVos){
 		//保存逻辑,现删除原有老师的不排课，再插入
 		SchoolYear  schoolYear = schoolYearService.getCurrent();
 		Term term = termService.getCurrent();		
-		Teacher teacher = teacherService.get(Integer.valueOf(teacherNoCourseVos.get(0).getTeacherId()));
-		teacherNoCourseService.deleteByTeacherAndYearAndTerm(teacher, schoolYear, term);		
-		for (NoCourseVo noCourseVo : teacherNoCourseVos) {		
-				TeacherNoCourse tnc = new TeacherNoCourse();
+		Grade grade = gradeService.get(Integer.valueOf(gradeNoCourseVos.get(0).getGradeId()));
+		gradeNoCourseService.deleteByGradeAndYearAndTerm(grade, schoolYear, term);		
+		for (NoCourseVo noCourseVo : gradeNoCourseVos) {		
+				GradeNoCourse tnc = new GradeNoCourse();
 				tnc.setSchoolYear(schoolYear);
 				tnc.setTerm(term);
-				tnc.setTeacher(teacher);
+				tnc.setGrade(grade);
 				//weekday-->seq
 				Weekday weekday = weekdayService.findByName(noCourseVo.getWeekday());
 				tnc.setWeekday(weekday);
@@ -138,7 +138,7 @@ public class TeacherNoCourseController {
 				String[] periods = noCourseVo.getPeriod().split("--");
 				LessonPeriod lessonPeriod = lessonPeriodService.findByStartTimeAndEndTime(periods[0], periods[1]);
 				tnc.setLessonPeriod(lessonPeriod);
-				teacherNoCourseService.save(tnc);									
+				gradeNoCourseService.save(tnc);									
 		}
 		
 	}

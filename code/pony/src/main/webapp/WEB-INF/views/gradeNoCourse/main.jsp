@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>老师不上课设置</title>
+<title>年级不上课设置</title>
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/easyui/themes/default/easyui.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/style.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/icon.css' />" />
@@ -29,7 +29,7 @@
             <div slot="header" class="clearfix">
               <el-row>
               <el-col :span="4">
-              <b>老师不上课设置</b>
+              <b>年级不上课设置</b>
               </el-col>
               
               <el-col :span="4" :offset="16">
@@ -41,16 +41,16 @@
             </div> 
             <el-row> 
             <el-col :span="1" >
-                    <b>老师:</b>                                    
+                    <b>年级:</b>                                    
                    </el-col> 
             <el-col :span="5" >
             <div class="grid-content bg-purple">                                     
-					<el-select v-model="teacherId" filterable placeholder="请选择..">
+					<el-select v-model="gradeId" filterable placeholder="请选择..">
                		 <el-option
-                        v-for="teacher in teachers" 
-                        :label="teacher.name"                      
-                        :value="teacher.teacherId">
-                        <span style="float: left">{{teacher.name}}({{teacher.teacherNo}})</span>
+                        v-for="grade in grades" 
+                        :label="grade.name"                      
+                        :value="grade.gradeId">
+                        <span style="float: left">{{grade.name}}</span>
                		 </el-option>
            			 </el-select>				
                     </div>
@@ -92,12 +92,12 @@
  var app = new Vue({ 
 	el : '#app' ,
 	data : { 		
-		teacherId:null,
-		teachers : [],
-		teachersUrl :"<s:url value='/teacherAdmin/listAllVo'/>",
+		gradeId:null,
+		grades : [],
+		gradesUrl :"<s:url value='/grade/list'/>",
 		weekdaysUrl :"<s:url value='/weekLessonAdmin/listHaveClass'/>",
-		listTableDataUrl :"<s:url value='/teacherNoCourse/listTableData'/>",
-		saveUrl :"<s:url value='/teacherNoCourse/save'/>",
+		listTableDataUrl :"<s:url value='/gradeNoCourse/listTableData'/>",
+		saveUrl :"<s:url value='/gradeNoCourse/save'/>",
 		weekdays :[],
 		cols:[{prop: 'period',
 			label:'时间--星期'
@@ -108,14 +108,14 @@
 		
 	}, 
 	mounted : function() { 	
-		this.getTeachers();
+		this.getGrades();
 		this.getHaveClass();
 			
 	}, 
 	methods : { 		
-		  getTeachers	:function(){ 
-			this.$http.get(this.teachersUrl).then(
-			function(response){this.teachers=response.data; },
+		  getGrades	:function(){ 
+			this.$http.get(this.gradesUrl).then(
+			function(response){this.grades=response.data; },
 			function(response){}  	 			
 			);
 			},
@@ -136,7 +136,7 @@
 		       		
 		       		//row.period   9:00--9:45
 		       		//column.label  星期一
-		       		if(this.teacherId==null){					
+		       		if(this.gradeId==null){					
 					return ;
 					}
 		       		if(cell.style.backgroundColor == "rgb(255, 0, 0)" ){
@@ -144,7 +144,7 @@
 		       		}
 		       		//#F00
 		       		cell.style.backgroundColor="#F00";
-		       		this.selectData.push({period:row.period,weekday:column.label,teacherId:this.teacherId});
+		       		this.selectData.push({period:row.period,weekday:column.label,gradeId:this.gradeId});
 		   		
 		       	},
 		 mouseEnter:function(row,column,cell){ 
@@ -162,10 +162,10 @@
 		 getListTableData:function(classId){
 					this.tableData = [];  //清空表格数据
 				
-					if(this.teacherId==null){					
+					if(this.gradeId==null){					
 						return ;
 						}			 			
-					 this.$http.get(this.listTableDataUrl,{params:{teacherId:this.teacherId}}).then(
+					 this.$http.get(this.listTableDataUrl,{params:{gradeId:this.gradeId}}).then(
 							function(response){
 								this.tableData  = response.data.tableData;																 			
 							 },
