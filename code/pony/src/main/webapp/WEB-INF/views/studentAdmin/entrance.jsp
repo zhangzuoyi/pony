@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>学生管理</title>
+<title>学生入学管理</title>
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/easyui/themes/default/easyui.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/style.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/icon.css' />" />
@@ -24,20 +24,13 @@
     <!-- Begin of toolbar -->
     <div id="my-toolbar-2">
         <div class="my-toolbar-button">
-        	<a href="#" class="easyui-menubutton" data-options="menu:'#mm2'">状态变更</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="openAdd('0')" plain="true">入学</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="openAdd('1')" plain="true">转入</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="openAdd('2')" plain="true">借入</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit" onclick="openEdit()" plain="true">修改</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-remove" onclick="removeItem()" plain="true">删除</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="openUpload()" plain="true">批量导入</a>
         </div>
-        <div id="mm2" style="width:100px;">
-	        <div onclick="openChangeStatus('开除')">开除</div>
-	        <div onclick="openChangeStatus('辍学')">辍学</div>
-	        <div onclick="openChangeStatus('退学')">退学</div>
-	        <div onclick="openChangeStatus('肄业')">肄业</div>
-	        <div onclick="openChangeStatus('休学')">休学</div>
-	        <div onclick="openChangeStatus('死亡')">死亡</div>
-	        <div onclick="openChangeStatus('转出')">转出</div>
-	        <div onclick="openChangeStatus('借出')">借出</div>
-	    </div>
         <div class="my-toolbar-search">
         	<label>年级：</label> 
             <select name="gradeId" v-model="gradeId" v-on:change="changeGrade()" class="my-select" panelHeight="auto" style="width:100px">
@@ -169,6 +162,10 @@
                 <td><input type="hidden" name="classId" /><input type="text" readonly="readonly" name="className" class="my-text" /></td>
             </tr>
             <tr>
+                <td width="60" align="right">学生类型:</td>
+                <td>统招</td>
+            </tr>
+            <tr>
                 <td width="60" align="right">文件:</td>
                 <td><input type="file" name="file" /></td>
             </tr>
@@ -276,8 +273,10 @@
 		});
 	}
 	
-	function openAdd(){
+	function openAdd(studentType){
 		$('#my-form-2').form('clear');
+		$("select[name='entranceType']").val(studentType);
+		$("select[name='schoolClass.classId']").val(app.classId);
 		$('#my-dialog-2').dialog({
 			closed: false,
 			modal:true,

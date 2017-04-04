@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -34,6 +32,7 @@ import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.Student;
+import com.zzy.pony.model.StudentStatusChange;
 import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.service.DictService;
 import com.zzy.pony.service.SchoolClassService;
@@ -52,14 +51,21 @@ public class StudentAdminController {
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
 	public String main(Model model){
-		List<SchoolClass> list=classService.findAll();
-		for(SchoolClass sc: list){
-//			sc.getGrade().setSchoolClasses(null);
-		}
+		List<SchoolClass> list=classService.findCurrent();
 		model.addAttribute("classes", list);
 		model.addAttribute("sexes", dictService.findSexes());
 		model.addAttribute("credentials", dictService.findCredentials());
+		model.addAttribute("studentTypes", dictService.findStudentTypes());
 		return "studentAdmin/main";
+	}
+	@RequestMapping(value="entrance",method = RequestMethod.GET)
+	public String entrance(Model model){
+		List<SchoolClass> list=classService.findCurrent();
+		model.addAttribute("classes", list);
+		model.addAttribute("sexes", dictService.findSexes());
+		model.addAttribute("credentials", dictService.findCredentials());
+		model.addAttribute("studentTypes", dictService.findStudentTypes());
+		return "studentAdmin/entrance";
 	}
 	@RequestMapping(value="list",method = RequestMethod.GET)
 	@ResponseBody
@@ -83,10 +89,10 @@ public class StudentAdminController {
 	@ResponseBody
 	public String add(Student sy, Model model){
 		sy.setCreateTime(new Date());
-		sy.setCreateUser("test");
+		sy.setCreateUser(ShiroUtil.getLoginUser().getLoginName());
 		sy.setUpdateTime(new Date());
-		sy.setUpdateUser("test");
-		sy.setStatus(Constants.STUDENT_STATUS_DEFAULT);
+		sy.setUpdateUser(ShiroUtil.getLoginUser().getLoginName());
+		sy.setStatus(StudentService.STUDENT_STATUS_ZD);//默认在读
 		service.add(sy);
 		return "success";
 	}
@@ -148,10 +154,11 @@ public class StudentAdminController {
 				stu.setBirthday(birthday);
 				stu.setEmail(email);
 				stu.setEntranceDate(entryDate);
+				stu.setEntranceType(StudentService.STUDENT_TYPE_TZ);//默认统招
 				stu.setHomeAddr(homeAddr);
 				stu.setHomeZipcode(zipcode);
 				stu.setIdNo(idCard);
-				stu.setIdType(Constants.ID_TYPE_DEFAULT);
+				stu.setIdType(Constants.ID_TYPE_DEFAULT);//默认身份证
 				stu.setName(name);
 				stu.setNation(nation);
 				stu.setNativeAddr(nativeAddr);
@@ -160,7 +167,7 @@ public class StudentAdminController {
 				stu.setSchoolClass(schoolClass);
 				stu.setSex(sex);
 				stu.setStudentNo(studentNo);
-				stu.setStatus(Constants.STUDENT_STATUS_DEFAULT);
+				stu.setStatus(StudentService.STUDENT_STATUS_ZD);
 				
 				list.add(stu);
 				i++;
@@ -185,6 +192,15 @@ public class StudentAdminController {
 		Student g=service.get(id);
 		g.setSchoolClasses(null);
 		return g;
+	}
+	
+	@RequestMapping(value="changeStatus",method = RequestMethod.POST)
+	@ResponseBody
+	public String changeStatus(StudentStatusChange sc, Model model){
+		sc.setCreateTime(new Date());
+		sc.setCreateUser(ShiroUtil.getLoginUser().getLoginName());
+		service.changeStatus(sc);
+		return "success";
 	}
 
 	@InitBinder

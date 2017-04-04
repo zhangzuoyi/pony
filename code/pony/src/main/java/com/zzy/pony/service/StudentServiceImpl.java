@@ -9,18 +9,43 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zzy.pony.dao.StudentDao;
+import com.zzy.pony.dao.StudentStatusChangeDao;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.Student;
+import com.zzy.pony.model.StudentStatusChange;
 @Service
 @Transactional
 public class StudentServiceImpl implements StudentService {
 	@Autowired
 	private StudentDao dao;
+	@Autowired
+	private StudentStatusChangeDao changeDao;
+	@Autowired
+	private SchoolYearService yearService;
+	@Autowired
+	private TermService termService;
 
 	@Override
 	public void add(Student sy) {
 		dao.save(sy);
-
+		addStatusChange(sy);
+	}
+	private void addStatusChange(Student stu){
+		StudentStatusChange change=new StudentStatusChange();
+		if(StudentService.STUDENT_TYPE_JR.equals(stu.getEntranceType())){
+			change.setChangeType("借入");
+		}else if(StudentService.STUDENT_TYPE_TZ.equals(stu.getEntranceType())){
+			change.setChangeType("入学");
+		}else if(StudentService.STUDENT_TYPE_ZR.equals(stu.getEntranceType())){
+			change.setChangeType("转入");
+		}
+		change.setCreateTime(new Date());
+		change.setCreateUser(stu.getCreateUser());
+		change.setOccurDate(stu.getEntranceDate());
+		change.setStudentId(stu.getStudentId());
+		change.setSchoolYear(yearService.getCurrent());
+		change.setTerm(termService.getCurrent());
+		changeDao.save(change);
 	}
 
 	@Override
@@ -108,4 +133,36 @@ public class StudentServiceImpl implements StudentService {
 		}
 	}
 
+	@Override
+	public void changeStatus(StudentStatusChange sc) {
+		sc.setSchoolYear(yearService.getCurrent());
+		sc.setTerm(termService.getCurrent());
+		Student student=dao.findOne(sc.getStudentId());
+		student.setStatus(getStatusByChangeType(sc.getChangeType()));
+		
+		dao.save(student);
+		changeDao.save(sc);
+	}
+
+	private String getStatusByChangeType(String changeType){
+		if("开除".equals(changeType)){
+			return STUDENT_STATUS_KC;
+		}else if("辍学".equals(changeType)){
+			return STUDENT_STATUS_CX;
+		}else if("退学".equals(changeType)){
+			return STUDENT_STATUS_TX;
+		}else if("肄业".equals(changeType)){
+			return STUDENT_STATUS_YY;
+		}else if("死亡".equals(changeType)){
+			return STUDENT_STATUS_SW;
+		}else if("转出".equals(changeType)){
+			return STUDENT_STATUS_ZC;
+		}else if("借出".equals(changeType)){
+			return STUDENT_STATUS_JC;
+		}else if("休学".equals(changeType)){
+			return STUDENT_STATUS_XX;
+		}
+		
+		return STUDENT_STATUS_ZD;
+	}
 }

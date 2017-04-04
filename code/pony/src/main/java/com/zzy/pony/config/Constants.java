@@ -4,8 +4,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Constants {
-	public static final String STUDENT_STATUS_DEFAULT="0";//学生状态，默认在读
-	public static final String STUDENT_STATUS_LEAVE="1";//学生状态，离校
 	public static final String CURRENT_FLAG_TRUE="0";//当前标志，是
 	public static final String CURRENT_FLAG_FALSE="1";//当前标志，否
 	public static final String USER_TYPE_TEACHER="t";
