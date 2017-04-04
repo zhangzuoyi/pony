@@ -3,7 +3,6 @@ package com.zzy.pony.vo;
 import java.util.List;
 
 import com.zzy.pony.model.LessonPeriod;
-import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.model.Term;

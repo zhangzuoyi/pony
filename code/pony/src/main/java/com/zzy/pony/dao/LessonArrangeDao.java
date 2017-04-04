@@ -13,5 +13,6 @@ import com.zzy.pony.model.Term;
 
 public interface LessonArrangeDao extends JpaRepository<LessonArrange,Integer>{
 	List<LessonArrange> findByClassIdAndSchoolYearAndTerm(Integer classId, SchoolYear year, Term term);
-	List<LessonArrange> findByClassIdAndSchoolYearAndTermAndSubject(Integer classId, SchoolYear year, Term term, Subject subject);
+	List<LessonArrange> findByClassIdAndSchoolYearAndTermAndSubject(Integer classId, SchoolYear schoolYear, Term term, Subject subject);
+	List<LessonArrange> findByClassIdAndSchoolYearAndTermAndSubjectAndSourceType(Integer classId, SchoolYear schoolYear, Term term, Subject subject,String sourceType);
 }

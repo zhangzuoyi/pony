@@ -32,8 +32,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
+
+
+import com.zzy.pony.dao.SchoolClassDao;
 import com.zzy.pony.dao.TeacherDao;
 import com.zzy.pony.dao.TeacherSubjectDao;
+import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.Teacher;
 import com.zzy.pony.model.TeacherSubject;
 import com.zzy.pony.service.TeacherSubjectService;
@@ -48,6 +52,8 @@ public class TeacherLessonController {
 	private TeacherDao teacherDao;
 	@Autowired
 	private TeacherSubjectDao teacherSubjectDao;
+	@Autowired
+	private SchoolClassDao schoolClassDao;
 	
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
@@ -68,6 +74,22 @@ public class TeacherLessonController {
 			List<Teacher> teachers = teacherDao.findAll();
 			for (Teacher teacher : teachers) {
 				List<TeacherSubjectVo> list = teacherSubjectService.findCurrentVoByTeacher(teacher);
+				resultList.addAll(list);				
+			}
+		}				
+		return resultList;
+	}
+	@RequestMapping(value="listBySchoolClass",method = RequestMethod.GET)
+	@ResponseBody
+	public List<TeacherSubjectVo> listBySchoolClass(@RequestParam(value="classId")Integer classId ){
+		List<TeacherSubjectVo> resultList = new ArrayList<TeacherSubjectVo>();
+		if (classId != null) {
+			SchoolClass schoolClass =  schoolClassDao.findOne(classId);
+			 resultList =  teacherSubjectService.findCurrentVoBySchoolClass(schoolClass);
+		}else {
+			List<SchoolClass> schoolClasses = schoolClassDao.findAll();
+			for (SchoolClass schoolClass : schoolClasses) {
+				List<TeacherSubjectVo> list = teacherSubjectService.findCurrentVoBySchoolClass(schoolClass);
 				resultList.addAll(list);				
 			}
 		}				

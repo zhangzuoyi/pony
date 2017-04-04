@@ -17,6 +17,7 @@ import com.zzy.pony.model.LessonArrange;
 import com.zzy.pony.model.LessonPeriod;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
+import com.zzy.pony.model.Subject;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.vo.LessonArrangeVo;
 import com.zzy.pony.vo.LessonArrangeVo.PeriodVo;
@@ -34,6 +35,8 @@ public class LessonArrangeServiceImpl implements LessonArrangeService {
 	private SchoolYearService yearService;
 	@Autowired
 	private TermService termService;
+	@Autowired
+	private SubjectService subjectService;
 
 	@Override
 	public void add(LessonArrange sy) {
@@ -113,4 +116,8 @@ public class LessonArrangeServiceImpl implements LessonArrangeService {
 			}
 		}
 	}
+
+	
+	
+	
 }

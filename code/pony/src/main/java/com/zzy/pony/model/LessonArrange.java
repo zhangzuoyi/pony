@@ -33,7 +33,7 @@ public class LessonArrange implements Serializable {
 	private String weekDay;
 	
 	@Column(name="SOURCE_TYPE")
-	private String sourceType;//来源类型 0 预排，1 自动，3 调课
+	private String sourceType;//来源类型 0 预排，1 自动，2 调课
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="CREATE_TIME")

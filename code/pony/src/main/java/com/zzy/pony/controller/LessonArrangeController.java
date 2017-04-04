@@ -52,6 +52,9 @@ public class LessonArrangeController {
 	public LessonArrangeVo findByClass(@RequestParam(value="classId") Integer classId, Model model){
 		return service.findArrangeVo(classId);
 	}
+	
+	
+	
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody
 	public String add(@RequestBody LessonArrange sy, Model model){

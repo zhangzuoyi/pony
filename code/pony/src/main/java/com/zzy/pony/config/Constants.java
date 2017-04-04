@@ -15,6 +15,10 @@ public class Constants {
 	public static final Integer HAVECLASS_FLAG_TRUE=1;//是否上课，是
 	public static final Map<String, String> WEEKDAYS;
 	public static final Map<String, String> WEEKDAYMAP;
+	public static final String SOURCE_TYPE_PRE="0";//预排课
+	public static final String SOURCE_TYPE_AUTO="1";//自动排课
+	public static final String SOURCE_TYPE_CHANGE="2";//调课
+
 
 	public static final Map<Integer, String> SUBJECT_TYPES;
 	public static final Map<String, String> USER_TYPES;

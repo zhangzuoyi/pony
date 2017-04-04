@@ -8,9 +8,11 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.zxing.Result;
 import com.zzy.pony.dao.LessonArrangeDao;
 import com.zzy.pony.dao.TeacherSubjectDao;
 import com.zzy.pony.model.LessonArrange;
+import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Teacher;
 import com.zzy.pony.model.TeacherSubject;
@@ -82,5 +84,26 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 		}
 		return result;
 	}
+
+	@Override
+	public List<TeacherSubjectVo> findCurrentVoBySchoolClass(
+			SchoolClass schoolClass) {
+		// TODO Auto-generated method stub
+		SchoolYear year=yearService.getCurrent();
+		Term term=termService.getCurrent();
+		List<TeacherSubject> list = dao.findBySchoolClassAndYearAndTerm(schoolClass, year, term);
+		List<TeacherSubjectVo> result = new ArrayList<TeacherSubjectVo>();
+		for(TeacherSubject ts:list){
+			List<LessonArrange> arranges=arrangeDao.findByClassIdAndSchoolYearAndTermAndSubject(ts.getSchoolClass().getClassId(), year, term, ts.getSubject());
+			TeacherSubjectVo vo=TeacherSubjectVo.fromModel(ts);
+			vo.setArranges(arranges);
+			result.add(vo);
+		}
+		return result;
+	}
+
+	
+	
+	
 
 }

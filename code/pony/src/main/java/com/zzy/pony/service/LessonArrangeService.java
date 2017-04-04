@@ -12,4 +12,5 @@ public interface LessonArrangeService {
 	void update(LessonArrange sy);
 	void delete(int id);
 	LessonArrangeVo findArrangeVo(Integer classId);
+
 }

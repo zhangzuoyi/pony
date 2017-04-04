@@ -2,6 +2,7 @@ package com.zzy.pony.service;
 
 import java.util.List;
 
+import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.Teacher;
 import com.zzy.pony.model.TeacherSubject;
 import com.zzy.pony.vo.TeacherSubjectVo;
@@ -19,4 +20,6 @@ public interface TeacherSubjectService {
 	 */
 	List<TeacherSubject> findCurrentByTeacher(Teacher teacher);
 	List<TeacherSubjectVo> findCurrentVoByTeacher(Teacher teacher);
+	
+	List<TeacherSubjectVo> findCurrentVoBySchoolClass(SchoolClass schoolClass);
 }
