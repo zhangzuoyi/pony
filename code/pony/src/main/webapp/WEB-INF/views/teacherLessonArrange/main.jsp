@@ -10,6 +10,8 @@
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/style.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/icon.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/bootstrap/css/bootstrap.min.css' />" />
+<link rel="stylesheet" type="text/css" href="<s:url value='/static/elementUI/index.css' />" />
+<link rel="stylesheet" type="text/css" href="<s:url value='/static/elementUI/element.css' />" />
 <script type="text/javascript" src="<s:url value='/static/js/jquery.min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/bootstrap/js/bootstrap.min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/easyui/jquery.easyui.min.js' />"></script>
@@ -17,69 +19,68 @@
 <script type="text/javascript" src="<s:url value='/static/easyui/dateFormat.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/vue/vue.min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/vue/vue-resource.min.js' />"></script>
+<script type="text/javascript" src="<s:url value='/static/elementUI/index.js' />"></script>
+
 </head>
 <body>
 <div id="app">
   <div>
-    	<div class="mainHeader">      
-        	<div class="search">
-        		<div class="row">     	   	 	
-       	    		<div class="col-lg-4 col-md-4"><span>学年：{{currentSchoolYear.name}}</span></div>         	
-         		    <div class="col-lg-4 col-md-4"><span>学期：{{currentTerm.name}}</span> </div>        
-            		<div class="col-lg-4 col-md-4">
-            		<button type="button" class="btn btn-primary btn-sm" v-on:click="save">保存</button>  
-            		<button type="button" class="btn btn-primary btn-sm" >查看任课列表</button>                                 		                               		
-            		</div>                           
-           		 </div>
-        	</div>
-		</div>
-    	<div class="mainBody">
-    		<div class="panel panel-default">
-   				 <div class="panel-heading">
-        		<h3 class="panel-title">老师</h3>
-    			</div>
-   				 <div class="panel-body">
-       			<select v-model="teacherSubjectVo.teacherId" class="form-control" style="width:200px;">
-       				<option value="">请选择</option>  
-  					<option v-for="teacher in teachers" v-bind:value="teacher.teacherId">  
-   					 {{ teacher.name}}({{teacher.teacherNo}})  
- 					 </option>  
-				</select>  
-   			 </div>
-		   </div>
-		   <div class="panel panel-default">
-   				 <div class="panel-heading">
-        		<h3 class="panel-title">科目</h3>
-    			</div>
-   				 <div class="panel-body">
-       			 <div>	
-       			 	<span  v-for="subject in subjects">
-       			 	<label class="checkbox-inline">
-    				 <input type="radio" name="subject"  v-bind:value="subject.subjectId" v-model="teacherSubjectVo.subjectId" >{{subject.name}}
- 				 	</label>
- 				 	</span>
-  				 </div>
-       			 	
-       			 	
-       			 	
-   			 	 </div>
-		   </div>
-		   <div class="panel panel-default">
-   				 <div class="panel-heading">
-        		<h3 class="panel-title">班级</h3>
-    			</div>
-   				 <div class="panel-body">      			 
-                    <div>
-                        <label class="checkbox-inline" v-for="(schoolClass,index)  in schoolClasses">
-                            <input type="checkbox" :true-value="schoolClass.classId" v-model="teacherSubjectVo.schoolClassIds[index]"   name="schoolClass"  >
-                            <span>{{schoolClass.name}}</span>
-                        </label>
+  	<el-card class="box-card content-margin">
+            <div slot="header" class="clearfix">
+                          
+              <el-row>
+                <el-col :span="6">
+                    <div class="grid-content ">学年：<b>{{currentSchoolYear.name}}</b></div>
+                </el-col>
+                <el-col :span="6">
+                    <div class="grid-content">学期：<b>{{currentTerm.name}}</b></div>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="12">
+                    <div class="grid-content bg-purple">
+                                                  老师:                  
+					<el-select v-model="teacherSubjectVo.teacherId" filterable placeholder="请选择..">
+               		 <el-option
+                        v-for="teacher in teachers" 
+                        :label="teacher.name"                      
+                        :value="teacher.teacherId">
+                        <span style="float: left">{{teacher.name}}({{teacher.teacherNo}})</span>
+               		 </el-option>
+           			 </el-select>				
                     </div>
-                    
-   			 </div>
-		   </div>
-    	
-    	</div>
+                </el-col>
+                <el-col :span="6">
+                    <div class="grid-content bg-purple-light">
+                     <el-button type="primary" v-on:click="save">保存</el-button> 
+                     <el-button type="primary" @click.native="dialogFormVisible = true">查看任课列表</el-button>                    
+                    </div>
+                </el-col>              
+            </el-row>           
+            </div>                     
+            <el-card class="box-card content-margin">
+            <div slot="header" class="clearfix">
+                <span>科目</span>
+            </div>
+          	<el-radio-group v-model="teacherSubjectVo.subjectId">
+                <el-radio-button v-for="subject in subjects" :label="subject.subjectId" >{{subject.name}}</el-radio-button>
+                
+            </el-radio-group>
+          
+       		 </el-card>
+       		  <el-card class="box-card content-margin">
+            <div slot="header" class="clearfix">
+                <span>班级</span>
+            </div>
+          	<el-checkbox-group v-model="teacherSubjectVo.schoolClassIds">
+   			 <el-checkbox  v-for="schoolClass  in schoolClasses"    :label="schoolClass.classId">{{schoolClass.name}}</el-checkbox>
+   
+  			</el-checkbox-group>
+          
+       		 </el-card>
+            
+          
+        </el-card>
     
     
     </div>
@@ -153,16 +154,12 @@ var app = new Vue({
 		save : function(teacherSubjectVo){
 			this.teacherSubjectVo.yearId = this.currentSchoolYear.yearId;
 			this.teacherSubjectVo.termId = this.currentTerm.termId;
-			/* this.teacherSubjectVo.schoolClassIds.forEach(function(val,index){
-				if(val.length == 0){
-				  this.teacherSubjectVo.schoolClassIds.splice(index,1);
-				}
-			}); */
-			for(var i = 0;i < this.teacherSubjectVo.schoolClassIds.length; i++) {
+			
+			/* for(var i = 0;i < this.teacherSubjectVo.schoolClassIds.length; i++) {
 				if(this.teacherSubjectVo.schoolClassIds[i] == undefined || this.teacherSubjectVo.schoolClassIds[i] == ''){
 				  this.teacherSubjectVo.schoolClassIds.splice(i,1);
 				}
-			}
+			} */
 			
 			
 			if(this.teacherSubjectVo.schoolClassIds!=null && this.teacherSubjectVo.schoolClassIds.length>0){
@@ -170,7 +167,11 @@ var app = new Vue({
 			}
 			if(this.teacherSubjectVo.className&&this.teacherSubjectVo.teacherId&&this.teacherSubjectVo.subjectId){
 			this.$http.post(this.saveUrl,this.teacherSubjectVo).then(
-			function(response){ alert("123"); },
+			function(response){
+				alert("123");
+				teacherSubjectVo={schoolClassIds:[],teacherId:null,subjectId:null};
+			
+			},
 			function(response){}  	 			
 			);
 			}else{
