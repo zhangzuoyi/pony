@@ -152,8 +152,10 @@ var app = new Vue({
 		classId:null,
 		classes:[],
 		subjectId:null,
+		currentSchoolYear : {},
+		currentSchoolYearUrl: "<s:url value='/schoolYear/getCurrent'/>",		
 		gradesUrl :"<s:url value='/grade/list'/>",
-		classesUrl :"<s:url value='/schoolClass/findByGrade'/>",
+		classesUrl :"<s:url value='/schoolClass/findByYearAndGrade'/>",
 		teacherLessonUrl :"<s:url value='/teacherLesson/listBySchoolClass'/>",
 		weekdaysUrl :"<s:url value='/weekLessonAdmin/listHaveClass'/>",
 		listTableDataUrl :"<s:url value='/preLessonArrange/listTableData'/>",
@@ -171,15 +173,21 @@ var app = new Vue({
 		
 	}, 
 	mounted : function() { 
-		
+		this.getCurrentSchoolYear(); 		
 		this.getGrades();
 		this.getHaveClass();
 			
 	}, 
-	methods : { 	
+	methods : { 
+			getCurrentSchoolYear : function(){ 
+			this.$http.get(this.currentSchoolYearUrl).then(
+			function(response){this.currentSchoolYear=response.data; },
+			function(response){}  			
+			); 
+			} ,	
 		  getClasses	:function(gradeId){ 
 			
-			this.$http.get(this.classesUrl,{params:{gradeId:gradeId}}).then(
+			this.$http.get(this.classesUrl,{params:{yearId:this.currentSchoolYear.yearId,gradeId:gradeId}}).then(
 			function(response){this.classes=response.data; },
 			function(response){}  	 			
 			);

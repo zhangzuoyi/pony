@@ -102,6 +102,56 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 		return result;
 	}
 
+	@Override
+	public List<Integer> findCurrentAllTeacherId() {
+		// TODO Auto-generated method stub
+		List<Integer> result =  new ArrayList<Integer>();
+		List<TeacherSubject> list = dao.findAll();
+		for (TeacherSubject teacherSubject : list) {
+			Integer teacherId = teacherSubject.getTeacher().getTeacherId();
+			if (!result.contains(teacherId)) {
+				result.add(teacherId);
+			}
+		}
+		
+		
+		return result;
+	}
+
+	@Override
+	public List<Integer> findCurrentAllClassId() {
+		// TODO Auto-generated method stub
+		List<Integer> result =  new ArrayList<Integer>();
+		List<TeacherSubject> list = dao.findAll();
+		for (TeacherSubject teacherSubject : list) {
+			Integer classId = teacherSubject.getSchoolClass().getClassId();
+			if (!result.contains(classId)) {
+				result.add(classId);
+			}
+		}
+		
+		
+		return result;
+	}
+
+	@Override
+	public List<Integer> findCurrentAllSubjectId() {
+		// TODO Auto-generated method stub
+		List<Integer> result =  new ArrayList<Integer>();
+		List<TeacherSubject> list = dao.findAll();
+		for (TeacherSubject teacherSubject : list) {
+			Integer subjectId = teacherSubject.getSubject().getSubjectId();
+			if (!result.contains(subjectId)) {
+				result.add(subjectId);
+			}
+		}	
+		return result;
+	}
+	
+	
+	
+	
+
 	
 	
 	
