@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -30,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
 import com.zzy.pony.config.Constants;
+import com.zzy.pony.model.CommonDict;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.Student;
 import com.zzy.pony.model.StudentStatusChange;
@@ -116,6 +119,11 @@ public class StudentAdminController {
 		System.out.println(classId);
 		List<Student> list=new ArrayList<Student>();
 		SchoolClass schoolClass=classService.get(classId);
+		List<CommonDict> sexList=dictService.findSexes();
+		Map<String,String> sexMap=new HashMap<String,String>();
+		for(CommonDict cd: sexList){
+			sexMap.put(cd.getValue(), cd.getCode());//从名称到编码
+		}
 		try {
 			Workbook wb=WorkbookFactory.create(file.getInputStream());
 			Sheet sheet=wb.getSheetAt(0);
@@ -165,7 +173,7 @@ public class StudentAdminController {
 				stu.setNativePlace(nativePlace);
 				stu.setPhone(phone);
 				stu.setSchoolClass(schoolClass);
-				stu.setSex(sex);
+				stu.setSex(sexMap.get(sex));
 				stu.setStudentNo(studentNo);
 				stu.setStatus(StudentService.STUDENT_STATUS_ZD);
 				

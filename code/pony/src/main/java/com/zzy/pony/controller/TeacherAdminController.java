@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -133,6 +135,11 @@ public class TeacherAdminController {
 		List<Teacher> list=new ArrayList<Teacher>();
 		List<Subject> subjects=subjectService.findAll();
 		List<CommonDict> degrees=dictService.findEducationDegrees();
+		List<CommonDict> sexList=dictService.findSexes();
+		Map<String,String> sexMap=new HashMap<String,String>();
+		for(CommonDict cd: sexList){
+			sexMap.put(cd.getValue(), cd.getCode());//从名称到编码
+		}
 		try {
 			Workbook wb=WorkbookFactory.create(file.getInputStream());
 			Sheet sheet=wb.getSheetAt(0);
@@ -140,7 +147,7 @@ public class TeacherAdminController {
 			while(true){
 				Teacher stu=new Teacher();
 				Row row=sheet.getRow(i);
-				if(row == null){
+				if(row == null || row.getCell(0) == null){
 					break;
 				}
 				Cell cell=row.getCell(0);
@@ -151,7 +158,7 @@ public class TeacherAdminController {
 				}
 				String name=row.getCell(1).getStringCellValue();
 				row.getCell(2).setCellType(HSSFCell.CELL_TYPE_STRING);
-				String sex=row.getCell(2).getStringCellValue();
+				String sexValue=row.getCell(2).getStringCellValue();
 				Date birthdayDate=row.getCell(3).getDateCellValue();
 				String birthday=null;
 				if(birthdayDate != null){
@@ -186,7 +193,7 @@ public class TeacherAdminController {
 				stu.setNativeAddr(nativeAddr);
 				stu.setNativePlace(nativePlace);
 				stu.setPhone(phone);
-				stu.setSex(sex);
+				stu.setSex(sexMap.get(sexValue));
 				stu.setTeacherNo(teacherNo);
 				stu.setMajor(major);
 				stu.setTitle(title);

@@ -26,6 +26,7 @@ import com.google.gson.GsonBuilder;
 import com.zzy.pony.model.Grade;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
+import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.SchoolYearService;
@@ -141,9 +142,10 @@ public class SchoolClassController {
 	public String add(SchoolClass sy, Model model){
 		Date now=new Date();
 		sy.setCreateTime(now);
-		sy.setCreateUser("test");
+		sy.setCreateUser(ShiroUtil.getLoginUser().getLoginName());
 		sy.setUpdateTime(now);
-		sy.setUpdateUser("test");
+		sy.setUpdateUser(ShiroUtil.getLoginUser().getLoginName());
+		sy.setYearId(yearService.getCurrent().getYearId());
 		service.add(sy);
 		return "success";
 	}
@@ -152,7 +154,7 @@ public class SchoolClassController {
 	public String edit(SchoolClass sy, Model model){
 		Date now=new Date();
 		sy.setUpdateTime(now);
-		sy.setUpdateUser("test");
+		sy.setUpdateUser(ShiroUtil.getLoginUser().getLoginName());
 		service.update(sy);
 		return "success";
 	}
