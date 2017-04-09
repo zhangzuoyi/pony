@@ -13,7 +13,7 @@ public class DNA {
 	private static final int weekdayIdBit = 1;
 	private static final int seqIdBit = 1;
 	private static final int classIdBit = 3;
-
+	private static final int dbaBit = 11;
 
 	private String[] teacherIdCandidate;  
 	private String[] subjectIdCandidate;
@@ -82,6 +82,10 @@ public class DNA {
 	public void setSeqIdCandidate(String[] seqIdCandidate) {
 		this.seqIdCandidate = seqIdCandidate;
 	}
+	public int getDnaBit(){
+		return this.dbaBit;
+	}
+	
 	
 
 	

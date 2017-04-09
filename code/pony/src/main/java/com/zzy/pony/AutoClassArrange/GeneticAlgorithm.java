@@ -5,15 +5,18 @@ package com.zzy.pony.AutoClassArrange;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
+import org.omg.CORBA.PRIVATE_MEMBER;
 
   
 public abstract class GeneticAlgorithm {
 	private List<Chromosome> population = new ArrayList<Chromosome>();
-	private int popSize = 100;//种群数量
-	private int geneSize;//基因最大长度
+	private int popSize = 50;//种群数量
+	//private int geneSize;//基因最大长度
 	private int maxIterNum = 500;//最大迭代次数
 	private double mutationRate = 0.01;//基因变异的概率
-	private int maxMutationNum = 3;//最大变异步长
+	//private int maxMutationNum = 3;//最大变异步长
 	
 	private int generation = 1;//当前遗传到第几代
 	
@@ -26,9 +29,9 @@ public abstract class GeneticAlgorithm {
 	private double y; //记录历史种群中最好的Y值
 	private int geneI;//x y所在代数
 	
-	public GeneticAlgorithm(int geneSize) {
+	/*public GeneticAlgorithm(int geneSize) {
 		this.geneSize = geneSize;
-	}
+	}*/
 	
 	public void caculte() {
 		//初始化种群
@@ -46,13 +49,13 @@ public abstract class GeneticAlgorithm {
 	 * @Description: 输出结果
 	 */
 	private void print() {
-		System.out.println("--------------------------------");
+		/*System.out.println("--------------------------------");
 		System.out.println("the generation is:" + generation);
 		System.out.println("the best y is:" + bestScore);
 		System.out.println("the worst fitness is:" + worstScore);
 		System.out.println("the average fitness is:" + averageScore);
 		System.out.println("the total fitness is:" + totalScore);
-		System.out.println("geneI:" + geneI + "\tx:" + x + "\ty:" + y);
+		System.out.println("geneI:" + geneI + "\tx:" + x + "\ty:" + y);*/
 	}
 	
 	
@@ -114,10 +117,24 @@ public abstract class GeneticAlgorithm {
 	}
 	
 	/**
-	 * @Description: 计算种群适应度
+	 * @Description: 计算种群适应度  需要根据各种规则计算
 	 */
 	private void caculteScore() {
-		setChromosomeScore(population.get(0));
+		
+// classLength * [teacherId(4)+classId(3)+subjectId(2)+weekdayId(1)+seqId(1)]*weekdayLength*seqLength
+//个体适应度函数定义为 如下规则对于每个班满足得1分，不满足则得0分，然后在算一个个体中所有班级的算术平均值
+		
+		
+		//规则1:同一老师在同一时间段最多只能上1节课ruleOne
+		//规则2:同一班级在同一时间段最多只能上1节课ruleTwo
+		//规则3:班级不排课设置ruleThree
+		//规则4:老师不排课设置ruleFour
+		//规则5:科目不排课设置ruleFive
+		//规则6:年级不排课设置ruleSix
+
+		
+		
+		/*setChromosomeScore(population.get(0));
 		bestScore = population.get(0).getScore();
 		worstScore = population.get(0).getScore();
 		totalScore = 0;
@@ -138,16 +155,17 @@ public abstract class GeneticAlgorithm {
 		}
 		averageScore = totalScore / popSize;
 		//因为精度问题导致的平均值大于最好值，将平均值设置成最好值
-		averageScore = averageScore > bestScore ? bestScore : averageScore;
-	}
-	
+		averageScore = averageScore > bestScore ? bestScore : averageScore;*/
+	}	
 	/**
 	 * 基因突变
 	 */
 	private void mutation() {
+		Random random =  new Random();
 		for (Chromosome chro : population) {
 			if (Math.random() < mutationRate) { //发生基因突变
-				int mutationNum = (int) (Math.random() * maxMutationNum);
+				
+				int mutationNum =random.nextInt(DNA.getInstance().getClassIdCandidate().length);
 				chro.mutation(mutationNum);
 			}
 		}
@@ -161,8 +179,8 @@ public abstract class GeneticAlgorithm {
 		if (chro == null) {
 			return;
 		}
-		double x = changeX(chro);
-		double y = caculateY(x);
+		//double x = changeX(chro);
+		//double y = caculateY(x);
 		chro.setScore(y);
 
 	}
@@ -190,10 +208,10 @@ public abstract class GeneticAlgorithm {
 	public void setPopSize(int popSize) {
 		this.popSize = popSize;
 	}
-
+/*
 	public void setGeneSize(int geneSize) {
 		this.geneSize = geneSize;
-	}
+	}*/
 
 	public void setMaxIterNum(int maxIterNum) {
 		this.maxIterNum = maxIterNum;
@@ -203,9 +221,9 @@ public abstract class GeneticAlgorithm {
 		this.mutationRate = mutationRate;
 	}
 
-	public void setMaxMutationNum(int maxMutationNum) {
+	/*public void setMaxMutationNum(int maxMutationNum) {
 		this.maxMutationNum = maxMutationNum;
-	}
+	}*/
 
 	public double getBestScore() {
 		return bestScore;

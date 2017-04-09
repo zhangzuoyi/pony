@@ -19,6 +19,13 @@ public class Chromosome {
 	public void setScore(double score) {
 		this.score = score;
 	}
+	
+	public char[] getGene(){	
+		return gene;
+	}
+	public void setGene(char[] gene){	
+		this.gene= gene;
+	}
 
 	/**
 	 * @param size
@@ -92,7 +99,7 @@ public class Chromosome {
 		//随机产生交叉互换位置  
 		int size = c1.gene.length;
 		int classCount = DNA.getInstance().getClassIdCandidate().length;
-		int classDNALength = 11*DNA.getInstance().getWeekdayIdCandidate().length*DNA.getInstance().getSeqIdCandidate().length;
+		int classDNALength = DNA.getInstance().getDnaBit()*DNA.getInstance().getWeekdayIdCandidate().length*DNA.getInstance().getSeqIdCandidate().length;
 		Random random = new Random();
 		
 		
@@ -123,11 +130,11 @@ public class Chromosome {
 	 */
 	public void mutation(int classIndex) {
 		//允许变异
-		int classCount = DNA.getInstance().getClassIdCandidate().length;	
-		int classDNALength = 11*DNA.getInstance().getWeekdayIdCandidate().length*DNA.getInstance().getSeqIdCandidate().length;
+		//int classCount = DNA.getInstance().getClassIdCandidate().length;	
+		int classDNALength = DNA.getInstance().getDnaBit()*DNA.getInstance().getWeekdayIdCandidate().length*DNA.getInstance().getSeqIdCandidate().length;
         char[] a =   DNA.getInstance().getDnaString(classIndex).toCharArray();
-        for (int i = (classCount-1)*classDNALength; i < classDNALength; i++) {
-			gene[i] = a[i-(classCount-1)*classDNALength];			
+        for (int i = classIndex*classDNALength; i < classDNALength; i++) {
+			gene[i] = a[i-(classIndex*classDNALength)];			
 		}
         
         
