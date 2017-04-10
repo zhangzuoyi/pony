@@ -23,6 +23,8 @@ public interface TeacherSubjectService {
 	
 	List<TeacherSubjectVo> findCurrentVoBySchoolClass(SchoolClass schoolClass);
 	
+	List<TeacherSubjectVo> findCurrentAll();
+	
 	List<Integer> findCurrentAllTeacherId();
 	List<Integer> findCurrentAllClassId();
 	List<Integer> findCurrentAllSubjectId();

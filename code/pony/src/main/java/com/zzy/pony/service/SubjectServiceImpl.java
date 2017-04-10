@@ -14,6 +14,7 @@ import com.zzy.pony.dao.SubjectDao;
 import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.ExamSubject;
 import com.zzy.pony.model.Subject;
+import com.zzy.pony.model.Teacher;
 @Service
 @Transactional
 public class SubjectServiceImpl implements SubjectService {
@@ -92,6 +93,21 @@ public class SubjectServiceImpl implements SubjectService {
 		
 		return subjects;
 	}
+
+	@Override
+	public List<Integer> findAllSubjectId() {
+		// TODO Auto-generated method stub
+		List<Integer> result = new ArrayList<Integer>();
+		List<Subject> list = dao.findAll();
+		for (Subject subject : list) {
+			
+			result.add(subject.getSubjectId());	
+		}
+		
+		return result;
+	}
+	
+	
 	
 	
 	

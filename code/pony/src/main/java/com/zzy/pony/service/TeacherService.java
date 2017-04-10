@@ -14,4 +14,5 @@ public interface TeacherService {
 	void upload(List<Teacher> teachers, String loginUser);
 	List<Teacher> findTeachersByTeacherNo(String teacherNo);
 	List<String>  findAllTeacherNo();
+	List<Integer> findAllTeacherId();
 }

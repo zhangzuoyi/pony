@@ -15,5 +15,6 @@ import com.zzy.pony.model.Term;
 public interface TeacherSubjectDao extends JpaRepository<TeacherSubject,Integer>{
 	List<TeacherSubject> findByTeacherAndYearAndTerm(Teacher teacher,SchoolYear year,Term term);
 	List<TeacherSubject> findBySchoolClassAndYearAndTerm(SchoolClass schoolClass,SchoolYear year,Term term);
+	List<TeacherSubject> findByYearAndTerm(SchoolYear year,Term term);
 
 }

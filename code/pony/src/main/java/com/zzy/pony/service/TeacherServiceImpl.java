@@ -154,4 +154,20 @@ public class TeacherServiceImpl implements TeacherService {
 			}
 		}
 	}
+
+	@Override
+	public List<Integer> findAllTeacherId() {
+		// TODO Auto-generated method stub
+		List<Integer> result = new ArrayList<Integer>();
+		List<Teacher> list = dao.findAll();
+		for (Teacher teacher : list) {
+			
+			result.add(teacher.getTeacherId());	
+		}
+		
+		return result;
+		
+	}
+	
+	
 }

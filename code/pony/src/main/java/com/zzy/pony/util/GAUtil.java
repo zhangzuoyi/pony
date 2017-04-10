@@ -1,10 +1,16 @@
 package com.zzy.pony.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.zzy.pony.vo.TeacherSubjectVo;
 
 public class GAUtil {
 
+	
+	
 	/*** 
 	* <p>Description:获取候选数组,bit为位数,list为id集合，如teacherId </p>
 	* @author  WANGCHAO262
@@ -19,6 +25,27 @@ public class GAUtil {
 		}		
 		return result;		
 	}
+	/*** 
+	* <p>Description: 获取班级老师与课时的映射关系  key:teacherId+classId+subjectId value:weekArrange</p>
+	* @author  WANGCHAO262
+	* @date  2017年4月10日 下午3:23:39
+	*/
+	public static Map<String,Integer> getTeacherSubjectweekArrange(List<TeacherSubjectVo> list){
+		Map<String, Integer> result =  new HashMap<String, Integer>();
+		for (TeacherSubjectVo teacherSubjectVo : list) {			
+			String teacherId = String.format("%04d", teacherSubjectVo.getTeacherId())  ;
+			String classId=String.format("%03d", teacherSubjectVo.getClassId()) ;
+			String subjectId =String.format("%02d", teacherSubjectVo.getSubjectId())  ;			
+			if (teacherSubjectVo.getWeekArrange() == null) {
+				teacherSubjectVo.setWeekArrange("0");
+			}
+			result.put(teacherId+classId+subjectId, Integer.valueOf(teacherSubjectVo.getWeekArrange()));
+		}		
+		return result;
+		
+	}
+	
+	
 	
 	public static void main(String[] args){
 		List<Integer> list = new ArrayList<Integer>();

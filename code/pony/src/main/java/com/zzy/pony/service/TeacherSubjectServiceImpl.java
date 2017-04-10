@@ -101,12 +101,32 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 		}
 		return result;
 	}
+	
+	
+	
+
+	@Override
+	public List<TeacherSubjectVo> findCurrentAll() {
+		// TODO Auto-generated method stub
+		List<TeacherSubjectVo> result = new ArrayList<TeacherSubjectVo>();
+		SchoolYear year=yearService.getCurrent();
+		Term term=termService.getCurrent();
+		List<TeacherSubject> list = dao.findByYearAndTerm(year, term);
+		for (TeacherSubject teacherSubject : list) {
+			TeacherSubjectVo vo  = TeacherSubjectVo.fromModel(teacherSubject);
+			result.add(vo);
+		}
+		
+		return result;
+	}
 
 	@Override
 	public List<Integer> findCurrentAllTeacherId() {
 		// TODO Auto-generated method stub
 		List<Integer> result =  new ArrayList<Integer>();
-		List<TeacherSubject> list = dao.findAll();
+		SchoolYear year=yearService.getCurrent();
+		Term term=termService.getCurrent();
+		List<TeacherSubject> list = dao.findByYearAndTerm(year, term);		
 		for (TeacherSubject teacherSubject : list) {
 			Integer teacherId = teacherSubject.getTeacher().getTeacherId();
 			if (!result.contains(teacherId)) {
@@ -122,7 +142,9 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 	public List<Integer> findCurrentAllClassId() {
 		// TODO Auto-generated method stub
 		List<Integer> result =  new ArrayList<Integer>();
-		List<TeacherSubject> list = dao.findAll();
+		SchoolYear year=yearService.getCurrent();
+		Term term=termService.getCurrent();
+		List<TeacherSubject> list = dao.findByYearAndTerm(year, term);
 		for (TeacherSubject teacherSubject : list) {
 			Integer classId = teacherSubject.getSchoolClass().getClassId();
 			if (!result.contains(classId)) {
@@ -138,7 +160,9 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 	public List<Integer> findCurrentAllSubjectId() {
 		// TODO Auto-generated method stub
 		List<Integer> result =  new ArrayList<Integer>();
-		List<TeacherSubject> list = dao.findAll();
+		SchoolYear year=yearService.getCurrent();
+		Term term=termService.getCurrent();
+		List<TeacherSubject> list = dao.findByYearAndTerm(year, term);
 		for (TeacherSubject teacherSubject : list) {
 			Integer subjectId = teacherSubject.getSubject().getSubjectId();
 			if (!result.contains(subjectId)) {

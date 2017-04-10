@@ -99,11 +99,11 @@ public class Chromosome {
 		//随机产生交叉互换位置  
 		int size = c1.gene.length;
 		int classCount = DNA.getInstance().getClassIdCandidate().length;
-		int classDNALength = DNA.getInstance().getDnaBit()*DNA.getInstance().getWeekdayIdCandidate().length*DNA.getInstance().getSeqIdCandidate().length;
+		int classDNALength = DNA.getInstance().getDnaBit() *DNA.getInstance().getWeekdayIdCandidate().length*DNA.getInstance().getSeqIdCandidate().length;
 		Random random = new Random();
 		
 		
-		int a =  (random.nextInt(classCount)+1)*classDNALength;
+		int a =  (random.nextInt(classCount)+1)*classDNALength  ;
 		while (a>=size) {
 			a=(random.nextInt(classCount)+1)*classDNALength;
 		}
@@ -111,9 +111,11 @@ public class Chromosome {
 		if(b>size){
 			b=size;
 		}
-		
-		//对位置上的基因进行交叉互换
-		for (int i = a; i <= b; i++) {
+		/*System.out.println(String.valueOf(c1.gene));
+		System.out.println(String.valueOf(c2.gene));*/
+
+		//对位置上的基因进行交叉互换 注意数组长度需要减1
+		for (int i = a-1; i < b; i++) {
 			char t = c1.gene[i];
 			c1.gene[i] = c2.gene[i];
 			c2.gene[i] = t;
@@ -121,19 +123,22 @@ public class Chromosome {
 		List<Chromosome> list = new ArrayList<Chromosome>();
 		list.add(c1);
 		list.add(c2);
+	/*	System.out.println(String.valueOf(c1.gene));
+		System.out.println(String.valueOf(c2.gene));*/
+		
 		return list;
 	}
 	
 	/**
 	 * @param num
-	 * @Description: 基因发生变异 第classIndex个班级表突变
+	 * @Description: 基因发生变异 第classIndex个班级表突变 classIndex从0开始
 	 */
 	public void mutation(int classIndex) {
 		//允许变异
 		//int classCount = DNA.getInstance().getClassIdCandidate().length;	
 		int classDNALength = DNA.getInstance().getDnaBit()*DNA.getInstance().getWeekdayIdCandidate().length*DNA.getInstance().getSeqIdCandidate().length;
         char[] a =   DNA.getInstance().getDnaString(classIndex).toCharArray();
-        for (int i = classIndex*classDNALength; i < classDNALength; i++) {
+        for (int i = classIndex*classDNALength; i < classIndex*classDNALength+classDNALength; i++) {
 			gene[i] = a[i-(classIndex*classDNALength)];			
 		}
         

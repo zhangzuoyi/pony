@@ -10,11 +10,11 @@ import java.util.Random;
 import org.omg.CORBA.PRIVATE_MEMBER;
 
   
-public abstract class GeneticAlgorithm {
+public  class GeneticAlgorithm {
 	private List<Chromosome> population = new ArrayList<Chromosome>();
-	private int popSize = 50;//种群数量
+	private int popSize = 30;//种群数量
 	//private int geneSize;//基因最大长度
-	private int maxIterNum = 500;//最大迭代次数
+	private int maxIterNum = 2000;//最大迭代次数
 	private double mutationRate = 0.01;//基因变异的概率
 	//private int maxMutationNum = 3;//最大变异步长
 	
@@ -25,9 +25,10 @@ public abstract class GeneticAlgorithm {
 	private double totalScore;//总得分
 	private double averageScore;//平均得分
 	
-	private double x; //记录历史种群中最好的X值
-	private double y; //记录历史种群中最好的Y值
-	private int geneI;//x y所在代数
+	//private double x; //记录历史种群中最好的X值
+	//private double y; //记录历史种群中最好的Y值
+	private Chromosome bestChromosome;//记录历史种群中最好的Y值	
+	private int geneI;//所在代数
 	
 	/*public GeneticAlgorithm(int geneSize) {
 		this.geneSize = geneSize;
@@ -49,13 +50,15 @@ public abstract class GeneticAlgorithm {
 	 * @Description: 输出结果
 	 */
 	private void print() {
-		/*System.out.println("--------------------------------");
+		System.out.println("--------------------------------");
 		System.out.println("the generation is:" + generation);
-		System.out.println("the best y is:" + bestScore);
+		System.out.println("the best fitness is:" + bestScore);
 		System.out.println("the worst fitness is:" + worstScore);
 		System.out.println("the average fitness is:" + averageScore);
 		System.out.println("the total fitness is:" + totalScore);
-		System.out.println("geneI:" + geneI + "\tx:" + x + "\ty:" + y);*/
+		//System.out.println("geneI:" + geneI + "\tx:" + x + "\ty:" + y);
+		System.out.println("geneI:" + geneI );
+
 	}
 	
 	
@@ -66,7 +69,6 @@ public abstract class GeneticAlgorithm {
 		
 		String[] classIdCandidate = DNA.getInstance().getClassIdCandidate();
 		for (int i = 0; i < popSize; i++) {
-			population = new ArrayList<Chromosome>();
 			Chromosome chro = new Chromosome(classIdCandidate);
 			population.add(chro);
 		}
@@ -109,7 +111,7 @@ public abstract class GeneticAlgorithm {
 		double sum = 0;
 		for (Chromosome chro : population) {
 			sum += chro.getScore();
-			if (sum > slice && chro.getScore() >= averageScore) {
+			if (sum > slice && chro.getScore() <= averageScore) {
 				return chro;
 			}
 		}
@@ -134,7 +136,7 @@ public abstract class GeneticAlgorithm {
 
 		
 		
-		/*setChromosomeScore(population.get(0));
+		setChromosomeScore(population.get(0));
 		bestScore = population.get(0).getScore();
 		worstScore = population.get(0).getScore();
 		totalScore = 0;
@@ -142,20 +144,23 @@ public abstract class GeneticAlgorithm {
 			setChromosomeScore(chro);
 			if (chro.getScore() > bestScore) { //设置最好基因值
 				bestScore = chro.getScore();
-				if (y < bestScore) {
-					x = changeX(chro);
+				/*if (y < bestScore) {
+					//x = changeX(chro);
 					y = bestScore;
 					geneI = generation;
-				}
+				}*/
 			}
 			if (chro.getScore() < worstScore) { //设置最坏基因值
 				worstScore = chro.getScore();
+				bestChromosome = chro;
+				geneI = generation;
+				
 			}
 			totalScore += chro.getScore();
 		}
 		averageScore = totalScore / popSize;
 		//因为精度问题导致的平均值大于最好值，将平均值设置成最好值
-		averageScore = averageScore > bestScore ? bestScore : averageScore;*/
+		averageScore = averageScore > bestScore ? bestScore : averageScore;
 	}	
 	/**
 	 * 基因突变
@@ -175,23 +180,25 @@ public abstract class GeneticAlgorithm {
 	 * @param chro
 	 * @Description: 设置染色体得分
 	 */
-	private void setChromosomeScore(Chromosome chro) {
-		if (chro == null) {
+	private void setChromosomeScore(Chromosome chromosome) {
+		if (chromosome == null) {
 			return;
 		}
 		//double x = changeX(chro);
 		//double y = caculateY(x);
-		chro.setScore(y);
-
+		//chro.setScore(y);
+		int scoreRuleOne = Rule.ruleOne(chromosome);
+		int scoreRuleTwo = Rule.ruleTwo(chromosome, DNA.getInstance().getTeacherSubjectweekArrange());
+		//chromosome.setScore(scoreRuleOne);
+		chromosome.setScore(scoreRuleOne+scoreRuleTwo);
 	}
 	
 	/**
 	 * @param chro
 	 * @return
-	 * @Author:lulei  
 	 * @Description: 将二进制转化为对应的X
 	 */
-	public abstract double changeX(Chromosome chro);
+	//public abstract double changeX(Chromosome chro);
 	
 	
 	/**
@@ -199,7 +206,7 @@ public abstract class GeneticAlgorithm {
 	 * @return
 	 * @Description: 根据X计算Y值 Y=F(X)
 	 */
-	public abstract double caculateY(double x);
+	//public abstract double caculateY(double x);
 
 	public void setPopulation(List<Chromosome> population) {
 		this.population = population;
@@ -241,11 +248,11 @@ public abstract class GeneticAlgorithm {
 		return averageScore;
 	}
 
-	public double getX() {
+	/*public double getX() {
 		return x;
 	}
 
 	public double getY() {
 		return y;
-	}
+	}*/
 }

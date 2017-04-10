@@ -27,4 +27,6 @@ public interface SubjectService {
 	List<Subject> findMajorSubject();
 	
 	List<Subject> findByExam(int examId);
+	
+	List<Integer> findAllSubjectId();
 }

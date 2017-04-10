@@ -1,5 +1,6 @@
 package com.zzy.pony.AutoClassArrange;
 
+import java.util.Map;
 import java.util.Random;
 
 
@@ -8,18 +9,21 @@ import java.util.Random;
 
 public class DNA {
 	//资源池    单例模式
-	private static final int teacherIdBit = 4;
-	private static final int subjectIdBit = 2;
-	private static final int weekdayIdBit = 1;
-	private static final int seqIdBit = 1;
-	private static final int classIdBit = 3;
-	private static final int dbaBit = 11;
+	private  int teacherIdBit = 4;
+	private  int subjectIdBit = 2;
+	private  int weekdayIdBit = 1;
+	private  int seqIdBit = 1;
+	private  int classIdBit = 3;
+	private  int dnaBit = 11;
 
 	private String[] teacherIdCandidate;  
 	private String[] subjectIdCandidate;
 	private String[] weekdayIdCandidate;
 	private String[] seqIdCandidate;
 	private String[] classIdCandidate;
+	private Map<String,Integer> TeacherSubjectweekArrange;//班级老师与课时的映射关系  key:teacherId+classId+subjectId value:weekArrange
+	
+	
 	private String dnaString;//基因序列   由1个班组成，课表安排形成一个最小单位  4位teacherId  3位classId 2位subjectId  1位星期weekday   1位课时seq
 	
 	
@@ -81,10 +85,35 @@ public class DNA {
 	}
 	public void setSeqIdCandidate(String[] seqIdCandidate) {
 		this.seqIdCandidate = seqIdCandidate;
+	}	
+	public Map<String, Integer> getTeacherSubjectweekArrange() {
+		return TeacherSubjectweekArrange;
 	}
-	public int getDnaBit(){
-		return this.dbaBit;
+	public void setTeacherSubjectweekArrange(
+			Map<String, Integer> teacherSubjectweekArrange) {
+		TeacherSubjectweekArrange = teacherSubjectweekArrange;
 	}
+	public int getTeacherIdBit() {
+		return teacherIdBit;
+	}
+	public int getSubjectIdBit() {
+		return subjectIdBit;
+	}
+	public int getWeekdayIdBit() {
+		return weekdayIdBit;
+	}
+	public int getSeqIdBit() {
+		return seqIdBit;
+	}
+	public int getClassIdBit() {
+		return classIdBit;
+	}
+	public int getDnaBit() {
+		return dnaBit;
+	}
+	
+	
+	
 	
 	
 
