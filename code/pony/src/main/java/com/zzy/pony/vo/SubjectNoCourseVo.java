@@ -1,5 +1,7 @@
 package com.zzy.pony.vo;
 
+import java.util.List;
+
 
 
 public class SubjectNoCourseVo {
@@ -16,6 +18,7 @@ public class SubjectNoCourseVo {
 	private String lessonPeriodName;
 	private int subjectId;
 	private String subjectName;
+	private List<Integer> gradeClassIds;
 	public SubjectNoCourseVo(){}
 	public int getId() {
 		return id;
@@ -96,6 +99,13 @@ public class SubjectNoCourseVo {
 	public void setTermName(String termName) {
 		this.termName = termName;
 	}
+	public List<Integer> getGradeClassIds() {
+		return gradeClassIds;
+	}
+	public void setGradeClassIds(List<Integer> gradeClassIds) {
+		this.gradeClassIds = gradeClassIds;
+	}
+	
 	
 	
 	

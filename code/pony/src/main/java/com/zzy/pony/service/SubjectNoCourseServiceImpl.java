@@ -16,8 +16,10 @@ import org.springframework.stereotype.Service;
 
 
 
+
 import com.zzy.pony.dao.SubjectNoCourseDao;
 import com.zzy.pony.model.Grade;
+import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.model.SubjectNoCourse;
@@ -29,6 +31,12 @@ import com.zzy.pony.vo.SubjectNoCourseVo;
 public class SubjectNoCourseServiceImpl implements SubjectNoCourseService {
 	@Autowired
 	private SubjectNoCourseDao subjectNoCourseDao;
+	@Autowired
+	private SchoolClassService schoolClassService;
+	@Autowired
+	private SchoolYearService schoolYearService;
+	@Autowired
+	private TermService termService;
 	
 	
 	@Override
@@ -45,11 +53,39 @@ public class SubjectNoCourseServiceImpl implements SubjectNoCourseService {
 		List<SubjectNoCourse> list = subjectNoCourseDao.findAll();
 		for (SubjectNoCourse subjectNoCourse : list) {
 			SubjectNoCourseVo tncv = toSubjectNoCourseVo(subjectNoCourse);
+			List<SchoolClass> schoolClasses =   schoolClassService.findByGrade(subjectNoCourse.getGrade().getGradeId());
+			List<Integer> gradeClassIds = new ArrayList<Integer>();
+			for (SchoolClass schoolClass : schoolClasses) {
+				gradeClassIds.add(schoolClass.getClassId());
+			}
+			tncv.setGradeClassIds(gradeClassIds);
 			result.add(tncv);
 		}
 		return result;
 	}
 	
+	
+	@Override
+	public List<SubjectNoCourseVo> findCurrentAllVo() {
+		// TODO Auto-generated method stub
+		List<SubjectNoCourseVo> result = new ArrayList<SubjectNoCourseVo>();
+		SchoolYear schoolYear = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();		
+		List<SubjectNoCourse> list = subjectNoCourseDao.findBySchoolYearAndTerm(schoolYear, term);
+		for (SubjectNoCourse subjectNoCourse : list) {
+			SubjectNoCourseVo tncv = toSubjectNoCourseVo(subjectNoCourse);
+			List<SchoolClass> schoolClasses =   schoolClassService.findByGrade(subjectNoCourse.getGrade().getGradeId());
+			List<Integer> gradeClassIds = new ArrayList<Integer>();
+			for (SchoolClass schoolClass : schoolClasses) {
+				gradeClassIds.add(schoolClass.getClassId());
+			}
+			tncv.setGradeClassIds(gradeClassIds);
+			result.add(tncv);
+		}
+		return result;
+	}
+
+
 	private SubjectNoCourseVo toSubjectNoCourseVo(SubjectNoCourse snc){
 		SubjectNoCourseVo sncv = new SubjectNoCourseVo();
 		sncv.setId(snc.getId());

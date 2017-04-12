@@ -22,5 +22,5 @@ import com.zzy.pony.model.Term;
 
 public interface SubjectNoCourseDao extends JpaRepository<SubjectNoCourse,Integer>{
 	List<SubjectNoCourse> findByGradeAndSubjectAndSchoolYearAndTerm(Grade grade,Subject subject,SchoolYear schoolYear,Term term);
-
+	List<SubjectNoCourse> findBySchoolYearAndTerm(SchoolYear schoolYear,Term term);
 }

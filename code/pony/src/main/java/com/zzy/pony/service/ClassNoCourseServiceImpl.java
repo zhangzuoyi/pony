@@ -37,6 +37,10 @@ import com.zzy.pony.vo.ClassNoCourseVo;
 public class ClassNoCourseServiceImpl implements ClassNoCourseService {
 	@Autowired
 	private ClassNoCourseDao classNoCourseDao;
+	@Autowired
+	private SchoolYearService schoolYearService;
+	@Autowired
+	private TermService termService;
 	
 	@Override
 	public List<ClassNoCourse> findAll() {
@@ -67,6 +71,36 @@ public class ClassNoCourseServiceImpl implements ClassNoCourseService {
 	}
 	
 		return result;
+	}
+	
+	
+
+	@Override
+	public List<ClassNoCourseVo> findCurrentAllVo() {
+		// TODO Auto-generated method stub
+		List<ClassNoCourseVo> result= new ArrayList<ClassNoCourseVo>();	
+		SchoolYear schoolYear = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();
+		List<ClassNoCourse> classNoCourses  = classNoCourseDao.findBySchoolYearAndTerm(schoolYear, term);
+		for (ClassNoCourse classNoCourse : classNoCourses) {
+			ClassNoCourseVo vo = new ClassNoCourseVo();
+			vo.setClassId(classNoCourse.getSchoolClass().getClassId());
+			vo.setClassName(classNoCourse.getSchoolClass().getName());
+			vo.setId(classNoCourse.getId());
+			vo.setLessonPeriodId(classNoCourse.getLessonPeriod().getPeriodId());
+			vo.setLessonPeriodName(classNoCourse.getLessonPeriod().getStartTime()+"——"+classNoCourse.getLessonPeriod().getEndTime());
+			vo.setSchoolYearId(classNoCourse.getSchoolYear().getYearId());
+			vo.setSchoolYearName(classNoCourse.getSchoolYear().getName());
+			vo.setTermId(classNoCourse.getTerm().getTermId());
+			vo.setTermName(classNoCourse.getTerm().getName());
+			vo.setWeekdayId(classNoCourse.getWeekday().getSeq());
+			vo.setWeekdayName(classNoCourse.getWeekday().getName());
+
+			result.add(vo);
+		}
+		
+			return result;	
+			
 	}
 
 	@Override

@@ -82,17 +82,150 @@ public class Rule {
 	}
 			
 	
-	//规则3:班级不排课设置ruleThree
+	//规则3:班级不排课设置ruleThree 由于编码规则每个班在每个课时都会有课 ,顾该规则需要特别考虑(年级不排课设置也是一样的)
 	
-	public static int ruleThree(Chromosome chromosome){
+	public static int ruleThree(Chromosome chromosome,Map<String, String> map){
 		int result = 0;
+		Map<String, String> mapCopy = new HashMap<String, String>();
+		mapCopy.putAll(map);
+		char[] gene = chromosome.getGene();
+		String geneString = String.valueOf(gene);
+		int dnaBit = DNA.getInstance().getDnaBit();
+		int classIdBit = DNA.getInstance().getClassIdBit();
+		int teacherIdBit = DNA.getInstance().getTeacherIdBit();
+		int subjectIdBit = DNA.getInstance().getSubjectIdBit();
+		int classLength =	 DNA.getInstance().getClassIdCandidate().length;
+		int classDNALength = DNA.getInstance().getDnaBit()*DNA.getInstance().getWeekdayIdCandidate().length*DNA.getInstance().getSeqIdCandidate().length;
+		int weekdayLength = DNA.getInstance().getWeekdayIdCandidate().length;
+		int seqLength = DNA.getInstance().getSeqIdCandidate().length;
+		//同一班级比较
+		for (int i = 0; i < weekdayLength; i++) {
+			for (int j = 0; j < seqLength; j++) {
+				for (int k = 0; k < classLength; k++) {
+				
+				//一个上课单元
+				String dnaString = geneString.substring((i*seqLength+j)*dnaBit+k*classDNALength, (i*seqLength+j)*dnaBit+k*classDNALength+dnaBit);
+				String key = dnaString.substring(teacherIdBit,teacherIdBit+classIdBit);
+				String value = dnaString.substring(teacherIdBit+classIdBit+subjectIdBit, dnaBit);
+				if (mapCopy.containsKey(key)&&mapCopy.get(key).equals(value)) {				
+					//@todo 规则分值计算				
+				}									
+				}
+			}
+		}	
 		
 		
 		return result;
 	}
 			//规则4:老师不排课设置ruleFour
+	public static int ruleFour(Chromosome chromosome,Map<String, String> map){
+		int result = map.size();
+		Map<String, String> mapCopy = new HashMap<String, String>();
+		mapCopy.putAll(map);
+		char[] gene = chromosome.getGene();
+		String geneString = String.valueOf(gene);
+		int dnaBit = DNA.getInstance().getDnaBit();
+		int classIdBit = DNA.getInstance().getClassIdBit();
+		int teacherIdBit = DNA.getInstance().getTeacherIdBit();
+		int subjectIdBit = DNA.getInstance().getSubjectIdBit();
+		int classLength =	 DNA.getInstance().getClassIdCandidate().length;
+		int classDNALength = DNA.getInstance().getDnaBit()*DNA.getInstance().getWeekdayIdCandidate().length*DNA.getInstance().getSeqIdCandidate().length;
+		int weekdayLength = DNA.getInstance().getWeekdayIdCandidate().length;
+		int seqLength = DNA.getInstance().getSeqIdCandidate().length;
+		//同一班级比较
+		for (int i = 0; i < weekdayLength; i++) {
+			for (int j = 0; j < seqLength; j++) {
+				for (int k = 0; k < classLength; k++) {
+				
+				//一个上课单元
+				String dnaString = geneString.substring((i*seqLength+j)*dnaBit+k*classDNALength, (i*seqLength+j)*dnaBit+k*classDNALength+dnaBit);
+				String key = dnaString.substring(0,teacherIdBit);
+				String value = dnaString.substring(teacherIdBit+classIdBit+subjectIdBit, dnaBit);
+				if (mapCopy.containsKey(key)&&mapCopy.get(key).equals(value)) {				
+					//@todo 规则分值计算  , map.size为初始化得分
+					result --;
+					
+				}									
+				}
+			}
+		}	
+		
+		
+		return Math.abs(result);
+	}
+	
+	
 			//规则5:科目不排课设置ruleFive
+	public static int ruleFive(Chromosome chromosome,Map<String, String> map){
+		int result = map.size();
+		Map<String, String> mapCopy = new HashMap<String, String>();
+		mapCopy.putAll(map);
+		char[] gene = chromosome.getGene();
+		String geneString = String.valueOf(gene);
+		int dnaBit = DNA.getInstance().getDnaBit();
+		int classIdBit = DNA.getInstance().getClassIdBit();
+		int teacherIdBit = DNA.getInstance().getTeacherIdBit();
+		int subjectIdBit = DNA.getInstance().getSubjectIdBit();
+		int classLength =	 DNA.getInstance().getClassIdCandidate().length;
+		int classDNALength = DNA.getInstance().getDnaBit()*DNA.getInstance().getWeekdayIdCandidate().length*DNA.getInstance().getSeqIdCandidate().length;
+		int weekdayLength = DNA.getInstance().getWeekdayIdCandidate().length;
+		int seqLength = DNA.getInstance().getSeqIdCandidate().length;
+		//同一班级比较
+		for (int i = 0; i < weekdayLength; i++) {
+			for (int j = 0; j < seqLength; j++) {
+				for (int k = 0; k < classLength; k++) {
+				
+				//一个上课单元
+				String dnaString = geneString.substring((i*seqLength+j)*dnaBit+k*classDNALength, (i*seqLength+j)*dnaBit+k*classDNALength+dnaBit);
+				String key = dnaString.substring(teacherIdBit,teacherIdBit+classIdBit+subjectIdBit);
+				String value = dnaString.substring(teacherIdBit+classIdBit+subjectIdBit, dnaBit);
+				if (mapCopy.containsKey(key)&&mapCopy.get(key).equals(value)) {				
+					//@todo 规则分值计算  , map.size为初始化得分
+					result --;
+					
+				}									
+				}
+			}
+		}	
+		
+		
+		return Math.abs(result);
+	}
+	
 			//规则6:年级不排课设置ruleSix
+	public static int ruleSix(Chromosome chromosome,Map<String, String> map){
+		int result = 0;
+		Map<String, String> mapCopy = new HashMap<String, String>();
+		mapCopy.putAll(map);
+		char[] gene = chromosome.getGene();
+		String geneString = String.valueOf(gene);
+		int dnaBit = DNA.getInstance().getDnaBit();
+		int classIdBit = DNA.getInstance().getClassIdBit();
+		int teacherIdBit = DNA.getInstance().getTeacherIdBit();
+		int subjectIdBit = DNA.getInstance().getSubjectIdBit();
+		int classLength =	 DNA.getInstance().getClassIdCandidate().length;
+		int classDNALength = DNA.getInstance().getDnaBit()*DNA.getInstance().getWeekdayIdCandidate().length*DNA.getInstance().getSeqIdCandidate().length;
+		int weekdayLength = DNA.getInstance().getWeekdayIdCandidate().length;
+		int seqLength = DNA.getInstance().getSeqIdCandidate().length;
+		//同一班级比较
+		for (int i = 0; i < weekdayLength; i++) {
+			for (int j = 0; j < seqLength; j++) {
+				for (int k = 0; k < classLength; k++) {
+				
+				//一个上课单元
+				String dnaString = geneString.substring((i*seqLength+j)*dnaBit+k*classDNALength, (i*seqLength+j)*dnaBit+k*classDNALength+dnaBit);
+				String key = dnaString.substring(teacherIdBit,teacherIdBit+classIdBit);
+				String value = dnaString.substring(teacherIdBit+classIdBit+subjectIdBit, dnaBit);
+				if (mapCopy.containsKey(key)&&mapCopy.get(key).equals(value)) {				
+					//@todo 规则分值计算				
+				}									
+				}
+			}
+		}	
+		
+		
+		return result;
+	}
 
 	
 }

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.omg.CORBA.PRIVATE_MEMBER;
 
   
 public  class GeneticAlgorithm {

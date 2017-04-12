@@ -5,6 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.id.IntegralDataTypeHolder;
+
+import com.zzy.pony.vo.ClassNoCourseVo;
+import com.zzy.pony.vo.GradeNoCourseVo;
+import com.zzy.pony.vo.SubjectNoCourseVo;
+import com.zzy.pony.vo.TeacherNoCourseVo;
 import com.zzy.pony.vo.TeacherSubjectVo;
 
 public class GAUtil {
@@ -40,6 +46,60 @@ public class GAUtil {
 				teacherSubjectVo.setWeekArrange("0");
 			}
 			result.put(teacherId+classId+subjectId, Integer.valueOf(teacherSubjectVo.getWeekArrange()));
+		}		
+		return result;
+		
+	}
+	public static Map<String,String> getClassNoCourse(List<ClassNoCourseVo> list){
+		Map<String, String> result =  new HashMap<String, String>();
+		for (ClassNoCourseVo vo : list) {			
+			String seqId = String.format("%01d", vo.getWeekdayId())  ;
+			String classId=String.format("%03d", vo.getClassId()) ;
+			String periodId =String.format("%01d", vo.getLessonPeriodId())  ;			
+			
+		result.put(classId, seqId+periodId);
+		}		
+		return result;
+		
+	}
+	public static Map<String,String> getTeacherNoCourse(List<TeacherNoCourseVo> list){
+		Map<String, String> result =  new HashMap<String, String>();
+		for (TeacherNoCourseVo vo : list) {			
+			String seqId = String.format("%01d", vo.getWeekdayId())  ;
+			String teacherId=String.format("%04d", vo.getTeacherId()) ;
+			String periodId =String.format("%01d", vo.getLessonPeriodId())  ;			
+			
+		result.put(teacherId, seqId+periodId);
+		}		
+		return result;
+		
+	}
+	public static Map<String,String> getSubjectNoCourse(List<SubjectNoCourseVo> list){
+		Map<String, String> result =  new HashMap<String, String>();
+		for (SubjectNoCourseVo vo : list) {			
+			String seqId = String.format("%01d", vo.getWeekdayId())  ;
+			
+			String periodId =String.format("%01d", vo.getLessonPeriodId())  ;
+			String subjectId =String.format("%02d", vo.getSubjectId())  ;
+			List<Integer> gradeClassIds = vo.getGradeClassIds();			
+			for (Integer gradeClassId : gradeClassIds) {
+				String classId= String.format("%3d", gradeClassId);
+				result.put(classId+subjectId, seqId+periodId);
+			}
+		}		
+		return result;
+		
+	}
+	public static Map<String,String> getGradeNoCourse(List<GradeNoCourseVo> list){
+		Map<String, String> result =  new HashMap<String, String>();
+		for (GradeNoCourseVo vo : list) {			
+			String seqId = String.format("%01d", vo.getWeekdayId())  ;
+			String periodId =String.format("%01d", vo.getLessonPeriodId())  ;
+			List<Integer> gradeClassIds = vo.getGradeClassIds();			
+			for (Integer gradeClassId : gradeClassIds) {
+				String classId= String.format("%3d", gradeClassId);
+				result.put(classId, seqId+periodId);
+			}			
 		}		
 		return result;
 		

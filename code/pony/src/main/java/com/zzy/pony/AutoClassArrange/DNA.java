@@ -22,7 +22,11 @@ public class DNA {
 	private String[] seqIdCandidate;
 	private String[] classIdCandidate;
 	private Map<String,Integer> TeacherSubjectweekArrange;//班级老师与课时的映射关系  key:teacherId+classId+subjectId value:weekArrange
-	
+	private Map<String, String> classNoCourse;
+	private Map<String, String> teacherNoCourse;
+	private Map<String, String> subjectNoCourse;
+	private Map<String, String> gradeNoCourse;
+
 	
 	private String dnaString;//基因序列   由1个班组成，课表安排形成一个最小单位  4位teacherId  3位classId 2位subjectId  1位星期weekday   1位课时seq
 	
@@ -111,6 +115,31 @@ public class DNA {
 	public int getDnaBit() {
 		return dnaBit;
 	}
+	public Map<String, String> getClassNoCourse() {
+		return classNoCourse;
+	}
+	public void setClassNoCourse(Map<String, String> classNoCourse) {
+		this.classNoCourse = classNoCourse;
+	}
+	public Map<String, String> getTeacherNoCourse() {
+		return teacherNoCourse;
+	}
+	public void setTeacherNoCourse(Map<String, String> teacherNoCourse) {
+		this.teacherNoCourse = teacherNoCourse;
+	}
+	public Map<String, String> getSubjectNoCourse() {
+		return subjectNoCourse;
+	}
+	public void setSubjectNoCourse(Map<String, String> subjectNoCourse) {
+		this.subjectNoCourse = subjectNoCourse;
+	}
+	public Map<String, String> getGradeNoCourse() {
+		return gradeNoCourse;
+	}
+	public void setGradeNoCourse(Map<String, String> gradeNoCourse) {
+		this.gradeNoCourse = gradeNoCourse;
+	}
+	
 	
 	
 	

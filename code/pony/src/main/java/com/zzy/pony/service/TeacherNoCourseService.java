@@ -15,4 +15,6 @@ public interface TeacherNoCourseService {
 	List<TeacherNoCourseVo> findAllVo();
 	void deleteByTeacherAndYearAndTerm(Teacher teacher,SchoolYear schoolYear,Term term);
 	void save(TeacherNoCourse teacherNoCourse);
+	List<TeacherNoCourseVo> findCurrentAllVo();
+
 }

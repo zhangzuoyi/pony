@@ -24,6 +24,10 @@ import com.zzy.pony.vo.TeacherNoCourseVo;
 public class TeacherNoCourseServiceImpl implements TeacherNoCourseService {
 	@Autowired
 	private TeacherNoCourseDao teacherNoCourseDao; 
+	@Autowired
+	private SchoolYearService schoolYearService;
+	@Autowired
+	private TermService termService;
 	
 	
 	@Override
@@ -45,6 +49,24 @@ public class TeacherNoCourseServiceImpl implements TeacherNoCourseService {
 		return result;
 	}
 	
+	
+	
+	@Override
+	public List<TeacherNoCourseVo> findCurrentAllVo() {
+		// TODO Auto-generated method stub
+		List<TeacherNoCourseVo> result = new ArrayList<TeacherNoCourseVo>();
+		SchoolYear schoolYear = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();
+		List<TeacherNoCourse> list = teacherNoCourseDao.findBySchoolYearAndTerm(schoolYear, term);
+		for (TeacherNoCourse teacherNoCourse : list) {
+			TeacherNoCourseVo tncv = toTeacherNoCourseVo(teacherNoCourse);
+			result.add(tncv);
+		}
+		return result;	
+		
+	}
+
+
 	private TeacherNoCourseVo toTeacherNoCourseVo(TeacherNoCourse tnc){
 		TeacherNoCourseVo tncv = new TeacherNoCourseVo();
 		tncv.setId(tnc.getId());
