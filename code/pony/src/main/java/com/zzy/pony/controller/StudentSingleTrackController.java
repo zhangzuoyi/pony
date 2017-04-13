@@ -121,26 +121,26 @@ public class StudentSingleTrackController {
 			List<Map<String, Object>> headList = new ArrayList<Map<String,Object>>();
 			
 			Map<String, Object> yearNameMap = new HashMap<String, Object>();
-			yearNameMap.put("field", "yearName");
-			yearNameMap.put("title", "学年");
+			yearNameMap.put("prop", "yearName");
+			yearNameMap.put("label", "学年");
 			Map<String, Object> termNameMap = new HashMap<String, Object>();
-			termNameMap.put("field", "termName");
-			termNameMap.put("title", "学期");
+			termNameMap.put("prop", "termName");
+			termNameMap.put("label", "学期");
 			Map<String, Object> examNameMap = new HashMap<String, Object>();
-			examNameMap.put("field", "examName");
-			examNameMap.put("title", "考试名称");						
+			examNameMap.put("prop", "examName");
+			examNameMap.put("label", "考试名称");						
 			
 			Map<String, Object> sumMap = new HashMap<String, Object>();
-			sumMap.put("field", "sum");
-			sumMap.put("title", subject.getName());
+			sumMap.put("prop", "sum");
+			sumMap.put("label", subject.getName());
 			Map<String, Object> classRankMap = new HashMap<String, Object>();
-			classRankMap.put("field", "classRank");
-			classRankMap.put("title", "班级排名");
+			classRankMap.put("prop", "classRank");
+			classRankMap.put("label", "班级排名");
 			classRankMap.put("sortable", "true");
 
 			Map<String, Object> gradeRankMap = new HashMap<String, Object>();
-			gradeRankMap.put("field", "gradeRank");
-			gradeRankMap.put("title", "年级排名");
+			gradeRankMap.put("prop", "gradeRank");
+			gradeRankMap.put("label", "年级排名");
 			gradeRankMap.put("sortable", "true");
 
 			headList.add(yearNameMap);

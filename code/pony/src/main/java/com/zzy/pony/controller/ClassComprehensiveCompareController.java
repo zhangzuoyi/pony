@@ -117,33 +117,33 @@ public class ClassComprehensiveCompareController {
 			List<Map<String, Object>> headList = new ArrayList<Map<String,Object>>();
 			
 			Map<String, Object> classNameMap = new HashMap<String, Object>();
-			classNameMap.put("field", "className");
-			classNameMap.put("title", "班级");
+			classNameMap.put("prop", "className");
+			classNameMap.put("label", "班级");
 			Map<String, Object> headTeacherNameMap = new HashMap<String, Object>();
-			headTeacherNameMap.put("field", "headTeacherName");
-			headTeacherNameMap.put("title", "任课教师");
+			headTeacherNameMap.put("prop", "headTeacherName");
+			headTeacherNameMap.put("label", "任课教师");
 			Map<String, Object> studentCountMap = new HashMap<String, Object>();
-			studentCountMap.put("field", "studentCount");
-			studentCountMap.put("title", "考生人数");
+			studentCountMap.put("prop", "studentCount");
+			studentCountMap.put("label", "考生人数");
 			
 			String[] subjects  =   cv.getSubjects();
 			for (String subjectId : subjects) {
 				Map<String, Object> headMap = new HashMap<String, Object>();
 				Subject subject = subjectService.get(Integer.valueOf(subjectId));
-				headMap.put("field", Constants.SUBJETCS.get(subject.getSubjectId())+"Average");
-				headMap.put("title", subject.getName()+"平均分");
+				headMap.put("prop", Constants.SUBJETCS.get(subject.getSubjectId())+"Average");
+				headMap.put("label", subject.getName()+"平均分");
 				headList.add(headMap);
 			}
 			
 			Map<String, Object> sumAverageMap = new HashMap<String, Object>();
-			sumAverageMap.put("field", "sumAverage");
-			sumAverageMap.put("title", "平均分");
+			sumAverageMap.put("prop", "sumAverage");
+			sumAverageMap.put("label", "平均分");
 			Map<String, Object> topMap = new HashMap<String, Object>();
-			topMap.put("field", "top");
-			topMap.put("title", "最高分");
+			topMap.put("prop", "top");
+			topMap.put("label", "最高分");
 			Map<String, Object> bottomMap = new HashMap<String, Object>();
-			bottomMap.put("field", "bottom");
-			bottomMap.put("title", "最低分");
+			bottomMap.put("prop", "bottom");
+			bottomMap.put("label", "最低分");
 			headList.add(classNameMap);
 			headList.add(headTeacherNameMap);
 			headList.add(studentCountMap);

@@ -9,233 +9,240 @@
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/easyui/themes/default/easyui.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/style.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/icon.css' />" />
+<link rel="stylesheet" type="text/css" href="<s:url value='/static/elementUI/index.css' />" />
+<link rel="stylesheet" type="text/css" href="<s:url value='/static/elementUI/element.css' />" />
 <script type="text/javascript" src="<s:url value='/static/js/jquery.min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/easyui/jquery.easyui.min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/easyui/locale/easyui-lang-zh_CN.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/easyui/dateFormat.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/echarts/echarts.min.js' />"></script>
+<script type="text/javascript" src="<s:url value='/static/vue/vue.min.js' />"></script>
+<script type="text/javascript" src="<s:url value='/static/vue/vue-resource.min.js' />"></script>
+<script type="text/javascript" src="<s:url value='/static/elementUI/index.js' />"></script>
 
 </head>
-<body class="easyui-layout">
-<div class="easyui-layout" data-options="fit:true">
-		<div data-options="region:'center'" style="border:0;">	
-     <!-- Begin of toolbar -->
-    <div id="my-toolbar-2">       
-        <div class="my-toolbar-search">
-       	    <div>
-       	    <label>学年：</label> 
-            <select name="schoolYear" class="my-select" panelHeight="auto" style="width:100px">
-            	<option value="">请选择</option>
-            	<c:forEach items="${schoolYears }" var="g">
-           			<option value="${g.yearId }">${g.startYear }-${g.endYear }</option>
-           		</c:forEach>
-            </select>
-            <label>学期：</label> 
-            <select name="terms" class="my-select" panelHeight="auto" style="width:100px">
-            	<option value="">请选择</option>            	
-            	<c:forEach items="${terms }" var="g">
-           			<option value="${g.termId }">${g.name }</option>
-           		</c:forEach>
-            </select>
-            <label>年级：</label> 
-            <select name="grade" class="my-select" panelHeight="auto" style="width:100px">
-            	<option value="">请选择</option>
-            	<c:forEach items="${grades }" var="g">
-           			<option value="${g.gradeId }">${g.name }</option>
-           		</c:forEach>
-            </select>
-            <label>考试：</label> 
-            <select name="exam" class="my-select" panelHeight="auto" style="width:100px">
-            	<option value="">请选择</option>
-            	<c:forEach items="${exams }" var="g">
-           			<option value="${g.examId }">${g.name }</option>
-           		</c:forEach>
-            </select>
-            <a href="#" id="searchButton" class="easyui-linkbutton" iconCls="icon-search">查询</a>                      
-            </div>                      
-            <div>
-            <label>班级：</label> 
-            <div id="schoolClasses">           
-            <c:forEach items="${schoolClasses }" var="g">
-               <input type="checkbox"  name="schoolClasses" value="${g.classId }"/>${g.name }
-            </c:forEach>
-            </div>
-            </div>
-            <div>        
-            <label>科目：</label>  
-            <div id="subjects">                    
-            <c:forEach items="${subjects }" var="g">
-               <input type="radio"  name="subjects" value="${g.subjectId }"/>${g.name }
-            </c:forEach>  
+<body>
+<div id="app">
+ <div>   	           	
+        	<el-card class="box-card content-margin">
+            <div slot="header" class="clearfix">
+              <el-row>
+              
+              <el-col :span="1" >
+                    <b>学年:</b>                                    
+            </el-col> 
+            <el-col :span="4" >
+            <div class="grid-content bg-purple">                                     
+					<el-select v-model="conditionVo.yearId"    filterable placeholder="请选择.." >
+               		 <el-option
+                        v-for="schoolYear in schoolYears"
+                        :label="schoolYear.name"                                            
+                        :value="schoolYear.yearId">
+                        <span style="float: left">{{schoolYear.name}}</span>
+               		 </el-option>
+           			 </el-select>				
+                    </div>
+            
+            </el-col>
+            <el-col :span="1" >
+                    <b>学期:</b>                                    
+            </el-col> 
+            <el-col :span="4" >
+            <div class="grid-content bg-purple">                                     
+					<el-select v-model="conditionVo.termId" @change="getExams(conditionVo.yearId,conditionVo.termId)" filterable placeholder="请选择..">
+               		 <el-option
+                        v-for="term in terms" 
+                        :label="term.name"                      
+                        :value="term.termId">
+                        <span style="float: left">{{term.name}}</span>
+               		 </el-option>
+           			 </el-select>				
+                    </div>
+            
+            </el-col>
+            <el-col :span="1" >
+                    <b>年级:</b>                                    
+            </el-col> 
+            <el-col :span="4" >
+            <div class="grid-content bg-purple">                                     
+					<el-select v-model="conditionVo.gradeId"  filterable placeholder="请选择..">
+               		 <el-option
+                        v-for="grade in grades" 
+                        :label="grade.name"                      
+                        :value="grade.gradeId">
+                        <span style="float: left">{{grade.name}}</span>
+               		 </el-option>
+           			 </el-select>				
+                    </div>
+            
+            </el-col>
+            <el-col :span="1" >
+                    <b>考试:</b>                                    
+            </el-col> 
+            <el-col :span="4" >
+            <div class="grid-content bg-purple">                                     
+					<el-select v-model="conditionVo.examId"  @change="getSchoolClasses(conditionVo.examId);getSubjects(conditionVo.examId)"  filterable placeholder="请选择..">
+               		 <el-option
+                        v-for="exam in exams" 
+                        :label="exam.name"                      
+                        :value="exam.examId">
+                        <span style="float: left">{{exam.name}}</span>
+               		 </el-option>
+           			 </el-select>				
+                    </div>
+            
+            </el-col>
+             
+              <el-col :span="2" >
+               <el-button type="primary" @click="getListTableData()" >查询</el-button>
+              <!--  <el-button type="primary" @click="save()" >保存</el-button>    -->          
+              </el-col>
+              
+              </el-row> 
+              <el-row>
+              <!-- <el-radio-group v-model="examTypeId">
+                <el-radio-button v-for="examType in examTypes" :label="examType.typeId" >{{examType.name}}</el-radio-button>              
+            </el-radio-group> -->
+            <el-col :span="1">班级:</el-col>
+            <el-col :offset="1">
+            <el-checkbox-group v-model="conditionVo.schoolClasseIds">
+   			 <el-checkbox  v-for="schoolClass in schoolClasses"   :label="schoolClass.classId">{{schoolClass.name}}</el-checkbox>   
+  			</el-checkbox-group>
+  			</el-col>
+              </el-row> 
+              <el-row>
+               <el-col :span="1">科目:</el-col>
+            <el-col :offset="1">
+            <el-radio-group v-model="conditionVo.subjectId">
+                <el-radio-button v-for="subject in subjects" :label="subject.subjectId" >{{subject.name}}</el-radio-button>              
+            </el-radio-group>
+  			</el-col>
+              </el-row>
+                                                                      
             </div> 
-             </div>                                                
-            </div>                   
+            <el-row> 
+            <el-col :span="16" :offset="4" >                   
+            <el-table  
+           	 		:data="tableData"                 
+                    border
+                    style="width: 100%"                  
+                    >                            
+                           
+                  <el-table-column 
+        			v-for="col in cols"
+        			:prop="col.prop" 
+        			:label="col.label"
+        			width="150"         			
+        			>
+     		 </el-table-column> 
+     		   
+                                               
+            </el-table>
+            </el-col> 
+                                                              
+            </el-row> 
+            <el-row>
+              <el-col :offset="4">           
+               <div id="echarts" style="width: 600px;height:400px;"></div> 
+               </el-col>
+            </el-row>
+        </el-card>       	
     </div>
-    
-    <!-- End of toolbar -->
-    <table    id="my-datagrid-2" class="easyui-datagrid" toolbar="#my-toolbar-2" data-options="
- rownumbers:true,
- singleSelect:true,
- fitColumns:true,
-		fit:true,
- pagination:true
- " ></table> 
-    </div>
-	<div data-options="region:'south'" style="border:0;" >
-	 <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-    <div id="echarts" style="width: 400px;height:300px;"></div>
-	</div>
+</div> 
 
-</div>
-<!-- End of easyui-dialog -->
 <script type="text/javascript">
 
+var app = new Vue({ 
+	el : '#app' ,
+	data : { 
 	
+		conditionVo : {gradeId:null,yearId:null,termId:null,examId:null,schoolClasseIds:[],subjectId:null},				
+		grades : [],		
+		schoolYears:[],		
+		terms:[],
+		schoolClasses:[],
+		exams:[],
+		subjects:[],		
+		schoolYearsUrl :"<s:url value='/schoolYear/listVo'/>",
+		termsUrl :"<s:url value='/term/list'/>",				
+		gradesUrl :"<s:url value='/grade/list'/>",
+		examsUrl : "<s:url value='/exam/findByYearAndTerm'/>",
+		schoolClassesUrl : "<s:url value='/schoolClass/findByExam' />",	
+		subjectsUrl : "<s:url value='/subject/findByExam' />",													
+		listTableDataUrl :"<s:url value='/classSingleCompare/findByCondition'/>",		
+		tableData: [],		
+        cols:[]
+		
 	
-	$("select[name='terms']").change(function(){
-		var yearId=$("select[name='schoolYear']").children('option:selected').val();
-		var termId=$("select[name='terms']").children('option:selected').val();
-		if(yearId == "" || termId==""){
-			$("select[name='exam']").empty();
+		
+	}, 
+	mounted : function() { 
+		this.getSchoolYears();
+		this.getTerms();		
+		this.getGrades();
 			
-		}else{
-			$.ajax({
-				url:"<s:url value='/exam/findByYearAndTerm' />",
-				data:{yearId: yearId,termId : termId},
-				method:"GET",
-				dataType:"json",
-				success:function(data){
-					$("select[name='exam']").empty();
-					$("select[name='exam']").append("<option value=''>请选择</option>");
-					var len=data.length;
-					for(var i=0;i<len;i++){
-						var item=data[i];
-						$("select[name='exam']").append("<option value='"+item.examId+"'>"+item.name+"</option>");
-					}
-				}	
-			});
-		}
-	});
-		$("select[name='exam']").change(function(){
-			var examId=$(this).children('option:selected').val();
-			if(examId == ""){				
-				$("#schoolClasses").empty();
-				$("#subjects").empty();
-
-			}else{				
-				$.ajax({
-					url:"<s:url value='/schoolClass/findByExam' />",
-					data:{examId: examId},
-					method:"GET",
-					dataType:"json",
-					success:function(data){
-						$("#schoolClasses").empty();
-						var len=data.length;
-						for(var i=0;i<len;i++){
-							var item=data[i];
-							$("#schoolClasses").append(" <input type='checkbox'  name='schoolClasses' value='"+item.classId+"'/>"+item.name);
-						}
-					}	
-				});
-				$.ajax({
-					url:"<s:url value='/subject/findByExam' />",
-					data:{examId: examId},
-					method:"GET",
-					dataType:"json",
-					success:function(data){
-						$("#subjects").empty();
-						var len=data.length;
-						for(var i=0;i<len;i++){
-							var item=data[i];
-							$("#subjects").append(" <input type='radio'  name='subjects' value='"+item.subjectId+"'/>"+item.name);
-						}
-					}	
-				}); 
-			}
-		});
-		function pagerFilter(data){
-			if (typeof data.length == 'number' && typeof data.splice == 'function'){	// is array
-				data = {
-					total: data.length,
-					rows: data
-				}
-			}
-			var dg = $(this);
-			var opts = dg.datagrid('options');
-			var pager = dg.datagrid('getPager');
-			pager.pagination({
-				onSelectPage:function(pageNum, pageSize){
-					opts.pageNumber = pageNum;
-					opts.pageSize = pageSize;
-					pager.pagination('refresh',{
-						pageNumber:pageNum,
-						pageSize:pageSize
-					});
-					dg.datagrid('loadData',data);
-				}
-			});
-			if (!data.originalRows){
-				data.originalRows = (data.rows);
-			}
-			var start = (opts.pageNumber-1)*parseInt(opts.pageSize);
-			var end = start + parseInt(opts.pageSize);
-			data.rows = (data.originalRows.slice(start, end));
-			return data;
-		}
+	}, 
+	methods : { 
+		 	
+		  getSchoolYears	:function(){ 			
+			this.$http.get(this.schoolYearsUrl).then(
+			function(response){this.schoolYears=response.data; },
+			function(response){}  	 			
+			);
+			},
+			getTerms	:function(){ 			
+			this.$http.get(this.termsUrl).then(
+			function(response){this.terms=response.data; },
+			function(response){}  	 			
+			);
+			},
+		  getGrades	:function(){ 
+			this.$http.get(this.gradesUrl).then(
+			function(response){this.grades=response.data; },
+			function(response){}  	 			
+			);
+			},
+		  getExams	:function(yearId,termId){
+		  
+		  	this.conditionVo.examId = null;
+		   
+			this.$http.get(this.examsUrl,{params:{yearId:yearId,termId:termId}}).then(
+			function(response){this.exams=response.data; },
+			function(response){}  	 			
+			);
+			},
+		getSchoolClasses :function(examId){
+		    this.conditionVo.schoolClasses = null; 
+			this.$http.get(this.schoolClassesUrl,{params:{examId:examId}}).then(
+			function(response){this.schoolClasses=response.data; },
+			function(response){}  	 			
+			);
+			},
+	    getSubjects :function(examId){ 
+			this.$http.get(this.subjectsUrl,{params:{examId:examId}}).then(
+			function(response){this.subjects=response.data; },
+			function(response){}  	 			
+			);
+			},
+		
 	
-	/**
-	* Name 载入数据
-	*/
-	$("#searchButton").click(function(){
-		var yearId=$("select[name='schoolYear']").children('option:selected').val();
-		var termId=$("select[name='terms']").children('option:selected').val();	
-		var gradeId=$("select[name='grade']").children('option:selected').val();				
-		var examId=$("select[name='exam']").children('option:selected').val();
-		var schoolClasses=new Array();  
-		$('input[name="schoolClasses"]:checked').each(function(){  
-			 schoolClasses.push($(this).val());//向数组中添加元素  
-		});  
-		//var idstr=schoolClasses.join(','); 
-		var subjectId=$("input[name='subjects']:checked").val();
-
-		
-		
-		if(yearId&&termId&&gradeId&&examId&&subjectId){				
-		$.ajax({
-				 headers: {
-					'Accept': 'application/json',	               
-	                'Content-Type': 'application/json'
-	            }, 
-				url:"<s:url value='/classSingleCompare/findByCondition' />",
-				data:JSON.stringify({yearId: yearId, termId: termId ,gradeId:gradeId ,examId: examId,schoolClasses:schoolClasses,subjectId:subjectId}),
-				type:"POST",
-				dataType:'json',
-				success:function(data){
+		 getListTableData:function(){
+					this.tableData = [];  //清空表格数据
 				
-					
-                     $("#my-datagrid-2").datagrid({
-                         columns: [data.title]    //动态取标题
-                     });
-                    // $("#my-datagrid-2").datagrid("loadData", data.rows);  //动态取数据 
-                    $('#my-datagrid-2').datagrid({loadFilter:pagerFilter}).datagrid('loadData', data.rows);
-
-                    echartsInit(data.echarts);
-                     
-                     
+					if(this.conditionVo.yearId==null||this.conditionVo.gradeId==null||this.conditionVo.termId==null||this.conditionVo.examId==null||this.conditionVo.subjectId==null){					
+						return ;
+						}			 			
+					 this.$http.post(this.listTableDataUrl,this.conditionVo).then(
+							function(response){
+                    this.cols= response.data.title;
+                   	this.tableData  = response.data.rows;                   
+                    this.echartsInit(response.data.echarts);	
+				 },
+							function(response){}  			
+							);   	
 				},
-				  error : function(XMLHttpRequest, textStatus, errorThrown) {
-		
-					/* alert(XMLHttpRequest.responseText); 
-					alert(XMLHttpRequest.status);
-					alert(XMLHttpRequest.readyState);
-					alert(textStatus);   */
-					}	
-			});		
-		}else{
-		$.messager.alert('','请输入完整的查询条件(科目必选)!');;
-		}		
-	});
-	function  echartsInit(echartsData){
+				
+	echartsInit:function (echartsData){
 	
 	var myChart = echarts.init(document.getElementById('echarts'));
 		var xAxis = {type: 'category',
@@ -294,50 +301,20 @@
     			},	
     			xAxis :xAxis,
     			series :series
-   			 /*xAxis : {
-       			 type: 'category',
-        		boundaryGap: false,
-       			 data: ['周一','周二','周三','周四','周五','周六','周日']
-    				},
-    		
-    series: [
-        {
-            name:'邮件营销',
-            type:'line',
-            stack: '总量',
-            data:[120, 132, 101, 134, 90, 230, 210]
-        },
-        {
-            name:'联盟广告',
-            type:'line',
-            stack: '总量',
-            data:[220, 182, 191, 234, 290, 330, 310]
-        },
-        {
-            name:'视频广告',
-            type:'line',
-            stack: '总量',
-            data:[150, 232, 201, 154, 190, 330, 410]
-        },
-        {
-            name:'直接访问',
-            type:'line',
-            stack: '总量',
-            data:[320, 332, 301, 334, 390, 330, 320]
-        },
-        {
-            name:'搜索引擎',
-            type:'line',
-            stack: '总量',
-            data:[820, 932, 901, 934, 1290, 1330, 1320]
-        }
-    	]	 */	 
+   			 
    					 
         };
 
         // 使用刚指定的配置项和数据显示图表。
         myChart.setOption(option);
-	}
+        }
+	  
+        }	        	
+});  
+
+	
+	
+	
 	
 
 	

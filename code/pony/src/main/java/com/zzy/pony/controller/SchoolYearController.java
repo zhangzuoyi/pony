@@ -1,6 +1,7 @@
 package com.zzy.pony.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +21,8 @@ import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.service.SchoolYearService;
+import com.zzy.pony.vo.SchoolYearVo;
+import com.zzy.pony.vo.conditionVo;
 
 @Controller
 @RequestMapping(value = "/schoolYear")
@@ -35,6 +38,22 @@ public class SchoolYearController {
 	@ResponseBody
 	public List<SchoolYear> list(Model model){
 		return service.findAll();
+	}
+	@RequestMapping(value="listVo",method = RequestMethod.GET)
+	@ResponseBody
+	public List<SchoolYearVo> listVo(Model model){
+		List<SchoolYearVo> result =  new ArrayList<SchoolYearVo>();
+		List<SchoolYear> list = service.findAll();
+		for (SchoolYear schoolYear : list) {
+			SchoolYearVo vo =new SchoolYearVo();
+			vo.setEndYear(schoolYear.getEndYear()+"");
+			vo.setIsCurrent(schoolYear.getIsCurrent());
+			vo.setName(schoolYear.getName());
+			vo.setStartYear(schoolYear.getStartYear()+"");
+			vo.setYearId(schoolYear.getYearId()+"");
+			result.add(vo);
+		}
+		return result;
 	}
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody
