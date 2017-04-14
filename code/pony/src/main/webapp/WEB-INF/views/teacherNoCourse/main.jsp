@@ -140,6 +140,13 @@
 					return ;
 					}
 		       		if(cell.style.backgroundColor == "rgb(255, 0, 0)" ){
+		       		//删除操作
+       			for(var i=0;i<this.selectData.length;i++){
+       			 if(this.selectData[i].period == row.period && this.selectData[i].weekday == column.label  ){
+       			   this.selectData.splice(i,1);     			   
+       			 }
+       			}
+       			cell.style.backgroundColor = "";
 		       			return;
 		       		}
 		       		//#F00
