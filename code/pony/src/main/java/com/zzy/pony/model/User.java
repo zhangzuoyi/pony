@@ -2,6 +2,9 @@ package com.zzy.pony.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +16,7 @@ import java.util.List;
 @Entity
 @Table(name="t_user")
 @NamedQuery(name="User.findAll", query="SELECT u FROM User u")
+@JsonIgnoreProperties(value={"roles"})
 public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 

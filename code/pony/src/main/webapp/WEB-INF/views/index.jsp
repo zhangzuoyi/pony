@@ -95,6 +95,14 @@
                 </ul>
             </div>
             </shiro:hasRole>
+            <shiro:hasRole name="admin">
+            <div title="考勤管理" data-options="iconCls:'icon-application-form-edit'" style="padding:5px;">  	
+    			<ul class="easyui-tree my-side-tree">
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/attendance/attendance/main/' />" iframe="1">考勤打卡</a></li>
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/attendance/attendance/my/' />" iframe="1">考勤记录</a></li>
+                </ul>
+            </div>
+            </shiro:hasRole>
             <shiro:hasRole name="teacher">
             <div title="任课管理" data-options="iconCls:'icon-application-form-edit'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">
