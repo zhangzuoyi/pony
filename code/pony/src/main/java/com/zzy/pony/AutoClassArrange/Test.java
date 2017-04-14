@@ -23,23 +23,23 @@ public class Test {
 		for (int i = 0; i < 10; i++) {
 			list.add(new Integer(i));
 		}		
-		teacherIdCandidate = GAUtil.getCandidateStrings(list, 4);
+		teacherIdCandidate = GAUtil.getCandidateStrings(list, 4,true);
 		for (int i = 0; i < 10; i++) {
 			list2.add(new Integer(i));
 		}		
-		subjectIdCandidate = GAUtil.getCandidateStrings(list, 2);
+		subjectIdCandidate = GAUtil.getCandidateStrings(list, 2,true);
 		for (int i = 0; i < 10; i++) {
 			list3.add(new Integer(i));
 		}		
-		weekdayIdCandidate = GAUtil.getCandidateStrings(list, 1);
+		weekdayIdCandidate = GAUtil.getCandidateStrings(list, 1,false);
 		for (int i = 0; i < 10; i++) {
 			list4.add(new Integer(i));
 		}		
-		seqIdCandidate = GAUtil.getCandidateStrings(list, 1);
+		seqIdCandidate = GAUtil.getCandidateStrings(list, 1,false);
 		for (int i = 0; i < 10; i++) {
 			list5.add(new Integer(i));
 		}		
-		classIdCandidate = GAUtil.getCandidateStrings(list, 3);
+		classIdCandidate = GAUtil.getCandidateStrings(list, 3,false);
 		
 		dna.setClassIdCandidate(classIdCandidate);
 		dna.setSeqIdCandidate(seqIdCandidate);

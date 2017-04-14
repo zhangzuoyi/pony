@@ -42,11 +42,11 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 	public void autoLessonArrange() {
 		// TODO Auto-generated method stub
 	
-		String[] classIdCandidate =   GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllClassId(), 3);    
-		String[] subjectIdCandidate =GAUtil.getCandidateStrings(teacherService.findAllTeacherId(), 2);    
-		String[] teacherIdCandidate =GAUtil.getCandidateStrings(subjectService.findAllSubjectId(), 4); 
-		String[] weekdayIdCandidate ={"1","2"};
-		String[] seqIdCandidate={"1","2"};
+		String[] classIdCandidate =   GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllClassId(), 3,false);    
+		String[] subjectIdCandidate =GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllSubjectId(), 2,true); 
+		String[] teacherIdCandidate =GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllTeacherId(), 4,true); 
+		String[] weekdayIdCandidate ={"1","2","3","4","5"};
+		String[] seqIdCandidate={"1","2","3","4","5","6","7"};
 		List<TeacherSubjectVo> vos = teacherSubjectService.findCurrentAll();
 		List<ClassNoCourseVo> classNoCourseVos = classNoCourseService.findCurrentAllVo();
 		List<TeacherNoCourseVo> teacherNoCourseVos = teacherNoCourseService.findCurrentAllVo();

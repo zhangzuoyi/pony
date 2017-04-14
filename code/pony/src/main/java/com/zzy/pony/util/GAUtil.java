@@ -18,18 +18,29 @@ public class GAUtil {
 	
 	
 	/*** 
-	* <p>Description:获取候选数组,bit为位数,list为id集合，如teacherId </p>
+	* <p>Description:获取候选数组,bit为位数,list为id集合，如teacherId flag是否增加空元素，在teacher和subject时为true，用于班级不排课设置</p>
 	* @author  WANGCHAO262
 	* @date  2017年4月7日 上午10:22:30
 	*/
-	public static String[] getCandidateStrings(List<Integer> list ,int bit){
-		String[] result  = new String[list.size()];
-		for (int i = 0; i < result.length; i++) {
-			String idStr = String.format("%0"+bit+"d", list.get(i));
-			System.out.println(idStr);
-			result[i] =idStr;		
-		}		
-		return result;		
+	public static String[] getCandidateStrings(List<Integer> list ,int bit,Boolean flag){
+		if (!flag) {
+			String[] result  = new String[list.size()];
+			for (int i = 0; i < result.length; i++) {
+				String idStr = String.format("%0"+bit+"d", list.get(i));
+				System.out.println(idStr);
+				result[i] =idStr;
+			}
+			return result;
+		}else{
+			String[] result  = new String[list.size()+1];
+			for (int i = 0; i < result.length-1; i++) {
+				String idStr = String.format("%0"+bit+"d", list.get(i));
+				System.out.println(idStr);
+				result[i] =idStr;
+			}
+			result[result.length-1] = String.format("%0"+bit+"d", Integer.valueOf(0));
+			return result;
+		}						
 	}
 	/*** 
 	* <p>Description: 获取班级老师与课时的映射关系  key:teacherId+classId+subjectId value:weekArrange</p>
@@ -105,6 +116,8 @@ public class GAUtil {
 		
 	}
 	
+	 
+	
 	
 	
 	public static void main(String[] args){
@@ -112,6 +125,6 @@ public class GAUtil {
 		for (int i = 0; i < 10; i++) {
 			list.add(new Integer(i));
 		}		
-		getCandidateStrings(list, 4);
+		getCandidateStrings(list, 4,true);
 	}
 }

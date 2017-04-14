@@ -13,8 +13,8 @@ public  class GeneticAlgorithm {
 	private List<Chromosome> population = new ArrayList<Chromosome>();
 	private int popSize = 30;//种群数量
 	//private int geneSize;//基因最大长度
-	private int maxIterNum = 2000;//最大迭代次数
-	private double mutationRate = 0.01;//基因变异的概率
+	private int maxIterNum = 500;//最大迭代次数
+	private double mutationRate = 0.02;//基因变异的概率
 	//private int maxMutationNum = 3;//最大变异步长
 	
 	private int generation = 1;//当前遗传到第几代
@@ -37,12 +37,22 @@ public  class GeneticAlgorithm {
 		//初始化种群
 		generation = 1;
 		init();
-		while (generation < maxIterNum) {
+		/*while (generation < maxIterNum) {
+			//种群遗传
+			evolve();
+			print();
+			generation++;
+		}*/
+		while(worstScore != 0){
 			//种群遗传
 			evolve();
 			print();
 			generation++;
 		}
+		System.out.println("----------");
+		System.out.println(String.valueOf(bestChromosome.getGene()));
+		System.out.println("----------");
+
 	}
 	
 	/**
@@ -188,8 +198,13 @@ public  class GeneticAlgorithm {
 		//chro.setScore(y);
 		int scoreRuleOne = Rule.ruleOne(chromosome);
 		int scoreRuleTwo = Rule.ruleTwo(chromosome, DNA.getInstance().getTeacherSubjectweekArrange());
+		int scoreRuleThree = Rule.ruleThree(chromosome, DNA.getInstance().getClassNoCourse());
+		int scoreRuleFour = Rule.ruleFour(chromosome, DNA.getInstance().getTeacherNoCourse());
+		int scoreRuleFive = Rule.ruleFive(chromosome, DNA.getInstance().getSubjectNoCourse());
+		int scoreRuleSix = Rule.ruleSix(chromosome, DNA.getInstance().getGradeNoCourse());
+
 		//chromosome.setScore(scoreRuleOne);
-		chromosome.setScore(scoreRuleOne+scoreRuleTwo);
+		chromosome.setScore(scoreRuleOne+scoreRuleTwo+scoreRuleThree+scoreRuleFour+scoreRuleFive+scoreRuleSix);
 	}
 	
 	/**

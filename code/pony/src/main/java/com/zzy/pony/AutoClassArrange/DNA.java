@@ -47,9 +47,16 @@ public class DNA {
 		Random random  = new Random();
 		for (int i = 0; i < this.weekdayIdCandidate.length; i++) {
 			for (int j = 0; j < this.seqIdCandidate.length; j++) {				
-				sb.append(this.teacherIdCandidate[random.nextInt(this.teacherIdCandidate.length)]);
+				String noClassTeacherString =  this.teacherIdCandidate[random.nextInt(this.teacherIdCandidate.length)] ;
+				sb.append(noClassTeacherString);
 				sb.append(this.classIdCandidate[classIndex]);
-				sb.append(this.subjectIdCandidate[random.nextInt(this.subjectIdCandidate.length)]);
+				
+				if (noClassTeacherString.equalsIgnoreCase("0000")) {
+					sb.append("00"); //0000classId00weekdayIdseqId为不上课编码
+				}else {
+					sb.append(this.subjectIdCandidate[random.nextInt(this.subjectIdCandidate.length)]);
+				}
+				
 				sb.append(this.weekdayIdCandidate[i]);
 				sb.append(this.seqIdCandidate[j]);	
 			}
