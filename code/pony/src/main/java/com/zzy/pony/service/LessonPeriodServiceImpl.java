@@ -64,6 +64,16 @@ public class LessonPeriodServiceImpl implements LessonPeriodService {
 		
 		return list.get(0);
 	}
+
+	@Override
+	public LessonPeriod findBySchoolYearAndTermAndSeq(SchoolYear schoolYear,
+			Term term, Integer seqId) {
+		// TODO Auto-generated method stub
+		List<LessonPeriod> list = dao.findBySchoolYearAndTermAndSeq(schoolYear, term, seqId);
+		return list.get(0);
+	}
+	
+	
 	
 	
 

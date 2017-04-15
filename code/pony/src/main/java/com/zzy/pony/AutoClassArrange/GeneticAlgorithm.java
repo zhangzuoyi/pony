@@ -33,7 +33,7 @@ public  class GeneticAlgorithm {
 		this.geneSize = geneSize;
 	}*/
 	
-	public void caculte() {
+	public String caculte() {
 		//初始化种群
 		generation = 1;
 		init();
@@ -52,7 +52,7 @@ public  class GeneticAlgorithm {
 		System.out.println("----------");
 		System.out.println(String.valueOf(bestChromosome.getGene()));
 		System.out.println("----------");
-
+		return String.valueOf(bestChromosome.getGene());
 	}
 	
 	/**

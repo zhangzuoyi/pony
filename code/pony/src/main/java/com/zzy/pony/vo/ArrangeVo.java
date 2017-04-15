@@ -1,12 +1,6 @@
 package com.zzy.pony.vo;
 
-import java.util.Date;
-import java.util.List;
 
-import com.zzy.pony.model.LessonPeriod;
-import com.zzy.pony.model.SchoolYear;
-import com.zzy.pony.model.Subject;
-import com.zzy.pony.model.Term;
 
 public class ArrangeVo {
 	private Integer arrangeId;	
@@ -22,6 +16,12 @@ public class ArrangeVo {
 	private Integer termId;
 	private Integer subjectId;
 	private String subjectName;
+	
+	private Integer teacherId;
+	private Integer weekdayId;
+	private Integer seqId; 
+	
+	
 	public ArrangeVo(){}
 	public Integer getArrangeId() {
 		return arrangeId;
@@ -101,7 +101,27 @@ public class ArrangeVo {
 	}
 	public void setSubjectName(String subjectName) {
 		this.subjectName = subjectName;
+	}
+	public Integer getTeacherId() {
+		return teacherId;
+	}
+	public void setTeacherId(Integer teacherId) {
+		this.teacherId = teacherId;
+	}
+	public Integer getWeekdayId() {
+		return weekdayId;
+	}
+	public void setWeekdayId(Integer weekdayId) {
+		this.weekdayId = weekdayId;
+	}
+	public Integer getSeqId() {
+		return seqId;
+	}
+	public void setSeqId(Integer seqId) {
+		this.seqId = seqId;
 	}	
+	
+	
 
 	
 }

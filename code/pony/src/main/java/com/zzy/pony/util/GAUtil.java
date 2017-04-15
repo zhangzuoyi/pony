@@ -7,6 +7,9 @@ import java.util.Map;
 
 import org.hibernate.id.IntegralDataTypeHolder;
 
+import com.zzy.pony.AutoClassArrange.DNA;
+import com.zzy.pony.model.LessonArrange;
+import com.zzy.pony.vo.ArrangeVo;
 import com.zzy.pony.vo.ClassNoCourseVo;
 import com.zzy.pony.vo.GradeNoCourseVo;
 import com.zzy.pony.vo.SubjectNoCourseVo;
@@ -115,6 +118,46 @@ public class GAUtil {
 		return result;
 		
 	}
+	
+	public static List<ArrangeVo> getLessonArranges(String bestChromosome){
+		List<ArrangeVo> result = new ArrayList<ArrangeVo>();		
+		int dnaBit = DNA.getInstance().getDnaBit();
+		int classIdBit = DNA.getInstance().getClassIdBit();
+		int teacherIdBit = DNA.getInstance().getTeacherIdBit();
+		int subjectIdBit = DNA.getInstance().getSubjectIdBit();
+	    int weekdayIdBit = DNA.getInstance().getWeekdayIdBit();
+	    int seqIdBit = DNA.getInstance().getSeqIdBit();
+		int classLength =	 DNA.getInstance().getClassIdCandidate().length;
+		int classDNALength = DNA.getInstance().getDnaBit()*DNA.getInstance().getWeekdayIdCandidate().length*DNA.getInstance().getSeqIdCandidate().length;
+		int weekdayLength = DNA.getInstance().getWeekdayIdCandidate().length;
+		int seqLength = DNA.getInstance().getSeqIdCandidate().length;
+		for (int i = 0; i < weekdayLength; i++) {
+			for (int j = 0; j < seqLength; j++) {
+				for (int k = 0; k < classLength; k++) {				
+				//一个上课单元
+				ArrangeVo vo = new ArrangeVo();
+				String dnaString = bestChromosome.substring((i*seqLength+j)*dnaBit+k*classDNALength, (i*seqLength+j)*dnaBit+k*classDNALength+dnaBit);
+				
+				Integer teacherId = Integer.valueOf(dnaString.substring(0, teacherIdBit)); 
+				Integer classId = Integer.valueOf(dnaString.substring(teacherIdBit, teacherIdBit+classIdBit)); 
+				Integer subjectId = Integer.valueOf(dnaString.substring(teacherIdBit+classIdBit, teacherIdBit+classIdBit+subjectIdBit)); 
+				Integer weekdayId = Integer.valueOf(dnaString.substring(teacherIdBit+classIdBit+subjectIdBit, teacherIdBit+classIdBit+subjectIdBit+weekdayIdBit)); 
+				Integer seqId = Integer.valueOf(dnaString.substring(teacherIdBit+classIdBit+subjectIdBit+weekdayIdBit, teacherIdBit+classIdBit+subjectIdBit+weekdayIdBit+seqIdBit)); 
+				vo.setTeacherId(teacherId);
+				vo.setClassId(classId);
+				vo.setSubjectId(subjectId);
+				vo.setWeekdayId(weekdayId);
+				vo.setSeqId(seqId);
+				vo.setSourceType("1");
+				result.add(vo);
+				
+				}
+			}
+		}
+	
+		return result;
+	}
+	
 	
 	 
 	

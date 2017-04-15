@@ -3,8 +3,11 @@ package com.zzy.pony.service;
 import java.util.List;
 
 import com.zzy.pony.model.SchoolClass;
+import com.zzy.pony.model.SchoolYear;
+import com.zzy.pony.model.Subject;
 import com.zzy.pony.model.Teacher;
 import com.zzy.pony.model.TeacherSubject;
+import com.zzy.pony.model.Term;
 import com.zzy.pony.vo.TeacherSubjectVo;
 
 public interface TeacherSubjectService {
@@ -28,6 +31,7 @@ public interface TeacherSubjectService {
 	List<Integer> findCurrentAllTeacherId();
 	List<Integer> findCurrentAllClassId();
 	List<Integer> findCurrentAllSubjectId();
+	Boolean isExists(Teacher teacher,SchoolYear schoolYear,Term term,SchoolClass schoolClass,Subject subject);
 
 	
 }

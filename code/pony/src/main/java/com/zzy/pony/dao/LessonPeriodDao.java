@@ -13,4 +13,5 @@ import com.zzy.pony.model.Term;
 public interface LessonPeriodDao extends JpaRepository<LessonPeriod,Integer>{
 	List<LessonPeriod> findBySchoolYearAndTermOrderBySeq(SchoolYear year, Term term);
 	List<LessonPeriod> findByStartTimeAndEndTime(String startTime,String endTime);
+	List<LessonPeriod> findBySchoolYearAndTermAndSeq(SchoolYear year, Term term,Integer seqId);
 }

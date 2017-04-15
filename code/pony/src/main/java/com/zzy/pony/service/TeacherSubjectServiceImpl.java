@@ -14,6 +14,7 @@ import com.zzy.pony.dao.TeacherSubjectDao;
 import com.zzy.pony.model.LessonArrange;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
+import com.zzy.pony.model.Subject;
 import com.zzy.pony.model.Teacher;
 import com.zzy.pony.model.TeacherSubject;
 import com.zzy.pony.model.Term;
@@ -171,6 +172,19 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 		}	
 		return result;
 	}
+
+	@Override
+	public Boolean isExists(Teacher teacher, SchoolYear schoolYear, Term term,
+			SchoolClass schoolClass, Subject subject) {
+		// TODO Auto-generated method stub
+		List<TeacherSubject> list = dao.findByTeacherAndYearAndTermAndSchoolClassAndSubject(teacher, schoolYear, term, schoolClass, subject);
+		if (list != null && list.size()>0) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 	
 	
 	

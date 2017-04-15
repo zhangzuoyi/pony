@@ -31,6 +31,15 @@ public class WeekdayServiceImpl implements WeekdayService {
 		 List<Weekday> weekdays =	weekdayDao.findByName(name);
 		 return weekdays.get(0);
 		}
+
+		@Override
+		public Weekday get(int id) {
+			// TODO Auto-generated method stub
+			Weekday weekday = weekdayDao.findOne(id);
+			return weekday;
+		}
+		
+		
 		
 		
 		

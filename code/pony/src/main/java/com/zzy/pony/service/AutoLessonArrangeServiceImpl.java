@@ -1,6 +1,7 @@
 package com.zzy.pony.service;
 
 
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -10,7 +11,19 @@ import org.springframework.stereotype.Service;
 
 import com.zzy.pony.AutoClassArrange.DNA;
 import com.zzy.pony.AutoClassArrange.GeneticAlgorithm;
+import com.zzy.pony.dao.LessonArrangeDao;
+import com.zzy.pony.model.LessonArrange;
+import com.zzy.pony.model.LessonPeriod;
+import com.zzy.pony.model.SchoolClass;
+import com.zzy.pony.model.SchoolYear;
+import com.zzy.pony.model.Subject;
+import com.zzy.pony.model.Teacher;
+import com.zzy.pony.model.TeacherSubject;
+import com.zzy.pony.model.Term;
+import com.zzy.pony.model.Weekday;
+import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.util.GAUtil;
+import com.zzy.pony.vo.ArrangeVo;
 import com.zzy.pony.vo.ClassNoCourseVo;
 import com.zzy.pony.vo.GradeNoCourseVo;
 import com.zzy.pony.vo.SubjectNoCourseVo;
@@ -36,12 +49,23 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 	private SubjectNoCourseService subjectNoCourseService;
 	@Autowired
 	private GradeNoCourseService gradeNoCourseService;
+	@Autowired
+	private SchoolYearService schoolYearService;
+	@Autowired
+	private TermService termService;
+	@Autowired
+	private SchoolClassService schoolClassService;
+	@Autowired
+	private LessonPeriodService lessonPeriodService;
+	@Autowired
+	private LessonArrangeDao lessonArrangeDao;
+	/*@Autowired
+	private WeekdayService weekdayService;*/
 	
 	
 	@Override
 	public void autoLessonArrange() {
 		// TODO Auto-generated method stub
-	
 		String[] classIdCandidate =   GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllClassId(), 3,false);    
 		String[] subjectIdCandidate =GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllSubjectId(), 2,true); 
 		String[] teacherIdCandidate =GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllTeacherId(), 4,true); 
@@ -63,9 +87,44 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		DNA.getInstance().setSubjectNoCourse(GAUtil.getSubjectNoCourse(subjectNoCourseVos));
 		DNA.getInstance().setGradeNoCourse(GAUtil.getGradeNoCourse(gradeNoCourseVos));
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
-		geneticAlgorithm.caculte();
+		String bestChromosome =  geneticAlgorithm.caculte();	
+		List<ArrangeVo> list =   GAUtil.getLessonArranges(bestChromosome);
+	}
+
+
+	@Override
+	public void save(List<ArrangeVo> list) {
+		// TODO Auto-generated method stub
+		SchoolYear schoolYear = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();
+		
+		for (ArrangeVo arrangeVo : list) {
+			LessonPeriod lessonPeriod = lessonPeriodService.findBySchoolYearAndTermAndSeq(schoolYear, term, arrangeVo.getSeqId());
+			//Weekday weekDay = weekdayService.get(arrangeVo.getWeekdayId());
+			Teacher teacher =  teacherService.get(arrangeVo.getTeacherId());
+			SchoolClass schoolClass =  schoolClassService.get(arrangeVo.getClassId());
+			Subject subject =  subjectService.get(arrangeVo.getSubjectId());
+			Boolean flag = teacherSubjectService.isExists(teacher, schoolYear, term, schoolClass, subject);
+			if (flag) {
+			LessonArrange lessonArrange = new LessonArrange();
+			lessonArrange.setClassId(arrangeVo.getClassId());
+			lessonArrange.setCreateTime(new Date());
+			lessonArrange.setCreateUser(ShiroUtil.getLoginUser().getLoginName());
+			lessonArrange.setLessonPeriod(lessonPeriod);
+			lessonArrange.setSchoolYear(schoolYear);
+			lessonArrange.setSourceType("1");//自动排课
+			lessonArrange.setSubject(subject);
+			lessonArrange.setTerm(term);
+			lessonArrange.setWeekDay(arrangeVo.getWeekdayId()+"");
+			lessonArrangeDao.save(lessonArrange);
+			}
+		
+		}
+		
 		
 	}
+	
+	 
 	
 	
 	
