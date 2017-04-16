@@ -1,6 +1,7 @@
 package com.zzy.pony.service;
 
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.zzy.pony.AutoClassArrange.DNA;
 import com.zzy.pony.AutoClassArrange.GeneticAlgorithm;
+import com.zzy.pony.config.Constants;
 import com.zzy.pony.dao.LessonArrangeDao;
 import com.zzy.pony.model.LessonArrange;
 import com.zzy.pony.model.LessonPeriod;
@@ -18,7 +20,6 @@ import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.model.Teacher;
-import com.zzy.pony.model.TeacherSubject;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.model.Weekday;
 import com.zzy.pony.security.ShiroUtil;
@@ -59,18 +60,31 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 	private LessonPeriodService lessonPeriodService;
 	@Autowired
 	private LessonArrangeDao lessonArrangeDao;
-	/*@Autowired
-	private WeekdayService weekdayService;*/
+	@Autowired
+	private WeekdayService weekdayService;
 	
 	
 	@Override
 	public void autoLessonArrange() {
 		// TODO Auto-generated method stub
+		SchoolYear schoolYear = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();
+		List<Weekday> weekdayList = weekdayService.findByhaveClass(Constants.HAVECLASS_FLAG_TRUE);
+		List<Integer> weekdays = new ArrayList<Integer>();
+		for (Weekday weekday : weekdayList) {
+			weekdays.add(weekday.getSeq());
+		}
+		List<Integer> seqs = new ArrayList<Integer>();
+		List<LessonPeriod> lessonPeriods = lessonPeriodService.findBySchoolYearAndTerm(schoolYear, term);
+		for (LessonPeriod lessonPeriod : lessonPeriods) {
+			seqs.add(lessonPeriod.getSeq());
+		}
+		
 		String[] classIdCandidate =   GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllClassId(), 3,false);    
 		String[] subjectIdCandidate =GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllSubjectId(), 2,true); 
 		String[] teacherIdCandidate =GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllTeacherId(), 4,true); 
-		String[] weekdayIdCandidate ={"1","2","3","4","5"};
-		String[] seqIdCandidate={"1","2","3","4","5","6","7"};
+		String[] weekdayIdCandidate =GAUtil.getCandidateStrings(weekdays, 1, false);
+		String[] seqIdCandidate=GAUtil.getCandidateStrings(seqs, 1, false);;
 		List<TeacherSubjectVo> vos = teacherSubjectService.findCurrentAll();
 		List<ClassNoCourseVo> classNoCourseVos = classNoCourseService.findCurrentAllVo();
 		List<TeacherNoCourseVo> teacherNoCourseVos = teacherNoCourseService.findCurrentAllVo();
@@ -89,6 +103,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		String bestChromosome =  geneticAlgorithm.caculte();	
 		List<ArrangeVo> list =   GAUtil.getLessonArranges(bestChromosome);
+		this.save(list);
 	}
 
 

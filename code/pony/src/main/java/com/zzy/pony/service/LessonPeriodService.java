@@ -15,4 +15,6 @@ public interface LessonPeriodService {
 	List<LessonPeriod> findBySchoolYearAndTerm(SchoolYear year, Term term);
 	LessonPeriod findByStartTimeAndEndTime(String startTime,String endTime);
 	LessonPeriod findBySchoolYearAndTermAndSeq(SchoolYear schoolYear ,Term term ,Integer seqId);
+
+
 }

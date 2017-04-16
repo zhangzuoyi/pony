@@ -117,6 +117,26 @@ public class LessonArrangeServiceImpl implements LessonArrangeService {
 		}
 	}
 
+	@Override
+	public List<LessonArrange> findByClassIdAndSchoolYearAndTerm(Integer classId, SchoolYear year, Term term) {
+		// TODO Auto-generated method stub
+		
+		List<LessonArrange> list =  dao.findByClassIdAndSchoolYearAndTerm(classId, year, term);
+		return list;
+	}
+
+	@Override
+	public LessonArrange findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(
+			Integer classId, SchoolYear year, Term term, String weekDay,
+			LessonPeriod lessonPeriod) {
+		// TODO Auto-generated method stub
+		List<LessonArrange> list = dao.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(classId, year, term, weekDay, lessonPeriod);
+		return list.get(0);
+	}
+	
+	
+	
+
 	
 	
 	
