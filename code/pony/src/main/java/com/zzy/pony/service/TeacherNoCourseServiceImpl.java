@@ -71,7 +71,7 @@ public class TeacherNoCourseServiceImpl implements TeacherNoCourseService {
 		TeacherNoCourseVo tncv = new TeacherNoCourseVo();
 		tncv.setId(tnc.getId());
 		tncv.setLessonPeriodId(tnc.getLessonPeriod().getPeriodId());
-		tncv.setLessonPeriodName(tnc.getLessonPeriod().getStartTime()+"——"+tnc.getLessonPeriod().getEndTime());
+		tncv.setLessonPeriodName(tnc.getLessonPeriod().getStartTime()+"--"+tnc.getLessonPeriod().getEndTime());
 		tncv.setTeacherId(tnc.getTeacher().getTeacherId());
 		tncv.setTeacherName(tnc.getTeacher().getName());
 		tncv.setTermId(tnc.getTerm().getTermId());

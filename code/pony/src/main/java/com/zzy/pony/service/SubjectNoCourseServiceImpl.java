@@ -90,7 +90,7 @@ public class SubjectNoCourseServiceImpl implements SubjectNoCourseService {
 		SubjectNoCourseVo sncv = new SubjectNoCourseVo();
 		sncv.setId(snc.getId());
 		sncv.setLessonPeriodId(snc.getLessonPeriod().getPeriodId());
-		sncv.setLessonPeriodName(snc.getLessonPeriod().getStartTime()+"——"+snc.getLessonPeriod().getEndTime());
+		sncv.setLessonPeriodName(snc.getLessonPeriod().getStartTime()+"--"+snc.getLessonPeriod().getEndTime());
 		sncv.setGradeId(snc.getGrade().getGradeId());
 		sncv.setGradeName(snc.getGrade().getName());
 		sncv.setSubjectId(snc.getSubject().getSubjectId());

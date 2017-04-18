@@ -85,7 +85,7 @@ public class AutoLessonArrangeController {
 			List<Map<String, Object>> dataList =  new ArrayList<Map<String,Object>>();
 			for (LessonPeriod lessonPeriod : lessonPeriods) {
 				Map<String, Object> map = new HashMap<String, Object>();
-				map.put("period",lessonPeriod.getStartTime()+"——"+lessonPeriod.getEndTime());
+				map.put("period",lessonPeriod.getStartTime()+"--"+lessonPeriod.getEndTime());
 				for (Weekday weekday : weekdays) {
 					LessonArrange lessonArrange =  lessonArrangeService.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(cv.getClassId(), year, term, weekday.getSeq()+"", lessonPeriod);
 					if (lessonArrange != null && lessonArrange.getSubject() !=null) {

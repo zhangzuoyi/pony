@@ -29,4 +29,6 @@ public interface SubjectService {
 	List<Subject> findByExam(int examId);
 	
 	List<Integer> findAllSubjectId();
+	
+	Subject findByName(String name);
 }
