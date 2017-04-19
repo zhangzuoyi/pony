@@ -18,5 +18,5 @@ public interface LessonArrangeDao extends JpaRepository<LessonArrange,Integer>{
 	List<LessonArrange> findByClassIdAndSchoolYearAndTermAndSubjectAndSourceType(Integer classId, SchoolYear schoolYear, Term term, Subject subject,String sourceType);
 	List<LessonArrange> findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(Integer classId, SchoolYear year, Term term, String weekDay,
 			LessonPeriod lessonPeriod);
-	List<LessonArrange> findBySchooleYearAndTermAndSourceType(SchoolYear year,Term term,String sourceType);
+	List<LessonArrange> findBySchoolYearAndTermAndSourceType(SchoolYear year,Term term,String sourceType);
 }

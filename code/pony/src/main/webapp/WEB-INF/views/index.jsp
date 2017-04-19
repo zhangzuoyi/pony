@@ -104,6 +104,14 @@
                 </ul>
             </div>
             </shiro:hasRole>
+            <shiro:hasRole name="admin">
+            <div title="消息管理" data-options="iconCls:'icon-application-form-edit'" style="padding:5px;">  	
+    			<ul class="easyui-tree my-side-tree">
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/userGroup/main/' />" iframe="1">用户组</a></li>
+                </ul>
+            </div>
+            </shiro:hasRole>
+            
             <shiro:hasRole name="teacher">
             <div title="任课管理" data-options="iconCls:'icon-application-form-edit'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">

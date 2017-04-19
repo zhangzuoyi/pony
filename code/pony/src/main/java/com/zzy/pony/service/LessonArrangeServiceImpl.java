@@ -141,7 +141,7 @@ public class LessonArrangeServiceImpl implements LessonArrangeService {
 	public List<LessonArrange> findBySchooleYearAndTermAndSourceType(
 			SchoolYear year, Term term, String sourceType) {
 		// TODO Auto-generated method stub
-		List<LessonArrange> result = dao.findBySchooleYearAndTermAndSourceType(year, term, sourceType);
+		List<LessonArrange> result = dao.findBySchoolYearAndTermAndSourceType(year, term, sourceType);
 		
 		return result;
 	}
