@@ -131,7 +131,10 @@ public class LessonArrangeServiceImpl implements LessonArrangeService {
 			LessonPeriod lessonPeriod) {
 		// TODO Auto-generated method stub
 		List<LessonArrange> list = dao.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(classId, year, term, weekDay, lessonPeriod);
-		return list.get(0);
+		if (list != null && list.size()>0) {
+			return list.get(0);
+		}
+		return null;
 	}
 	
 	
