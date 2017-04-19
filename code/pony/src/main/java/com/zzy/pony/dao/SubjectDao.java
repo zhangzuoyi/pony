@@ -11,5 +11,6 @@ import com.zzy.pony.model.Subject;
 public interface SubjectDao extends JpaRepository<Subject,Integer>{
 	List<Subject> findByTypeIn(List<Integer> types);
 	List<Subject> findByType(Integer type);
+	List<Subject> findByName(String name);
 
 }

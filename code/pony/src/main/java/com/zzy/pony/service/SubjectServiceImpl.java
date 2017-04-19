@@ -106,6 +106,15 @@ public class SubjectServiceImpl implements SubjectService {
 		
 		return result;
 	}
+
+	@Override
+	public Subject findByName(String name) {
+		// TODO Auto-generated method stub
+		List<Subject> list = dao.findByName(name);
+		return list.get(0);
+	}
+	
+	
 	
 	
 	
