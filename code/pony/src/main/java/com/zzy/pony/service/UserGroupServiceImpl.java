@@ -33,6 +33,37 @@ public class UserGroupServiceImpl implements UserGroupService {
 		return result;
 	}
 
+	@Override
+	public void add(Group group) {
+		// TODO Auto-generated method stub
+		userGroupDao.save(group);
+	}
+
+	@Override
+	public void update(Group group) {
+		// TODO Auto-generated method stub
+		Group old = userGroupDao.findOne(group.getGroupId());
+		old.setGroupType(group.getGroupType());
+		old.setName(group.getName());
+		old.setUsers(group.getUsers());
+		userGroupDao.save(old);
+	}
+
+	@Override
+	public void delete(Group group) {
+		// TODO Auto-generated method stub
+		userGroupDao.delete(group);
+	}
+
+	@Override
+	public Group get(Integer groupId) {
+		// TODO Auto-generated method stub
+		return userGroupDao.findOne(groupId);
+	}
+	
+	
+	
+
 	
 	
 	 

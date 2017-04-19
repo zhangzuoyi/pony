@@ -114,7 +114,7 @@
         </el-card> 
         
         
-        <el-dialog title="新增" v-model="dialogFormVisible">
+        <el-dialog title="新增" v-model="dialogFormVisible" size="large">
                 <el-form :model="userGroup">
                     <el-form-item label="名称" :label-width="formLabelWidth">
                         <el-autocomplete
@@ -150,17 +150,23 @@
                    			 border
                    			style="width: 100%"
                     		highlight-current-row
-                    		@current-change="handleCurrentChange">                    		
+                    		@current-change="handleCurrentChange">   
+                    		
+                    		<el-table-column label="备选用户" prop="userName">
+                      		</el-table-column>                 		
                       		</el-table>
-                      		<el-table-column label="备选用户" prop="userName">
-                      		</el-table-column>
+                      		
                       		
                       	</el-col>
-                        <el-col :span="4">
-                             <el-button size="small" @click="addOne()">》</el-button>
-                             <el-button size="small" @click="removeOne">《</el-button>
-                             <el-button size="small" @click="addAll">》》</el-button>
-                             <el-button size="small" @click="removeAll">《《</el-button>                       
+                        <el-col :span="4"  >
+                            <el-row type="flex" justify="center">
+                            <div>
+                             	<div><el-button size="small" @click="addOne()">》</el-button></div>
+                            	<div><el-button size="small" @click="removeOne">《</el-button></div>
+                             	<div><el-button size="small" @click="addAll">》》</el-button></div>
+                             	<div><el-button size="small" @click="removeAll">《《</el-button></div>                       
+                       		</div>
+                       		</el-row>
                         </el-col>
                       	<el-col :span="10">
                       	<el-table 
@@ -169,13 +175,15 @@
                    			 border
                    			 style="width: 100%"
                     		highlight-current-row
-                    		@current-change="handleCurrentChange">                    		
+    						@current-change="handleCurrentChange">   
+   				
+    						<el-table-column label="已选用户" prop="userName">
+                      		</el-table-column>                 		
                       		</el-table>
-                      		<el-table-column label="已选用户" prop="userName">
-                      		</el-table-column>
+                      		                     		
                       	</el-col>                      	                      
                       </el-row>                                                                                                              
-                    </el-form-item>
+                    </el-form-item> 
                     
                     
                     
@@ -233,15 +241,13 @@ var app = new Vue({
                 return function userGroups() {
                     return (userGroups.name.indexOf(queryString.toLowerCase()) === 0);
                 };
-            } ,
-	
+            } ,	
 		getUserGroups : function(){ 
 			this.$http.get(this.userGroupUrl).then(
 			function(response){this.userGroups=response.data;},
 			function(response){}  			
 			); 
-			} ,	
-		 
+			} ,			 
 		 getListTableData:function(){
 					this.tableData = [];  //清空表格数据												 			
 					 this.$http.get(this.listTableDataUrl,{params:{groupType:this.groupType,groupName:this.groupName}}).then(

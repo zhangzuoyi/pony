@@ -2,10 +2,7 @@ package com.zzy.pony.controller;
 
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,21 +13,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.zzy.pony.config.Constants;
+
+
 import com.zzy.pony.model.Group;
-import com.zzy.pony.model.LessonPeriod;
-import com.zzy.pony.model.SchoolYear;
-import com.zzy.pony.model.Term;
-import com.zzy.pony.model.Weekday;
-import com.zzy.pony.service.LessonPeriodService;
-import com.zzy.pony.service.PreLessonArrangeService;
-import com.zzy.pony.service.SchoolYearService;
-import com.zzy.pony.service.TermService;
 import com.zzy.pony.service.UserGroupService;
-import com.zzy.pony.service.WeekdayService;
-import com.zzy.pony.vo.ArrangeVo;
 
 
 
@@ -59,6 +45,24 @@ public class UserGroupController {
 		List<Group> result = userGroupService.listByCondition(groupType, groupName);	
 		return result;
 	}
+	
+	@RequestMapping(value="add",method = RequestMethod.POST)
+	@ResponseBody
+	public void add(@RequestBody Group group){
+		userGroupService.add(group);		
+	}
+	@RequestMapping(value="update",method = RequestMethod.GET)
+	@ResponseBody
+	public void update(@RequestBody Group group){
+		userGroupService.update(group);
+	}
+	@RequestMapping(value="delete",method = RequestMethod.GET)
+	@ResponseBody
+	public void delete(Integer groupId){
+		Group group =  userGroupService.get(groupId);
+		userGroupService.delete(group);
+	}
+	
 	
 	
 	
