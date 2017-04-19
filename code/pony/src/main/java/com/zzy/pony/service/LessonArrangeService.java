@@ -17,6 +17,6 @@ public interface LessonArrangeService {
 	LessonArrangeVo findArrangeVo(Integer classId);
 	List<LessonArrange> findByClassIdAndSchoolYearAndTerm(Integer classId, SchoolYear year, Term term);
 	LessonArrange findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(Integer classId, SchoolYear year, Term term,String weekDay,LessonPeriod lessonPeriod);
-
-
+	List<LessonArrange> findBySchooleYearAndTermAndSourceType(SchoolYear year ,Term term,String sourceType);
+	void deleteList(List<LessonArrange> list);
 }

@@ -71,6 +71,13 @@ public class AutoLessonArrangeController {
 	@RequestMapping(value="autoLessonArrange",method = RequestMethod.GET)
 	@ResponseBody
 	public void autoLessonArrange(){
+		//删除当前学年，当前学期所有自动排课和调课类型的数据
+		SchoolYear year = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();
+		List<LessonArrange> autoList = lessonArrangeService.findBySchooleYearAndTermAndSourceType(year, term, Constants.SOURCE_TYPE_AUTO);
+		List<LessonArrange> changeList = lessonArrangeService.findBySchooleYearAndTermAndSourceType(year, term, Constants.SOURCE_TYPE_CHANGE);
+		autoList.addAll(changeList);
+		lessonArrangeService.deleteList(autoList);	
 		autoLessonArrangeService.autoLessonArrange();		
 	}
 	

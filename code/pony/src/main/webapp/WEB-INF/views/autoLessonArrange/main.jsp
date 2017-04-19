@@ -43,7 +43,7 @@
             </el-col> 
             <el-col :span="5" >
             <div class="grid-content bg-purple">                                     
-					<el-select v-model="conditionVo.gradeId"  @change="getClasses(gradeId)"  filterable placeholder="请选择.." >
+					<el-select v-model="conditionVo.gradeId"  @change="getClasses(conditionVo.gradeId)"  filterable placeholder="请选择.." >
                		 <el-option
                         v-for="grade in grades" 
                         :label="grade.name"                      
@@ -127,7 +127,7 @@
         			v-for="col in cols"
         			:prop="col.prop" 
         			:label="col.label"
-        			width="120" 
+        			width="150" 
         			>
      		 </el-table-column> 
      		   
