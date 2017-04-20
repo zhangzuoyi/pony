@@ -40,11 +40,15 @@
             <el-col :span="5" >
             <div class="grid-content bg-purple">                                     
 					<el-select v-model="groupType"    filterable placeholder="请选择.." >
-               		 <el-option
-                        v-for="groupType in groupTypes" 
-                        :label="groupType.name"                      
-                        :value="groupType.groupType">
-                        <span style="float: left">{{groupType.name}}</span>
+               		 <el-option                       
+                        :label="'老师'"                   
+                        :value="'1'">
+                        <span style="float: left">老师</span>
+               		 </el-option>
+               		 <el-option                       
+                        :label="'学生'"                       
+                        :value="'2'">
+                        <span style="float: left">学生</span>
                		 </el-option>
            			 </el-select>				
                     </div>
@@ -65,7 +69,6 @@
             </el-col>
              
               <el-col :span="4" :offset="8">
-              <!--  <el-button type="primary" @click="getListTableData()" >查询</el-button> -->
                <el-button type="primary" @click="getListTableData()" >查询</el-button>             
               </el-col>
               
@@ -114,7 +117,7 @@
         </el-card> 
         
         
-        <el-dialog title="新增" v-model="dialogFormVisible" size="large">
+        <el-dialog title="新增用户组" v-model="dialogFormVisible" size="large">
                 <el-form :model="userGroup">
                     <el-form-item label="名称" :label-width="formLabelWidth">
                         <el-autocomplete
@@ -125,38 +128,40 @@
                     </el-form-item>
                     <el-form-item label="类型" :label-width="formLabelWidth">
                         <el-select v-model="userGroup.groupType"    filterable placeholder="请选择.." >
-               		 <el-option
-                        v-for="groupType in groupTypes" 
-                        :label="groupType.name"                      
-                        :value="groupType.groupType">
-                        <span style="float: left">{{groupType.name}}</span>
+               		 <el-option                       
+                        :label="'老师'"                   
+                        :value="'1'">
+                        <span style="float: left">老师</span>
                		 </el-option>
-           			 </el-select>
+               		 <el-option                       
+                        :label="'学生'"                       
+                        :value="'2'">
+                        <span style="float: left">学生</span>
+               		 </el-option>
+           			 </el-select>          			 
                     </el-form-item>
-                    <el-form-item  :label-width="formLabelWidth">
-                      <el-autocomplete                           
-                            :fetch-suggestions="querySearch"
+                   
+                    <el-form-item  :label-width="formLabelWidth" v:show="userGroup.groupType == '1'">
+                      <el-input  
+                      		v-model="teacherSearch"                                                    
                             icon="search"
                             :on-icon-click="handleIconClick"
-                            placeholder="请输入内容"                            
-                      ></el-autocomplete>                                                                                         
-                    </el-form-item>
-                    <el-form-item  :label-width="formLabelWidth">
+                            placeholder="请输入内容">
+                      </el-input>                                                                                         
+                    </el-form-item>                  
+                    <el-form-item  :label-width="formLabelWidth" v:show="userGroup.groupType == '1'">
                       <el-row>
                       	<el-col :span="10">
                       		<el-table 
                       		height="250"
-                      		:data="unselectUser"
+                      		:data="unselectTeacher"
                    			 border
                    			style="width: 100%"
                     		highlight-current-row
-                    		@current-change="handleCurrentChange">   
-                    		
-                    		<el-table-column label="备选用户" prop="userName">
+                    		@current-change="handleCurrentChange">                      		
+                    		<el-table-column label="备选用户" prop="teacherName">
                       		</el-table-column>                 		
-                      		</el-table>
-                      		
-                      		
+                      		</el-table>                      		
                       	</el-col>
                         <el-col :span="4"  >
                             <el-row type="flex" justify="center">
@@ -171,13 +176,69 @@
                       	<el-col :span="10">
                       	<el-table 
                       		height="250"
-                      		:data="selectUser"
+                      		:data="selectTeacher"
                    			 border
                    			 style="width: 100%"
                     		highlight-current-row
-    						@current-change="handleCurrentChange">   
-   				
-    						<el-table-column label="已选用户" prop="userName">
+    						@current-change="handleCurrentChange">     				
+    						<el-table-column label="已选用户" prop="teacherName">
+                      		</el-table-column>                 		
+                      		</el-table>
+                      		                     		
+                      	</el-col>                      	                      
+                      </el-row>                                                                                                              
+                    </el-form-item> 
+                    
+                    <el-form-item  :label-width="formLabelWidth" v:show="userGroup.groupType == '2'">
+                      <el-input  
+                      		v-model="studentSearch"                                                    
+                            icon="search"
+                            :on-icon-click="handleIconClick"
+                            placeholder="请输入内容">
+                      </el-input>                                                                                         
+                    </el-form-item>                   
+                    <el-form-item  :label-width="formLabelWidth" v:show="userGroup.groupType == '2'">
+                      <el-row>
+                      	<el-col :span="10">
+                      		<!-- <el-table 
+                      		height="250"
+                      		:data="unselectStudent"
+                   			 border
+                   			style="width: 100%"
+                    		highlight-current-row
+                    		@current-change="handleCurrentChange">                      		
+                    		<el-table-column label="备选用户" prop="studentName">
+                      		</el-table-column>                 		
+                      		</el-table>  --> 
+                      		<el-tree
+                    			 :data="treeData"
+                   				 highlight-current
+                    			 ref="tree"
+                    			 :props="props"
+                   				 node-key="id"
+                    			 show-checkbox
+							  >
+           					 </el-tree>                    		
+                      	</el-col>
+                        <el-col :span="4"  >
+                            <el-row type="flex" justify="center">
+                            <div>
+                             	<div><el-button size="small" @click="addOneStudent()">》</el-button></div>
+                            	<div><el-button size="small" @click="removeOneStudent">《</el-button></div>
+                             	<div><el-button size="small" @click="addAllStudent">》》</el-button></div>
+                             	<div><el-button size="small" @click="removeAllStudent">《《</el-button></div>                       
+                       		</div>
+                       		</el-row>
+                        </el-col>
+                      	<el-col :span="10">
+                      	<el-table 
+                      		height="250"
+                      		:data="selectStudent"
+                   			 border
+                   			 style="width: 100%"
+                    		highlight-current-row
+    						@current-change="handleCurrentChange">     				
+    						<el-table-column label="已选用户" prop="studentName">
                       		</el-table-column>                 		
                       		</el-table>
                       		                     		
@@ -215,21 +276,46 @@ var app = new Vue({
 		groupName:null,				
 		userGroups:[],		
 		userGroupUrl: "<s:url value='/userGroup/list'/>",
-		listTableDataUrl :	"<s:url value='/userGroup/listByCondition'/>",			
+		listTableDataUrl :	"<s:url value='/userGroup/listByCondition'/>",	
+		teachersUrl :"<s:url value='/teacherAdmin/list'/>",	
+		studentTreeUrl :"<s:url value='/schoolClass/listTree'/>",	
 		tableData: [],
-		userGroup:{},
+		userGroup:{groupName:null,groupType:null},
 		dialogFormVisible:false,
 		formLabelWidth : '120px',
-		unselectUser:[],
-		selectUser:[],
+		unselectTeacher:[],
+		selectTeacher:[],
+		teachers:[],
+		currentTeacher:{},
+		teacherSearch:null,
+		unselectStudent:[],
+		selectStudent:[],
+		students:[],
+		currentStudent:{},
+		studentSearch:null,
+		treeData: [],    
+       	props: {
+                    label: 'label',
+                    children: 'children'
+                },
 		
 	}, 
 	mounted : function() { 
-		this.getUserGroups(); 		
+		this.getUserGroups();
+		this.getTeachers();		
 		
 			
 	}, 
 	methods : { 
+	
+		getStudentTree : function(){ 			
+			this.$http.get(this.studentTreeUrl).then(
+			function(response){
+				this.treeData  = response.data.treeData;
+			 },
+			function(response){}  			
+			); 	
+			},
 	
 		  querySearch :function(queryString, cb) {
                 var userGroups = this.userGroups;
@@ -242,6 +328,18 @@ var app = new Vue({
                     return (userGroups.name.indexOf(queryString.toLowerCase()) === 0);
                 };
             } ,	
+         createFilterForSelectTeacher :function(queryString) {
+                return function unselectTeachers(unselectTeacher) {
+                    return (unselectTeacher.teacherName.indexOf(queryString.toLowerCase()) >= 0 );
+                };
+            } ,	
+            
+            getTeachers	:function(){ 
+			this.$http.get(this.teachersUrl).then(
+			function(response){this.teachers=response.data; },
+			function(response){}  	 			
+			);
+			},
 		getUserGroups : function(){ 
 			this.$http.get(this.userGroupUrl).then(
 			function(response){this.userGroups=response.data;},
@@ -257,36 +355,182 @@ var app = new Vue({
 							function(response){}  			
 							);   	
 							},
-		handleEdit : function(index,row){
-		
+		handleEdit : function(index,row){		
 		
 		},
-		handleDelete : function(index,row){
-		
+		handleDelete : function(index,row){		
 		
 		},	
 		add : function(){
 		 this.dialogFormVisible = true;
+		 this.userGroup={groupName:null,groupType:'1'}; //新增默认为老师组
+		 //this.userGroup.groupType= '2' ;   
+		 for(index in this.teachers){
+		 //console.log(this.teachers[index].name+'('+this.teachers[index].teacherNo+')');
+		 this.unselectTeacher.push({teacherName:this.teachers[index].name+'('+this.teachers[index].teacherNo+')',teacherId:this.teachers[index].teacherId});	 
+		 }	
+		 this.selectTeacher=[];
+		 teacherSearch= null;	 
 		},
 		handleCurrentChange : function(currentRow){
+		if(this.userGroup.groupType == '1'){
+				this.currentTeacher=currentRow;				
+		}
+		if(this.userGroup.groupType == '2'){
+				this.currentStudent=currentRow;				
+		}
 		
 		},
 		handleIconClick	: function(){
-		
-		
+			this.unselectTeacher = [];
+			for(index in this.teachers){
+			 this.unselectTeacher.push({teacherName:this.teachers[index].name+'('+this.teachers[index].teacherNo+')',teacherId:this.teachers[index].teacherId});	 
+		 	}				
+			var unselectTeacher = this.unselectTeacher;
+            var results = this.teacherSearch ? unselectTeacher.filter(this.createFilterForSelectTeacher(this.teacherSearch)) : unselectTeacher;              		
+			this.unselectTeacher = results;
 		},
 		addOne: function(){
+		if(this.userGroup.groupType == '1'){
+				if (!this.currentTeacher) {
+					alert('请选择一个老师！');
+					return;
+				} else {
+					for (var i = 0; i < this.unselectTeacher.length; i++) {
+						var oneRow = this.unselectTeacher[i];
+						if (oneRow.teacherId == this.currentTeacher.teacherId) {
+							this.unselectTeacher.splice(i, 1);
+							this.selectTeacher.push(oneRow);
+							this.currentTeacher = null;
+							break;
+						}
+					}
+				}				
+		}
+		if(this.userGroup.groupType == '2'){
+				if (!this.currentStudent) {
+					alert('请选择一个学生！');
+					return;
+				} else {
+					for (var i = 0; i < this.unselectStudent.length; i++) {
+						var oneRow = this.unselectStudent[i];
+						if (oneRow.studentId == this.currentStudent.teacherId) {
+							this.unselectStudent.splice(i, 1);
+							this.selectStudent.push(oneRow);
+							this.currentStudent = null;
+							break;
+						}
+					}
+				}				
+		}
+		
 		
 		},
 		removeOne: function(){
+		if(this.userGroup.groupType == '1'){
+				if (!this.currentTeacher) {
+					alert('请选择一个老师！');
+					return;
+				} else {
+					for (var i = 0; i < this.selectTeacher.length; i++) {
+						var oneRow = this.selectTeacher[i];
+						if (oneRow.teacherId == this.currentTeacher.teacherId) {
+							this.selectTeacher.splice(i, 1);
+							this.unselectTeacher.push(oneRow);
+							this.currentTeacher = null;
+							break;
+						}
+					}
+				}				
+		}
+		if(this.userGroup.groupType == '2'){
+				if (!this.currentStudent) {
+					alert('请选择一个学生！');
+					return;
+				} else {
+					for (var i = 0; i < this.selectStudent.length; i++) {
+						var oneRow = this.selectStudent[i];
+						if (oneRow.studentId == this.currentStudent.teacherId) {
+							this.selectStudent.splice(i, 1);
+							this.unselectStudent.push(oneRow);
+							this.currentStudent = null;
+							break;
+						}
+					}
+				}				
+		}
 		
 		},
 		addAll: function(){
+		if(this.userGroup.groupType == '1'){
+				this.selectTeacher = this.selectTeacher
+						.concat(this.unselectTeacher);
+				this.unselectTeacher = [];				
+		}
+		if(this.userGroup.groupType == '2'){
+				this.selectStudent = this.selectStudent
+						.concat(this.unselectStudent);
+				this.unselectStudent = [];					
+		}
 		
+				
 		},
 		removeAll: function(){
+		if(this.userGroup.groupType == '1'){
+				this.unselectTeacher = this.unselectTeacher
+						.concat(this.selectTeacher);
+				this.selectTeacher = [];				
+		}
+		if(this.userGroup.groupType == '2'){
+				this.unselectStudent = this.unselectStudent
+						.concat(this.selectStudent);
+				this.selectStudent = [];					
+		}
+		},	
+		addOneStudent: function(){
+			if(this.$refs.tree.getCheckedKeys().length>=1){
+			var selectStudent=this.$refs.tree.getCheckedKeys();	
+				for(var index in selectStudent){
+					if(this.selectStudent.indexOf(selectStudent[index]) >=0 ){
+						continue;
+					}
+					else{
+						this.selectStudent.push(selectStudent[index]);
+					}					
+				}
+										
+			}else{
+			return ;
+			}	
+		},	
+		removeOneStudent: function(){
+		if (!this.currentStudent) {
+					alert('请选择一个学生！');
+					return;
+				} else {
+					for (var i = 0; i < this.selectStudent.length; i++) {
+						var oneRow = this.selectStudent[i];
+						if (oneRow.studentId == this.currentStudent.teacherId) {
+							this.selectStudent.splice(i, 1);							
+							this.currentStudent = null;
+							break;
+						}
+					}
+				}
 		
-		},			
+		},	
+		addAllStudent: function(){
+			this.selectStudent=[];
+			for(var index in this.students){
+				this.selectStudent.push(this.students[index].studentId);
+			}
+		
+		},	
+		removeAllStudent: function(){
+			this.selectStudent=null;
+		
+		},	
+			
 		     	
 			
 			

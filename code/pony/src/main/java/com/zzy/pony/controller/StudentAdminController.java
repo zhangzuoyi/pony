@@ -31,14 +31,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.model.CommonDict;
+import com.zzy.pony.model.Grade;
 import com.zzy.pony.model.SchoolClass;
+import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Student;
 import com.zzy.pony.model.StudentStatusChange;
 import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.service.DictService;
 import com.zzy.pony.service.SchoolClassService;
+import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.StudentService;
 import com.zzy.pony.util.DateTimeUtil;
 
@@ -51,6 +56,7 @@ public class StudentAdminController {
 	private SchoolClassService classService;
 	@Autowired
 	private DictService dictService;
+
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
 	public String main(Model model){
@@ -79,6 +85,44 @@ public class StudentAdminController {
 		}
 		return list;
 	}
+	
+	//获取班级学生树结构数据
+		@RequestMapping(value="listTree",method = RequestMethod.GET)
+		@ResponseBody
+		public String listTree(Model model){
+			StringBuilder result = new StringBuilder();
+			List<Map<String, Object>> lists = new ArrayList<Map<String,Object>>();
+			List<SchoolClass> schoolClasses = classService.findCurrent();
+			for (SchoolClass schoolClass : schoolClasses) {
+				Map<String, Object> map = new HashMap<String, Object>();
+				//map.put("id", grade.getGradeId());
+				map.put("label", schoolClass.getName());
+				List<Map<String, Object>> list2 = new ArrayList<Map<String,Object>>();
+				List<Student> students = service.findBySchoolClass(schoolClass.getClassId());
+					for (Student student : students) {
+						Map<String, Object> map2 = new HashMap<String, Object>();
+						map2.put("id", student.getStudentId());
+						map2.put("label", student.getName());
+						list2.add(map2);
+					}
+				map.put("children", list2);
+				lists.add(map);
+				
+			}
+			GsonBuilder gb = new GsonBuilder();
+			Gson gson = gb.create();
+			String treeDatas= gson.toJson(lists);	
+			result.append("{\"treeData\"");
+			result.append(":");
+			result.append(treeDatas);
+			result.append("}");
+			return result.toString();
+			
+			
+			
+			
+		}
+	
 	@RequestMapping(value="findByClass",method = RequestMethod.GET)
 	@ResponseBody
 	public List<Student> findByClass(@RequestParam(value="classId") int classId, Model model){

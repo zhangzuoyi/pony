@@ -16,6 +16,10 @@ public class Constants {
 	public static final String SOURCE_TYPE_PRE="0";//预排课
 	public static final String SOURCE_TYPE_AUTO="1";//自动排课
 	public static final String SOURCE_TYPE_CHANGE="2";//调课
+	public static final String USER_GROUP_TYPE_TEACHER="1";//用户组类型:老师
+	public static final String USER_GROUP_TYPE_STUDENT="2";//用户组类型:学生
+
+
 
 
 	public static final Map<Integer, String> SUBJECT_TYPES;
