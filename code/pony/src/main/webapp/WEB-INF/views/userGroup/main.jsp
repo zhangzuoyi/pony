@@ -141,15 +141,19 @@
            			 </el-select>          			 
                     </el-form-item>
                    
-                    <el-form-item  :label-width="formLabelWidth" v:show="userGroup.groupType == '1'">
-                      <el-input  
+                    <el-form-item label="筛选" :label-width="formLabelWidth" v-show="userGroup.groupType == '1'">
+                      <el-row>
+                      <el-col :span="10">
+                      <el-input                             
                       		v-model="teacherSearch"                                                    
                             icon="search"
                             :on-icon-click="handleIconClick"
                             placeholder="请输入内容">
-                      </el-input>                                                                                         
+                      </el-input> 
+                      </el-col> 
+                      </el-row>                                                                                       
                     </el-form-item>                  
-                    <el-form-item  :label-width="formLabelWidth" v:show="userGroup.groupType == '1'">
+                    <el-form-item  :label-width="formLabelWidth" v-show="userGroup.groupType == '1'">
                       <el-row>
                       	<el-col :span="10">
                       		<el-table 
@@ -189,28 +193,16 @@
                       </el-row>                                                                                                              
                     </el-form-item> 
                     
-                    <el-form-item  :label-width="formLabelWidth" v:show="userGroup.groupType == '2'">
-                      <el-input  
-                      		v-model="studentSearch"                                                    
-                            icon="search"
-                            :on-icon-click="handleIconClick"
-                            placeholder="请输入内容">
-                      </el-input>                                                                                         
+                    
+                      </el-col>
+                      </el-row>                                                                                         
                     </el-form-item>                   
-                    <el-form-item  :label-width="formLabelWidth" v:show="userGroup.groupType == '2'">
+                    <el-form-item  :label-width="formLabelWidth" v-show="userGroup.groupType == '2'">
                       <el-row>
-                      	<el-col :span="10">
-                      		<!-- <el-table 
-                      		height="250"
-                      		:data="unselectStudent"
-                   			 border
-                   			style="width: 100%"
-                    		highlight-current-row
-                    		@current-change="handleCurrentChange">                      		
-                    		<el-table-column label="备选用户" prop="studentName">
-                      		</el-table-column>                 		
-                      		</el-table>  --> 
+                      	<el-col :span="10">                     		
+                      		<div style="height:250px;overflow :auto;">
                       		<el-tree
+                      			 
                     			 :data="treeData"
                    				 highlight-current
                     			 ref="tree"
@@ -218,7 +210,9 @@
                    				 node-key="id"
                     			 show-checkbox
 							  >
-           					 </el-tree>                    		
+           					 </el-tree> 
+           					 </div>
+           					                    		
                       	</el-col>
                         <el-col :span="4"  >
                             <el-row type="flex" justify="center">
@@ -238,7 +232,7 @@
                    			 style="width: 100%"
                     		highlight-current-row
     						@current-change="handleCurrentChange">     				
-    						<el-table-column label="已选用户" prop="studentName">
+    						<el-table-column label="已选用户" prop="label">
                       		</el-table-column>                 		
                       		</el-table>
                       		                     		
@@ -253,7 +247,7 @@
                     
                 </el-form>
                 <div slot="footer" class="dialog-footer">                   
-                    <el-button type="primary" @click.native="dialogFormVisible = false">确 定</el-button>
+                    <el-button type="primary" @click.native="submit()">确 定</el-button>
                     <el-button @click.native="dialogFormVisible = false">取 消</el-button>
                 </div>
             </el-dialog>
@@ -278,7 +272,9 @@ var app = new Vue({
 		userGroupUrl: "<s:url value='/userGroup/list'/>",
 		listTableDataUrl :	"<s:url value='/userGroup/listByCondition'/>",	
 		teachersUrl :"<s:url value='/teacherAdmin/list'/>",	
-		studentTreeUrl :"<s:url value='/schoolClass/listTree'/>",	
+		studentTreeUrl :"<s:url value='/studentAdmin/listTree'/>",
+		addUrl :"<s:url value='/userGroup/add'/>",
+		updateUrl :"<s:url value='/userGroup/update'/>",
 		tableData: [],
 		userGroup:{groupName:null,groupType:null},
 		dialogFormVisible:false,
@@ -290,7 +286,6 @@ var app = new Vue({
 		teacherSearch:null,
 		unselectStudent:[],
 		selectStudent:[],
-		students:[],
 		currentStudent:{},
 		studentSearch:null,
 		treeData: [],    
@@ -302,7 +297,8 @@ var app = new Vue({
 	}, 
 	mounted : function() { 
 		this.getUserGroups();
-		this.getTeachers();		
+		this.getTeachers();	
+		this.getStudentTree();
 		
 			
 	}, 
@@ -370,7 +366,9 @@ var app = new Vue({
 		 this.unselectTeacher.push({teacherName:this.teachers[index].name+'('+this.teachers[index].teacherNo+')',teacherId:this.teachers[index].teacherId});	 
 		 }	
 		 this.selectTeacher=[];
-		 teacherSearch= null;	 
+		 this.selectStudent=[];
+		 teacherSearch= null;	
+		 this.$refs.tree.setCheckedKeys([]);
 		},
 		handleCurrentChange : function(currentRow){
 		if(this.userGroup.groupType == '1'){
@@ -383,15 +381,24 @@ var app = new Vue({
 		},
 		handleIconClick	: function(){
 			this.unselectTeacher = [];
+			var selectTeacherIds =[];//已选择
+			for(var x in this.selectTeacher){
+				selectTeacherIds.push(this.selectTeacher[x].teacherId);
+			}
 			for(index in this.teachers){
+			 if(selectTeacherIds.indexOf(this.teachers[index].teacherId)>=0){
+				continue; 				 
+			 }			 
 			 this.unselectTeacher.push({teacherName:this.teachers[index].name+'('+this.teachers[index].teacherNo+')',teacherId:this.teachers[index].teacherId});	 
-		 	}				
+		 	}	
+			
+			
 			var unselectTeacher = this.unselectTeacher;
             var results = this.teacherSearch ? unselectTeacher.filter(this.createFilterForSelectTeacher(this.teacherSearch)) : unselectTeacher;              		
 			this.unselectTeacher = results;
 		},
 		addOne: function(){
-		if(this.userGroup.groupType == '1'){
+		
 				if (!this.currentTeacher) {
 					alert('请选择一个老师！');
 					return;
@@ -406,28 +413,13 @@ var app = new Vue({
 						}
 					}
 				}				
-		}
-		if(this.userGroup.groupType == '2'){
-				if (!this.currentStudent) {
-					alert('请选择一个学生！');
-					return;
-				} else {
-					for (var i = 0; i < this.unselectStudent.length; i++) {
-						var oneRow = this.unselectStudent[i];
-						if (oneRow.studentId == this.currentStudent.teacherId) {
-							this.unselectStudent.splice(i, 1);
-							this.selectStudent.push(oneRow);
-							this.currentStudent = null;
-							break;
-						}
-					}
-				}				
-		}
+		
+		
 		
 		
 		},
 		removeOne: function(){
-		if(this.userGroup.groupType == '1'){
+		
 				if (!this.currentTeacher) {
 					alert('请选择一个老师！');
 					return;
@@ -442,56 +434,38 @@ var app = new Vue({
 						}
 					}
 				}				
-		}
-		if(this.userGroup.groupType == '2'){
-				if (!this.currentStudent) {
-					alert('请选择一个学生！');
-					return;
-				} else {
-					for (var i = 0; i < this.selectStudent.length; i++) {
-						var oneRow = this.selectStudent[i];
-						if (oneRow.studentId == this.currentStudent.teacherId) {
-							this.selectStudent.splice(i, 1);
-							this.unselectStudent.push(oneRow);
-							this.currentStudent = null;
-							break;
-						}
-					}
-				}				
-		}
+		
+		
 		
 		},
 		addAll: function(){
-		if(this.userGroup.groupType == '1'){
+		
 				this.selectTeacher = this.selectTeacher
 						.concat(this.unselectTeacher);
 				this.unselectTeacher = [];				
-		}
-		if(this.userGroup.groupType == '2'){
-				this.selectStudent = this.selectStudent
-						.concat(this.unselectStudent);
-				this.unselectStudent = [];					
-		}
+		
+		
 		
 				
 		},
 		removeAll: function(){
-		if(this.userGroup.groupType == '1'){
+		
 				this.unselectTeacher = this.unselectTeacher
 						.concat(this.selectTeacher);
 				this.selectTeacher = [];				
-		}
-		if(this.userGroup.groupType == '2'){
-				this.unselectStudent = this.unselectStudent
-						.concat(this.selectStudent);
-				this.selectStudent = [];					
-		}
+		
+		
 		},	
 		addOneStudent: function(){
-			if(this.$refs.tree.getCheckedKeys().length>=1){
-			var selectStudent=this.$refs.tree.getCheckedKeys();	
-				for(var index in selectStudent){
-					if(this.selectStudent.indexOf(selectStudent[index]) >=0 ){
+			if(this.$refs.tree.getCheckedNodes().length>=1){
+			var selectStudent=this.$refs.tree.getCheckedNodes();//需要排除班级节点	
+			
+			var selectStudentIds =[];//已选择
+			for(var x in this.selectStudent){
+				selectStudentIds.push(this.selectStudent[x].id);
+			}				
+			for(var index in selectStudent){
+					if(selectStudent[index].id ==null  ||  selectStudentIds.indexOf(selectStudent[index].id) >=0 ){
 						continue;
 					}
 					else{
@@ -510,7 +484,7 @@ var app = new Vue({
 				} else {
 					for (var i = 0; i < this.selectStudent.length; i++) {
 						var oneRow = this.selectStudent[i];
-						if (oneRow.studentId == this.currentStudent.teacherId) {
+						if (oneRow.id == this.currentStudent.id) {
 							this.selectStudent.splice(i, 1);							
 							this.currentStudent = null;
 							break;
@@ -521,15 +495,37 @@ var app = new Vue({
 		},	
 		addAllStudent: function(){
 			this.selectStudent=[];
-			for(var index in this.students){
-				this.selectStudent.push(this.students[index].studentId);
-			}
-		
+			for(var index in this.treeData){								
+				var treeDataChildren = this.treeData[index].children;
+				for(var x in treeDataChildren)	{
+					this.selectStudent.push(treeDataChildren[x]);	
+				}
+				}						
 		},	
 		removeAllStudent: function(){
 			this.selectStudent=null;
 		
-		},	
+		},
+		submit :function(){
+			this.userGroup.teacherGroup = this.selectTeacher;
+			this.userGroup.studentGroup = this.selectStudent;
+			if(this.userGroup.groupId != null){
+			
+					this.$http.post(this.updateUrl,this.userGroup).then(
+					function(response){},
+					function(response){}  			
+					); 
+					
+				
+			}else{
+				this.$http.post(this.addUrl,this.userGroup).then(
+						function(response){},
+						function(response){}  			
+						); 
+				
+			}
+			
+		}
 			
 		     	
 			
