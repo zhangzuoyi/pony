@@ -25,6 +25,10 @@ public class UserServiceImpl implements UserService {
 	private UserDao dao;
 	@Autowired
 	private UserMapper mapper;
+	@Autowired
+	private TeacherService teacherService;
+	@Autowired
+	private StudentService studentService;
 
 	@Override
 	public User findByLoginName(String loginName) {
@@ -75,5 +79,33 @@ public class UserServiceImpl implements UserService {
 	public User findById(Integer userId) {
 		return dao.findOne(userId);
 	}
+
+	@Override
+	public User findByTeacherId(int teacherId) {
+		// TODO Auto-generated method stub
+		Teacher teacher = teacherService.get(teacherId);
+		if (teacher != null) {
+			List<User> users = dao.findByTeacher(teacher);
+			if (users !=null && users.size()>0) {
+				return  users.get(0);
+			}
+		}				
+		return null;
+	}
+
+	@Override
+	public User findByStudentId(int studentId) {
+		// TODO Auto-generated method stub
+		Student student = studentService.get(studentId);		
+		if (student != null) {
+			List<User> users = dao.findByStudent(student);
+			if (users !=null && users.size()>0) {
+				return  users.get(0);
+			}
+		}	
+		return null;
+	}
+	
+	
 
 }

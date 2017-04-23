@@ -26,7 +26,7 @@ public class Group implements Serializable {
 	private String name;
 
 	//bi-directional many-to-many association to User
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(
 			name="t_user_group"
 			, joinColumns={

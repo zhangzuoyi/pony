@@ -2,6 +2,7 @@ package com.zzy.pony.controller;
 
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
+
+
+
+
+
+
+import com.zzy.pony.config.Constants;
 import com.zzy.pony.model.Group;
+import com.zzy.pony.model.User;
+import com.zzy.pony.service.TeacherService;
 import com.zzy.pony.service.UserGroupService;
+import com.zzy.pony.service.UserService;
+import com.zzy.pony.vo.UserGroupVo;
 
 
 
@@ -26,6 +38,9 @@ public class UserGroupController {
 	
 	@Autowired
 	private UserGroupService userGroupService;
+	@Autowired
+	private UserService userService ;
+	
 
 	@RequestMapping(value="main",method = RequestMethod.GET)
 	public String main(Model model){
@@ -41,24 +56,105 @@ public class UserGroupController {
 	}	
 	@RequestMapping(value="listByCondition",method = RequestMethod.GET)
 	@ResponseBody
-	public List<Group> listByCondition(@RequestParam(value="groupType") String groupType,@RequestParam(value="groupName") String groupName){		
-		List<Group> result = userGroupService.listByCondition(groupType, groupName);	
+	public List<UserGroupVo> listByCondition(@RequestParam(value="groupType") String groupType,@RequestParam(value="groupName") String groupName){		
+		List<UserGroupVo> result = new ArrayList<UserGroupVo>();
+		List<Group> list = userGroupService.listByCondition(groupType, groupName);
+		for (Group group : list) {
+			UserGroupVo vo = new UserGroupVo();
+			vo.setGroupId(group.getGroupId()+"");
+			vo.setGroupName(group.getName());
+			vo.setGroupType(group.getGroupType());
+			if(Constants.USER_GROUP_TYPE_TEACHER.equalsIgnoreCase(group.getGroupType())){
+				List<String> teacherGroup = new ArrayList<String>();
+				for (User user : group.getUsers()) {
+					teacherGroup.add(user.getTeacher().getTeacherId()+"");
+				}
+				vo.setTeacherGroup(teacherGroup);				
+			}
+			if(Constants.USER_GROUP_TYPE_STUDENT.equalsIgnoreCase(group.getGroupType())){
+				List<String> studentGroup = new ArrayList<String>();
+				for (User user : group.getUsers()) {
+					studentGroup.add(user.getStudent().getStudentId()+"");
+				}
+				vo.setStudentGroup(studentGroup);
+			}
+			result.add(vo);
+			
+		}
+		
 		return result;
 	}
 	
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody
-	public void add(@RequestBody Group group){
-		userGroupService.add(group);		
+	public void add(@RequestBody UserGroupVo vo){
+		Group group = new Group();
+		if (Constants.USER_GROUP_TYPE_TEACHER.equalsIgnoreCase(vo.getGroupType())) {
+			group.setGroupType(vo.getGroupType());
+			group.setName(vo.getGroupName());
+			List<User> users = new ArrayList<User>();
+			for (String teacherId : vo.getTeacherGroup()) {
+				User user = userService.findByTeacherId(Integer.valueOf(teacherId));
+				users.add(user);
+			}
+			group.setUsers(users);
+			userGroupService.add(group);	
+		}
+		if (Constants.USER_GROUP_TYPE_STUDENT.equalsIgnoreCase(vo.getGroupType())) {
+			group.setGroupType(vo.getGroupType());
+			group.setName(vo.getGroupName());
+			List<User> users = new ArrayList<User>();
+			for (String studentId : vo.getStudentGroup()) {
+				User user = userService.findByStudentId(Integer.valueOf(studentId));
+				if (user != null) {
+					users.add(user);
+				}
+			}
+			group.setUsers(users);
+			userGroupService.add(group);
+		}
+		
+			
 	}
-	@RequestMapping(value="update",method = RequestMethod.GET)
+	@RequestMapping(value="update",method = RequestMethod.POST)
 	@ResponseBody
-	public void update(@RequestBody Group group){
-		userGroupService.update(group);
+	public void update(@RequestBody UserGroupVo vo){
+		
+		Group group = new Group();
+		if (Constants.USER_GROUP_TYPE_TEACHER.equalsIgnoreCase(vo.getGroupType())) {
+			group.setGroupId(Integer.valueOf(vo.getGroupId()));
+			group.setGroupType(vo.getGroupType());
+			group.setName(vo.getGroupName());
+			List<User> users = new ArrayList<User>();
+			for (String teacherId : vo.getTeacherGroup()) {
+				User user = userService.findByTeacherId(Integer.valueOf(teacherId));
+				if (user != null) {
+					users.add(user);
+				}
+			}
+			group.setUsers(users);
+			userGroupService.update(group);	
+		}
+		if (Constants.USER_GROUP_TYPE_STUDENT.equalsIgnoreCase(vo.getGroupType())) {
+			group.setGroupId(Integer.valueOf(vo.getGroupId()));
+			group.setGroupType(vo.getGroupType());
+			group.setName(vo.getGroupName());
+			List<User> users = new ArrayList<User>();
+			for (String studentId : vo.getStudentGroup()) {
+				User user = userService.findByStudentId(Integer.valueOf(studentId));
+				if (user != null) {
+					users.add(user);
+				}
+			}
+			group.setUsers(users);
+			userGroupService.update(group);
+		}
+		
+		
 	}
 	@RequestMapping(value="delete",method = RequestMethod.GET)
 	@ResponseBody
-	public void delete(Integer groupId){
+	public void delete(@RequestParam(value="groupId") Integer groupId){
 		Group group =  userGroupService.get(groupId);
 		userGroupService.delete(group);
 	}

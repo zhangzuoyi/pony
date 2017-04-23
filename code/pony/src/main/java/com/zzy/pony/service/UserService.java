@@ -15,4 +15,7 @@ public interface UserService {
 	List<Role> findRoles(Integer userId);
 	void addFromTeacher(Teacher teacher);
 	void addFromStudent(Student student);
+	User findByTeacherId(int teacherId);
+	User findByStudentId(int studentId);
+
 }

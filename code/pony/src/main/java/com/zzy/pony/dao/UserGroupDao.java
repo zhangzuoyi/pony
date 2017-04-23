@@ -12,5 +12,7 @@ import com.zzy.pony.model.Group;
 
 public interface UserGroupDao extends JpaRepository<Group,Integer>{
 	List<Group> findByGroupTypeAndName(String groupType,String groupName);
+	List<Group> findByGroupType(String groupType);
+	List<Group> findByName(String name);
 
 }

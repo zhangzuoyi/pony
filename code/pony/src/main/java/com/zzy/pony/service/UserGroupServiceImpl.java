@@ -1,10 +1,13 @@
 package com.zzy.pony.service;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.poi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +32,20 @@ public class UserGroupServiceImpl implements UserGroupService {
 	@Override
 	public List<Group> listByCondition(String groupType, String groupName) {
 		// TODO Auto-generated method stub
-		List<Group> result = userGroupDao.findByGroupTypeAndName(groupType, groupName);
+		List<Group> result = new ArrayList<Group>();
+		if (!StringUtils.isEmpty(groupType) && !StringUtils.isEmpty(groupName)) {
+			result = userGroupDao.findByGroupTypeAndName(groupType, groupName);
+		}
+		if (!StringUtils.isEmpty(groupType) && StringUtils.isEmpty(groupName)) {
+			result = userGroupDao.findByGroupType(groupType);
+		}
+		if (StringUtils.isEmpty(groupType) && !StringUtils.isEmpty(groupName)) {
+			result = userGroupDao.findByName(groupName);
+		}
+		if (StringUtils.isEmpty(groupType) && StringUtils.isEmpty(groupName)) {
+			result = userGroupDao.findAll();
+		}
+		
 		return result;
 	}
 
