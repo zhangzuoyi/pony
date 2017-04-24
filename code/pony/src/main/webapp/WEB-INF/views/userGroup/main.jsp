@@ -22,7 +22,6 @@
 <script type="text/javascript" src="<s:url value='/static/elementUI/index.js' />"></script>
 
 </head>
-<body>
 <div id="app">
   <div>   	           	
         	<el-card class="box-card content-margin">

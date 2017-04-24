@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.model.Group;
 import com.zzy.pony.model.User;
-import com.zzy.pony.service.TeacherService;
 import com.zzy.pony.service.UserGroupService;
 import com.zzy.pony.service.UserService;
 import com.zzy.pony.vo.UserGroupVo;
