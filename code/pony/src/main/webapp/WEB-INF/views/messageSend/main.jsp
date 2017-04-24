@@ -123,6 +123,7 @@
                   
             </div> 
               
+
         </el-card>
         
         
@@ -214,9 +215,7 @@ var app = new Vue({
 	}, 
 	methods : { 
 			   	
-			
-			
-		  
+	  
         }	        
 	 
 	
