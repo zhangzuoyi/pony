@@ -10,6 +10,14 @@ public class UserGroupVo {
 	private String groupId;
 	private List<String> studentGroup;
 	private List<String> teacherGroup;
+	
+	
+	
+	private String userName;
+	private String userId;
+	
+	
+	
 	public UserGroupVo(){}
 	public String getGroupType() {
 		return groupType;
@@ -41,6 +49,19 @@ public class UserGroupVo {
 	public void setTeacherGroup(List<String> teacherGroup) {
 		this.teacherGroup = teacherGroup;
 	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	
 	
 	 
 	

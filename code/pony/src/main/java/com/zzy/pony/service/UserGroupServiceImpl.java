@@ -76,6 +76,9 @@ public class UserGroupServiceImpl implements UserGroupService {
 		// TODO Auto-generated method stub
 		return userGroupDao.findOne(groupId);
 	}
+
+	
+	
 	
 	
 	

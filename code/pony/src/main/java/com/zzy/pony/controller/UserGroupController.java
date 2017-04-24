@@ -158,16 +158,25 @@ public class UserGroupController {
 		userGroupService.delete(group);
 	}
 	
-	
-	
-	
-
-	
-	
-	
-	
-	
-	
-	
+	@RequestMapping(value="listByGroupId",method = RequestMethod.GET)
+	@ResponseBody
+	public List<UserGroupVo> listByGroupId(@RequestParam(value="groupId") String groupId){		
+		List<UserGroupVo> result = new ArrayList<UserGroupVo>();
+		Group group = userGroupService.get(Integer.valueOf(groupId));
+		for (User user : group.getUsers()) {
+			UserGroupVo vo = new UserGroupVo();
+			vo.setGroupId(group.getGroupId()+"");
+			vo.setGroupName(group.getName());
+			vo.setGroupType(group.getGroupType());
+			vo.setUserId(user.getUserId()+"");
+			if (Constants.USER_GROUP_TYPE_STUDENT.equalsIgnoreCase(group.getGroupType())) {
+				vo.setUserName(user.getStudent().getName());				
+			}else if (Constants.USER_GROUP_TYPE_TEACHER.equalsIgnoreCase(group.getGroupType())) {
+				vo.setUserName(user.getTeacher().getName());
+			}			
+			result.add(vo);		
+		}			
+		return result;
+	}
 	
 }

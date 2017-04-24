@@ -14,6 +14,7 @@ public interface UserGroupService {
 	List<Group> list();
 	List<Group> listByCondition(String groupType,String groupName);
 	Group get(Integer groupId);
+
 	
 	void add(Group group);
 	void update(Group group);

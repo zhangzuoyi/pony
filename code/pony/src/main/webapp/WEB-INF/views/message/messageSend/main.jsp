@@ -39,10 +39,10 @@
             </el-col> 
             </el-row>
             <el-row>
-            <el-col :span="2" :offset="5">
+            <el-col :span="1" :offset="5">
                     <b>用户组:</b>                                    
             </el-col> 
-            <el-col :span="5" >
+            <el-col :span="6" >
             <div class="grid-content bg-purple">                                     
 					<el-select multiple v-model="userGroup"    filterable placeholder="请选择.." >
                		 <el-option              		 
@@ -56,19 +56,17 @@
             </el-col>      
             </el-row>
             <el-row>
-            <el-col :span="2" :offset="5">
+            <el-col :span="1" :offset="5">
                     <b>用户:</b>                                    
             </el-col> 
-            <el-col :span="5" >
+            <el-col :span="6" >
             <div class="grid-content bg-purple">                                     
-					<el-select multiple v-model="users"    filterable placeholder="请选择.." >
-               		 <el-option
-                        v-for="user in users" 
-                        :label="user.name"                      
-                        :value="user.userId">
-                        <span style="float: left">{{user.name}}</span>
-               		 </el-option>
-           			 </el-select>				
+				 <el-input                  
+                    icon="search"
+                    v-model="users"
+                    @click="handleUserClick"
+                    :disabled="true">
+            </el-input>				
                </div>           
             </el-col>      
             </el-row>
@@ -76,7 +74,7 @@
             <el-col :span="2" :offset="4" >
                     <b>标题:</b>                                    
             </el-col> 
-            <el-col :span="5" >
+            <el-col :span="6" >
             <div class="grid-content bg-purple">                                     
 				<el-input v-model="title" placeholder="请输入内容"></el-input>					
              </div>           
@@ -87,7 +85,7 @@
             <el-col :span="2" :offset="4" >
                     <b>内容:</b>                                    
             </el-col> 
-            <el-col :span="5" >
+            <el-col :span="6" >
             <div class="grid-content bg-purple">                                     
 				<el-input v-model="content" 
 				type="textarea"
@@ -95,31 +93,35 @@
              </div>           
             </el-col>           
             </el-row>
+             
              <el-row>
             <el-col :span="2" :offset="4" >
                     <b>附件:</b>                                    
             </el-col> 
             <el-col :span="5" >
             <div class="grid-content bg-purple">                                     
-			<el-upload
-  			 ref="upload"
- 			 :on-preview="handlePreview"
+			<el-upload					
+  			 ref="upload" 			
   			:on-remove="handleRemove"
   			:file-list="fileList"
   			:auto-upload="false">
   			<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-</el-upload>
-
-  
-</el-upload>					
+			</el-upload> 							
              </div>           
             </el-col>           
             </el-row>
             
             <el-row>
-            <el-col :span="2" :offset="4"> 发送 </el-col>
-            <el-col :span="2" :offset="4"> 暂存 </el-col>                   
-            </el-row>
+            <el-col :span="2" :offset="4"> 
+              <el-button type="primary" @click="send">发送</el-button>           
+           </el-col>
+            <el-col :span="2" :offset="4">
+             <el-button type="primary" @click="save">暂存</el-button>  
+            </el-col> 
+            <el-col :span="2" :offset="4">
+             <el-button type="primary" @click="close">关闭</el-button>  
+            </el-col>                   
+           </el-row>
                   
             </div> 
               
@@ -129,16 +131,16 @@
         
         <el-dialog title="用户选择" v-model="dialogFormVisible" size="large">
                
-                <el-form :model="">
-                    
+                <el-form>                   
                     <el-form-item label="用户组" :label-width="formLabelWidth">
-                        <el-select v-model=""    filterable placeholder="请选择.." >
-               		 <el-option
-                        v-for="item in userGroup"
-                        :label="item.name"
-                        :value="item.groupId">
-                	</el-option>               		
-           			 </el-select> 
+                     <el-select   @change="handleChange" v-model="selectUserGroup"  filterable placeholder="请选择.." >
+               		 <el-option              		 
+                        v-for="userGroup in userGroups" 
+                        :label="userGroup.name"                      
+                        :value="userGroup.groupId">
+                        <span style="float: left">{{userGroup.name}}</span>
+               		 </el-option>  
+               		 </el-select>      			 
            			 <el-input                             
                       		v-model="searchString"                                                    
                             icon="search"
@@ -148,7 +150,7 @@
            			          			 
                     </el-form-item>
                    
-                    <el-form-item label="筛选" :label-width="formLabelWidth" ">
+                    <el-form-item label="筛选" :label-width="formLabelWidth" >
                       <el-row>
                       	<el-col :span="10">
                       		<el-table 
@@ -204,16 +206,171 @@
 var app = new Vue({ 
 	el : '#app' ,
 	data : { 		
-		
-		
+		userGroup:[],
+		users:[],
+		title:null,
+		content:null,
+		userGroups:[],
+		searchString:null,
+		unselectUser:[],
+		selectUser:[],
+		dialogFormVisible:false,
+		formLabelWidth : '120px',
+		userGroupUrl: "<s:url value='/userGroup/list'/>",
+		listByGroupIdUrl:"<s:url value='/userGroup/listByGroupId'/>",
+		currentUser:null,
+		fileList:[],
+		selectUserGroup:null,
+		groupId:null
 	
 		
 	}, 
 	mounted : function() { 
-		
+		this.getUserGroups();
 			
 	}, 
 	methods : { 
+			 getUserGroups : function(){ 
+			this.$http.get(this.userGroupUrl).then(
+			function(response){
+			this.userGroups=response.data;},
+			function(response){}  			
+			); 
+			} ,
+			listByGroupId :function(groupId){ 
+			this.$http.get(this.listByGroupIdUrl,{params:{groupId: groupId}}).then(
+			function(response){this.unselectUser=response.data;},
+			function(response){}  			
+			); 
+			}, 
+			 handleChange :function(value){
+			 this.groupId = value;
+			 this.listByGroupId(value);
+			 
+			 },
+			 handleUserClick:function(){
+			 this.dialogFormVisible=true;
+			 this.unselectUser = [];
+			 this.selectUser = [];
+			 this.groupId=null;
+			 	 
+			 },
+			 
+			 createFilter :function(queryString) {
+                return function users(user) {
+                    return (user.userName.indexOf(queryString.toLowerCase()) >= 0);
+                };
+            } ,
+			 
+			  handleIconClick:function(){
+			//
+			var unselectUser = this.unselectUser;
+            var results = this.searchString ? unselectUser.filter(this.createFilter(this.searchString)) : searchString;              		
+			this.unselectUser = results;
+			
+			 	 
+			 },
+			 handleCurrentChange:function(currentRow){
+			 
+			 this.currentUser = currentRow;
+			 
+			 },
+			 addOne:function(){
+			 	if (!this.currentUser) {
+					alert('请选择！');
+					return;
+				} else {
+					for (var i = 0; i < this.unselectUser.length; i++) {
+						var oneRow = this.unselectUser[i];
+						if (oneRow.userId == this.currentUser.userId) {
+							this.unselectUser.splice(i, 1);
+							this.selectUser.push(oneRow);
+							this.currentUser = null;
+							break;
+						}
+					}
+				}	
+			 
+			 
+			 },
+			 removeOne:function(){
+			 	if (!this.currentUser) {
+					alert('请选择！');
+					return;
+				} else {
+					var unselectUserIds = [];
+			  		 for(var index in this.unselectUser){
+			   			unselectUserIds.push(this.unselectUser[index].userId);
+			  			 }
+				
+					for (var i = 0; i < this.selectUser.length; i++) {
+						var oneRow = this.selectUser[i];
+						if (oneRow.userId == this.currentUser.userId ) {
+							this.selectUser.splice(i, 1);
+							if(oneRow.groupId == this.groupId && unselectUserIds.indexOf(oneRow.userId)< 0 ){
+							 this.unselectUser.push(oneRow);
+							}														
+							this.currentUser = null;
+							break;
+						}
+					}
+				}	
+			 },
+			 addAll:function(){
+			 
+			   var selectUserIds = [];
+			   for(var index in this.selectUser){
+			   selectUserIds.push(this.selectUser[index].userId);
+			   }
+			 	for (var i = 0; i < this.unselectUser.length; i++) {
+						var oneRow = this.unselectUser[i];
+						if(selectUserIds.indexOf(oneRow.userId) < 0){
+							this.selectUser.push(oneRow);
+						}
+					}
+				this.unselectUser = [];
+			 	
+			 	
+			 },
+			 removeAll:function(){
+				var unselectUserIds = [];
+			   	for(var index in this.unselectUser){
+			   		unselectUserIds.push(this.unselectUser[index].userId);
+			   }
+			 
+				 for (var i = 0; i < this.selectUser.length; i++) {
+						var oneRow = this.selectUser[i];
+						if(oneRow.groupId == this.groupId && unselectUserIds.indexOf(oneRow.userId)< 0){
+							this.unselectUser.push(oneRow);
+						}
+					}
+			 
+			 	 this.selectUser = [];
+			 
+			 
+			 },
+			 submit : function(){
+			 	this.dialogFormVisible=false;
+			 	for(var index in  this.selectUser){
+			 	this.users += this.selectUser[index].userName+";";			 	 
+			 	}
+			 	
+			 },
+			 handleRemove : function(file, fileList) {
+                console.log(file, fileList);
+             },
+             send : function(){
+             
+             },
+             save : function(){
+             
+             },
+             close : function(){
+             
+             },
+            
+			
+			 
 			   	
 	  
         }	        
