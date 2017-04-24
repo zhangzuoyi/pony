@@ -22,7 +22,6 @@
 <script type="text/javascript" src="<s:url value='/static/elementUI/index.js' />"></script>
 
 </head>
-<body>
 <div id="app">
   <div>   	           	
         	<el-card class="box-card content-margin">
@@ -62,7 +61,7 @@
 					<el-autocomplete
                             v-model="groupName"
                             :fetch-suggestions="querySearch"
-                            placeholder="请输入内容"                            
+                            placeholder="请输入内容"  
                     ></el-autocomplete>				
                     </div>
             
@@ -94,12 +93,12 @@
                         >
                 </el-table-column>
                 <el-table-column
-                        prop="groupType"
+                		inline-template
                         label="类型"
-                        >
+                        ><div>{{row.groupType | typeFilter}}</div>
                 </el-table-column>
                 <el-table-column
-                        prop="name"
+                        prop="groupName"
                         label="名称"
                         >
                 </el-table-column>                              
@@ -117,11 +116,14 @@
         </el-card> 
         
         
-        <el-dialog title="新增用户组" v-model="dialogFormVisible" size="large">
+        <el-dialog  v-model="dialogFormVisible" size="large">
+               <div slot="title" class="dialog-title">
+                    <b>{{title}}</b>
+                </div>
                 <el-form :model="userGroup">
                     <el-form-item label="名称" :label-width="formLabelWidth">
                         <el-autocomplete
-                            v-model="userGroup.name"
+                            v-model="userGroup.groupName"
                             :fetch-suggestions="querySearch"
                             placeholder="请输入内容"                            
                     ></el-autocomplete>	
@@ -275,8 +277,9 @@ var app = new Vue({
 		studentTreeUrl :"<s:url value='/studentAdmin/listTree'/>",
 		addUrl :"<s:url value='/userGroup/add'/>",
 		updateUrl :"<s:url value='/userGroup/update'/>",
+		deleteUrl :"<s:url value='/userGroup/delete'/>",
 		tableData: [],
-		userGroup:{groupName:null,groupType:null},
+		userGroup:{groupName:null,groupType:null,teacherGroup:[],studentGroup:[]},
 		dialogFormVisible:false,
 		formLabelWidth : '120px',
 		unselectTeacher:[],
@@ -293,15 +296,27 @@ var app = new Vue({
                     label: 'label',
                     children: 'children'
                 },
+        title:null
 		
 	}, 
 	mounted : function() { 
 		this.getUserGroups();
+		this.getListTableData();
 		this.getTeachers();	
 		this.getStudentTree();
 		
 			
 	}, 
+	filters: {
+        typeFilter: function(type) {
+            if(type == '1'){
+            return '老师';
+            }
+            if(type == '2'){
+            return '学生';
+            }
+        }
+    },
 	methods : { 
 	
 		getStudentTree : function(){ 			
@@ -314,14 +329,20 @@ var app = new Vue({
 			},
 	
 		  querySearch :function(queryString, cb) {
+                var results=[];
                 var userGroups = this.userGroups;
-                var results = queryString ? userGroups.filter(this.createFilter(queryString)) : userGroups;
-                // 调用 callback 返回建议列表的数据
+                var result = queryString ? userGroups.filter(this.createFilter(queryString)) : userGroups;
+                //调用 callback 返回建议列表的数据 key值必须为value
+                for(var index in result){
+                	var name = result[index].name;
+                	results.push({"value": name  });
+                }
                 cb(results);
+              // cb([{"value": "三全鲜食（北新泾店）", "address": "长宁区新渔路144号"},{"value": "Hot honey 首尔炸鸡（仙霞路）", "address": "上海市长宁区淞虹路661号"}]);
             },
           createFilter :function(queryString) {
-                return function userGroups() {
-                    return (userGroups.name.indexOf(queryString.toLowerCase()) === 0);
+                return function userGroups(userGroup) {
+                    return (userGroup.name.indexOf(queryString.toLowerCase()) >= 0);
                 };
             } ,	
          createFilterForSelectTeacher :function(queryString) {
@@ -346,20 +367,69 @@ var app = new Vue({
 					this.tableData = [];  //清空表格数据												 			
 					 this.$http.get(this.listTableDataUrl,{params:{groupType:this.groupType,groupName:this.groupName}}).then(
 							function(response){
-								this.tableData  = response.data.tableData;
+								this.tableData  = response.data;
 							 },
 							function(response){}  			
 							);   	
 							},
-		handleEdit : function(index,row){		
-		
+		handleEdit : function(index,row){	
+			this.title="修改用户组";		
+			this.userGroup = row;
+			this.dialogFormVisible = true;
+			this.unselectTeacher = [];
+			this.selectTeacher = [];
+			this.selectStudent=[];
+			
+			if(this.userGroup.groupType == '1'){
+				
+				var selectTeacherIds =this.userGroup.teacherGroup;//已选择			
+				for(index in this.teachers){
+			 		if(selectTeacherIds.indexOf(this.teachers[index].teacherId+"")>=0 || selectTeacherIds.indexOf(this.teachers[index].teacherId)>=0){
+					this.selectTeacher.push({teacherName:this.teachers[index].name+'('+this.teachers[index].teacherNo+')',teacherId:this.teachers[index].teacherId});	 				 
+					 }else{
+				 	this.unselectTeacher.push({teacherName:this.teachers[index].name+'('+this.teachers[index].teacherNo+')',teacherId:this.teachers[index].teacherId});	 				 
+				 	}			 
+		 		}
+			
+			this.$refs.tree.setCheckedKeys([]);
+			
+			}
+			if(this.userGroup.groupType == '2'){
+				var selectStudentIds =this.userGroup.studentGroup;//已选择			
+				for(var index in this.treeData){
+			 		for(var x in this.treeData[index]){
+			 		if(selectStudentIds.indexOf(this.treeData[index][x].id)){
+			 		 this.selectStudent.push(this.treeData[index][x]);
+			 		}			 		
+			 		}		 
+		 		}
+			
+			 this.$refs.tree.setCheckedKeys([]);
+			
+			for(index in this.teachers){
+			 this.unselectTeacher.push({teacherName:this.teachers[index].name+'('+this.teachers[index].teacherNo+')',teacherId:this.teachers[index].teacherId});	 
+			 }	
+			
+			}
+			
+			
+			this.getListTableData();
 		},
 		handleDelete : function(index,row){		
-		
+			
+			this.$http.get(this.deleteUrl,{params:{groupId:row.groupId}}).then(
+							function(response){
+								this.getListTableData();
+							 },
+							function(response){}  			
+							);   	
+							
+
 		},	
 		add : function(){
+		this.title="新增用户组";
 		 this.dialogFormVisible = true;
-		 this.userGroup={groupName:null,groupType:'1'}; //新增默认为老师组
+		 this.userGroup={groupName:null,groupType:'1',teacherGroup:[],studentGroup:[]}; //新增默认为老师组
 		 //this.userGroup.groupType= '2' ;   
 		 for(index in this.teachers){
 		 //console.log(this.teachers[index].name+'('+this.teachers[index].teacherNo+')');
@@ -507,31 +577,49 @@ var app = new Vue({
 		
 		},
 		submit :function(){
-			this.userGroup.teacherGroup = this.selectTeacher;
-			this.userGroup.studentGroup = this.selectStudent;
-			if(this.userGroup.groupId != null){
+			this.userGroup.teacherGroup = [];
+			this.userGroup.studentGroup=[];
+			for(var index in this.selectTeacher){
+				this.userGroup.teacherGroup.push(this.selectTeacher[index].teacherId);
+			}
+			for(var x in this.selectStudent){
+				this.userGroup.studentGroup.push(this.selectStudent[x].id);
+			}
 			
+			
+			if(this.userGroup.groupType == '1' && this.selectTeacher ==null ){
+			alert("老师不能为空");
+			return ;
+			}
+			if(this.userGroup.groupType == '2' && this.selectStudent ==null ){
+			alert("学生不能为空");
+			return ;
+			}
+			if(this.userGroup.groupName ==null){
+			 alert("组名不能为空");
+			 return;
+			}
+			
+			
+			
+			if(this.userGroup.groupId != null){			
 					this.$http.post(this.updateUrl,this.userGroup).then(
-					function(response){},
+					function(response){this.dialogFormVisible = false},
 					function(response){}  			
 					); 
 					
 				
 			}else{
 				this.$http.post(this.addUrl,this.userGroup).then(
-						function(response){},
+						function(response){this.dialogFormVisible = false},
 						function(response){}  			
 						); 
 				
 			}
 			
 		}
-			
-		     	
-			
-			
-		  
-        }	        
+  
+       } 	        
 	 
 	
 });  
