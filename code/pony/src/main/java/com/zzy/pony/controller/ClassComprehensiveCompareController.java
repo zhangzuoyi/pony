@@ -96,9 +96,9 @@ public class ClassComprehensiveCompareController {
 	public String findByCondition(@RequestBody conditionVo cv) {
 		//新增默认全选功能
 			List<SchoolClass> schoolClasses = new ArrayList<SchoolClass>();
-		
+			SchoolYear year =  schoolYearService.getCurrent();
 		if (cv.getSchoolClasses()==null || cv.getSchoolClasses().length == 0) {
-			schoolClasses = schoolClassService.findByGrade(cv.getGradeId());
+			schoolClasses = schoolClassService.findByYearAndGrade(year.getYearId(), cv.getGradeId());
 			String[] schoolClassArray = new String[schoolClasses.size()] ;
 			for (int i = 0; i < schoolClasses.size(); i++) {
 				schoolClassArray[i] = schoolClasses.get(i).getClassId()+"";

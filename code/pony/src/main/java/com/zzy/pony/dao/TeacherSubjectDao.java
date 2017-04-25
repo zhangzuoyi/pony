@@ -18,5 +18,5 @@ public interface TeacherSubjectDao extends JpaRepository<TeacherSubject,Integer>
 	List<TeacherSubject> findBySchoolClassAndYearAndTerm(SchoolClass schoolClass,SchoolYear year,Term term);
 	List<TeacherSubject> findByYearAndTerm(SchoolYear year,Term term);
 	List<TeacherSubject> findByTeacherAndYearAndTermAndSchoolClassAndSubject(Teacher teacher,SchoolYear year,Term term,SchoolClass schoolClass,Subject subject);
-
+	List<TeacherSubject> findByTeacherAndSubjectAndYearAndTerm(Teacher teacher,Subject subject,SchoolYear schoolYear,Term term);
 }

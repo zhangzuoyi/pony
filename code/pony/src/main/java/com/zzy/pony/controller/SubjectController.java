@@ -56,6 +56,12 @@ public class SubjectController {
 
 		return subjects;
 	}
+	@RequestMapping(value="findByClass",method = RequestMethod.GET)
+	@ResponseBody
+	public List<Subject> findByClass(@RequestParam(value="classId") int classId,Model model){
+		List<Subject> subjects = service.findByClass(classId);
+		return subjects;
+	}
 	
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody

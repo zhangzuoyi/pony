@@ -81,6 +81,57 @@
 <!-- End of easyui-dialog -->
 <script type="text/javascript">
 
+		$(function(){ 
+				//默认选择当前学年和学期
+				$.ajax({
+					url:"<s:url value='/schoolYear/getCurrent' />",
+					data:{},
+					method:"GET",
+					dataType:"json",
+					success:function(data){
+						$("select[name='schoolYear']").val(data.yearId);
+					$.ajax({
+					url:"<s:url value='/term/getCurrent' />",
+					data:{},
+					method:"GET",
+					dataType:"json",
+					success:function(data){
+						$("select[name='terms']").val(data.termId);
+						var yearId=$("select[name='schoolYear']").children('option:selected').val();
+			   			 var termId=$("select[name='terms']").children('option:selected').val();
+					$.ajax({
+					url:"<s:url value='/exam/findByYearAndTerm' />",
+					data:{yearId: yearId,termId : termId},
+					method:"GET",
+					dataType:"json",
+					success:function(data){
+						$("select[name='exam']").empty();
+						$("select[name='exam']").append("<option value=''>请选择</option>");
+						var len=data.length;
+						for(var i=0;i<len;i++){
+							var item=data[i];
+							$("select[name='exam']").append("<option value='"+item.examId+"'>"+item.name+"</option>");
+						}
+					}	
+				});
+						
+						
+						
+						
+						}						
+				});
+						
+						}						
+				});
+				
+				
+				
+				
+				
+				
+		}); 
+
+
 	$("select[name='terms']").change(function(){
 			var yearId=$("select[name='schoolYear']").children('option:selected').val();
 			var termId=$("select[name='terms']").children('option:selected').val();
@@ -105,6 +156,30 @@
 				});
 			}
 		});
+		
+		$("select[name='grade']").change(function(){
+			var gradeId=$("select[name='grade']").children('option:selected').val();
+				if(gradeId ==""){
+				$("#schoolClasses").empty();
+				}else{
+				$.ajax({
+					url:"<s:url value='/schoolClass/findCurrentByGrade' />",
+					data:{gradeId: gradeId},
+					method:"GET",
+					dataType:"json",
+					success:function(data){
+						$("#schoolClasses").empty();
+						var len=data.length;
+						for(var i=0;i<len;i++){
+							var item=data[i];
+							$("#schoolClasses").append(" <input type='checkbox'  name='schoolClasses' value='"+item.classId+"'/>"+item.name);
+						}	
+					}
+				});
+			}
+		});
+		
+		
 		$("select[name='exam']").change(function(){
 			var examId=$(this).children('option:selected').val();
 			if(examId == ""){
@@ -126,7 +201,7 @@
 						}
 					}	
 				}); 
-				 $.ajax({
+				 /* $.ajax({
 					url:"<s:url value='/schoolClass/findByExam' />",
 					data:{examId: examId},
 					method:"GET",
@@ -139,7 +214,7 @@
 							$("#schoolClasses").append(" <input type='checkbox'  name='schoolClasses' value='"+item.classId+"'/>"+item.name);
 						}
 					}	
-				}); 
+				});  */
 			}
 		});
 		

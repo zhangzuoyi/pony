@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
@@ -89,8 +90,9 @@ public class ReLessonArrangeController {
 		SchoolYear year = schoolYearService.getCurrent();
 		Term term = termService.getCurrent();
 		
-		String[] beforePeriods = beforeSelect.getPeriod().split("--");
-		LessonPeriod beforeLessonPeriod = lessonPeriodService.findByStartTimeAndEndTime(beforePeriods[0], beforePeriods[1]);
+		//String[] beforePeriods = beforeSelect.getPeriod().split("--");
+		//LessonPeriod beforeLessonPeriod = lessonPeriodService.findByStartTimeAndEndTime(beforePeriods[0], beforePeriods[1]);
+		LessonPeriod beforeLessonPeriod = lessonPeriodService.findBySchoolYearAndTermAndSeq(year, term,Integer.valueOf(beforeSelect.getPeriod()) );
 		String beforeWeekday="";
 		for (String key : Constants.WEEKDAYS.keySet()) {
 			if (Constants.WEEKDAYS.get(key).equalsIgnoreCase(beforeSelect.getWeekDay())) {
@@ -102,8 +104,10 @@ public class ReLessonArrangeController {
 		if (!"".equalsIgnoreCase(beforeSelect.getSubjectName())) {
 			 beforeSubject = subjectService.findByName(beforeSelect.getSubjectName());
 		}
-		String[] afterPeriods = afterSelect.getPeriod().split("--");
-		LessonPeriod afterLessonPeriod = lessonPeriodService.findByStartTimeAndEndTime(afterPeriods[0], afterPeriods[1]);
+		//String[] afterPeriods = afterSelect.getPeriod().split("--");
+		//LessonPeriod afterLessonPeriod = lessonPeriodService.findByStartTimeAndEndTime(afterPeriods[0], afterPeriods[1]);
+		LessonPeriod afterLessonPeriod = lessonPeriodService.findBySchoolYearAndTermAndSeq(year, term,Integer.valueOf(afterSelect.getPeriod()) );
+
 		String afterWeekday="";
 		for (String key : Constants.WEEKDAYS.keySet()) {
 			if (Constants.WEEKDAYS.get(key).equalsIgnoreCase(afterSelect.getWeekDay())) {
@@ -152,7 +156,8 @@ public class ReLessonArrangeController {
 			List<Map<String, Object>> dataList =  new ArrayList<Map<String,Object>>();
 			for (LessonPeriod lessonPeriod : lessonPeriods) {
 				Map<String, Object> map = new HashMap<String, Object>();
-				map.put("period",lessonPeriod.getStartTime()+"--"+lessonPeriod.getEndTime());
+				//map.put("period",lessonPeriod.getStartTime()+"--"+lessonPeriod.getEndTime());
+				map.put("period", lessonPeriod.getSeq()+"");
 				for (Weekday weekday : weekdays) {
 					LessonArrange lessonArrange =  lessonArrangeService.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(cv.getClassId(), year, term, weekday.getSeq()+"", lessonPeriod);
 					if (lessonArrange != null && lessonArrange.getSubject() !=null) {

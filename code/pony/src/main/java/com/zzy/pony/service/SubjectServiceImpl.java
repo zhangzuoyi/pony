@@ -13,8 +13,11 @@ import com.zzy.pony.dao.ExamSubjectDao;
 import com.zzy.pony.dao.SubjectDao;
 import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.ExamSubject;
+import com.zzy.pony.model.SchoolClass;
+import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.model.Teacher;
+import com.zzy.pony.model.Term;
 @Service
 @Transactional
 public class SubjectServiceImpl implements SubjectService {
@@ -24,6 +27,9 @@ public class SubjectServiceImpl implements SubjectService {
 	private ExamDao examDao;
 	@Autowired
 	private ExamSubjectDao examSubjectDao;
+	@Autowired
+	private SchoolClassService schoolClassService;
+	
 	
 
 	@Override
@@ -113,6 +119,28 @@ public class SubjectServiceImpl implements SubjectService {
 		List<Subject> list = dao.findByName(name);
 		return list.get(0);
 	}
+
+	@Override
+	public List<Subject> findByClass(int classId) {
+		// TODO Auto-generated method stub
+		SchoolClass schoolClass =  schoolClassService.get(classId);
+		List<SchoolClass> schoolClasses = new ArrayList<SchoolClass>();
+		schoolClasses.add(schoolClass);
+		List<Exam> exams = examDao.findBySchoolClasses(schoolClasses);
+		List<Subject> result = new ArrayList<Subject>();
+		for (Exam exam : exams) {
+			List<ExamSubject> examSubjects =  examSubjectDao.findByExam(exam);
+			for (ExamSubject examSubject : examSubjects) {
+				if (!result.contains(examSubject)) {
+					result.add(examSubject.getSubject());
+				}				
+			}
+		}
+		
+		return result;
+	}
+	
+	
 	
 	
 	

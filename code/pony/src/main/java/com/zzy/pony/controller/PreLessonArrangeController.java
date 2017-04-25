@@ -64,7 +64,8 @@ public class PreLessonArrangeController {
 		List<LessonPeriod> lessonPeriods= lessonPeriodService.findBySchoolYearAndTerm(schoolYear, term);//上课时段
 		for (LessonPeriod lessonPeriod : lessonPeriods) {
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("period", lessonPeriod.getStartTime()+"--"+lessonPeriod.getEndTime());
+			//map.put("period", lessonPeriod.getStartTime()+"--"+lessonPeriod.getEndTime());
+			map.put("period", lessonPeriod.getSeq()+"");
 			for (Weekday weekday : weekdays) {
 				Boolean  flag = false;
 				String subjectName="";

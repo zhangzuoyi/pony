@@ -23,6 +23,8 @@ import java.util.Map;
 
 
 
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+
 
 
 
@@ -54,6 +58,7 @@ import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.ExamType;
 import com.zzy.pony.model.Grade;
 import com.zzy.pony.model.Subject;
+import com.zzy.pony.service.ExamResultRankService;
 import com.zzy.pony.service.ExamService;
 import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.SubjectService;
@@ -78,6 +83,8 @@ public class StudentSingleTrackController {
 	private StudentSingleTrackService studentSingleTrackService;
 	@Autowired
 	private ExamService examService;
+	@Autowired
+	private ExamResultRankService examResultRankService;
 	
 	
 	
@@ -114,7 +121,7 @@ public class StudentSingleTrackController {
 		}
 		    Subject subject = subjectDao.findOne(cv.getSubjectId());
 		
-		
+		    int studentId = cv.getStudentId();
 		
 			StringBuilder result = new StringBuilder();
 			List<Map<String, Object>> dataList =  studentSingleTrackService.findByCondition(cv);
@@ -161,9 +168,10 @@ public class StudentSingleTrackController {
 			
 			//新增echarts数据获取xAxis(学年+学期+考试名)yAxis(班级排名+年级排名)
 			Map<String, Object> echartsMap = new LinkedHashMap<String, Object>();
-			List<Exam> exams = examService.findAll();
-			for (Exam exam : exams) {
-				ExamVo examVo = examService.getVo(exam.getExamId());
+			//List<Exam> exams = examService.findAll();
+			List<Integer> exams= examResultRankService.findExamsByStudentId(studentId);
+			for (Integer exam : exams) {
+				ExamVo examVo = examService.getVo(exam);
 				if (dataList!=null&&dataList.size()!=0) {
 					for (Map<String, Object> dataMap : dataList) {
 						

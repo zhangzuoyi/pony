@@ -96,6 +96,13 @@ public class TeacherAdminController {
 
 		return result;
 	}
+	@RequestMapping(value="findSubjectByTeacher",method = RequestMethod.GET)
+	@ResponseBody
+	public Subject findSubjectByTeacher(@RequestParam(value="teacherId") int teacherId, Model model){
+		Teacher g=service.get(teacherId);
+		return g.getSubject();
+	}
+	
 	
 	
 	

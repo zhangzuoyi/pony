@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.google.zxing.Result;
 import com.zzy.pony.dao.LessonArrangeDao;
 import com.zzy.pony.dao.TeacherSubjectDao;
+import com.zzy.pony.mapper.TeacherSubjectMapper;
 import com.zzy.pony.model.LessonArrange;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
@@ -19,6 +20,7 @@ import com.zzy.pony.model.Teacher;
 import com.zzy.pony.model.TeacherSubject;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.vo.TeacherSubjectVo;
+import com.zzy.pony.vo.conditionVo;
 @Service
 @Transactional
 public class TeacherSubjectServiceImpl implements TeacherSubjectService {
@@ -30,7 +32,15 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 	private TermService termService;
 	@Autowired
 	private LessonArrangeDao arrangeDao;
-
+	@Autowired
+	private TeacherService teacherService;
+	@Autowired
+	private SubjectService subjectService;
+	@Autowired
+	private TeacherSubjectMapper teacherSubjectMapper;
+	@Autowired
+	private SchoolClassService schoolClassService;
+	
 	@Override
 	public void add(TeacherSubject sy) {
 		dao.save(sy);
@@ -184,6 +194,59 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 		
 		return false;
 	}
+
+	@Override
+	public List<TeacherSubjectVo> findCurrentVoByTeacherAndSubject(
+			int teacherId, int subjectId) {
+		// TODO Auto-generated method stub
+		SchoolYear schoolYear = yearService.getCurrent();
+		Term term = termService.getCurrent();
+		Teacher teacher = teacherService.get(teacherId);
+		Subject subject = subjectService.get(subjectId);
+		List<TeacherSubject> list = dao.findByTeacherAndSubjectAndYearAndTerm(teacher, subject, schoolYear, term);
+		List<TeacherSubjectVo> result = new ArrayList<TeacherSubjectVo>();
+		for(TeacherSubject ts:list){
+			List<LessonArrange> arranges=arrangeDao.findByClassIdAndSchoolYearAndTermAndSubject(ts.getSchoolClass().getClassId(), schoolYear, term, ts.getSubject());
+			TeacherSubjectVo vo=TeacherSubjectVo.fromModel(ts);
+			vo.setArranges(arranges);
+			result.add(vo);
+		}
+		
+		return result;
+	}
+
+	@Override
+	public List<TeacherSubjectVo> findCurrentVoByCondition(conditionVo cv) {
+		// TODO Auto-generated method stub
+		List<TeacherSubjectVo> result = new ArrayList<TeacherSubjectVo>();
+		SchoolYear year = yearService.getCurrent();
+		Term term = termService.getCurrent();
+		cv.setYearId(year.getYearId());
+		cv.setTermId(term.getTermId());
+		//选择了年级未选择班级
+		if (cv.getGradeId()!=0 && cv.getClassId() ==0) {
+			List<SchoolClass> classes = schoolClassService.findByGrade(cv.getGradeId());
+			for (SchoolClass schoolClass : classes) {
+				cv.setClassId(schoolClass.getClassId());
+				List<TeacherSubjectVo> list = teacherSubjectMapper.findByCondition(cv);
+				result.addAll(list);
+			}
+		}else {
+			result = teacherSubjectMapper.findByCondition(cv);
+		}
+		for (TeacherSubjectVo teacherSubjectVo : result) {
+			SchoolClass schoolClass = schoolClassService.get(teacherSubjectVo.getClassId());
+			Teacher teacher = teacherService.get(teacherSubjectVo.getTeacherId());
+			teacherSubjectVo.setClassName(schoolClass.getName());
+			teacherSubjectVo.setTeacherNo(teacher.getTeacherNo());
+		}
+		
+		
+		return result;
+	}
+	
+	
+	
 	
 	
 	

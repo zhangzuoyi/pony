@@ -9,6 +9,7 @@ import com.zzy.pony.model.Teacher;
 import com.zzy.pony.model.TeacherSubject;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.vo.TeacherSubjectVo;
+import com.zzy.pony.vo.conditionVo;
 
 public interface TeacherSubjectService {
 	void add(TeacherSubject sy);
@@ -25,6 +26,12 @@ public interface TeacherSubjectService {
 	List<TeacherSubjectVo> findCurrentVoByTeacher(Teacher teacher);
 	
 	List<TeacherSubjectVo> findCurrentVoBySchoolClass(SchoolClass schoolClass);
+	
+	List<TeacherSubjectVo> findCurrentVoByTeacherAndSubject(int teacherId,int subjectId);
+	
+	List<TeacherSubjectVo> findCurrentVoByCondition(conditionVo cv);
+
+
 	
 	List<TeacherSubjectVo> findCurrentAll();
 	

@@ -219,7 +219,8 @@ var app = new Vue({
 					  if(this.selectData.length ==0){return;}
 					this.$http.post(this.saveUrl, this.selectData).then(
 							function(response){
-								this.selectData = [];		
+								this.selectData = [];
+								this.getListTableData();		
 								alert("保存成功");
 							 },
 							function(response){}  			

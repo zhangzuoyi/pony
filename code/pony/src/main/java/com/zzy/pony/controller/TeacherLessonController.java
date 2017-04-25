@@ -8,10 +8,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+
+
 
 
 
@@ -42,6 +46,7 @@ import com.zzy.pony.model.Teacher;
 import com.zzy.pony.model.TeacherSubject;
 import com.zzy.pony.service.TeacherSubjectService;
 import com.zzy.pony.vo.TeacherSubjectVo;
+import com.zzy.pony.vo.conditionVo;
 
 @Controller
 @RequestMapping(value = "/teacherLesson")
@@ -63,11 +68,13 @@ public class TeacherLessonController {
 		return "teacherLesson/main";
 	}
 	
-	@RequestMapping(value="list",method = RequestMethod.GET)
+	@RequestMapping(value="list",method = RequestMethod.POST)
 	@ResponseBody
-	public List<TeacherSubjectVo> list(@RequestParam(value="teacherId")Integer teacherId ){
+	public List<TeacherSubjectVo> list(@RequestBody conditionVo cv ){
 		List<TeacherSubjectVo> resultList = new ArrayList<TeacherSubjectVo>();
-		if (teacherId != null) {
+		
+		resultList = teacherSubjectService.findCurrentVoByCondition(cv);
+		/*if (teacherId != null) {
 			Teacher teacher =  teacherDao.findOne(teacherId);
 			 resultList =  teacherSubjectService.findCurrentVoByTeacher(teacher);
 		}else {
@@ -76,7 +83,17 @@ public class TeacherLessonController {
 				List<TeacherSubjectVo> list = teacherSubjectService.findCurrentVoByTeacher(teacher);
 				resultList.addAll(list);				
 			}
-		}				
+		}*/				
+		return resultList;
+	}
+	@RequestMapping(value="listByTeacher",method = RequestMethod.GET)
+	@ResponseBody
+	public List<TeacherSubjectVo> listByTeacher(@RequestParam(value="teacherId") int teacherId ){
+		List<TeacherSubjectVo> resultList = new ArrayList<TeacherSubjectVo>();
+		
+			 Teacher teacher =  teacherDao.findOne(teacherId);
+			 resultList =  teacherSubjectService.findCurrentVoByTeacher(teacher);
+						
 		return resultList;
 	}
 	@RequestMapping(value="listBySchoolClass",method = RequestMethod.GET)

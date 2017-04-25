@@ -49,7 +49,7 @@
             </el-col> 
             <el-col :span="5" >
             <div class="grid-content bg-purple">                                     
-					<el-select v-model="conditionVo.classId" @change="getStudents(conditionVo.classId)" filterable placeholder="请选择..">
+					<el-select v-model="conditionVo.classId" @change="getStudents(conditionVo.classId);getSubjects(conditionVo.classId)" filterable placeholder="请选择..">
                		 <el-option
                         v-for="schoolClass in classes" 
                         :label="schoolClass.name"                      
@@ -152,7 +152,7 @@ var app = new Vue({
 		classesUrl :"<s:url value='/schoolClass/findByYearAndGrade'/>",
 		studentsUrl :  "<s:url value='/studentAdmin/findByClass'/>",
 		examTypesUrl : "<s:url value='/examType/list' />",
-		subjectsUrl : "<s:url value='/subject/list' />",						
+		subjectsUrl : "<s:url value='/subject/findByClass' />",						
 		listTableDataUrl :"<s:url value='/studentSingleTrack/findByCondition'/>",		
 		tableData: [],		
         cols:[]
@@ -164,7 +164,7 @@ var app = new Vue({
 		this.getCurrentSchoolYear(); 		
 		this.getGrades();
 		this.getExamTypes();
-		this.getSubjects();
+		//this.getSubjects();
 			
 	}, 
 	methods : { 
@@ -204,8 +204,8 @@ var app = new Vue({
 			function(response){}  	 			
 			);
 			},
-		getSubjects :function(){ 
-			this.$http.get(this.subjectsUrl).then(
+		getSubjects :function(classId){ 
+			this.$http.get(this.subjectsUrl,{params:{classId:classId}}).then(
 			function(response){this.subjects=response.data; },
 			function(response){}  	 			
 			);

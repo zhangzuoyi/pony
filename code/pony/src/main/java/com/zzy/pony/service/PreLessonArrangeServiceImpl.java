@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 
 
+
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.dao.LessonArrangeDao;
 import com.zzy.pony.model.LessonArrange;
@@ -105,9 +106,9 @@ public class PreLessonArrangeServiceImpl implements PreLessonArrangeService {
 		//weekday-->seq
 		Weekday weekday = weekdayService.findByName(arrangeVo.getWeekDay());
 		//peroid-->periodId
-		String[] periods = arrangeVo.getPeriod().split("--");
-		LessonPeriod lessonPeriod = lessonPeriodService.findByStartTimeAndEndTime(periods[0], periods[1]);
-	
+		//String[] periods = arrangeVo.getPeriod().split("--");
+		//LessonPeriod lessonPeriod = lessonPeriodService.findByStartTimeAndEndTime(periods[0], periods[1]);
+		LessonPeriod lessonPeriod = lessonPeriodService.findBySchoolYearAndTermAndSeq(schoolYear, term,Integer.valueOf(arrangeVo.getPeriod()) );
 		lessonArrange.setClassId(arrangeVo.getClassId());
 		lessonArrange.setCreateTime(new Date());
 		lessonArrange.setCreateUser(ShiroUtil.getLoginUser().getLoginName());

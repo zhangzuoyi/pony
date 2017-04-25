@@ -97,7 +97,8 @@ public class ClassNoCourseController {
 		List<LessonPeriod> lessonPeriods= lessonPeriodService.findBySchoolYearAndTerm(schoolYear, term);//上课时段
 		for (LessonPeriod lessonPeriod : lessonPeriods) {
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("period", lessonPeriod.getStartTime()+"--"+lessonPeriod.getEndTime());
+			//map.put("period", lessonPeriod.getStartTime()+"--"+lessonPeriod.getEndTime());
+			map.put("period", lessonPeriod.getSeq()+"");
 			for (Weekday weekday : weekdays) {
 				Boolean  flag = false;
 				for (ClassNoCourseVo vo : classNoCourseVos) {
@@ -153,8 +154,9 @@ public class ClassNoCourseController {
 				Weekday weekday = weekdayService.findByName(noCourseVo.getWeekday());
 				cnc.setWeekday(weekday);
 				//peroid-->periodId
-				String[] periods = noCourseVo.getPeriod().split("--");
-				LessonPeriod lessonPeriod = lessonPeriodService.findByStartTimeAndEndTime(periods[0], periods[1]);
+				//String[] periods = noCourseVo.getPeriod().split("--");
+				//LessonPeriod lessonPeriod = lessonPeriodService.findByStartTimeAndEndTime(periods[0], periods[1]);				
+				LessonPeriod lessonPeriod = lessonPeriodService.findBySchoolYearAndTermAndSeq(schoolYear, term,Integer.valueOf(noCourseVo.getPeriod()) );
 				cnc.setLessonPeriod(lessonPeriod);
 				classNoCourseService.save(cnc);				
 			}		

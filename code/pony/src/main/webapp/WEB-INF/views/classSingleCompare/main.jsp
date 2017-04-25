@@ -65,7 +65,7 @@
             </el-col> 
             <el-col :span="4" >
             <div class="grid-content bg-purple">                                     
-					<el-select v-model="conditionVo.gradeId"  filterable placeholder="请选择..">
+					<el-select v-model="conditionVo.gradeId"  @change="getSchoolClasses(conditionVo.gradeId)" filterable placeholder="请选择..">
                		 <el-option
                         v-for="grade in grades" 
                         :label="grade.name"                      
@@ -81,7 +81,7 @@
             </el-col> 
             <el-col :span="4" >
             <div class="grid-content bg-purple">                                     
-					<el-select v-model="conditionVo.examId"  @change="getSchoolClasses(conditionVo.examId);getSubjects(conditionVo.examId)"  filterable placeholder="请选择..">
+					<el-select v-model="conditionVo.examId"  @change="getSubjects(conditionVo.examId)"  filterable placeholder="请选择..">
                		 <el-option
                         v-for="exam in exams" 
                         :label="exam.name"                      
@@ -105,7 +105,7 @@
             </el-radio-group> -->
             <el-col :span="1">班级:</el-col>
             <el-col :offset="1">
-            <el-checkbox-group v-model="conditionVo.schoolClasseIds">
+            <el-checkbox-group v-model="conditionVo.schoolClassIds">
    			 <el-checkbox  v-for="schoolClass in schoolClasses"   :label="schoolClass.classId">{{schoolClass.name}}</el-checkbox>   
   			</el-checkbox-group>
   			</el-col>
@@ -156,7 +156,7 @@ var app = new Vue({
 	el : '#app' ,
 	data : { 
 	
-		conditionVo : {gradeId:null,yearId:null,termId:null,examId:null,schoolClasseIds:[],subjectId:null},				
+		conditionVo : {gradeId:null,yearId:null,termId:null,examId:null,schoolClassIds:[],subjectId:null},				
 		grades : [],		
 		schoolYears:[],		
 		terms:[],
@@ -164,10 +164,12 @@ var app = new Vue({
 		exams:[],
 		subjects:[],		
 		schoolYearsUrl :"<s:url value='/schoolYear/listVo'/>",
-		termsUrl :"<s:url value='/term/list'/>",				
+		termsUrl :"<s:url value='/term/list'/>",
+		currentSchoolYearsUrl :"<s:url value='/schoolYear/getCurrent'/>",
+		currentTermsUrl :"<s:url value='/term/getCurrent'/>",							
 		gradesUrl :"<s:url value='/grade/list'/>",
 		examsUrl : "<s:url value='/exam/findByYearAndTerm'/>",
-		schoolClassesUrl : "<s:url value='/schoolClass/findByExam' />",	
+		schoolClassesUrl : "<s:url value='/schoolClass/findCurrentByGrade' />",	
 		subjectsUrl : "<s:url value='/subject/findByExam' />",													
 		listTableDataUrl :"<s:url value='/classSingleCompare/findByCondition'/>",		
 		tableData: [],		
@@ -177,22 +179,49 @@ var app = new Vue({
 		
 	}, 
 	mounted : function() { 
+		this.getCurrentSchoolYear();
+		this.getCurrentTerm();
 		this.getSchoolYears();
 		this.getTerms();		
 		this.getGrades();
+		this.getInitExams();
+		
 			
 	}, 
 	methods : { 
+	
+	
 		 	
-		  getSchoolYears	:function(){ 			
-			this.$http.get(this.schoolYearsUrl).then(
-			function(response){this.schoolYears=response.data; },
+		 getCurrentSchoolYear	:function(){ 			
+			this.$http.get(this.currentSchoolYearsUrl).then(
+			function(response){
+			this.conditionVo.yearId=response.data.yearId+"";
+			 },
 			function(response){}  	 			
 			);
 			},
-			getTerms	:function(){ 			
+		getCurrentTerm	:function(){ 			
+			this.$http.get(this.currentTermsUrl).then(
+			function(response){this.conditionVo.termId=response.data.termId; },
+			function(response){}  	 			
+			);
+			},
+				
+		 	
+		  getSchoolYears	:function(){ 			
+			this.$http.get(this.schoolYearsUrl).then(
+			function(response){
+			this.schoolYears=response.data; 
+			},
+			function(response){}  	 			
+			);
+			},
+		  getTerms	:function(){ 			
 			this.$http.get(this.termsUrl).then(
-			function(response){this.terms=response.data; },
+			function(response){
+			this.terms=response.data;
+			
+			 },
 			function(response){}  	 			
 			);
 			},
@@ -202,8 +231,34 @@ var app = new Vue({
 			function(response){}  	 			
 			);
 			},
+		 getInitExams	:function(){
+		  var yearId = null;
+		  var termId = null;
+		  this.$http.get(this.currentSchoolYearsUrl).then(
+			function(response){
+			yearId=response.data.yearId+"";
+			this.$http.get(this.currentTermsUrl).then(
+			function(response){
+			termId=response.data.termId;
+			this.conditionVo.examId = null;		   
+			this.$http.get(this.examsUrl,{params:{yearId:yearId,termId:termId}}).then(
+			function(response){this.exams=response.data; },
+			function(response){}  	 			
+			);						
+			 },
+			function(response){}  	 			
+			);
+			
+			 },
+			function(response){}  	 			
+			);
+	  	
+			},
 		  getExams	:function(yearId,termId){
 		  
+		  	if(yearId == null || termId == null){
+		  	 return ;
+		  	}
 		  	this.conditionVo.examId = null;
 		   
 			this.$http.get(this.examsUrl,{params:{yearId:yearId,termId:termId}}).then(
@@ -211,9 +266,9 @@ var app = new Vue({
 			function(response){}  	 			
 			);
 			},
-		getSchoolClasses :function(examId){
+		getSchoolClasses :function(gradeId){
 		    this.conditionVo.schoolClasses = null; 
-			this.$http.get(this.schoolClassesUrl,{params:{examId:examId}}).then(
+			this.$http.get(this.schoolClassesUrl,{params:{gradeId:gradeId}}).then(
 			function(response){this.schoolClasses=response.data; },
 			function(response){}  	 			
 			);
@@ -231,7 +286,9 @@ var app = new Vue({
 				
 					if(this.conditionVo.yearId==null||this.conditionVo.gradeId==null||this.conditionVo.termId==null||this.conditionVo.examId==null||this.conditionVo.subjectId==null){					
 						return ;
-						}			 			
+						}
+						
+					 this.conditionVo.schoolClasses = this.conditionVo.schoolClassIds;				 			
 					 this.$http.post(this.listTableDataUrl,this.conditionVo).then(
 							function(response){
                     this.cols= response.data.title;

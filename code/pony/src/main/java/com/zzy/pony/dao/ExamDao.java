@@ -15,5 +15,6 @@ import com.zzy.pony.model.Term;
 public interface ExamDao extends JpaRepository<Exam,Integer>{
 //	List<Exam> findBySubject(Subject subject);
 //	List<Exam> findBySchoolYearAndTermAndSubjectAndSchoolClasses(SchoolYear schoolYear,Term term,Subject subject,SchoolClass schoolClass);
-	List<Exam> findBySchoolYearAndTerm(SchoolYear schoolYear,Term term); 
+	List<Exam> findBySchoolYearAndTerm(SchoolYear schoolYear,Term term);
+	List<Exam> findBySchoolClasses(List<SchoolClass> schoolClasses);
 }

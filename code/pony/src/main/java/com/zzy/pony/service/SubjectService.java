@@ -28,6 +28,8 @@ public interface SubjectService {
 	
 	List<Subject> findByExam(int examId);
 	
+	List<Subject> findByClass(int classId);
+	
 	List<Integer> findAllSubjectId();
 	
 	Subject findByName(String name);

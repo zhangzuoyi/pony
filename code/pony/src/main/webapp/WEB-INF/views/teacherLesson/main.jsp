@@ -36,11 +36,57 @@
                     <div class="grid-content">学期：<b>{{currentTerm.name}}</b></div>
                 </el-col>
               </el-row>
+              
               <el-row>
-                <el-col :span="12">
+              <el-col :span="6">
+                    <div class="grid-content bg-purple">
+                                                  年级:                  
+					<el-select v-model="conditionVo.gradeId" clearable @change="getClasses(conditionVo.gradeId)"  filterable placeholder="请选择.." >
+               		 <el-option
+                        v-for="grade in grades" 
+                        :label="grade.name"                      
+                        :value="grade.gradeId">
+                        <span style="float: left">{{grade.name}}</span>
+               		 </el-option>
+           			 </el-select>				
+                    </div>				
+                </el-col>
+                <el-col :span="6">
+                    <div class="grid-content bg-purple">
+                                                  班级:                  
+					<el-select v-model="conditionVo.classId" clearable filterable placeholder="请选择..">
+               		 <el-option
+                        v-for="schoolClass in classes" 
+                        :label="schoolClass.name"                      
+                        :value="schoolClass.classId">
+                        <span style="float: left">{{schoolClass.name}}</span>
+               		 </el-option>
+           			 </el-select>				
+                    </div>
+                </el-col>                
+                </el-row>
+                
+                <el-row>
+                <el-col :span="6">
+                    <div class="grid-content bg-purple">
+                                                  科目:                  
+					<el-select v-model="conditionVo.subjectId" clearable filterable placeholder="请选择..">
+               		 <el-option
+                        v-for="subject in subjects" 
+                        :label="subject.name"                      
+                        :value="subject.subjectId">
+                        <span style="float: left">{{subject.name}}</span>
+               		 </el-option>
+           			 </el-select>				
+                    </div>
+                </el-col>
+              
+              
+                <el-col :span="6">
                     <div class="grid-content bg-purple">
                                                   老师:                  
-					<el-select v-model="teacherId" filterable placeholder="请选择..">
+					<el-select v-model="conditionVo.teacherId" clearable filterable placeholder="请选择..">
+               		 
                		 <el-option
                         v-for="teacher in teachers" 
                         :label="teacher.name"                      
@@ -130,21 +176,29 @@
 	data : { 
 		dialogFormVisible:false,
 		formLabelWidth:'120px',
-	    teacherId:null,
+	    conditionVo:{gradeId:null,classId:null,subjectId:null,teacherId:null},  
 		currentSchoolYear : {},
 		currentTerm : {},		
 		teachers : [],
+		grades:[],
+		classes:[],
+		subjects:[],
 		currentSchoolYearUrl: "<s:url value='/schoolYear/getCurrent'/>",
 		currentTermUrl: "<s:url value='/term/getCurrent'/>",		
 		teachersUrl :"<s:url value='/teacherAdmin/list'/>",
 		teacherLessonUrl : "<s:url value='/teacherLesson/list'/>",
 		submitUrl : "<s:url value='/teacherLesson/submit'/>",
+		gradesUrl :"<s:url value='/grade/list'/>",
+		classesUrl :"<s:url value='/schoolClass/findByYearAndGrade'/>",
+		subjectUrl:"<s:url value='/subject/list'/>",
 		tableData: [],
         multipleSelection: [],
         selectTeachers :{selectTeacherId:[],weekArrange:1}
 		
 	}, 
 	mounted : function() { 
+		this.getGrades();
+		this.getSubjects();			
 		this.getCurrentSchoolYear(); 
 		this.getCurrentTerm();	
 		this.getTeachers();
@@ -166,10 +220,33 @@
 			function(response){this.currentTerm=response.data; },
 			function(response){}  	 			
 			);
-			},		
+			},	
+		getGrades	:function(){ 
+			this.$http.get(this.gradesUrl).then(
+			function(response){this.grades=response.data; },
+			function(response){}  	 			
+			);
+			},
+		getSubjects	:function(){ 
+			this.$http.get(this.subjectUrl).then(
+			function(response){this.subjects=response.data; },
+			function(response){}  	 			
+			);
+			},
+		getClasses	:function(gradeId){ 
+		 
+		 	this.conditionVo.classId = null;
+			
+			this.$http.get(this.classesUrl,{params:{yearId:this.currentSchoolYear.yearId,gradeId:gradeId}}).then(
+			function(response){this.classes=response.data; },
+			function(response){}  	 			
+			);
+			},	
 		getTeachers	:function(){ 
 			this.$http.get(this.teachersUrl).then(
-			function(response){this.teachers=response.data; },
+			function(response){this.teachers=response.data;
+			
+			 },
 			function(response){}  	 			
 			);
 			},
@@ -180,7 +257,7 @@
             },
         list : function(){
         	this.selectTeachers.selectTeacherId=[];this.selectTeachers.weekArrange=1;
-			this.$http.get(this.teacherLessonUrl,{params:{teacherId: this.teacherId}}).then(
+			this.$http.post(this.teacherLessonUrl,this.conditionVo).then(
 			function(response){this.tableData=response.data; },
 			function(response){}  			
 			); 	

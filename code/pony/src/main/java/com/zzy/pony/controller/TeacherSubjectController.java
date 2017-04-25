@@ -23,6 +23,7 @@ import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.SubjectService;
 import com.zzy.pony.service.TeacherService;
 import com.zzy.pony.service.TeacherSubjectService;
+import com.zzy.pony.vo.TeacherSubjectVo;
 
 @Controller
 @RequestMapping(value = "/teacherSubject")
@@ -51,6 +52,14 @@ public class TeacherSubjectController {
 
 		return list;
 	}
+	@RequestMapping(value="findByTeacherAndSubject",method = RequestMethod.GET)
+	@ResponseBody
+	public List<TeacherSubjectVo> findByTeacherAndSubject(@RequestParam(value="teacherId") int teacherId,@RequestParam(value="subjectId") int subjectId){
+		List<TeacherSubjectVo> list=service.findCurrentVoByTeacherAndSubject(teacherId, subjectId);
+
+		return list;
+	}
+	
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody
 	public String add(TeacherSubject sy, Model model){

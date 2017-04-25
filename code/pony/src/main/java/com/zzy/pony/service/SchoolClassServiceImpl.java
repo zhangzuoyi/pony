@@ -100,6 +100,10 @@ public class SchoolClassServiceImpl implements SchoolClassService {
 		SchoolYear year=yearService.getCurrent();
 		return dao.findByYearId(year.getYearId());
 	}
+
+	
+	
+	
 	
 
 }

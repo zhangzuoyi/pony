@@ -105,6 +105,15 @@ public class SchoolClassController {
 		List<SchoolClass> schoolClasses =service.findByGrade(gradeId);
 		return toSimpleVo(schoolClasses);
 	}
+	
+	
+	@RequestMapping(value="findCurrentByGrade",method = RequestMethod.GET)
+	@ResponseBody
+	public List<SchoolClassVo> findCurrentByGrade(@RequestParam(value="gradeId") int gradeId,Model model){
+		SchoolYear year = yearService.getCurrent();
+		List<SchoolClass> schoolClasses =service.findByYearAndGrade(year.getYearId(), gradeId);
+		return toSimpleVo(schoolClasses);
+	}
 	@RequestMapping(value="findByYearAndGrade",method = RequestMethod.GET)
 	@ResponseBody
 	public List<SchoolClassVo> findByYearAndGrade(@RequestParam(value="yearId") int yearId,@RequestParam(value="gradeId") int gradeId,Model model){

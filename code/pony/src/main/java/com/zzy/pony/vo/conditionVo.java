@@ -14,6 +14,7 @@ public class conditionVo {
 	private String[] examTypeIds;
 	
 	private int subjectId;
+	private int teacherId;
 	
 	public conditionVo(){
 		
@@ -102,6 +103,14 @@ public class conditionVo {
 
 	public void setExamId(int examId) {
 		this.examId = examId;
+	}
+
+	public int getTeacherId() {
+		return teacherId;
+	}
+
+	public void setTeacherId(int teacherId) {
+		this.teacherId = teacherId;
 	}
 	
 	
