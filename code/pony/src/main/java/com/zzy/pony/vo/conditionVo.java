@@ -16,6 +16,8 @@ public class conditionVo {
 	private int subjectId;
 	private int teacherId;
 	
+	private int messageId;
+	
 	public conditionVo(){
 		
 	}
@@ -112,6 +114,15 @@ public class conditionVo {
 	public void setTeacherId(int teacherId) {
 		this.teacherId = teacherId;
 	}
+
+	public int getMessageId() {
+		return messageId;
+	}
+
+	public void setMessageId(int messageId) {
+		this.messageId = messageId;
+	}
+	
 	
 	
 	

@@ -18,6 +18,13 @@ public class Constants {
 	public static final String SOURCE_TYPE_CHANGE="2";//调课
 	public static final String USER_GROUP_TYPE_TEACHER="1";//用户组类型:老师
 	public static final String USER_GROUP_TYPE_STUDENT="2";//用户组类型:学生
+	public static final int IS_VALID_Y=  0 ;//有效
+	public static final int IS_VALID_N=  1 ;//无效
+	public static final String RECEIVER_TYPE_GROUP=  "0" ;//组
+	public static final String RECEIVER_TYPE_USER=  "1" ;//个人
+	
+	public static final String MESSAGE_ATTACH_UPLOADPATH = "D:\\pingan\\tmp";
+	
 
 
 

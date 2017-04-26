@@ -9,7 +9,7 @@
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/easyui/themes/default/easyui.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/style.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/icon.css' />" />
-<link rel="stylesheet" type="text/css" href="<s:url value='/static/bootstrap/css/bootstrap.min.css' />" />
+<%-- <link rel="stylesheet" type="text/css" href="<s:url value='/static/bootstrap/css/bootstrap.min.css' />" /> --%>
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/elementUI/index.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/elementUI/element.css' />" />
 <script type="text/javascript" src="<s:url value='/static/js/jquery.min.js' />"></script>
@@ -44,7 +44,7 @@
             </el-col> 
             <el-col :span="6" >
             <div class="grid-content bg-purple">                                     
-					<el-select multiple v-model="userGroup"    filterable placeholder="请选择.." >
+					<el-select multiple v-model="message.userGroup"    filterable placeholder="请选择.." >
                		 <el-option              		 
                         v-for="userGroup in userGroups" 
                         :label="userGroup.name"                      
@@ -63,7 +63,7 @@
             <div class="grid-content bg-purple">                                     
 				 <el-input                  
                     icon="search"
-                    v-model="users"
+                    v-model="message.users"
                     @click="handleUserClick"
                     :disabled="true">
             </el-input>				
@@ -76,7 +76,7 @@
             </el-col> 
             <el-col :span="6" >
             <div class="grid-content bg-purple">                                     
-				<el-input v-model="title" placeholder="请输入内容"></el-input>					
+				<el-input v-model="message.title" placeholder="请输入内容"></el-input>					
              </div>           
             </el-col>
             
@@ -87,7 +87,7 @@
             </el-col> 
             <el-col :span="6" >
             <div class="grid-content bg-purple">                                     
-				<el-input v-model="content" 
+				<el-input v-model="message.content" 
 				type="textarea"
  				 :rows="5" placeholder="请输入内容"></el-input>					
              </div>           
@@ -101,11 +101,17 @@
             <el-col :span="5" >
             <div class="grid-content bg-purple">                                     
 			<el-upload					
-  			 ref="upload" 			
+  			 ref="upload" 	
+  			 name="fileUpload"
+  			 action="<s:url value='/message/messageSend/fileUpload'/>"		
   			:on-remove="handleRemove"
   			:file-list="fileList"
-  			:auto-upload="false">
+  			:auto-upload="false"
+  			:data="conditionVo"
+  			multiple
+  			>
   			<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+  			<el-button style="margin-left:10px;" size="small" type="primary" @click="clearFiles">清空文件</el-button>
 			</el-upload> 							
              </div>           
             </el-col>           
@@ -117,12 +123,8 @@
            </el-col>
             <el-col :span="2" :offset="4">
              <el-button type="primary" @click="save">暂存</el-button>  
-            </el-col> 
-            <el-col :span="2" :offset="4">
-             <el-button type="primary" @click="close">关闭</el-button>  
-            </el-col>                   
-           </el-row>
-                  
+            </el-col>                               
+           </el-row>                 
             </div> 
               
 
@@ -206,10 +208,9 @@
 var app = new Vue({ 
 	el : '#app' ,
 	data : { 		
-		userGroup:[],
-		users:[],
-		title:null,
-		content:null,
+		
+		
+		message:{userGroup:[],users:[],title:null,content:null},	
 		userGroups:[],
 		searchString:null,
 		unselectUser:[],
@@ -218,10 +219,12 @@ var app = new Vue({
 		formLabelWidth : '120px',
 		userGroupUrl: "<s:url value='/userGroup/list'/>",
 		listByGroupIdUrl:"<s:url value='/userGroup/listByGroupId'/>",
+		sendUrl:"<s:url value='/message/messageSend/send'/>",
 		currentUser:null,
 		fileList:[],
 		selectUserGroup:null,
-		groupId:null
+		groupId:null,
+		conditionVo:{messageId:null}  
 	
 		
 	}, 
@@ -360,6 +363,35 @@ var app = new Vue({
                 console.log(file, fileList);
              },
              send : function(){
+             if(this.message.userGroup==null && this.message.users ==null){
+             alert("用户组和用户不能同时为空.."); 
+             return;            
+             }
+             if(this.message.title==null ){
+             alert("标题不能为空.."); 
+             return;            
+             }
+             if(this.message.content==null ){
+             alert("内容不能为空.."); 
+             return;            
+             }
+             //消息发送
+              
+			this.$http.post(this.sendUrl,this.message).then(
+			function(response){
+			 this.message={userGroup:[],users:[],title:null,content:null};
+			 this.conditionVo.messageId =  response.data;			
+             this.$refs.upload.submit();			
+			},
+			function(response){}  			
+			); 
+			
+             
+             
+             
+             
+             
+             
              
              },
              save : function(){
@@ -368,7 +400,9 @@ var app = new Vue({
              close : function(){
              
              },
-            
+            clearFiles : function(){
+                   this.$refs.upload.clearFiles();
+            }
 			
 			 
 			   	

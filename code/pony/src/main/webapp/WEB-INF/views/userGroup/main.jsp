@@ -604,14 +604,14 @@ var app = new Vue({
 			
 			if(this.userGroup.groupId != null){			
 					this.$http.post(this.updateUrl,this.userGroup).then(
-					function(response){this.dialogFormVisible = false},
+					function(response){this.dialogFormVisible = false;this.getListTableData();},
 					function(response){}  			
 					); 
 					
 				
 			}else{
 				this.$http.post(this.addUrl,this.userGroup).then(
-						function(response){this.dialogFormVisible = false},
+						function(response){this.dialogFormVisible = false;this.getListTableData();},
 						function(response){}  			
 						); 
 				

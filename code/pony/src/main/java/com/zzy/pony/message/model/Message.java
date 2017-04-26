@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,6 +18,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+
 
 import com.zzy.pony.model.User;
 
@@ -54,15 +57,16 @@ public class Message implements Serializable {
 	private User user;
 
 	//bi-directional many-to-one association to MessageAttach
-	@OneToMany(mappedBy="message")
+	
+	@OneToMany(mappedBy="message",cascade=CascadeType.ALL)
 	private List<MessageAttach> messageAttaches;
 
 	//bi-directional many-to-one association to MessageReceiveInfo
-	@OneToMany(mappedBy="message")
+	@OneToMany(mappedBy="message",cascade=CascadeType.ALL)
 	private List<MessageReceiveInfo> messageReceiveInfos;
 
 	//bi-directional many-to-one association to MessageReceiver
-	@OneToMany(mappedBy="message")
+	@OneToMany(mappedBy="message",cascade=CascadeType.ALL)
 	private List<MessageReceiver> messageReceivers;
 
 	public Message() {
