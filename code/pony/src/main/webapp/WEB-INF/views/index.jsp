@@ -72,7 +72,7 @@
             <div title="排课管理" data-options="iconCls:'icon-application-form-edit'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/lessonPeriod/main/' />" iframe="1">上课时段管理</a></li>
-                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/lessonArrange/main/' />" iframe="1">课程安排</a></li>
+                    <%-- <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/lessonArrange/main/' />" iframe="1">课程安排</a></li> --%>
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/teacherLessonArrange/main/' />" iframe="1">老师任课安排</a></li>
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/teacherLesson/main/' />" iframe="1">老师任课列表</a></li>
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/weekLessonAdmin/main/' />" iframe="1">星期上课设置</a></li>
