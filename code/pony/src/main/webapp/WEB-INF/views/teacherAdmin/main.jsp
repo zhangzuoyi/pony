@@ -325,7 +325,16 @@
 			/* { checkbox:true}, */
 			{ field:'teacherNo',title:'教师编号',width:100,sortable:true},
 			{ field:'name',title:'姓名',width:100,sortable:true},
-			{ field:'sex',title:'性别',width:100,sortable:true},
+			{ field:'sex',title:'性别',width:100,sortable:true,
+				formatter:function(value,rec){
+					if(rec.sex == 'M'){
+						return "男";
+					}else if(rec.sex == 'F'){
+						return "女";
+					}
+				   return "";
+				}
+			},
 			{ field:'birthday',title:'生日',width:100,sortable:true},
 			{ field:'phone',title:'联系电话',width:100,sortable:true},
 			{ field:'graduateDate',title:'毕业日期',width:100,sortable:true},
