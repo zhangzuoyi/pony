@@ -37,10 +37,10 @@ public class LessonPeriodServiceImpl implements LessonPeriodService {
 	public void update(LessonPeriod sy) {
 		LessonPeriod old=dao.findOne(sy.getPeriodId());
 		old.setEndTime(sy.getEndTime());
-		old.setSchoolYear(sy.getSchoolYear());
+//		old.setSchoolYear(sy.getSchoolYear());
 		old.setSeq(sy.getSeq());
 		old.setStartTime(sy.getStartTime());
-		old.setTerm(sy.getTerm());
+//		old.setTerm(sy.getTerm());
 		
 		dao.save(old);
 	}

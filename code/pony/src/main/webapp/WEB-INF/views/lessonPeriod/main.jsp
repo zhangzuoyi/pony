@@ -36,21 +36,15 @@
         	<tr>
                 <td width="60" align="right">学年:</td>
                 <td>
-                	<select name="schoolYear.yearId" class="my-select">
-                		<c:forEach items="${years }" var="g">
-                			<option value="${g.yearId }">${g.name }</option>
-                		</c:forEach>
-                	</select>
+                	${currentYear.name }
+                	<input type="hidden" name="schoolYear.yearId" value="${currentYear.yearId }" />
                 </td>
             </tr>
             <tr>
                 <td width="60" align="right">学期:</td>
                 <td>
-                	<select name="term.termId" class="my-select">
-                		<c:forEach items="${terms }" var="g">
-                			<option value="${g.termId }">${g.name }</option>
-                		</c:forEach>
-                	</select>
+                	${currentTerm.name }
+                	<input type="hidden" name="term.termId" value="${currentTerm.termId }" />
                 </td>
             </tr>
             <tr>
@@ -80,6 +74,7 @@
 				if(data){
 					$.messager.alert('信息提示','提交成功！','info');
 					$('#my-dialog-2').dialog('close');
+					reload();
 				}
 				else
 				{
@@ -97,8 +92,9 @@
 			url:"<s:url value='/lessonPeriod/edit' />",
 			success:function(data){
 				if(data){
-					$.messager.alert('信息提示','提交成功！','info');
+					$.messager.alert('信息提示','修改成功！','info');
 					$('#my-dialog-2').dialog('close');
+					reload();
 				}
 				else
 				{
@@ -117,11 +113,12 @@
 				var item = $('#my-datagrid-2').datagrid('getSelected');
 				$.ajax({
 					url:"<s:url value='/lessonPeriod/delete' />",
-					data:{id: item.peroidId},
+					data:{id: item.periodId},
 					method:"POST",
 					success:function(data){
 						if(data){
-							$.messager.alert('信息提示','删除成功！','info');		
+							$.messager.alert('信息提示','删除成功！','info');	
+							reload();
 						}
 						else
 						{
@@ -133,11 +130,8 @@
 		});
 	}
 	
-	/**
-	* Name 打开添加窗口
-	*/
 	function openAdd(){
-		$('#my-form-2').form('clear');
+		clearForm();
 		$('#my-dialog-2').dialog({
 			closed: false,
 			modal:true,
@@ -156,11 +150,8 @@
         });
 	}
 	
-	/**
-	* Name 打开修改窗口
-	*/
 	function openEdit(){
-		$('#my-form-2').form('clear');
+		clearForm();
 		var item = $('#my-datagrid-2').datagrid('getSelected');
 		$.ajax({
 			url:"<s:url value='/lessonPeriod/get' />",
@@ -200,6 +191,11 @@
             }]
         });
 	}	
+	function clearForm(){
+		$('input[name="seq"]').val("");
+		$('input[name="startTime"]').val("");
+		$('input[name="endTime"]').val("");
+	}
 	
 	/**
 	* Name 分页过滤器
@@ -239,7 +235,7 @@
 	* Name 载入数据
 	*/
 	$('#my-datagrid-2').datagrid({
-		url:"<s:url value='/lessonPeriod/list' />",
+		url:"<s:url value='/lessonPeriod/findBySchoolYearAndTerm' />",
 		method:'get',
 		loadFilter:pagerFilter,		
 		rownumbers:true,

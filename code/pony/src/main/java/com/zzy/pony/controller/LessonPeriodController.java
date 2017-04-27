@@ -37,8 +37,10 @@ public class LessonPeriodController {
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
 	public String main(Model model){
-		model.addAttribute("years", yearService.findAll());
-		model.addAttribute("terms", termService.findAll());
+//		model.addAttribute("years", yearService.findAll());
+//		model.addAttribute("terms", termService.findAll());
+		model.addAttribute("currentYear", yearService.getCurrent());
+		model.addAttribute("currentTerm", termService.getCurrent());
 		return "lessonPeriod/main";
 	}
 	@RequestMapping(value="list",method = RequestMethod.GET)
