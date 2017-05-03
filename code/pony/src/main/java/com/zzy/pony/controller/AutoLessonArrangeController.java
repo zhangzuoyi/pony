@@ -97,7 +97,7 @@ public class AutoLessonArrangeController {
 				for (Weekday weekday : weekdays) {
 					LessonArrange lessonArrange =  lessonArrangeService.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(cv.getClassId(), year, term, weekday.getSeq()+"", lessonPeriod);
 					if (lessonArrange != null && lessonArrange.getSubject() !=null) {
-						map.put( Constants.WEEKDAYMAP.get(weekday.getSeq()) , lessonArrange.getSubject().getName());
+						map.put( Constants.WEEKDAYMAP.get(weekday.getSeq()+"") , lessonArrange.getSubject().getName());
 					}					
 				}
 				dataList.add(map);

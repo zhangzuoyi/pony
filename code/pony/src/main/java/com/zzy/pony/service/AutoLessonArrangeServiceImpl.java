@@ -79,9 +79,15 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		for (LessonPeriod lessonPeriod : lessonPeriods) {
 			seqs.add(lessonPeriod.getSeq());
 		}
+		List<Subject> subjects = subjectService.findAll();
+		List<Integer> subjectIntegers = new ArrayList<Integer>();
+		for (Subject subject : subjects) {
+			subjectIntegers.add(subject.getSubjectId());
+		}
 		
 		String[] classIdCandidate =   GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllClassId(), 3,false);    
-		String[] subjectIdCandidate =GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllSubjectId(), 2,true); 
+		//String[] subjectIdCandidate =GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllSubjectId(), 2,true);
+		String[] subjectIdCandidate =GAUtil.getCandidateStrings(subjectIntegers, 2,true);
 		String[] teacherIdCandidate =GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllTeacherId(), 4,true); 
 		String[] weekdayIdCandidate =GAUtil.getCandidateStrings(weekdays, 1, false);
 		String[] seqIdCandidate=GAUtil.getCandidateStrings(seqs, 1, false);;
@@ -103,6 +109,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		String bestChromosome =  geneticAlgorithm.caculte();	
 		List<ArrangeVo> list =   GAUtil.getLessonArranges(bestChromosome);
+		GAUtil.print(bestChromosome);
 		this.save(list);
 	}
 

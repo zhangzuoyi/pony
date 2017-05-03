@@ -64,6 +64,32 @@ public class GAUtil {
 		return result;
 		
 	}
+	
+	/*** 
+	* <p>Description:
+	* input   key:teacherId+classId+subjectId value weekArrange
+	* output  key:classId value( key:teacherId+subjectId value:weekArrange) </p>
+	* @author  WANGCHAO262
+	* @date  2017年5月3日 下午2:14:46
+	*/
+	public static Map<String, Map<String, Integer>> getClassTeacherSubjectweekArrange(Map<String,Integer> map){
+		Map<String, Map<String, Integer>> result = new HashMap<String, Map<String,Integer>>();
+		for (String key : map.keySet()) {
+			String classId = key.substring(4, 7);//key
+			if (result.containsKey(classId)) {
+				Map<String, Integer> innerMap = result.get(classId);
+				innerMap.put(key.substring(0, 4)+key.substring(7, 9), map.get(key));
+				
+			}else{
+				Map<String, Integer> innerMap = new HashMap<String, Integer>();
+				innerMap.put(key.substring(0, 4)+key.substring(7, 9), map.get(key));
+				result.put(classId, innerMap);
+			}		
+		}
+		return result;		
+	}
+	
+	
 	public static Map<String,String> getClassNoCourse(List<ClassNoCourseVo> list){
 		Map<String, String> result =  new HashMap<String, String>();
 		for (ClassNoCourseVo vo : list) {			
@@ -156,6 +182,26 @@ public class GAUtil {
 		}
 	
 		return result;
+	}
+	public static void print(String a){
+		System.out.println();	
+
+		for (int i = 0; i < 140; i++) {		
+			System.out.print(a.substring(i*11, (i+1)*11)+"  ");
+			if (i>0 && (i+1)%7==0) {
+			System.out.println();	
+			}
+		}
+	}
+	public static void print2(String a){
+		System.out.println();	
+
+		for (int i = 0; i < 35; i++) {		
+			System.out.print(a.substring(i*11, (i+1)*11)+"  ");
+			if (i>0 && (i+1)%7==0) {
+			System.out.println();	
+			}
+		}
 	}
 	
 	

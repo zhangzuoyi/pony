@@ -4,17 +4,24 @@
 package com.zzy.pony.AutoClassArrange;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+
+import org.hibernate.id.IntegralDataTypeHolder;
+
+import com.zzy.pony.util.GAUtil;
+
 
 
   
 public  class GeneticAlgorithm {
 	private List<Chromosome> population = new ArrayList<Chromosome>();
-	private int popSize = 30;//种群数量
+	private int popSize = 20;//种群数量
 	//private int geneSize;//基因最大长度
 	private int maxIterNum = 500;//最大迭代次数
-	private double mutationRate = 0.02;//基因变异的概率
+	private double mutationRate = 0.1;//基因变异的概率  (285s)
 	//private int maxMutationNum = 3;//最大变异步长
 	
 	private int generation = 1;//当前遗传到第几代
@@ -46,7 +53,7 @@ public  class GeneticAlgorithm {
 		while(worstScore != 0){
 			//种群遗传
 			evolve();
-			print();
+			//print();
 			generation++;
 		}
 		System.out.println("----------");
@@ -76,9 +83,17 @@ public  class GeneticAlgorithm {
 	 */
 	private void init() {
 		
-		String[] classIdCandidate = DNA.getInstance().getClassIdCandidate();
+		/*String[] classIdCandidate = DNA.getInstance().getClassIdCandidate();
 		for (int i = 0; i < popSize; i++) {
 			Chromosome chro = new Chromosome(classIdCandidate);
+			population.add(chro);
+		}
+		caculteScore();*/
+		//生成的个体默认满足ruleTwo即老师的课时数条件
+		String[] classIdCandidate = DNA.getInstance().getClassIdCandidate();
+		Map<String, Integer> map = DNA.getInstance().getTeacherSubjectweekArrange();
+		for (int i = 0; i < popSize; i++) {
+			Chromosome chro = new Chromosome(classIdCandidate,map);
 			population.add(chro);
 		}
 		caculteScore();
@@ -116,7 +131,7 @@ public  class GeneticAlgorithm {
 	 * @Description: 轮盘赌法选择可以遗传下一代的染色体
 	 */
 	private Chromosome getParentChromosome (){
-		double slice = Math.random() * totalScore;
+		/*double slice = Math.random() * totalScore;
 		double sum = 0;
 		for (Chromosome chro : population) {
 			sum += chro.getScore();
@@ -124,7 +139,8 @@ public  class GeneticAlgorithm {
 				return chro;
 			}
 		}
-		return null;
+		return null;*/
+		return bestChromosome;
 	}
 	
 	/**
@@ -175,12 +191,13 @@ public  class GeneticAlgorithm {
 	 * 基因突变
 	 */
 	private void mutation() {
+		Map<String, Map<String, Integer>> map = new HashMap<String, Map<String,Integer>>();
+		map = GAUtil.getClassTeacherSubjectweekArrange(DNA.getInstance().getTeacherSubjectweekArrange());
 		Random random =  new Random();
 		for (Chromosome chro : population) {
-			if (Math.random() < mutationRate) { //发生基因突变
-				
+			if (Math.random() < mutationRate) { //发生基因突变				
 				int mutationNum =random.nextInt(DNA.getInstance().getClassIdCandidate().length);
-				chro.mutation(mutationNum);
+				chro.mutation(mutationNum,map);
 			}
 		}
 	}
@@ -202,8 +219,10 @@ public  class GeneticAlgorithm {
 		int scoreRuleFour = Rule.ruleFour(chromosome, DNA.getInstance().getTeacherNoCourse());
 		int scoreRuleFive = Rule.ruleFive(chromosome, DNA.getInstance().getSubjectNoCourse());
 		int scoreRuleSix = Rule.ruleSix(chromosome, DNA.getInstance().getGradeNoCourse());
-
+		GAUtil.print2(String.valueOf(chromosome.getGene()));
 		//chromosome.setScore(scoreRuleOne);
+		System.out.println("---------------scoreRuleOne:"+scoreRuleOne);
+		System.out.println("---------------scoreRuleTwo:"+scoreRuleTwo);
 		chromosome.setScore(scoreRuleOne+scoreRuleTwo+scoreRuleThree+scoreRuleFour+scoreRuleFive+scoreRuleSix);
 	}
 	

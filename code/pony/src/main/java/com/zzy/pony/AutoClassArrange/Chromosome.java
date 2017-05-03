@@ -6,7 +6,10 @@ package com.zzy.pony.AutoClassArrange;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+
+import com.zzy.pony.util.GAUtil;
 
 public class Chromosome {
 	private char[] gene;//基因序列
@@ -40,6 +43,31 @@ public class Chromosome {
 		  sb.append(DNA.getInstance().getDnaString(i));
 	  }	   
 	   gene = sb.toString().toCharArray();
+			
+	}
+	/**
+	 * @param size
+	 * 随机生成所有班级的基因序列,且每个班满足老师课时数条件 key:teacherId+classId+subjectId value:weekArrange
+	 */
+	public Chromosome(String[] classIdCandidate,Map<String, Integer> map) {
+		/*if (classIdCandidate.length <= 0) {
+			return;
+		}
+	   StringBuilder sb = new StringBuilder();
+	   for (int i = 0; i < classIdCandidate.length; i++) {
+		  sb.append(DNA.getInstance().getDnaString(i));
+	  }	   
+	   gene = sb.toString().toCharArray();*/
+		
+		if (classIdCandidate.length <= 0) {
+			return;
+		}
+	   StringBuilder sb = new StringBuilder();
+	   Map<String, Map<String, Integer>> classMap = GAUtil.getClassTeacherSubjectweekArrange(map);
+	   for (int i = 0; i < classIdCandidate.length; i++) {
+		  sb.append(DNA.getInstance().getDnaStringRuleTwo(i,classMap));
+	  }	   
+	   gene = sb.toString().toCharArray();	
 			
 	}
 	
@@ -103,6 +131,7 @@ public class Chromosome {
 		Random random = new Random();
 		
 		
+		
 		int a =  (random.nextInt(classCount)+1)*classDNALength  ;
 		while (a>=size) {
 			a=(random.nextInt(classCount)+1)*classDNALength;
@@ -111,8 +140,8 @@ public class Chromosome {
 		if(b>size){
 			b=size;
 		}
-		/*System.out.println(String.valueOf(c1.gene));
-		System.out.println(String.valueOf(c2.gene));*/
+		/*GAUtil.print(String.valueOf(c1.gene));
+		GAUtil.print(String.valueOf(c2.gene));*/
 
 		//对位置上的基因进行交叉互换 注意数组长度需要减1
 		for (int i = a-1; i < b; i++) {
@@ -123,8 +152,8 @@ public class Chromosome {
 		List<Chromosome> list = new ArrayList<Chromosome>();
 		list.add(c1);
 		list.add(c2);
-	/*	System.out.println(String.valueOf(c1.gene));
-		System.out.println(String.valueOf(c2.gene));*/
+		/*GAUtil.print(String.valueOf(c1.gene));
+		GAUtil.print(String.valueOf(c2.gene));*/
 		
 		return list;
 	}
@@ -133,11 +162,11 @@ public class Chromosome {
 	 * @param num
 	 * @Description: 基因发生变异 第classIndex个班级表突变 classIndex从0开始
 	 */
-	public void mutation(int classIndex) {
+	public void mutation(int classIndex,Map<String, Map<String, Integer>> map) {
 		//允许变异
-		//int classCount = DNA.getInstance().getClassIdCandidate().length;	
+		//int classCount = DNA.getInstance().getClassIdCandidate().length;
 		int classDNALength = DNA.getInstance().getDnaBit()*DNA.getInstance().getWeekdayIdCandidate().length*DNA.getInstance().getSeqIdCandidate().length;
-        char[] a =   DNA.getInstance().getDnaString(classIndex).toCharArray();
+        char[] a =   DNA.getInstance().getDnaStringRuleTwo(classIndex, map).toCharArray();
         for (int i = classIndex*classDNALength; i < classIndex*classDNALength+classDNALength; i++) {
 			gene[i] = a[i-(classIndex*classDNALength)];			
 		}
