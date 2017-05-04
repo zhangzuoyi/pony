@@ -1,10 +1,15 @@
 package com.zzy.pony.message.vo;
 
+import java.util.Date;
+
 public class MessageVo {
    private int[] userGroup;
    private int[] users;
    private String title;
    private String content;
+   private String sendTime;
+   private String sendUser;
+   private String[] attach; 
    public MessageVo(){}
 public int[] getUserGroup() {
 	return userGroup;
@@ -30,6 +35,25 @@ public String getContent() {
 public void setContent(String content) {
 	this.content = content;
 }
+public String getSendTime() {
+	return sendTime;
+}
+public void setSendTime(String sendTime) {
+	this.sendTime = sendTime;
+}
+public String getSendUser() {
+	return sendUser;
+}
+public void setSendUser(String sendUser) {
+	this.sendUser = sendUser;
+}
+public String[] getAttach() {
+	return attach;
+}
+public void setAttach(String[] attach) {
+	this.attach = attach;
+}
+
    
 	
 	

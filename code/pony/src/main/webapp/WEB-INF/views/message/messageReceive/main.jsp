@@ -33,12 +33,10 @@
               </el-col>
               </el-row>     
             <el-row>
-            <el-col :span="2" :offset="16"> 
-              <el-button type="primary" @click="read">标识已读</el-button>           
+            <el-col :span="4" :offset="16"> 
+              <el-button type="primary" @click="readMessage">标识已读</el-button>
+             <el-button type="primary" @click="deleteMessage">删除</el-button>                           
            </el-col>
-            <el-col :span="2" :offset="18">
-             <el-button type="primary" @click="delete">删除</el-button>  
-            </el-col>                               
            </el-row>                 
             </div> 
             <el-table
@@ -57,14 +55,17 @@
                     <div>{{ row.date }}</div>
                 </el-table-column> -->
                  <el-table-column
-                        prop="title"
+                        inline-template                        
                         label="标题"
                         >
+                        <div><a href="javascript:void(0)" @click="watchMessage">{{row.title}}</a></div>
                 </el-table-column>
                 <el-table-column
-                        prop="sendTime"
+               			inline-template
+                       
                         label="发送时间"
                        >
+                       <div>{{row.sendTime | }}</div>
                 </el-table-column>
                 <el-table-column
                         prop="sendUser"
@@ -107,199 +108,51 @@ var app = new Vue({
 	data : { 		
 		
 		
-		message:{userGroup:[],users:[],title:null,content:null},	
-		userGroups:[],
-		searchString:null,
-		unselectUser:[],
-		selectUser:[],
+			
+		messageReceiveUrl:"<s:url value='/message/messageReceive/list'/>",
 		dialogFormVisible:false,
-		formLabelWidth : '120px',
-		userGroupUrl: "<s:url value='/userGroup/list'/>",
-		listByGroupIdUrl:"<s:url value='/userGroup/listByGroupId'/>",
-		sendUrl:"<s:url value='/message/messageSend/send'/>",
-		currentUser:null,
-		fileList:[],
-		selectUserGroup:null,
-		groupId:null,
-		conditionVo:{messageId:null}  
+		tableData:[]
 	
 		
 	}, 
 	mounted : function() { 
-		this.getUserGroups();
+		this.getMessageReceive();
 			
 	}, 
 	methods : { 
-			 getUserGroups : function(){ 
-			this.$http.get(this.userGroupUrl).then(
+		getMessageReceive : function(){ 
+			this.$http.get(this.messageReceiveUrl).then(
 			function(response){
-			this.userGroups=response.data;},
+			this.tableData=response.data;},
 			function(response){}  			
 			); 
 			} ,
-			listByGroupId :function(groupId){ 
-			this.$http.get(this.listByGroupIdUrl,{params:{groupId: groupId}}).then(
-			function(response){this.unselectUser=response.data;},
-			function(response){}  			
-			); 
-			}, 
-			 handleChange :function(value){
-			 this.groupId = value;
-			 this.listByGroupId(value);
-			 
-			 },
-			 handleUserClick:function(){
-			 this.dialogFormVisible=true;
-			 this.unselectUser = [];
-			 this.selectUser = [];
-			 this.groupId=null;
-			 	 
-			 },
-			 
-			 createFilter :function(queryString) {
-                return function users(user) {
-                    return (user.userName.indexOf(queryString.toLowerCase()) >= 0);
-                };
-            } ,
-			 
-			  handleIconClick:function(){
-			//
-			var unselectUser = this.unselectUser;
-            var results = this.searchString ? unselectUser.filter(this.createFilter(this.searchString)) : searchString;              		
-			this.unselectUser = results;
 			
-			 	 
-			 },
-			 handleCurrentChange:function(currentRow){
-			 
-			 this.currentUser = currentRow;
-			 
-			 },
-			 addOne:function(){
-			 	if (!this.currentUser) {
-					alert('请选择！');
-					return;
-				} else {
-					for (var i = 0; i < this.unselectUser.length; i++) {
-						var oneRow = this.unselectUser[i];
-						if (oneRow.userId == this.currentUser.userId) {
-							this.unselectUser.splice(i, 1);
-							this.selectUser.push(oneRow);
-							this.currentUser = null;
-							break;
-						}
-					}
-				}	
-			 
-			 
-			 },
-			 removeOne:function(){
-			 	if (!this.currentUser) {
-					alert('请选择！');
-					return;
-				} else {
-					var unselectUserIds = [];
-			  		 for(var index in this.unselectUser){
-			   			unselectUserIds.push(this.unselectUser[index].userId);
-			  			 }
-				
-					for (var i = 0; i < this.selectUser.length; i++) {
-						var oneRow = this.selectUser[i];
-						if (oneRow.userId == this.currentUser.userId ) {
-							this.selectUser.splice(i, 1);
-							if(oneRow.groupId == this.groupId && unselectUserIds.indexOf(oneRow.userId)< 0 ){
-							 this.unselectUser.push(oneRow);
-							}														
-							this.currentUser = null;
-							break;
-						}
-					}
-				}	
-			 },
-			 addAll:function(){
-			 
-			   var selectUserIds = [];
-			   for(var index in this.selectUser){
-			   selectUserIds.push(this.selectUser[index].userId);
-			   }
-			 	for (var i = 0; i < this.unselectUser.length; i++) {
-						var oneRow = this.unselectUser[i];
-						if(selectUserIds.indexOf(oneRow.userId) < 0){
-							this.selectUser.push(oneRow);
-						}
-					}
-				this.unselectUser = [];
-			 	
-			 	
-			 },
-			 removeAll:function(){
-				var unselectUserIds = [];
-			   	for(var index in this.unselectUser){
-			   		unselectUserIds.push(this.unselectUser[index].userId);
-			   }
-			 
-				 for (var i = 0; i < this.selectUser.length; i++) {
-						var oneRow = this.selectUser[i];
-						if(oneRow.groupId == this.groupId && unselectUserIds.indexOf(oneRow.userId)< 0){
-							this.unselectUser.push(oneRow);
-						}
-					}
-			 
-			 	 this.selectUser = [];
-			 
-			 
-			 },
-			 submit : function(){
-			 	this.dialogFormVisible=false;
-			 	for(var index in  this.selectUser){
-			 	this.users += this.selectUser[index].userName+";";			 	 
-			 	}
-			 	
-			 },
-			 handleRemove : function(file, fileList) {
-                console.log(file, fileList);
-             },
-             send : function(){
-             if(this.message.userGroup==null && this.message.users ==null){
-             alert("用户组和用户不能同时为空.."); 
-             return;            
-             }
-             if(this.message.title==null ){
-             alert("标题不能为空.."); 
-             return;            
-             }
-             if(this.message.content==null ){
-             alert("内容不能为空.."); 
-             return;            
-             }
-             //消息发送
-              
-			this.$http.post(this.sendUrl,this.message).then(
-			function(response){
-			 this.message={userGroup:[],users:[],title:null,content:null};
-			 this.conditionVo.messageId =  response.data;			
-             this.$refs.upload.submit();			
-			},
-			function(response){}  			
-			); 
-			
-             
-             
-             
-             
-             
-             
-             
-             },
-             save : function(){
-             
-             },
-             close : function(){
-             
-             },
-            clearFiles : function(){
-                   this.$refs.upload.clearFiles();
-            }
+		readMessage : function(){ 
+			this.$http.get(this.messageReceiveUrl).then(
+					function(response){
+					this.tableData=response.data;},
+					function(response){}  			
+					); 
+					} ,
+		deleteMessage : function(){ 
+			this.$http.get(this.messageReceiveUrl).then(
+					function(response){
+					this.tableData=response.data;},
+					function(response){}  			
+					); 
+					} ,	
+		watchMessage : function(){ 
+						this.$http.get(this.messageReceiveUrl).then(
+								function(response){
+								this.tableData=response.data;},
+								function(response){}  			
+								); 
+								} ,			
+					
+	    handleSelectionChange:function() {
+		                                                
+		            },	
 			
 			 
 			   	

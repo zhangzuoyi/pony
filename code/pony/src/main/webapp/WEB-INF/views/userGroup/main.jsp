@@ -573,7 +573,7 @@ var app = new Vue({
 				}						
 		},	
 		removeAllStudent: function(){
-			this.selectStudent=null;
+			this.selectStudent=[];
 		
 		},
 		submit :function(){
