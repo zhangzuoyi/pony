@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.zzy.pony.dao.UserGroupDao;
 import com.zzy.pony.model.Group;
+import com.zzy.pony.model.User;
 
 
 
@@ -76,6 +77,26 @@ public class UserGroupServiceImpl implements UserGroupService {
 		// TODO Auto-generated method stub
 		return userGroupDao.findOne(groupId);
 	}
+
+	@Override
+	public Boolean isExist(int userId, int[] groupIds) {
+		// TODO Auto-generated method stub
+		if (groupIds == null || groupIds.length ==0) {
+			return false;
+		}
+		for (int groupId : groupIds) {
+			Group group =  userGroupDao.findOne(groupId);
+			List<User> users =   group.getUsers();
+			for (User user : users) {
+				if (userId == user.getUserId()) {
+					return true;
+				}
+			}
+		}				
+		return false;
+	}
+	
+	
 
 	
 	

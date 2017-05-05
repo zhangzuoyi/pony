@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>消息接收</title>
+<title>已发送消息</title>
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/easyui/themes/default/easyui.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/style.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/icon.css' />" />
@@ -29,12 +29,11 @@
             <div slot="header" class="clearfix">
               <el-row>
               <el-col :span="4">
-              <b>消息接收</b>
+              <b>已发送消息</b>
               </el-col>
               </el-row>     
             <el-row>
             <el-col :span="6" :offset="16"> 
-              <el-button type="primary" @click="readMessage">标识已读</el-button>
              <el-button type="primary" @click="deleteMessage">删除</el-button> 
              <el-button type="primary" @click="refresh">更新</el-button>                           
            </el-col>
@@ -62,23 +61,16 @@
                         <div><a href="javascript:void(0)" @click="watchMessage(row.id)">{{row.title}}</a></div>
                 </el-table-column>
                 <el-table-column
-               			inline-template
-                       
+               			inline-template                       
                         label="发送时间"
                        >
                        <div>{{row.sendTime}}</div>
                 </el-table-column>
                 <el-table-column
-                        prop="sendUser"
-                        label="发送人"                       
+                        prop="receiveUser"
+                        label="收件人"                       
                         >
-                </el-table-column> 
-                <el-table-column
-                        inline-template
-                        label="状态"                       
-                        >
-                        <div>{{row.readStatus | readStatusFilter }}</div>
-                </el-table-column>                               
+                </el-table-column>                                               
                 <el-table-column
                         inline-template
                         label="附件"
@@ -86,19 +78,13 @@
                         <div><a v-for="attach in row.attachs"  href="javascript:void(0)" @click="downloadAttach(row.messageId,attach)" >{{attach}}&nbsp;</a></div>
                 </el-table-column>
             </el-table>
-            
-            
-            
-            
-              
-
         </el-card>
         
         
         <el-dialog title="消息" v-model="dialogFormVisible" size="large">
                <el-form>                   
-                    <el-form-item label="发件人" :label-width="formLabelWidth">                          			 
-           			 <el-input v-model="selectMessage.sendUser" :disabled="true"></el-input>          			          			 
+                    <el-form-item label="收件人" :label-width="formLabelWidth">                          			 
+           			 <el-input v-model="selectMessage.receiveUser" :disabled="true"></el-input>          			          			 
                     </el-form-item>
                     <el-form-item label="标题" :label-width="formLabelWidth">                          			 
            			 <el-input v-model="selectMessage.title" :disabled="true"></el-input>          			          			 
@@ -119,13 +105,9 @@
 		
 var app = new Vue({ 
 	el : '#app' ,
-	data : { 		
-		
-		
-			
-		messageReceiveUrl:"<s:url value='/message/messageReceive/list'/>",
-		readMessageUrl:"<s:url value='/message/messageReceive/read'/>",
-		deleteMessageUrl:"<s:url value='/message/messageReceive/delete'/>",
+	data : { 				
+		messageSentUrl:"<s:url value='/message/messageSent/list'/>",
+		deleteMessageUrl:"<s:url value='/message/messageSent/delete'/>",
 		dialogFormVisible:false,
 		formLabelWidth:"120px",
 		tableData:[],
@@ -133,50 +115,30 @@ var app = new Vue({
 		selectMessages:[]
 	
 		
-	}, 
-	filters: {    
-    readStatusFilter: function (value) {
-      if(value == 1){return "已读"; }
-      if(value == 0){return "未读"; }
-    }
-  }	,
+	}, 	
 	mounted : function() { 
-		this.getMessageReceive();
+		this.getMessageSent();
 			
 	}, 
 	methods : { 
 	   refresh :function(){
-	    this.getMessageReceive();
+	    this.getMessageSent();
 	   },
-		getMessageReceive : function(){ 
-			this.$http.get(this.messageReceiveUrl).then(
+		getMessageSent : function(){ 
+			this.$http.get(this.messageSentUrl).then(
 			function(response){
 			this.tableData=response.data;},
 			function(response){}  			
 			); 
 			} ,
-			
-		readMessage : function(){ 
+	deleteMessage : function(val){
 			var selectMessage = [];
 			for(var message in this.selectMessages){
-			selectMessage.push(this.selectMessages[message].messageReceiveInfoId);
-			}			
-			this.$http.get(this.readMessageUrl,{params:{selectMessage:selectMessage}}).then(
-			function(response){
-			this.getMessageReceive();},
-			function(response){}  			
-			); 
-			} ,
-					
-		deleteMessage : function(val){
-			var selectMessage = [];
-			for(var message in this.selectMessages){
-			selectMessage.push(this.selectMessages[message].messageReceiveInfoId);
-			}
-		 
+			selectMessage.push(this.selectMessages[message].messageId);
+			}		 
 			this.$http.get(this.deleteMessageUrl,{params:{selectMessage:selectMessage}}).then(
 					function(response){
-					this.getMessageReceive();},
+					this.getMessageSent();},
 					function(response){}  			
 					); 
 					} ,	

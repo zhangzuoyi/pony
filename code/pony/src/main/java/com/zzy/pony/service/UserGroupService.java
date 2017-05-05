@@ -14,6 +14,8 @@ public interface UserGroupService {
 	List<Group> list();
 	List<Group> listByCondition(String groupType,String groupName);
 	Group get(Integer groupId);
+	//用户是否在组内
+	Boolean isExist(int userId,int[] groupIds);
 
 	
 	void add(Group group);
