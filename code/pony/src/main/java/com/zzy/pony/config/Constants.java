@@ -22,6 +22,8 @@ public class Constants {
 	public static final int IS_VALID_N=  1 ;//无效
 	public static final String RECEIVER_TYPE_GROUP=  "0" ;//组
 	public static final String RECEIVER_TYPE_USER=  "1" ;//个人
+	public static final int RECEIVER_READ_Y=  1 ;//已读
+	public static final int RECEIVER_READ_N=  0 ;//未读
 	
 	public static final String MESSAGE_ATTACH_UPLOADPATH = "D:\\pingan\\tmp";
 	

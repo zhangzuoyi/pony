@@ -63,7 +63,7 @@
             <div class="grid-content bg-purple">                                     
 				 <el-input                  
                     icon="search"
-                    v-model="message.users"
+                    v-model="users"
                     @click="handleUserClick"
                     :disabled="true">
             </el-input>				
@@ -224,7 +224,8 @@ var app = new Vue({
 		fileList:[],
 		selectUserGroup:null,
 		groupId:null,
-		conditionVo:{messageId:null}  
+		conditionVo:{messageId:null} ,
+		users:"" 
 	
 		
 	}, 
@@ -253,6 +254,7 @@ var app = new Vue({
 			 },
 			 handleUserClick:function(){
 			 this.dialogFormVisible=true;
+			 this.selectUserGroup = null;
 			 this.unselectUser = [];
 			 this.selectUser = [];
 			 this.groupId=null;
@@ -268,7 +270,7 @@ var app = new Vue({
 			  handleIconClick:function(){
 			//
 			var unselectUser = this.unselectUser;
-            var results = this.searchString ? unselectUser.filter(this.createFilter(this.searchString)) : searchString;              		
+            var results = this.searchString ? unselectUser.filter(this.createFilter(this.searchString)) : this.searchString;              		
 			this.unselectUser = results;
 			
 			 	 
@@ -355,7 +357,8 @@ var app = new Vue({
 			 submit : function(){
 			 	this.dialogFormVisible=false;
 			 	for(var index in  this.selectUser){
-			 	this.users += this.selectUser[index].userName+";";			 	 
+			 	this.users += this.selectUser[index].userName+";";	
+			 	this.message.users.push(this.selectUser[index].userId);			 	 			 			 	 
 			 	}
 			 	
 			 },
@@ -380,8 +383,10 @@ var app = new Vue({
 			this.$http.post(this.sendUrl,this.message).then(
 			function(response){
 			 this.message={userGroup:[],users:[],title:null,content:null};
+			 this.users = null;
 			 this.conditionVo.messageId =  response.data;			
-             this.$refs.upload.submit();			
+             this.$refs.upload.submit();
+             this.clearFiles();			
 			},
 			function(response){}  			
 			); 

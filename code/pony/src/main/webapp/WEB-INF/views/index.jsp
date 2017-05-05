@@ -110,6 +110,7 @@
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/userGroup/main/' />" iframe="1">用户组</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/message/messageSend/main/' />" iframe="1">消息发送</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/message/messageReceive/main/' />" iframe="1">消息接收</a></li>
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/message/messageSent/main/' />" iframe="1">已发送消息</a></li>
                 
                 </ul>
             </div>

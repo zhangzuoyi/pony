@@ -17,5 +17,6 @@ public interface UserService {
 	void addFromStudent(Student student);
 	User findByTeacherId(int teacherId);
 	User findByStudentId(int studentId);
+	String findUserNameById(Integer id);
 
 }

@@ -105,6 +105,22 @@ public class UserServiceImpl implements UserService {
 		}	
 		return null;
 	}
+
+	@Override
+	public String findUserNameById(Integer id) {
+		// TODO Auto-generated method stub
+		User user = dao.findOne(id);
+		
+		if (Constants.USER_TYPE_STUDENT.equalsIgnoreCase(user.getUserType())) {
+			return  user.getStudent().getName();
+		}
+		if (Constants.USER_TYPE_TEACHER.equalsIgnoreCase(user.getUserType())) {
+			return user.getTeacher().getName();
+		}	
+		return null;
+	}
+	
+	
 	
 	
 

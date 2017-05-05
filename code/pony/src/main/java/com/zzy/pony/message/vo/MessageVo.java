@@ -1,6 +1,9 @@
 package com.zzy.pony.message.vo;
 
 import java.util.Date;
+import java.util.List;
+
+import com.zzy.pony.message.model.MessageAttach;
 
 public class MessageVo {
    private int[] userGroup;
@@ -9,7 +12,11 @@ public class MessageVo {
    private String content;
    private String sendTime;
    private String sendUser;
-   private String[] attach; 
+   private String[] attachs; 
+   private String readStatus;
+   private String messageId;
+   private String messageReceiveInfoId; 
+   private String receiveUser;
    public MessageVo(){}
 public int[] getUserGroup() {
 	return userGroup;
@@ -47,12 +54,41 @@ public String getSendUser() {
 public void setSendUser(String sendUser) {
 	this.sendUser = sendUser;
 }
-public String[] getAttach() {
-	return attach;
+
+
+public String[] getAttachs() {
+	return attachs;
 }
-public void setAttach(String[] attach) {
-	this.attach = attach;
+public void setAttachs(String[] attachs) {
+	this.attachs = attachs;
 }
+public String getReadStatus() {
+	return readStatus;
+}
+public void setReadStatus(String readStatus) {
+	this.readStatus = readStatus;
+}
+public String getMessageId() {
+	return messageId;
+}
+public void setMessageId(String messageId) {
+	this.messageId = messageId;
+}
+public String getMessageReceiveInfoId() {
+	return messageReceiveInfoId;
+}
+public void setMessageReceiveInfoId(String messageReceiveInfoId) {
+	this.messageReceiveInfoId = messageReceiveInfoId;
+}
+public String getReceiveUser() {
+	return receiveUser;
+}
+public void setReceiveUser(String receiveUser) {
+	this.receiveUser = receiveUser;
+}
+
+
+
 
    
 	

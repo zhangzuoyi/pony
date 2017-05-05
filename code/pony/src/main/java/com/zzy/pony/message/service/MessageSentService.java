@@ -13,8 +13,7 @@ import com.zzy.pony.message.vo.MessageVo;
 
 
 
-public interface MessageReceiveService {
+public interface MessageSentService {
 	List<MessageVo> list();
-	MessageReceiveInfo get(int id);
-	void save(MessageReceiveInfo messageReceiveInfo);
+	
 }

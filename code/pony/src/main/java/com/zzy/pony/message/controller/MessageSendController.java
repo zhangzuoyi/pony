@@ -153,11 +153,23 @@ public class MessageSendController {
 		}
 		if ( messageVo.getUsers() != null &&  messageVo.getUsers().length>0) {
 			for (int userId : messageVo.getUsers()) {
-				MessageReceiveInfo messageReceiveInfo = new MessageReceiveInfo();
-				messageReceiveInfo.setIsValid(Constants.IS_VALID_Y);
-				messageReceiveInfo.setUser(userService.findById(userId));
-				messageReceiveInfo.setMessage(message);
-				messageReceiveInfos.add(messageReceiveInfo);
+				
+				MessageReceiver messageReceiver = new MessageReceiver();
+				messageReceiver.setReceiverType(Constants.RECEIVER_TYPE_USER);
+				messageReceiver.setReceiverId(userId);
+				messageReceiver.setMessage(message);
+				String userName = userService.findUserNameById(userId);
+				messageReceiver.setName(userName);
+				messageReceivers.add(messageReceiver);
+				
+				if (!userGroupService.isExist(userId, messageVo.getUserGroup())) {
+					MessageReceiveInfo messageReceiveInfo = new MessageReceiveInfo();
+					messageReceiveInfo.setIsValid(Constants.IS_VALID_Y);
+					messageReceiveInfo.setUser(userService.findById(userId));
+					messageReceiveInfo.setMessage(message);
+					messageReceiveInfos.add(messageReceiveInfo);
+				}
+			
 			}
 		}
 		
