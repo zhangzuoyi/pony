@@ -23,7 +23,7 @@ public class Constants {
 	public static final String RECEIVER_TYPE_GROUP=  "0" ;//组
 	public static final String RECEIVER_TYPE_USER=  "1" ;//个人
 	
-	public static final String MESSAGE_ATTACH_UPLOADPATH = "D:\\pingan\\tmp";
+	public static final String MESSAGE_ATTACH_UPLOADPATH = "/home/upload";
 	
 
 
