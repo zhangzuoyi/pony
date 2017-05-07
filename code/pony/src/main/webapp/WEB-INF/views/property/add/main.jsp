@@ -42,9 +42,9 @@ width:200px;
 			<el-row>
 			<el-col :span="8">
 			<el-form-item label="分类"> 
-			<el-select v-model="property.propertyType" placeholder="分类"> 
-				<el-option label="区域一" value="shanghai"></el-option> 
-				<el-option label="区域二" value="beijing"></el-option>
+			<el-select v-model="property.propertyType" placeholder="请选择.."> 
+				<el-option v-for="propertyType in propertyTypes" :label="propertyType.name" :value="propertyType.category">				
+				</el-option> 				
 			</el-select> 
 			</el-form-item>
 			</el-col>						
@@ -68,9 +68,9 @@ width:200px;
 			</el-col>						
 			<el-col :span="8">
 			<el-form-item label="使用部门"> 
-			<el-select v-model="property.department" placeholder="分类"> 
-				<el-option label="区域一" value="shanghai"></el-option> 
-				<el-option label="区域二" value="beijing"></el-option>
+			<el-select v-model="property.department" placeholder="请选择.."> 
+				<el-option v-for="department in departments"  :label="department.name" :value="department.deptId"></el-option> 
+				
 			</el-select> 			 			
 			</el-form-item>
 			</el-col>
@@ -102,17 +102,15 @@ width:200px;
 			<el-row>
 			<el-col :span="8">
 			<el-form-item label="责任人"> 
-			<el-select v-model="property.owner" placeholder="责任人"> 
-				<el-option label="区域一" value="shanghai"></el-option> 
-				<el-option label="区域二" value="beijing"></el-option>
+			<el-select v-model="property.owner" placeholder="请选择" filterable> 
+				<el-option v-for="user in users"  :label="user.name" :value="user.teacherId"></el-option> 				
 			</el-select>
 			</el-form-item>
 			</el-col>						
 			<el-col :span="8">
 			<el-form-item label="使用人"> 
 			<el-select v-model="property.user" placeholder="使用人"> 
-				<el-option label="区域一" value="shanghai"></el-option> 
-				<el-option label="区域二" value="beijing"></el-option>
+					<el-option v-for="user in users"  :label="user.name" :value="user.teacherId"></el-option> 								
 			</el-select> 			 			
 			</el-form-item>
 			</el-col>
@@ -168,8 +166,13 @@ width:200px;
 var app = new Vue({ 
 	el : '#app' ,
 	data : { 		
-		
-		property:{}
+		propertyTypeUrl:"<s:url value='/property/propertyType/list'/>",
+		propertyTypes:[],
+		departmentUrl:"<s:url value='/property/department/list'/>",
+		departments:[],
+		property:{propertyType:null,department:null,owner:null,user:null},
+		usersUrl:"<s:url value='/teacherAdmin/list'/>",	//责任人和使用人取教师	
+		users:[],
 			
 	
 	
@@ -178,17 +181,35 @@ var app = new Vue({
 	
 	mounted : function() { 
 		
-			
+		this.getPropertyType();	
+		this.getDepartment();
+		this.getUsers();
 	}, 
 	methods : { 
 	   
-		/* getMessageReceive : function(){ 
-			this.$http.get(this.messageReceiveUrl).then(
+		getPropertyType : function(){ 
+			this.$http.get(this.propertyTypeUrl).then(
 			function(response){
-			this.tableData=response.data;},
+			this.propertyTypes=response.data;},
 			function(response){}  			
 			); 
-			} , */
+			} ,
+		getDepartment : function(){
+				
+				 
+				this.$http.get(this.departmentUrl).then(
+				function(response){
+				this.departments=response.data;},
+				function(response){}  			
+				); 
+				} ,
+		getUsers : function(){ 
+					this.$http.get(this.usersUrl).then(
+					function(response){
+					this.users=response.data;},
+					function(response){}  			
+					); 
+					} ,
 		onSubmit : function(){
 			
 		}	,
