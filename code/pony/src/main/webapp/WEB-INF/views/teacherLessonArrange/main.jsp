@@ -195,6 +195,10 @@ var app = new Vue({
 			);
 			},
 		getSubjectByTeacher : function(teacherId){ 
+		    //取消选中
+		    this.teacherSubjectVo.subjectId = null;
+		    this.teacherSubjectVo.schoolClassIds = [];
+		
 			if(teacherId == null ||teacherId ==""){
 			return ;
 			}
@@ -246,14 +250,18 @@ var app = new Vue({
 			if(this.teacherSubjectVo.className&&this.teacherSubjectVo.teacherId&&this.teacherSubjectVo.subjectId){
 			this.$http.post(this.saveUrl,this.teacherSubjectVo).then(
 			function(response){
-				alert("123");
+				this.$alert("保存成功","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 				teacherSubjectVo={schoolClassIds:[],teacherId:null,subjectId:null};
 			
 			},
 			function(response){}  	 			
 			);
 			}else{
-				alert("请选择完整..");
+				this.$alert("请选择完整..","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 			}	
 		},
 		listByTeacher : function(teacherId){        	

@@ -187,11 +187,24 @@
 							function(response){
 								this.selectData = [];
 								this.getListTableData();		
-								alert("保存成功");
+								this.alert();
 							 },
 							function(response){}  			
 							);  		  
-		       			 },       	
+		       			 }, 
+		   alert :function(){
+		 this.$alert("保存成功","提示",{
+		 confirmButtonText : '确认',
+		 //回调(可选)
+		 /* callback :  function(action,instance){
+		   instance.$message({
+		   type : 'info',
+		   message : 'action :   '+ action
+		   });
+		 }  */
+		 });
+		},    			 
+		       			       	
 		       	
 			
 			

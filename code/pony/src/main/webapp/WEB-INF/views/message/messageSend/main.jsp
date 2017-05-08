@@ -282,7 +282,11 @@ var app = new Vue({
 			 },
 			 addOne:function(){
 			 	if (!this.currentUser) {
-					alert('请选择！');
+					
+					this.$alert("请选择","提示",{
+		 			confirmButtonText : '确认',		 
+					 });
+				
 					return;
 				} else {
 					for (var i = 0; i < this.unselectUser.length; i++) {
@@ -300,7 +304,11 @@ var app = new Vue({
 			 },
 			 removeOne:function(){
 			 	if (!this.currentUser) {
-					alert('请选择！');
+					
+					this.$alert("请选择","提示",{
+		 			confirmButtonText : '确认',		 
+					 });
+					
 					return;
 				} else {
 					var unselectUserIds = [];
@@ -367,15 +375,25 @@ var app = new Vue({
              },
              send : function(){
              if(this.message.userGroup==null && this.message.users ==null){
-             alert("用户组和用户不能同时为空.."); 
+             
+             this.$alert("用户组和用户不能同时为空..","提示",{
+		 			confirmButtonText : '确认',		 
+					 }); 
              return;            
              }
              if(this.message.title==null ){
-             alert("标题不能为空.."); 
+             
+             this.$alert("标题不能为空..","提示",{
+		 			confirmButtonText : '确认',		 
+					 });
+             
              return;            
              }
              if(this.message.content==null ){
-             alert("内容不能为空.."); 
+             
+             this.$alert("内容不能为空..","提示",{
+		 			confirmButtonText : '确认',		 
+					 }); 
              return;            
              }
              //消息发送

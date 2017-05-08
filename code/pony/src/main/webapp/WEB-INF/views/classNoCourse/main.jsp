@@ -197,11 +197,24 @@
 					function(response){
 						this.selectData = [];
 						this.getListTableData();		
-						alert("保存成功");
+						this.alert();
 					 },
 					function(response){}  			
 					); 		  
        			 },
+       	alert :function(){
+		 this.$alert("保存成功","提示",{
+		 confirmButtonText : '确认',
+		 //回调(可选)
+		 /* callback :  function(action,instance){
+		   instance.$message({
+		   type : 'info',
+		   message : 'action :   '+ action
+		   });
+		 }  */
+		 });
+		},		 
+       			 
        	cellClick:function(row,column,cell){
        		
        		//row.period   9:00--9:45
