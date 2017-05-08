@@ -48,7 +48,7 @@ var app = new Vue({
 		checkin:function(){ 	
 			this.$http.post(this.checkinUrl).then(
 					function(response){
-						alert("保存成功");
+						this.alert();
 					 },
 					function(response){}  			
 					);  		  
@@ -56,11 +56,24 @@ var app = new Vue({
       	checkout:function(){ 	
       				this.$http.post(this.checkoutUrl).then(
       						function(response){
-      							alert("保存成功");
+      							this.alert();
       						 },
       						function(response){}  			
       						);  		  
-      	}
+      	},
+      	alert :function(){
+		 this.$alert("保存成功","提示",{
+		 confirmButtonText : '确认',
+		 //回调(可选)
+		 /* callback :  function(action,instance){
+		   instance.$message({
+		   type : 'info',
+		   message : 'action :   '+ action
+		   });
+		 } */ 
+		 });
+		},
+      	
       }
         
 	 

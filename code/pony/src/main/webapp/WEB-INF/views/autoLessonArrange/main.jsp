@@ -137,7 +137,23 @@
             
             </el-col>          
             </el-row>   
-        </el-card>       	
+        </el-card>
+        
+        <el-dialog     close-on-click-modal="false" close-on-press-escape="false" v-model="dialogFormVisible" >			
+				
+				 <el-table 
+				    v-loading="loading" 
+				    element-loading-text="自动排课中..."            	 		                
+                    border
+                    style="width: 100%"
+                    empty-text=""
+                    >                            
+                  </el-table>         
+				
+		</el-dialog>
+        
+        
+               	
     </div>
     
     
@@ -167,6 +183,8 @@ var app = new Vue({
 		}],
 		
 		tableData: [],
+		dialogFormVisible:false,
+		loading:false
 		
 	
 		
@@ -211,10 +229,20 @@ var app = new Vue({
 				); 	
 				},
 		autoLessonArrange : function(){ 
-					this.$http.get(this.autoLessonArrangeUrl).then(
-					function(response){},
+		
+		            this.$confirm('自动排课将会删除之前的自动排课结果，是否继续操作？','提示',{
+		            confirmButtonText : '确认',
+		            cancleButtonText : '取消',
+		            type : 'warning',		            
+		            }).then(function(){  app.dialogFormVisible=true;   app.loading = true;
+		           // console.log(app);
+		            app.$http.get(app.autoLessonArrangeUrl).then(
+					function(response){app.dialogFormVisible=false;   app.loading = false;},
 					function(response){}  	 			
-					);
+					);           
+		            }).catch(function(){    });
+
+					
 					},	
 		
 		 getListTableData:function(){

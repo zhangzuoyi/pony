@@ -244,6 +244,20 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 		
 		return result;
 	}
+
+	@Override
+	public TeacherSubject findCurrentByClassAndSubject(SchoolClass schoolClass,
+			Subject subject) {
+		// TODO Auto-generated method stub
+		SchoolYear schoolYear = yearService.getCurrent();
+		Term term= termService.getCurrent();
+		List<TeacherSubject> teacherSubjects = dao.findBySchoolClassAndSubjectAndYearAndTerm(schoolClass, subject, schoolYear, term);		
+		if (teacherSubjects != null && teacherSubjects.size()>0) {
+			return  teacherSubjects.get(0);
+		}
+		return null;
+	}
+	
 	
 	
 	

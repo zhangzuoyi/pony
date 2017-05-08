@@ -39,6 +39,7 @@ public interface TeacherSubjectService {
 	List<Integer> findCurrentAllClassId();
 	List<Integer> findCurrentAllSubjectId();
 	Boolean isExists(Teacher teacher,SchoolYear schoolYear,Term term,SchoolClass schoolClass,Subject subject);
+	TeacherSubject findCurrentByClassAndSubject(SchoolClass schoolClass,Subject subject);
 
 	
 }

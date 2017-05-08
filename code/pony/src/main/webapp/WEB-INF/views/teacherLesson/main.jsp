@@ -269,7 +269,9 @@
 			function(response){}  			
 			); 
 		}else{
-			alert("请选择完整..");
+			this.$alert("请选择完整..","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 			this.dialogFormVisible=false;
 		}				
 		}

@@ -158,7 +158,9 @@ var app = new Vue({
 		},
 		update : function(){
 			if(this.department.name == null || this.department.name == "" ){
-				alert("不能为空");
+				this.$alert("不能为空","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 				this.dialogFormVisible=false;
 				this.getDepartment();
 				return ;
@@ -169,7 +171,9 @@ var app = new Vue({
 						this.department={name:null};
 						this.getDepartment();
 						if(response.data == "1"){
-							alert("已存在相同的部门");
+							this.$alert("已存在相同的部门","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 						}						 
 						
 						
@@ -181,7 +185,9 @@ var app = new Vue({
 		},
 		add : function(){
 			if(this.department.name == null || this.department.name == "" ){
-				alert("不能为空");
+				this.$alert("不能为空","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 				this.dialogFormVisible=false;
 				this.getDepartment();
 				return ;
@@ -192,7 +198,9 @@ var app = new Vue({
 						this.department={name:null}; 
 						this.getDepartment();
 						if(response.data == "1"){
-							alert("已存在相同的部门");
+							this.$alert("已存在相同的部门","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 						}
 						
 						

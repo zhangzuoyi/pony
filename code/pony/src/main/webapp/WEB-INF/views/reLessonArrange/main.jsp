@@ -229,11 +229,15 @@ var app = new Vue({
 							
 						
 							if(this.beforeSelect==null||this.afterSelect==null){					
-								alert("请选择需要调整的两门课程");
+								this.$alert("请选择需要调整的两门课程","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 								return ;
 								}
 							if(this.beforeSelect.subjectName==""&&this.afterSelect.subjectName==""){					
-								alert("两门课程不能同时为空");
+								this.$alert("两门课程不能同时为空","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 								return ;
 								}
 							this.select.push(this.beforeSelect);
@@ -256,11 +260,16 @@ var app = new Vue({
        		//column.label  星期一
        		//  #0F0调课前 beforeSelect      #F4A460 (244, 164, 96)调课后 afterSelect
 			if(this.conditionVo.classId ==null  ){
-   			alert("班级不能为空");
+   			this.$alert("班级不能为空","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
+   			
    			return ;
    			} 
        		if(this.beforeSelect !=null && this.afterSelect !=null&&cell.style.backgroundColor=="" ){
-       			alert("一次不能调整超过两门课程");
+       			this.$alert("一次不能调整超过两门课程","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
        			return ;
        		}      		      		
        		if(cell.style.backgroundColor == "rgb(0, 255, 0)" ){

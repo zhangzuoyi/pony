@@ -470,7 +470,9 @@ var app = new Vue({
 		addOne: function(){
 		
 				if (!this.currentTeacher) {
-					alert('请选择一个老师！');
+					this.$alert("请选择一个老师！","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 					return;
 				} else {
 					for (var i = 0; i < this.unselectTeacher.length; i++) {
@@ -491,7 +493,9 @@ var app = new Vue({
 		removeOne: function(){
 		
 				if (!this.currentTeacher) {
-					alert('请选择一个老师！');
+					this.$alert("请选择一个老师！","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 					return;
 				} else {
 					for (var i = 0; i < this.selectTeacher.length; i++) {
@@ -549,7 +553,9 @@ var app = new Vue({
 		},	
 		removeOneStudent: function(){
 		if (!this.currentStudent) {
-					alert('请选择一个学生！');
+					this.$alert("请选择一个学生！","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 					return;
 				} else {
 					for (var i = 0; i < this.selectStudent.length; i++) {
@@ -588,15 +594,21 @@ var app = new Vue({
 			
 			
 			if(this.userGroup.groupType == '1' && this.selectTeacher ==null ){
-			alert("老师不能为空");
+			this.$alert("老师不能为空！","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 			return ;
 			}
 			if(this.userGroup.groupType == '2' && this.selectStudent ==null ){
-			alert("学生不能为空");
+			this.$alert("学生不能为空！","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 			return ;
 			}
 			if(this.userGroup.groupName ==null){
-			 alert("组名不能为空");
+			 this.$alert("组号不能为空！","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 			 return;
 			}
 			

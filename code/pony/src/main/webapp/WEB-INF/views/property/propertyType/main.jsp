@@ -166,7 +166,9 @@ var app = new Vue({
 		},
 		update : function(){
 			if(this.propertyType.category == null || this.propertyType.category == ""||this.propertyType.name == null || this.propertyType.name == "" ){
-				alert("不能为空");
+				this.$alert("不能为空","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 				this.dialogFormVisible=false;
 				this.getPropertyType();
 				return ;
@@ -177,7 +179,9 @@ var app = new Vue({
 						this.propertyType={category:null,name:null};
 						this.getPropertyType();
 						if(response.data == "1"){
-							alert("已存在相同的分类编码");
+							this.$alert("已存在相同的分类编码","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 						}						 
 						
 						
@@ -189,7 +193,9 @@ var app = new Vue({
 		},
 		add : function(){
 			if(this.propertyType.category == null || this.propertyType.category == ""||this.propertyType.name == null || this.propertyType.name == "" ){
-				alert("不能为空");
+				this.$alert("不能为空","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 				this.dialogFormVisible=false;
 				this.getPropertyType();
 				return ;
@@ -200,7 +206,9 @@ var app = new Vue({
 						this.propertyType={category:null,name:null}; 
 						this.getPropertyType();
 						if(response.data == "1"){
-							alert("已存在相同的分类编码");
+							this.$alert("已存在相同的分类编码","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 						}
 						
 						

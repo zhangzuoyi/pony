@@ -149,6 +149,7 @@ width:200px;
 			 <el-col :span="6" :offset="10">
 			 <el-button type="primary" @click="onSubmit">提交</el-button>
 			 <el-button type="primary" @click="cancle">取消</el-button>
+			 <!-- <el-button type="primary" @click="alert">alert</el-button> -->
 			 </el-col>			 
 			</el-row>			
 			</el-form>
@@ -215,7 +216,21 @@ var app = new Vue({
 		}	,
 		cancle : function(){
 		
-		}
+		},
+		/* alert :function(){
+		 this.$alert("内容","标题",{
+		 confirmButtonText : '确认',
+		 //回调(可选)
+		 callback :  function(action,instance){
+		   instance.$message({
+		   type : 'info',
+		   message : 'action :   '+ action
+		   });
+		 } 
+		 });
+		}, */
+		
+		
 		
 			
 			 

@@ -28,18 +28,26 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
+
+
+
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.model.LessonArrange;
 import com.zzy.pony.model.LessonPeriod;
+import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
+import com.zzy.pony.model.TeacherSubject;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.model.Weekday;
 import com.zzy.pony.service.AutoLessonArrangeService;
 import com.zzy.pony.service.LessonArrangeService;
 import com.zzy.pony.service.LessonPeriodService;
+import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.SchoolYearService;
+import com.zzy.pony.service.TeacherSubjectService;
 import com.zzy.pony.service.TermService;
 import com.zzy.pony.service.WeekdayService;
 import com.zzy.pony.vo.conditionVo;
@@ -62,6 +70,10 @@ public class AutoLessonArrangeController {
 	private LessonPeriodService lessonPeriodService;
 	@Autowired
 	private WeekdayService weekdayService;
+	@Autowired
+	private TeacherSubjectService teacherSubjectService;
+	@Autowired
+	private SchoolClassService schoolClassService;
 
 	@RequestMapping(value="main",method = RequestMethod.GET)
 	public String main(Model model){	
@@ -96,8 +108,13 @@ public class AutoLessonArrangeController {
 				map.put("period", lessonPeriod.getSeq()+"");
 				for (Weekday weekday : weekdays) {
 					LessonArrange lessonArrange =  lessonArrangeService.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(cv.getClassId(), year, term, weekday.getSeq()+"", lessonPeriod);
-					if (lessonArrange != null && lessonArrange.getSubject() !=null) {
-						map.put( Constants.WEEKDAYMAP.get(weekday.getSeq()+"") , lessonArrange.getSubject().getName());
+					//新增老师名字
+					SchoolClass schoolClass = schoolClassService.get(cv.getClassId());
+					
+					
+					if (lessonArrange != null && lessonArrange.getSubject() !=null ) {
+						TeacherSubject  teacherSubject = teacherSubjectService.findCurrentByClassAndSubject(schoolClass,lessonArrange.getSubject());						
+						map.put( Constants.WEEKDAYMAP.get(weekday.getSeq()+"") , lessonArrange.getSubject().getName()+"("+teacherSubject.getTeacher().getName()+")");
 					}					
 				}
 				dataList.add(map);

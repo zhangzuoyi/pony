@@ -277,7 +277,9 @@ var app = new Vue({
 							function(response){
 								this.selectData = [];
 								this.getListTableData();
-								alert("保存成功");
+								this.$alert("保存成功","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
 							 },
 							function(response){}  			
 							);   		  
