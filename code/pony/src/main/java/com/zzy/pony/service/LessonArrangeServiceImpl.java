@@ -151,6 +151,20 @@ public class LessonArrangeServiceImpl implements LessonArrangeService {
 		// TODO Auto-generated method stub
 		dao.delete(list);
 	}
+
+	@Override
+	public LessonArrange findByClassIdAndSubjectAndSchoolYearAndTermAndWeekDayAndLessonPeriod(
+			int classId, Subject subject, SchoolYear year, Term term,
+			String weekDay, LessonPeriod lessonPeriod) {
+		// TODO Auto-generated method stub
+		List<LessonArrange> list = dao.findByClassIdAndSubjectAndSchoolYearAndTermAndWeekDayAndLessonPeriod(classId, subject, year, term, weekDay, lessonPeriod);
+		if (list != null && list.size()>0) {
+			return list.get(0);
+		}
+		return null;
+	}
+	
+	
 	
 	
 	

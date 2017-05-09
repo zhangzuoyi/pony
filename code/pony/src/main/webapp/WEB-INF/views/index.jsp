@@ -83,6 +83,7 @@
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/preLessonArrange/main/' />" iframe="1">预排</a></li>
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/autoLessonArrange/main/' />" iframe="1">自动排课</a></li>
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/reLessonArrange/main/' />" iframe="1">调课</a></li>
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/teacherCourse/main/' />" iframe="1">教师课表</a></li>
                 	
                 	
                 </ul>
@@ -131,6 +132,7 @@
             <div title="任课管理" data-options="iconCls:'icon-application-form-edit'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/teacher/courses/' />" iframe="1">我的任课</a></li>
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/teacher/mycourse/' />" iframe="1">我的课表</a></li>                   
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/teacher/examresult/' />" iframe="1">成绩管理</a></li>              
                 </ul>
             </div>
@@ -139,7 +141,6 @@
             <div title="学生菜单" data-options="iconCls:'icon-application-form-edit'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/student/chooseCourseMain/' />" iframe="1">选课</a></li>
-                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/student/mycourseMain/' />" iframe="1">我的课表</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/student/myresultsMain/' />" iframe="1">我的成绩</a></li>
                 </ul>
             </div>
