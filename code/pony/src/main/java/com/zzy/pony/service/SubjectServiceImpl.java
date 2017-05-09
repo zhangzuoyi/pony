@@ -1,7 +1,9 @@
 package com.zzy.pony.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -131,13 +133,17 @@ public class SubjectServiceImpl implements SubjectService {
 		for (Exam exam : exams) {
 			List<ExamSubject> examSubjects =  examSubjectDao.findByExam(exam);
 			for (ExamSubject examSubject : examSubjects) {
-				if (!result.contains(examSubject)) {
-					result.add(examSubject.getSubject());
-				}				
-			}
+				result.add(examSubject.getSubject());				
 		}
+		}
+		//重写hashCode和equals方法去重subject
+		Set<Subject> subjects = new HashSet<Subject>();
+		subjects.addAll(result);
 		
-		return result;
+		List<Subject> subjectList = new ArrayList<Subject>();
+		subjectList.addAll(subjects);
+		
+		return subjectList;
 	}
 	
 	

@@ -52,6 +52,9 @@ public class StudentComprehensiveTrackServiceImpl implements StudentComprehensiv
 		//根据studentId获取所有参加的examId
 		List<Map<String, Object>>  resultList = new ArrayList<Map<String,Object>>();
 				List<Integer> examIds =	examResultRankService.findExamsByStudentId(cv.getStudentId());
+				int classId = cv.getClassId();
+				int studentId = cv.getStudentId();
+				
 				if (examIds!= null && examIds.size() >0) {
 					for (Integer examId : examIds) {
 						Exam exam = examDao.findOne(examId);
@@ -72,8 +75,8 @@ public class StudentComprehensiveTrackServiceImpl implements StudentComprehensiv
 						}
 						cv.setSchoolClasses(schoolClasses);
 						
-						int classId = cv.getClassId();
-						int studentId = cv.getStudentId();
+						//int classId = cv.getClassId();
+						//int studentId = cv.getStudentId();
 						//将classId和studentId置空
 						cv.setClassId(0);
 						cv.setStudentId(0);
