@@ -1,5 +1,6 @@
 package com.zzy.pony.config;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -35,6 +36,30 @@ public class Constants {
 	public static final Map<String, String> USER_TYPES;
 	public static final Map<Integer, String> SUBJETCS;
 	public static final Map<Integer, String> PP_TYPES;//奖惩类型 
+	
+	private static Map<String, String> dictTypes;
+	public static final String DICT_SEX = "sex";
+	public static final String DICT_CREDENTIAL = "credential";
+	public static final String DICT_EDU_DEGREE= "edu_degree";
+	public static final String DICT_STU_REMARK_LEVEL = "stu_remark_level";
+	public static final String DICT_STUDENT_TYPE = "student_type";
+	public static final String DICT_STUDENT_STATUS= "student_status";
+
+	
+	
+	public static Map<String, String> getDictTypes(){
+		if (dictTypes == null) {
+			dictTypes=new LinkedHashMap<String, String>();
+			dictTypes.put(DICT_SEX, "性别");
+			dictTypes.put(DICT_CREDENTIAL, "证件类型");
+			dictTypes.put(DICT_EDU_DEGREE, "教育程度");
+			dictTypes.put(DICT_STU_REMARK_LEVEL, "成绩等级");
+			dictTypes.put(DICT_STUDENT_TYPE, "学生类型");
+			dictTypes.put(DICT_STUDENT_STATUS, "学生状态");
+			Collections.unmodifiableMap(dictTypes);
+		}
+		return dictTypes;
+	}
 	
 	static{
 		WEEKDAYS=new LinkedHashMap<String, String>();

@@ -19,6 +19,7 @@
 <script type="text/javascript" src="<s:url value='/static/easyui/dateFormat.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/vue/vue.min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/vue/vue-resource.min.js' />"></script>
+<script type="text/javascript" src="<s:url value='/static/vue/vue-validator.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/elementUI/index.js' />"></script>
 <style type="text/css">
 .el-input {
@@ -50,7 +51,7 @@ width:200px;
 			</el-col>						
 			<el-col :span="8">
 			<el-form-item label="名称"> 
-			<el-input v-model="property.name" ></el-input> 			
+			<el-input v-model="property.name" v-validate:name="{required:true}"></el-input> 			
 			</el-form-item>
 			</el-col>
 			<el-col :span="8">
@@ -174,6 +175,7 @@ var app = new Vue({
 		property:{propertyType:null,department:null,owner:null,user:null},
 		usersUrl:"<s:url value='/teacherAdmin/list'/>",	//责任人和使用人取教师	
 		users:[],
+		property:{}
 			
 	
 	

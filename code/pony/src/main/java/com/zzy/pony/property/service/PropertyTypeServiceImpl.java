@@ -53,8 +53,8 @@ public class PropertyTypeServiceImpl implements PropertyTypeService {
 	@Override
 	public Boolean isExist(PropertyType propertyType) {
 		// TODO Auto-generated method stub
-		PropertyType pt = propertyTypeDao.findOne(propertyType.getCategory());
-		if (pt == null) {
+		List<PropertyType> propertyTypes = propertyTypeDao.findByCategory(propertyType.getCategory());
+		if (propertyTypes == null || propertyTypes.isEmpty()) {
 			return false;
 		}
 		return true;
