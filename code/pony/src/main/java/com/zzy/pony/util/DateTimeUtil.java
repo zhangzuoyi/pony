@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DateTimeUtil {
+	public static final String FORMAL_SHORT_FORMAT="yyyyMMdd";
 	public static final String FORMAL_FORMAT="yyyy-MM-dd";
 	public static final String FORMAL_LONG_FORMAT="yyyy-MM-dd HH:mm:ss";
 

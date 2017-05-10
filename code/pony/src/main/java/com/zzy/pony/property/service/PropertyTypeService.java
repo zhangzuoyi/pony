@@ -16,4 +16,5 @@ public interface PropertyTypeService {
 	void update(PropertyType propertyType);
 	void delete(int typeId);
 	Boolean isExist(PropertyType propertyType);
+	PropertyType get(int id);
 }

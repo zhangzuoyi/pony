@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.zzy.pony.config.Constants;
 import com.zzy.pony.dao.CommonDictDao;
 import com.zzy.pony.model.CommonDict;
 
@@ -92,6 +93,13 @@ public class DictServiceImpl implements DictService {
 	public List<CommonDict> findStudentTypes() {
 		return dao.findByDictType("student_type");
 	}
+
+	@Override
+	public List<CommonDict> findPropertyStatus() {
+		// TODO Auto-generated method stub
+		return dao.findByDictType(Constants.DICT_PROPERTY_STATUS);
+	}
+	
 	
 	
 

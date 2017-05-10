@@ -39,23 +39,23 @@ width:200px;
               </el-row>                                
             </div>
 
-			<el-form ref="form" :model="property" label-width="80px" >
+			<el-form ref="ruleForm" :model="property" label-width="80px"  :rules="rules" >
 			<el-row>
 			<el-col :span="8">
-			<el-form-item label="分类"> 
+			<el-form-item label="分类" prop="propertyType"> 
 			<el-select v-model="property.propertyType" placeholder="请选择.."> 
-				<el-option v-for="propertyType in propertyTypes" :label="propertyType.name" :value="propertyType.category">				
+				<el-option v-for="propertyType in propertyTypes" :label="propertyType.name" :value="propertyType.typeId">				
 				</el-option> 				
 			</el-select> 
 			</el-form-item>
 			</el-col>						
 			<el-col :span="8">
-			<el-form-item label="名称"> 
+			<el-form-item label="名称" prop="name"> 
 			<el-input v-model="property.name" v-validate:name="{required:true}"></el-input> 			
 			</el-form-item>
 			</el-col>
 			<el-col :span="8">
-			<el-form-item label="型号"> 
+			<el-form-item label="型号" prop="spec"> 
 			<el-input v-model="property.spec" ></el-input> 			
 			</el-form-item>
 			</el-col>			
@@ -63,12 +63,12 @@ width:200px;
 			
 			<el-row>
 			<el-col :span="8">
-			<el-form-item label="存放地点"> 
+			<el-form-item label="存放地点" prop="location"> 
 			<el-input v-model="property.location" ></el-input>
 			</el-form-item>
 			</el-col>						
 			<el-col :span="8">
-			<el-form-item label="使用部门"> 
+			<el-form-item label="使用部门" prop="department"> 
 			<el-select v-model="property.department" placeholder="请选择.."> 
 				<el-option v-for="department in departments"  :label="department.name" :value="department.deptId"></el-option> 
 				
@@ -76,7 +76,7 @@ width:200px;
 			</el-form-item>
 			</el-col>
 			<el-col :span="8">
-			<el-form-item label="购买日期"> 
+			<el-form-item label="购买日期" prop="buyDate"> 
 			<el-date-picker type="date" placeholder="选择日期" v-model="property.buyDate" style="width: 200px;"></el-date-picker> 			
 			</el-form-item>
 			</el-col>			
@@ -84,17 +84,17 @@ width:200px;
 			
 			<el-row>
 			<el-col :span="8">
-			<el-form-item label="购买价格"> 
+			<el-form-item label="购买价格" prop="price"> 
 			<el-input-number size="large" v-model="property.price" style="width:200px;"></el-input-number>
 			</el-form-item>
 			</el-col>						
 			<el-col :span="8">
-			<el-form-item label="品牌"> 
+			<el-form-item label="品牌" prop="brand"> 
 			<el-input v-model="property.brand" ></el-input>						 			
 			</el-form-item>
 			</el-col>
 			<el-col :span="8">
-			<el-form-item label="生产日期"> 
+			<el-form-item label="生产日期" prop="productDate"> 
 			<el-date-picker type="date" placeholder="选择日期" v-model="property.productDate" style="width: 200px;"></el-date-picker> 			
 			</el-form-item>
 			</el-col>			
@@ -102,21 +102,21 @@ width:200px;
 			
 			<el-row>
 			<el-col :span="8">
-			<el-form-item label="责任人"> 
+			<el-form-item label="责任人" prop="owner"> 
 			<el-select v-model="property.owner" placeholder="请选择" filterable> 
 				<el-option v-for="user in users"  :label="user.name" :value="user.teacherId"></el-option> 				
 			</el-select>
 			</el-form-item>
 			</el-col>						
 			<el-col :span="8">
-			<el-form-item label="使用人"> 
+			<el-form-item label="使用人" prop="user"> 
 			<el-select v-model="property.user" placeholder="使用人"> 
 					<el-option v-for="user in users"  :label="user.name" :value="user.teacherId"></el-option> 								
 			</el-select> 			 			
 			</el-form-item>
 			</el-col>
 			<el-col :span="8">
-			<el-form-item label="资产编码"> 
+			<el-form-item label="资产编码" prop="propCode"> 
 			<el-input v-model="property.propCode" :disabled="true" ></el-input>						 			
 			</el-form-item>
 			</el-col>			
@@ -124,32 +124,31 @@ width:200px;
 			
 			<el-row>
 			<el-col :span="8">
-			<el-form-item label="状态"> 
+			<el-form-item label="状态" prop="status"> 
 			<el-select v-model="property.status" placeholder="状态"> 
-				<el-option label="区域一" value="shanghai"></el-option> 
-				<el-option label="区域二" value="beijing"></el-option>
+				<el-option  v-for=" status  in  propertyStatus" :label="status.value" :value="status.code"></el-option> 				 
 			</el-select>
 			</el-form-item>
 			</el-col>						
 			<el-col :span="8">
-			<el-form-item label="采购数量"> 
+			<el-form-item label="采购数量" prop="number"> 
 			<el-input-number size="large" v-model="property.number" style="width:200px;"></el-input-number>			
 			</el-col>						
 			</el-row>
 			<el-row>
-			<el-form-item label="详细配置">
+			<el-form-item label="详细配置" prop="description">
 			<el-input type="textarea" :rows="5" placeholder="请输入内容" v-model="property.description"></el-input>			
 			</el-form-item>
 			</el-row>
 			<el-row>
-			<el-form-item label="备注">
+			<el-form-item label="备注" prop="comments">
 			<el-input type="textarea" :rows="5" placeholder="请输入内容" v-model="property.comments"></el-input>						
 			</el-form-item>
 			</el-row>
 			<el-row>
 			 <el-col :span="6" :offset="10">
-			 <el-button type="primary" @click="onSubmit">提交</el-button>
-			 <el-button type="primary" @click="cancle">取消</el-button>
+			 <el-button type="primary" @click="onSubmit('ruleForm')">提交</el-button>
+			 <el-button type="primary" @click="reset('ruleForm')">重置</el-button>
 			 <!-- <el-button type="primary" @click="alert">alert</el-button> -->
 			 </el-col>			 
 			</el-row>			
@@ -172,10 +171,18 @@ var app = new Vue({
 		propertyTypes:[],
 		departmentUrl:"<s:url value='/property/department/list'/>",
 		departments:[],
+		propertyStatusUrl:"<s:url value='/commonDict/propertyStatus'/>",
+		propertyStatus:[],
 		property:{propertyType:null,department:null,owner:null,user:null},
 		usersUrl:"<s:url value='/teacherAdmin/list'/>",	//责任人和使用人取教师	
 		users:[],
-		property:{}
+		property:{propertyType:null,department:null,user:null,owner:null,buyDate:null,productDate:null,   status : '1'},
+		rules :{
+		name: [{required :true,message:"请选择名称",trigger:"blur"}],
+		status: [{required :true,message:"请填写状态",trigger:"blur"}],
+		},
+		submitUrl:"<s:url value='/property/add/addPropertys'/>",
+		
 			
 	
 	
@@ -187,6 +194,7 @@ var app = new Vue({
 		this.getPropertyType();	
 		this.getDepartment();
 		this.getUsers();
+		this.getPropertyStatus();
 	}, 
 	methods : { 
 	   
@@ -213,11 +221,34 @@ var app = new Vue({
 					function(response){}  			
 					); 
 					} ,
-		onSubmit : function(){
+		getPropertyStatus :function(){ 
+					this.$http.get(this.propertyStatusUrl).then(
+					function(response){
+					this.propertyStatus=response.data;},
+					function(response){}  			
+					); 
+					} ,			
+					
+		onSubmit : function(formName){
+			
+			this.$refs[formName].validate(function(valid){
+				if(valid){
+				app.$http.post(app.submitUrl,app.propertyType).then(
+					function(response){
+						app.property={propertyType:null,department:null,user:null,owner:null,   status : '1'};
+						app.$message({type:'info',message:'提交成功'});												 												
+					 },
+					function(response){}  			
+					);			
+				}else{
+				console.log("error submit!");				
+				}
+			});
+			
 			
 		}	,
-		cancle : function(){
-		
+		reset : function(ruleForm){
+		  this.$refs[ruleForm].resetFields();
 		},
 		/* alert :function(){
 		 this.$alert("内容","标题",{

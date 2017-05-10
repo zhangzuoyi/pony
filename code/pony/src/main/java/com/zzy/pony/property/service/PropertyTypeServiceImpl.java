@@ -59,6 +59,13 @@ public class PropertyTypeServiceImpl implements PropertyTypeService {
 		}
 		return true;
 	}
+
+	@Override
+	public PropertyType get(int id) {
+		// TODO Auto-generated method stub
+		return propertyTypeDao.findOne(id);
+	}
+	
 	
 	
 

@@ -62,6 +62,13 @@ public class DepartmentServiceImpl implements DepartmentService {
 		}
 		return true;
 	}
+
+	@Override
+	public Department get(int id) {
+		// TODO Auto-generated method stub
+		return departmentDao.findOne(id);
+	}
+	
 	
 	
 

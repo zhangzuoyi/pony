@@ -29,6 +29,7 @@ public interface DictService {
 	 * @return
 	 */
 	List<CommonDict> findStudentTypes();
+	List<CommonDict> findPropertyStatus();
 	
 	
 	

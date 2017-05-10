@@ -97,6 +97,14 @@ public class CommonDictController {
 		
 		return Constants.getDictTypes();
 	}
+	@ResponseBody
+	@RequestMapping(value="propertyStatus",method = RequestMethod.GET)
+	public List<CommonDict> propertyStatus(){
+		
+		return dictService.findPropertyStatus();
+	}
+	
+	
 	
 	
 	
