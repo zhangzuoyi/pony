@@ -40,14 +40,20 @@ public class PropertyAddServiceImpl implements PropertyAddService {
 	public int maxCode(String date) {
 		// TODO Auto-generated method stub
 		List<Property> list = propertyDao.findByPropCodeStartingWith(date);
-		int max  = Integer.valueOf(list.get(0).getPropCode()) ;
-		for (Property property : list) {
-			int code = Integer.valueOf(property.getPropCode()) ; 
-			if(code > max){
-				max = code;
-			}		
+		long max = 0;
+		int result  = 0;
+		if (list != null && list.size()>0) {
+			 max  = Long.valueOf(list.get(0).getPropCode()) ; 
+			 for (Property property : list) {
+					long code = Long.valueOf(property.getPropCode()) ; 
+					if(code > max){
+						max = code;
+					}		
+				}
+				result =  Integer.valueOf(String.valueOf(max).substring(8));		
 		}
-		int result =  Integer.valueOf(String.valueOf(max).substring(6));		
+		
+
 		return result;
 	}
 	

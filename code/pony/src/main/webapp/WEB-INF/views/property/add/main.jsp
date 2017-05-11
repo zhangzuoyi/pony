@@ -110,7 +110,7 @@ width:200px;
 			</el-col>						
 			<el-col :span="8">
 			<el-form-item label="使用人" prop="user"> 
-			<el-select v-model="property.user" placeholder="使用人"> 
+			<el-select v-model="property.user" placeholder="使用人" filterable> 
 					<el-option v-for="user in users"  :label="user.name" :value="user.teacherId"></el-option> 								
 			</el-select> 			 			
 			</el-form-item>
@@ -176,7 +176,7 @@ var app = new Vue({
 		property:{propertyType:null,department:null,owner:null,user:null},
 		usersUrl:"<s:url value='/teacherAdmin/list'/>",	//责任人和使用人取教师	
 		users:[],
-		property:{propertyType:null,department:null,user:null,owner:null,buyDate:null,productDate:null,   status : '1'},
+		property:{propertyType:null,department:null,user:null,owner:null,buyDate:null,productDate:null,status : '1',number:null,description:null,comments:null},
 		rules :{
 		name: [{required :true,message:"请选择名称",trigger:"blur"}],
 		status: [{required :true,message:"请填写状态",trigger:"blur"}],
@@ -233,13 +233,22 @@ var app = new Vue({
 			
 			this.$refs[formName].validate(function(valid){
 				if(valid){
-				app.$http.post(app.submitUrl,app.propertyType).then(
+				
+				app.$confirm("确认提交？","提示",{
+				confirmButtonText :'确认',
+				cancleButtonText : '取消',
+				type:'info'	
+				}).then(function(){ 
+					app.$http.post(app.submitUrl,app.property).then(
 					function(response){
-						app.property={propertyType:null,department:null,user:null,owner:null,   status : '1'};
+						app.property={propertyType:null,department:null,user:null,owner:null,buyDate:null,productDate:null,status : '1',number:null,description:null,comments:null};
 						app.$message({type:'info',message:'提交成功'});												 												
 					 },
 					function(response){}  			
-					);			
+					);
+				
+				   })
+				.catch(function(){ });							
 				}else{
 				console.log("error submit!");				
 				}

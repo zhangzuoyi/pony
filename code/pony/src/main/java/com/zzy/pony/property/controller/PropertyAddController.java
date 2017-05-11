@@ -80,7 +80,7 @@ public class PropertyAddController {
 			property.setUser(userService.findByTeacherId(vo.getUser()));
 			//编码规则  年月日+序号 例如  201705100001
 			String preffix =  DateTimeUtil.dateToStr(new Date(), DateTimeUtil.FORMAL_SHORT_FORMAT);
-			String suffix =  String.format("%4d", maxCode+i);
+			String suffix =  String.format("%04d", maxCode+i);
 			property.setPropCode(preffix+suffix);
 			propertyAddService.add(property);			
 		}
