@@ -1,7 +1,9 @@
 package com.zzy.pony.service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -119,6 +121,25 @@ public class UserServiceImpl implements UserService {
 		}	
 		return null;
 	}
+
+	/*** 
+	* <p>Description: MAP<ID,NAME></p>
+	* @author  WANGCHAO262
+	* @date  2017年5月12日 上午10:29:37
+	*/
+	@Override
+	public Map<Integer, String> getUserNameMap() {
+		// TODO Auto-generated method stub
+		Map<Integer, String> result = new HashMap<Integer, String>();
+		List<User> users = dao.findAll();
+		for (User user : users) {
+			String name =   this.findUserNameById(user.getUserId());
+			result.put(user.getUserId(), name);
+		}
+		
+		return result;
+	}
+	
 	
 	
 	

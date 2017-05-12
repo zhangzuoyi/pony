@@ -3,6 +3,7 @@ package com.zzy.pony.property.controller;
 
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -17,8 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zzy.pony.property.model.Property;
-import com.zzy.pony.property.model.PropertyType;
-import com.zzy.pony.property.service.PropertyTypeService;
+import com.zzy.pony.property.service.PropertyAdminService;
+import com.zzy.pony.property.vo.PropertyVo;
+import com.zzy.pony.service.UserService;
 
 
 
@@ -28,6 +30,10 @@ import com.zzy.pony.property.service.PropertyTypeService;
 public class PropertyAdminController {
 	static Logger log=LoggerFactory.getLogger(PropertyAdminController.class);
 	
+	@Autowired
+	private PropertyAdminService propertyAdminService;
+	@Autowired
+	private UserService userService;
 	
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
@@ -36,28 +42,58 @@ public class PropertyAdminController {
 	}
 	@RequestMapping(value="list",method = RequestMethod.GET)
 	@ResponseBody
-	public List<Property> list(){		
-		return null;
+	public List<PropertyVo> list(){	
+		List<PropertyVo> result = new ArrayList<PropertyVo>();
+		List<Property> propertys =  propertyAdminService.list();
+		for (Property property : propertys) {
+			PropertyVo vo = new PropertyVo();
+			vo.setPropId(property.getPropId());
+			vo.setPropertyTypeName(property.getPropertyType().getName());
+			vo.setName(property.getName());
+			vo.setSpec(property.getSpec());
+			vo.setPropCode(property.getPropCode());
+			vo.setLocation(property.getLocation());
+			vo.setOwnerName(userService.findUserNameById(property.getOwner().getUserId()));
+			vo.setStatus(property.getStatus());
+			if(property.getUser() != null){
+				vo.setUserName(userService.findUserNameById(property.getUser().getUserId()));		
+			}
+		result.add(vo);
+		}
+		
+		return result;
+		
 	}
 	
 	@RequestMapping(value="receive",method = RequestMethod.POST)
 	@ResponseBody
-	public void receive(@RequestBody PropertyType propertyType){		
+	public void receive(@RequestParam(value="selectPropertys[]") List<Integer> properties,@RequestParam(value="user") int teacherId ){		
+		
+		for (Integer propId : properties) {	
+			Property property = propertyAdminService.get(propId);
+			propertyAdminService.receive(property, teacherId);
+		}
 		
 	}
 	
 	@RequestMapping(value="back",method = RequestMethod.POST)
 	@ResponseBody
-	public void back(@RequestBody PropertyType propertyType){		
+	public void back(@RequestBody List<Integer> properties){		
 		
-		
+		for (Integer propId : properties) {
+			Property property = propertyAdminService.get(propId);
+			propertyAdminService.back(property);
+		}
 		
 	}
 	
-	@RequestMapping(value="cancle",method = RequestMethod.GET)
+	@RequestMapping(value="cancle",method = RequestMethod.POST)
 	@ResponseBody
-	public void cancle(@RequestParam(value="typeId") int typeId){		
-		
+	public void cancle(@RequestBody List<Integer> properties){		
+		for (Integer propId : properties) {
+			Property property =  propertyAdminService.get(propId);
+			propertyAdminService.cancle(property);
+		}
 	}
 	
 	

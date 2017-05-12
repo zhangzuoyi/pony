@@ -176,7 +176,7 @@ var app = new Vue({
 		property:{propertyType:null,department:null,owner:null,user:null},
 		usersUrl:"<s:url value='/teacherAdmin/list'/>",	//责任人和使用人取教师	
 		users:[],
-		property:{propertyType:null,department:null,user:null,owner:null,buyDate:null,productDate:null,status : '1',number:null,description:null,comments:null},
+		property:{propertyType:null,department:null,user:null,owner:null,buyDate:null,productDate:null,status : '0',number:null,description:null,comments:null},
 		rules :{
 		name: [{required :true,message:"请选择名称",trigger:"blur"}],
 		status: [{required :true,message:"请填写状态",trigger:"blur"}],
@@ -241,7 +241,7 @@ var app = new Vue({
 				}).then(function(){ 
 					app.$http.post(app.submitUrl,app.property).then(
 					function(response){
-						app.property={propertyType:null,department:null,user:null,owner:null,buyDate:null,productDate:null,status : '1',number:null,description:null,comments:null};
+						app.property={propertyType:null,department:null,user:null,owner:null,buyDate:null,productDate:null,status : '0',number:null,description:null,comments:null};
 						app.$message({type:'info',message:'提交成功'});												 												
 					 },
 					function(response){}  			

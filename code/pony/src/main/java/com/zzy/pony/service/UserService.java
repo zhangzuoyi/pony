@@ -1,6 +1,7 @@
 package com.zzy.pony.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.zzy.pony.model.Role;
 import com.zzy.pony.model.Student;
@@ -18,5 +19,6 @@ public interface UserService {
 	User findByTeacherId(int teacherId);
 	User findByStudentId(int studentId);
 	String findUserNameById(Integer id);
+	Map<Integer, String> getUserNameMap();
 
 }

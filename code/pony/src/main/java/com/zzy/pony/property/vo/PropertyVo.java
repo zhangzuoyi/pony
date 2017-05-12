@@ -16,9 +16,12 @@ public class PropertyVo {
 	private String spec;
 	private String status;
 	private int propertyType;
+	private String propertyTypeName;
 	private int department;
 	private int owner;
+	private String ownerName;
 	private int user;
+	private String userName;
 	private int number;
 	public PropertyVo(){}
 	public int getPropId() {
@@ -124,6 +127,25 @@ public class PropertyVo {
 	public void setNumber(int number) {
 		this.number = number;
 	}
+	public String getPropertyTypeName() {
+		return propertyTypeName;
+	}
+	public void setPropertyTypeName(String propertyTypeName) {
+		this.propertyTypeName = propertyTypeName;
+	}
+	public String getOwnerName() {
+		return ownerName;
+	}
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	
 	
 	
 }

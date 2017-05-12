@@ -25,6 +25,10 @@ public class Constants {
 	public static final String RECEIVER_TYPE_USER=  "1" ;//个人
 	public static final int RECEIVER_READ_Y=  1 ;//已读
 	public static final int RECEIVER_READ_N=  0 ;//未读
+	public static final String PROPERTY_STATUS_FREE=  "0" ;//资产状态  空闲
+	public static final String PROPERTY_STATUS_OCCUPY=  "1" ;//资产状态  使用中
+	public static final String PROPERTY_STATUS_DESTROY=  "2" ;//资产状态  作废
+
 	
 	public static final String MESSAGE_ATTACH_UPLOADPATH = "/home/upload";
 	

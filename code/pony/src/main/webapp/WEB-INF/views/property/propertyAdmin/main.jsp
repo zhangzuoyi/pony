@@ -38,7 +38,7 @@ width:200px;
               </el-row>
               <el-row>
                <el-col :span="16">
-                <el-button type="primary" @click="add">新增</el-button>
+               <!--  <el-button type="primary" @click="add">新增</el-button> -->
                 <el-button type="primary" @click="receive">领用</el-button>
                 <el-button type="primary" @click="back">归还</el-button>
                 <el-button type="primary" @click="cancle">作废</el-button>                                
@@ -61,7 +61,7 @@ width:200px;
                          inline-template
                         label="分类"
                         >
-                 <div>{{row.typeId | typeFilter}}</div>       
+                 <div>{{row.propertyTypeName }}</div>       
                 </el-table-column>
                 <el-table-column
                 		prop="name"
@@ -87,7 +87,7 @@ width:200px;
                          inline-template
                         label="责任人"
                         >
-                 <div>{{row.ownerId | ownerFilter}}</div>       
+                 <div>{{row.ownerName}}</div>       
                 </el-table-column>
                 <el-table-column
                          inline-template
@@ -99,7 +99,7 @@ width:200px;
                          inline-template
                         label="使用人"
                         >
-                 <div>{{row.userId | userFilter}}</div>       
+                 <div>{{row.userName}}</div>       
                 </el-table-column>
                                              
                 
@@ -108,6 +108,22 @@ width:200px;
 			
 
         </el-card>
+		<el-dialog title="领用" v-model="dialogFormVisible" >			
+			<el-form :model="ruleForm" :rules="rules" ref="ruleForm">			 
+			 <el-form-item label="使用人" prop="user" :label-width="formLabelWidth"> 
+			 <el-select v-model="ruleForm.user" placeholder="使用人" filterable> 
+					<el-option v-for="user in users"  :label="user.name" :value="user.teacherId+''"></el-option> 								
+			</el-select> 			 			
+			</el-form-item>
+		    </el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button type="primary" @click="onSubmit('ruleForm')">确定</el-button>
+				<el-button @click="dialogFormVisible = false">取 消</el-button>				
+			</div>
+		</el-dialog>
+			 
+			
+			
 			
 
 
@@ -125,23 +141,89 @@ var app = new Vue({
 		propertysUrl:"<s:url value='/property/propertyAdmin/list'/>",
 		receiveUrl :"<s:url value='/property/propertyAdmin/receive'/>",		
 		backUrl :"<s:url value='/property/propertyAdmin/back'/>",
-		deleteUrl :"<s:url value='/property/propertyAdmin/delete'/>",
-		selectPropertys:[]
+		deleteUrl :"<s:url value='/property/propertyAdmin/cancle'/>",
+		selectPropertys:[],
+		usersUrl:"<s:url value='/teacherAdmin/list'/>",	//责任人和使用人取教师	
+		users:[],
+		ruleForm :{user : ''},
+		dialogFormVisible:false,
+		formLabelWidth:"120px",
+		rules :{
+		 user: [{required: true, message: '请选择用户', trigger: 'change'}],
+		},
+		propertyTypeUrl:"<s:url value='/property/propertyType/list'/>",
+		propertyTypes:[],
+		userNameMapUrl:"<s:url value='/user/userNameMap'/>",
+		userNameMap:[],
 	
 	
 		
-	}, 
+	},
+	filters: {    
+   		 /* typeFilter: function (value) {
+     		for(var index in app.propertyTypes){
+     		  if(app.propertyTypes[index].typeId == value){
+     		    return app.propertyTypes[index].name;
+     		  }
+     		}    		
+ 		 }	, 
+ 		  ownerFilter: function (value) {
+     		for(var index in app.userNameMap){
+     		  if(app.userNameMap[index].key == value){
+     		    return app.propertyTypes[index].value;
+     		  }
+     		}   
+ 		 }	, 
+ 		 userFilter: function (value) {
+     		 for(var index in app.userNameMap){
+     		  if(app.userNameMap[index].key == value){
+     		    return app.propertyTypes[index].value;
+     		  }
+     		} 
+    		}, */
+ 		   
+ 		 statusFilter: function (value) {
+     		 if(value == '0'){return "空闲"; }
+     		 if(value == '1'){return "使用中"; }
+     		 if(value == '2'){return "作废"; }
+     		 
+    		
+ 		 }	, 
+ 		},
 	
 	mounted : function() { 
 		this.getPropertys();
+		this.getUsers();
+		//this.getPropertyType();
+		//this.getUserNameMap(); 
+		
 			
 	}, 
 	methods : { 
 		 handleSelectionChange:function(val) {
 		             this.selectPropertys = val;                                   
 		            },
-	
-	   
+		  /*  getUserNameMap: function(){		 
+			this.$http.get(this.userNameMapUrl).then(
+			function(response){
+			this.userNameMap=response.data;},
+			function(response){}  			
+			); 
+			} , 
+		  getPropertyType : function(){		 
+			this.$http.get(this.propertyTypeUrl).then(
+			function(response){
+			this.propertyTypes=response.data;},
+			function(response){}  			
+			); 
+			} , */
+	     getUsers : function(){ 
+					this.$http.get(this.usersUrl).then(
+					function(response){
+					this.users=response.data;},
+					function(response){}  			
+					); 
+					} , 
 		 getPropertys : function(){
 			
 			 
@@ -150,7 +232,7 @@ var app = new Vue({
 			this.tableData=response.data;},
 			function(response){}  			
 			); 
-			} ,
+			} , 
 		 receive : function(){
 			//只有空闲状态(0)才可以使用
 			if(this.selectPropertys == null || this.selectPropertys.length == 0){
@@ -168,18 +250,44 @@ var app = new Vue({
 				});
 				return ;
 			 }
-			}	
-			//传递数组		 
-			this.$http.post(this.receiveUrl,this.selectPropertys).then(
-			function(response){
-			this.$message({
-				type:"info",
-				message:"领取成功"
-			});
+			}				
+			this.dialogFormVisible = true;			
 			},
-			function(response){}  			
-			); 
-			} ,	
+			
+			onSubmit :function(formName){
+			//传递数组
+			 this.$refs[formName].validate(function(valid){
+				if(valid){	
+				   var selectPropertys = []; 
+				   for(var index in app.selectPropertys){
+				    selectPropertys.push(app.selectPropertys[index].propId);
+				   }
+							   
+				    app.$http.post(app.receiveUrl,{selectPropertys:selectPropertys,user:app.ruleForm.user},{
+                            emulateJSON:true
+                        }
+				    ).then(
+					function(response){
+					app.dialogFormVisible = false;
+					app.selectPropertys = [];
+					app.ruleForm={user : ''};
+					app.getPropertys();
+					app.$message({
+						type:"info",
+						message:"领取成功"
+					});
+					},
+					function(response){}  			
+					);   				
+				}else{
+				
+				console.log("error submit!");				
+				}
+			}); 	
+			
+			
+			},	
+			
 		 back : function(){
 			
 			 
@@ -200,9 +308,15 @@ var app = new Vue({
 				return ;
 			 }
 			}	
-			//传递数组		 
-			this.$http.post(this.backUrl,this.selectPropertys).then(
+			//传递数组
+			var selectPropertys = []; 
+				   for(var index in this.selectPropertys){
+				    selectPropertys.push(this.selectPropertys[index].propId);
+				   }		 
+			this.$http.post(this.backUrl,selectPropertys).then(
 			function(response){
+			this.selectPropertys = [];
+			this.getPropertys();
 			this.$message({
 				type:"info",
 				message:"归还成功"
@@ -221,9 +335,15 @@ var app = new Vue({
 				return ;
 			}			
 			
-			//传递数组		 
-			this.$http.post(this.deleteUrl,this.selectPropertys).then(
+			//传递数组
+			var selectPropertys = []; 
+				   for(var index in this.selectPropertys){
+				    selectPropertys.push(this.selectPropertys[index].propId);
+				   }		 
+			this.$http.post(this.deleteUrl,selectPropertys).then(
 			function(response){
+			this.selectPropertys = [];
+			this.getPropertys();			
 			this.$message({
 				type:"info",
 				message:"删除成功"
@@ -231,7 +351,7 @@ var app = new Vue({
 			},
 			function(response){}  			
 			);
-			} ,					
+			} 					
 				
 		
 		
