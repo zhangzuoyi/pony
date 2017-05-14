@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.hibernate.id.IntegralDataTypeHolder;
 
 import com.zzy.pony.util.GAUtil;
 
@@ -51,12 +50,21 @@ public  class GeneticAlgorithm {
 			generation++;
 		}*/
 		while(worstScore != 0){
-			//种群遗传
+			//种群遗传			
 			evolve();
 			//print();
 			generation++;
 		}
 		System.out.println("----------");
+		System.out.println("worstScore:"+worstScore);
+		System.out.println("bestScore:"+bestChromosome.getScore());
+		System.err.println("scoreOne:"+bestChromosome.getScoreOne());
+		System.err.println("scoreThree:"+bestChromosome.getScoreThree());
+		System.err.println("scoreFour:"+bestChromosome.getScoreFour());
+		System.err.println("scoreFive:"+bestChromosome.getScoreFive());
+		System.err.println("scoreSix:"+bestChromosome.getScoreSix());
+		System.err.println("scoreSeven:"+bestChromosome.getScoreSeven());
+
 		System.out.println(String.valueOf(bestChromosome.getGene()));
 		System.out.println("----------");
 		return String.valueOf(bestChromosome.getGene());
@@ -91,7 +99,7 @@ public  class GeneticAlgorithm {
 		caculteScore();*/
 		//生成的个体默认满足ruleTwo即老师的课时数条件
 		String[] classIdCandidate = DNA.getInstance().getClassIdCandidate();
-		Map<String, Integer> map = DNA.getInstance().getTeacherSubjectweekArrange();
+		Map<String, String> map = DNA.getInstance().getTeacherSubjectweekArrange();
 		for (int i = 0; i < popSize; i++) {
 			Chromosome chro = new Chromosome(classIdCandidate,map);
 			population.add(chro);
@@ -191,7 +199,7 @@ public  class GeneticAlgorithm {
 	 * 基因突变
 	 */
 	private void mutation() {
-		Map<String, Map<String, Integer>> map = new HashMap<String, Map<String,Integer>>();
+		Map<String, Map<String, String>> map = new HashMap<String, Map<String,String>>();
 		map = GAUtil.getClassTeacherSubjectweekArrange(DNA.getInstance().getTeacherSubjectweekArrange());
 		Random random =  new Random();
 		for (Chromosome chro : population) {
@@ -205,6 +213,7 @@ public  class GeneticAlgorithm {
 	/**
 	 * @param chro
 	 * @Description: 设置染色体得分
+	 * 去掉规则2(老师上课课时数)，该规则在编码中已经实现
 	 */
 	private void setChromosomeScore(Chromosome chromosome) {
 		if (chromosome == null) {
@@ -214,16 +223,23 @@ public  class GeneticAlgorithm {
 		//double y = caculateY(x);
 		//chro.setScore(y);
 		int scoreRuleOne = Rule.ruleOne(chromosome);
-		int scoreRuleTwo = Rule.ruleTwo(chromosome, DNA.getInstance().getTeacherSubjectweekArrange());
+		//int scoreRuleTwo = Rule.ruleTwo(chromosome, DNA.getInstance().getTeacherSubjectweekArrange());
 		int scoreRuleThree = Rule.ruleThree(chromosome, DNA.getInstance().getClassNoCourse());
 		int scoreRuleFour = Rule.ruleFour(chromosome, DNA.getInstance().getTeacherNoCourse());
 		int scoreRuleFive = Rule.ruleFive(chromosome, DNA.getInstance().getSubjectNoCourse());
 		int scoreRuleSix = Rule.ruleSix(chromosome, DNA.getInstance().getGradeNoCourse());
-		GAUtil.print2(String.valueOf(chromosome.getGene()));
+		int scoreRuleSeven = Rule.ruleSeven(chromosome, DNA.getInstance().getTeacherSubjectClassMap());
+		//GAUtil.print2(String.valueOf(chromosome.getGene()));
 		//chromosome.setScore(scoreRuleOne);
-		System.out.println("---------------scoreRuleOne:"+scoreRuleOne);
-		System.out.println("---------------scoreRuleTwo:"+scoreRuleTwo);
-		chromosome.setScore(scoreRuleOne+scoreRuleTwo+scoreRuleThree+scoreRuleFour+scoreRuleFive+scoreRuleSix);
+		//System.out.println("---------------scoreRuleOne:"+scoreRuleOne);
+		//System.out.println("--------------scoreRuleSeven:"+scoreRuleSeven);
+		chromosome.setScore(scoreRuleOne+scoreRuleThree+scoreRuleFour+scoreRuleFive+scoreRuleSix+scoreRuleSeven);
+		chromosome.setScoreOne(scoreRuleOne);
+		chromosome.setScoreThree(scoreRuleThree);
+		chromosome.setScoreFour(scoreRuleFour);
+		chromosome.setScoreFive(scoreRuleFive);
+		chromosome.setScoreSix(scoreRuleSix);
+		chromosome.setScoreSeven(scoreRuleSeven);
 	}
 	
 	/**

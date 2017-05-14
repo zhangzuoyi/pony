@@ -28,7 +28,8 @@ public class DNA {
 	private String[] weekdayIdCandidate;
 	private String[] seqIdCandidate;
 	private String[] classIdCandidate;
-	private Map<String,Integer> TeacherSubjectweekArrange;//班级老师与课时的映射关系  key:teacherId+classId+subjectId value:weekArrange
+	private Map<String,String> TeacherSubjectweekArrange;//班级老师与课时的映射关系  key:teacherId+classId+subjectId value:weekArrange
+	private Map<String, Map<String,Integer>> teacherSubjectClassMap;//平课设置  key:teacherId+subjectId value:(key classId value count(初始为0))
 	private Map<String, String> classNoCourse;
 	private Map<String, String> teacherNoCourse;
 	private Map<String, String> subjectNoCourse;
@@ -77,22 +78,61 @@ public class DNA {
 	* <p>Description:获取一个dna个体,index为classIdCandidate的索引  key:teacherId+classId+subjectId value:weekArrange </p>
 	* @author  WANGCHAO262
 	* @date  2017年4月7日 下午2:22:42
+	* 
+	* mofify 支持2+1形式
+	* 
 	*/
-	public String getDnaStringRuleTwo(int classIndex,Map<String, Map<String, Integer>> map){
+	public String getDnaStringRuleTwo(int classIndex,Map<String, Map<String, String>> map){
 		StringBuilder sb = new StringBuilder();
 		Random random  = new Random();
 		int k = this.weekdayIdCandidate.length * this.seqIdCandidate.length;//总时间段数 5*7
 		//key:classId value( key:teacherId+subjectId value:weekArrange)	
-		Map<String, Integer> classMap = map.get(this.classIdCandidate[classIndex]);
-		Map<Integer, String> randomMap = new HashMap<Integer, String>();
+		Map<String, String> classMap = map.get(this.classIdCandidate[classIndex]);
+		Map<Integer, String> randomMap = new HashMap<Integer, String>();	
 		for (String key : classMap.keySet()) {
-			for (int i = 0; i < classMap.get(key); i++) {
-				int classNumber = random.nextInt(k)+1;
-				while(randomMap.containsKey(classNumber)){
-					classNumber = random.nextInt(k)+1;
+			
+			//分两种情况，第一种是weekArrange不含+,第二种是含+
+			//第一种
+			if (classMap.get(key).indexOf("+")<0) {
+				for (int i = 0; i <  Integer.valueOf(classMap.get(key)) ; i++) {
+					int classNumber = random.nextInt(k)+1;
+					while(randomMap.containsKey(classNumber) ||GAUtil.isExistClass(randomMap, classNumber,key)){
+						classNumber = random.nextInt(k)+1;
+					}
+					randomMap.put(classNumber, key);									
 				}
-				randomMap.put(classNumber, key);									
-			}		
+			}else {
+				//第二种  2+1
+				   String[] a = classMap.get(key).split("\\+");
+				   for (int i = 0; i <  Integer.valueOf(a[0]) ; i++) {
+						int classNumber = random.nextInt(k)+1;
+						while(randomMap.containsKey(classNumber) ||GAUtil.isExistClass(randomMap, classNumber,key)){
+							classNumber = random.nextInt(k)+1;
+						}
+						randomMap.put(classNumber, key);									
+					}
+				   for (int i = 0; i <  Integer.valueOf(a[1]) ; i++) {
+						int classNumber = random.nextInt(k)+1;		
+						//头一天的最后一节不能与第二天的第一节形成联排课  classNumber%this.seqIdCandidate.length == 1
+						//早上的第一节课不能与下午的第一节课形成里联排课 classNumber%this.seqIdCandidate.length == 4
+						//classNumber+1>k 不能超出范围
+						/*35 28 21 14 7
+						  34 27 20 13 6
+						  33 26 19 12 5
+						  32 25 18 11 4
+
+						  31 24 17 10 3
+						  30 23 16  9 2
+						  29 22 15  8 1*/
+				       //当天已经上过该课就不能再上
+						while(randomMap.containsKey(classNumber)||randomMap.containsKey(classNumber+1)||classNumber+1>k||classNumber%this.seqIdCandidate.length == 0|| classNumber%this.seqIdCandidate.length == 3 ||GAUtil.isExistClass(randomMap, classNumber,key)){
+							classNumber = random.nextInt(k)+1;
+						}
+						randomMap.put(classNumber, key);
+						randomMap.put(classNumber+1, key);
+					}			
+				
+			}					
 		}	
 		for (int i = 0; i < this.weekdayIdCandidate.length; i++) {
 			for (int j = 0; j < this.seqIdCandidate.length; j++) {								
@@ -120,7 +160,11 @@ public class DNA {
 				k--;
 			}
 				
-		}			
+		}
+		
+		
+		
+		
 		this.dnaString = sb.toString();		
 		System.out.println(this.dnaString);
 		//GAUtil.print2(this.dnaString);
@@ -157,11 +201,11 @@ public class DNA {
 	public void setSeqIdCandidate(String[] seqIdCandidate) {
 		this.seqIdCandidate = seqIdCandidate;
 	}	
-	public Map<String, Integer> getTeacherSubjectweekArrange() {
+	public Map<String, String> getTeacherSubjectweekArrange() {
 		return TeacherSubjectweekArrange;
 	}
 	public void setTeacherSubjectweekArrange(
-			Map<String, Integer> teacherSubjectweekArrange) {
+			Map<String, String> teacherSubjectweekArrange) {
 		TeacherSubjectweekArrange = teacherSubjectweekArrange;
 	}
 	public int getTeacherIdBit() {
@@ -206,6 +250,14 @@ public class DNA {
 	public void setGradeNoCourse(Map<String, String> gradeNoCourse) {
 		this.gradeNoCourse = gradeNoCourse;
 	}
+	public Map<String, Map<String, Integer>> getTeacherSubjectClassMap() {
+		return teacherSubjectClassMap;
+	}
+	public void setTeacherSubjectClassMap(
+			Map<String, Map<String, Integer>> teacherSubjectClassMap) {
+		this.teacherSubjectClassMap = teacherSubjectClassMap;
+	}
+	
 	
 	
 	

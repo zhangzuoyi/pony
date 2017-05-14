@@ -14,6 +14,15 @@ import com.zzy.pony.util.GAUtil;
 public class Chromosome {
 	private char[] gene;//基因序列
 	private double score;//对应的函数得分
+
+	
+	private int scoreOne; 
+	private int scoreThree; 
+	private int scoreFour; 
+	private int scoreFive; 
+	private int scoreSix; 
+	private int scoreSeven; 
+
 	
 	public double getScore() {
 		return score;
@@ -28,6 +37,59 @@ public class Chromosome {
 	}
 	public void setGene(char[] gene){	
 		this.gene= gene;
+	}
+	
+	
+	
+	
+	
+
+	public int getScoreOne() {
+		return scoreOne;
+	}
+
+	public void setScoreOne(int scoreOne) {
+		this.scoreOne = scoreOne;
+	}
+
+	public int getScoreThree() {
+		return scoreThree;
+	}
+
+	public void setScoreThree(int scoreThree) {
+		this.scoreThree = scoreThree;
+	}
+
+	public int getScoreFour() {
+		return scoreFour;
+	}
+
+	public void setScoreFour(int scoreFour) {
+		this.scoreFour = scoreFour;
+	}
+
+	public int getScoreFive() {
+		return scoreFive;
+	}
+
+	public void setScoreFive(int scoreFive) {
+		this.scoreFive = scoreFive;
+	}
+
+	public int getScoreSix() {
+		return scoreSix;
+	}
+
+	public void setScoreSix(int scoreSix) {
+		this.scoreSix = scoreSix;
+	}
+
+	public int getScoreSeven() {
+		return scoreSeven;
+	}
+
+	public void setScoreSeven(int scoreSeven) {
+		this.scoreSeven = scoreSeven;
 	}
 
 	/**
@@ -48,8 +110,10 @@ public class Chromosome {
 	/**
 	 * @param size
 	 * 随机生成所有班级的基因序列,且每个班满足老师课时数条件 key:teacherId+classId+subjectId value:weekArrange
+	 * 
+	 *  mofify  支持2+1形式
 	 */
-	public Chromosome(String[] classIdCandidate,Map<String, Integer> map) {
+	public Chromosome(String[] classIdCandidate,Map<String, String> map) {
 		/*if (classIdCandidate.length <= 0) {
 			return;
 		}
@@ -63,7 +127,7 @@ public class Chromosome {
 			return;
 		}
 	   StringBuilder sb = new StringBuilder();
-	   Map<String, Map<String, Integer>> classMap = GAUtil.getClassTeacherSubjectweekArrange(map);
+	   Map<String, Map<String, String>> classMap = GAUtil.getClassTeacherSubjectweekArrange(map);
 	   for (int i = 0; i < classIdCandidate.length; i++) {
 		  sb.append(DNA.getInstance().getDnaStringRuleTwo(i,classMap));
 	  }	   
@@ -162,7 +226,7 @@ public class Chromosome {
 	 * @param num
 	 * @Description: 基因发生变异 第classIndex个班级表突变 classIndex从0开始
 	 */
-	public void mutation(int classIndex,Map<String, Map<String, Integer>> map) {
+	public void mutation(int classIndex,Map<String, Map<String, String>> map) {
 		//允许变异
 		//int classCount = DNA.getInstance().getClassIdCandidate().length;
 		int classDNALength = DNA.getInstance().getDnaBit()*DNA.getInstance().getWeekdayIdCandidate().length*DNA.getInstance().getSeqIdCandidate().length;

@@ -107,7 +107,7 @@
             <el-dialog title="每周课时设置" v-model="dialogFormVisible">
                 <el-form :model="selectTeachers">
                     <el-form-item label="课时数" :label-width="formLabelWidth">
-                        <el-input-number v-model="selectTeachers.weekArrange"  :min="1" :max="20" ></el-input-number>
+                        <el-input v-model="selectTeachers.weekArrange"   ></el-input>
                     </el-form-item>                  
                 </el-form>
                 <div slot="footer" class="dialog-footer">

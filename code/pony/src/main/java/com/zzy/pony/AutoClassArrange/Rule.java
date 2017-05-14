@@ -236,6 +236,68 @@ public class Rule {
 		
 		return result;
 	}
+	//规则7:平课设置ruleSeven 对于一个老师如果在多个班上课，那么在每个班的上课进度应该一致
+	//map (key teacherId+subjectId  value (key classId  value count(用来计数，初始化为0)) )
+	public static int ruleSeven(Chromosome chromosome,Map<String, Map<String, Integer>> map){
+		int result=0;
+		//重置,解决浅复制问题
+		for (String teacherSubject : map.keySet()) {
+			Map<String , Integer> classMap = map.get(teacherSubject);
+			for (String classId : classMap.keySet()) {
+				classMap.put(classId, 0);
+			}
+		}
+		 
+		char[] gene = chromosome.getGene();
+		String geneString = String.valueOf(gene);
+		int dnaBit = DNA.getInstance().getDnaBit();
+		int classIdBit = DNA.getInstance().getClassIdBit();
+		int teacherIdBit = DNA.getInstance().getTeacherIdBit();
+		int subjectIdBit = DNA.getInstance().getSubjectIdBit();
+		int classLength =	 DNA.getInstance().getClassIdCandidate().length;
+		int classDNALength = DNA.getInstance().getDnaBit()*DNA.getInstance().getWeekdayIdCandidate().length*DNA.getInstance().getSeqIdCandidate().length;
+		int weekdayLength = DNA.getInstance().getWeekdayIdCandidate().length;
+		int seqLength = DNA.getInstance().getSeqIdCandidate().length;
+		//同一天的同一老师同一科目的上课数量应该一致
+		for (int i = 0; i < weekdayLength; i++) {
+			//每天结束计算一次分数并重置
+			if (i!=0) {
+				for (String teacherSubject : map.keySet()) {
+					Map<String , Integer> classMap = map.get(teacherSubject);
+					Set<Integer> set = new HashSet<Integer>(); 
+					for (String classId : classMap.keySet()) {
+						set.add(classMap.get(classId));
+					}
+				   result += set.size()-1;
+				}
+				//重置
+				for (String teacherSubject : map.keySet()) {
+					Map<String , Integer> classMap = map.get(teacherSubject);
+					for (String classId : classMap.keySet()) {
+						classMap.put(classId, 0);
+					}
+				}
+				
+			}
+			
+			for (int j = 0; j < seqLength; j++) {
+				for (int k = 0; k < classLength; k++) {
+				
+				//一个上课单元
+				String dnaString = geneString.substring((i*seqLength+j)*dnaBit+k*classDNALength, (i*seqLength+j)*dnaBit+k*classDNALength+dnaBit);
+				String teacherSubjectString =  dnaString.substring(0, teacherIdBit)+dnaString.substring(teacherIdBit+classIdBit, teacherIdBit+classIdBit+subjectIdBit);			
+				String classIdString = dnaString.substring(teacherIdBit,teacherIdBit+classIdBit);
+				if (map.containsKey(teacherSubjectString)&&map.get(teacherSubjectString).containsKey(classIdString)) {
+					int count =   map.get(teacherSubjectString).get(classIdString).intValue();
+					map.get(teacherSubjectString).put(classIdString, count+1);
+				}												
+				}
+			}
+		}	
+		
+		
+		return result;
+	}
 
 	
 }

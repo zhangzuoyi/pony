@@ -49,9 +49,12 @@ public class GAUtil {
 	* <p>Description: 获取班级老师与课时的映射关系  key:teacherId+classId+subjectId value:weekArrange</p>
 	* @author  WANGCHAO262
 	* @date  2017年4月10日 下午3:23:39
+	* 
+	* modify weekArrange可以为2+1形式，表示2次独立的课，1次连排课,将返回类型修改
+	* 
 	*/
-	public static Map<String,Integer> getTeacherSubjectweekArrange(List<TeacherSubjectVo> list){
-		Map<String, Integer> result =  new HashMap<String, Integer>();
+	public static Map<String,String> getTeacherSubjectweekArrange(List<TeacherSubjectVo> list){
+		Map<String, String> result =  new HashMap<String, String>();
 		for (TeacherSubjectVo teacherSubjectVo : list) {			
 			String teacherId = String.format("%04d", teacherSubjectVo.getTeacherId())  ;
 			String classId=String.format("%03d", teacherSubjectVo.getClassId()) ;
@@ -59,10 +62,33 @@ public class GAUtil {
 			if (teacherSubjectVo.getWeekArrange() == null) {
 				teacherSubjectVo.setWeekArrange("0");
 			}
-			result.put(teacherId+classId+subjectId, Integer.valueOf(teacherSubjectVo.getWeekArrange()));
+			result.put(teacherId+classId+subjectId, teacherSubjectVo.getWeekArrange());
 		}		
 		return result;
 		
+	}
+	
+	/**
+	 * @param list   key teacherId+subjectId value(key classId value count(计数，初始为0))
+	 * @return
+	 */
+	public static Map<String, Map<String, Integer>>	 getTeacherSubjectClass(List<TeacherSubjectVo> list){
+		Map<String, Map<String, Integer>> result =  new HashMap<String, Map<String,Integer>>();
+		for (TeacherSubjectVo teacherSubjectVo : list) {
+			String teacherId = String.format("%04d", teacherSubjectVo.getTeacherId())  ;
+			String classId=String.format("%03d", teacherSubjectVo.getClassId()) ;
+			String subjectId =String.format("%02d", teacherSubjectVo.getSubjectId())  ;	
+			String key = teacherId+subjectId;
+			if (result.containsKey(key)) {
+				result.get(key).put(classId, 0);
+			}else {
+				Map<String, Integer> innerMap =  new HashMap<String, Integer>();
+				innerMap.put(classId, 0);
+				result.put(key, innerMap);
+			}
+		}
+		
+		return result;
 	}
 	
 	/*** 
@@ -72,21 +98,49 @@ public class GAUtil {
 	* @author  WANGCHAO262
 	* @date  2017年5月3日 下午2:14:46
 	*/
-	public static Map<String, Map<String, Integer>> getClassTeacherSubjectweekArrange(Map<String,Integer> map){
-		Map<String, Map<String, Integer>> result = new HashMap<String, Map<String,Integer>>();
+	public static Map<String, Map<String, String>> getClassTeacherSubjectweekArrange(Map<String,String> map){
+		Map<String, Map<String, String>> result = new HashMap<String, Map<String,String>>();
 		for (String key : map.keySet()) {
 			String classId = key.substring(4, 7);//key
 			if (result.containsKey(classId)) {
-				Map<String, Integer> innerMap = result.get(classId);
+				Map<String, String> innerMap = result.get(classId);
 				innerMap.put(key.substring(0, 4)+key.substring(7, 9), map.get(key));
 				
 			}else{
-				Map<String, Integer> innerMap = new HashMap<String, Integer>();
+				Map<String, String> innerMap = new HashMap<String, String>();
 				innerMap.put(key.substring(0, 4)+key.substring(7, 9), map.get(key));
 				result.put(classId, innerMap);
 			}		
 		}
 		return result;		
+	}
+	
+	
+	/**
+	 * @param randomMap   已经排好的课程 
+	 * @param classNumber 即将安排的课程序号
+	 * @param key 即将安排的课程
+	 *                    35 28 21 14 7
+						  34 27 20 13 6
+						  33 26 19 12 5
+						  32 25 18 11 4
+
+						  31 24 17 10 3
+						  30 23 16  9 2
+						  29 22 15  8 1
+	 * @return
+	 */
+	public static boolean isExistClass(Map<Integer, String> randomMap,int classNumber,String key ){
+		
+		int ceil =  (classNumber/7+1)*7;
+		int floor =  classNumber-classNumber%7;
+		for (int i = floor+1; i <= ceil; i++) {
+			if (randomMap.containsKey(i)&&randomMap.get(i).equalsIgnoreCase(key)) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	

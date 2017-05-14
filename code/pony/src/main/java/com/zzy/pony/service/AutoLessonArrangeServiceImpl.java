@@ -106,10 +106,11 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		DNA.getInstance().setTeacherNoCourse(GAUtil.getTeacherNoCourse(teacherNoCourseVos));
 		DNA.getInstance().setSubjectNoCourse(GAUtil.getSubjectNoCourse(subjectNoCourseVos));
 		DNA.getInstance().setGradeNoCourse(GAUtil.getGradeNoCourse(gradeNoCourseVos));
+		DNA.getInstance().setTeacherSubjectClassMap(GAUtil.getTeacherSubjectClass(vos));
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		String bestChromosome =  geneticAlgorithm.caculte();	
 		List<ArrangeVo> list =   GAUtil.getLessonArranges(bestChromosome);
-		GAUtil.print(bestChromosome);
+		//GAUtil.print(bestChromosome);
 		this.save(list);
 	}
 
