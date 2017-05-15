@@ -99,6 +99,9 @@ public class DictServiceImpl implements DictService {
 		// TODO Auto-generated method stub
 		return dao.findByDictType(Constants.DICT_PROPERTY_STATUS);
 	}
+
+	
+	
 	
 	
 	

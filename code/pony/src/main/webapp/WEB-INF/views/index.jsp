@@ -124,6 +124,8 @@
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/property/department/main/' />" iframe="1">部门管理</a></li>                                    
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/property/add/main' />" iframe="1">新增资产</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/property/propertyAdmin/main' />" iframe="1">资产管理</a></li>
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/property/addConsumable/main' />" iframe="1">新增损耗品</a></li>
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/property/consumableAdmin/main' />" iframe="1">损耗品管理</a></li>
                    
                 
                 </ul>
