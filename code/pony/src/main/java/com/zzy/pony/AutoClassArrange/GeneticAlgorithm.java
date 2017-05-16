@@ -17,9 +17,9 @@ import com.zzy.pony.util.GAUtil;
   
 public  class GeneticAlgorithm {
 	private List<Chromosome> population = new ArrayList<Chromosome>();
-	private int popSize = 20;//种群数量
+	private int popSize = 10;//种群数量
 	//private int geneSize;//基因最大长度
-	private int maxIterNum = 500;//最大迭代次数
+	private int maxIterNum = 10000;//最大迭代次数
 	private double mutationRate = 0.1;//基因变异的概率  (285s)
 	//private int maxMutationNum = 3;//最大变异步长
 	
@@ -49,10 +49,16 @@ public  class GeneticAlgorithm {
 			print();
 			generation++;
 		}*/
-		while(worstScore != 0){
+		/*while(worstScore > 0){
 			//种群遗传			
 			evolve();
-			//print();
+			print();
+			generation++;
+		}*/
+		while(bestChromosome.getScoreOne() != 0 || bestChromosome.getScoreThree() != 0 || bestChromosome.getScoreFour() != 0 ||bestChromosome.getScoreFive() != 0 ||bestChromosome.getScoreSix() != 0/*||bestChromosome.getScoreSeven() != 0*/){
+			//种群遗传			
+			evolve();
+			print();
 			generation++;
 		}
 		System.out.println("----------");
@@ -228,7 +234,9 @@ public  class GeneticAlgorithm {
 		int scoreRuleFour = Rule.ruleFour(chromosome, DNA.getInstance().getTeacherNoCourse());
 		int scoreRuleFive = Rule.ruleFive(chromosome, DNA.getInstance().getSubjectNoCourse());
 		int scoreRuleSix = Rule.ruleSix(chromosome, DNA.getInstance().getGradeNoCourse());
-		int scoreRuleSeven = Rule.ruleSeven(chromosome, DNA.getInstance().getTeacherSubjectClassMap());
+		int scoreRuleSeven = Rule.ruleSeven(chromosome, DNA.getInstance().getTeacherSubjectClassMap(),DNA.getInstance().getTeacherSubjectIrregularClassMap());
+		
+		//int scoreRuleSeven = 0;
 		//GAUtil.print2(String.valueOf(chromosome.getGene()));
 		//chromosome.setScore(scoreRuleOne);
 		//System.out.println("---------------scoreRuleOne:"+scoreRuleOne);

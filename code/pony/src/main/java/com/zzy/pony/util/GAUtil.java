@@ -5,10 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hibernate.id.IntegralDataTypeHolder;
 
 import com.zzy.pony.AutoClassArrange.DNA;
-import com.zzy.pony.model.LessonArrange;
 import com.zzy.pony.vo.ArrangeVo;
 import com.zzy.pony.vo.ClassNoCourseVo;
 import com.zzy.pony.vo.GradeNoCourseVo;
@@ -85,6 +83,52 @@ public class GAUtil {
 				Map<String, Integer> innerMap =  new HashMap<String, Integer>();
 				innerMap.put(classId, 0);
 				result.put(key, innerMap);
+			}
+		}
+		
+		return result;
+	}
+	/**
+	 * @param list   key teacherId+subjectId value classId   获取不平课的班级，即某个老师在A班上3节课，在B班上4节课
+	 * @return
+	 */
+	public static Map<String, Map<String, Integer>>	 getTeacherSubjectIrregularClass(List<TeacherSubjectVo> list){
+		Map<String, Map<String, Integer>> tmp =  new HashMap<String, Map<String,Integer>>();
+		Map<String, Map<String, Integer>> result =  new HashMap<String, Map<String,Integer>>();
+
+		for (TeacherSubjectVo teacherSubjectVo : list) {
+			String teacherId = String.format("%04d", teacherSubjectVo.getTeacherId())  ;
+			String classId=String.format("%03d", teacherSubjectVo.getClassId()) ;
+			String subjectId =String.format("%02d", teacherSubjectVo.getSubjectId())  ;	
+			int weekarranges = 0;
+			String weekarrange = teacherSubjectVo.getWeekArrange();
+			if (weekarrange.indexOf("+")>0) {
+				String[] a = weekarrange.split("\\+");
+				weekarranges =  Integer.valueOf(a[0]) + 2*Integer.valueOf(a[1]);				
+			}else {
+				weekarranges = Integer.valueOf(weekarrange);
+			}						
+			String key = teacherId+subjectId;
+			if (tmp.containsKey(key)) {
+				for (String classKey : tmp.get(key).keySet()) {
+					if (tmp.get(key).get(classKey) !=  weekarranges) {
+						if (!result.containsKey(key)) {
+							Map<String, Integer> innerMap = new HashMap<String, Integer>();
+							innerMap.put(classId, 0);
+							innerMap.put(classKey, 0);
+							result.put(key, innerMap);							
+						}else {							
+							result.get(key).put(classId, 0);							
+						}																	
+					}
+				}  
+				
+				tmp.get(key).put(classId, weekarranges);
+				
+			}else {
+				Map<String, Integer> innerMap =  new HashMap<String, Integer>();								
+				innerMap.put(classId, weekarranges);
+				tmp.put(key, innerMap);
 			}
 		}
 		

@@ -30,6 +30,7 @@ public class DNA {
 	private String[] classIdCandidate;
 	private Map<String,String> TeacherSubjectweekArrange;//班级老师与课时的映射关系  key:teacherId+classId+subjectId value:weekArrange
 	private Map<String, Map<String,Integer>> teacherSubjectClassMap;//平课设置  key:teacherId+subjectId value:(key classId value count(初始为0))
+	private Map<String, Map<String,Integer>> teacherSubjectIrregularClassMap;//平课设置 不规则班级 key:teacherId+subjectId value:(key classId value count(初始为0))
 	private Map<String, String> classNoCourse;
 	private Map<String, String> teacherNoCourse;
 	private Map<String, String> subjectNoCourse;
@@ -166,7 +167,7 @@ public class DNA {
 		
 		
 		this.dnaString = sb.toString();		
-		System.out.println(this.dnaString);
+		//System.out.println(this.dnaString);
 		//GAUtil.print2(this.dnaString);
 		return this.dnaString;	
 	}
@@ -257,6 +258,14 @@ public class DNA {
 			Map<String, Map<String, Integer>> teacherSubjectClassMap) {
 		this.teacherSubjectClassMap = teacherSubjectClassMap;
 	}
+	public Map<String, Map<String, Integer>> getTeacherSubjectIrregularClassMap() {
+		return teacherSubjectIrregularClassMap;
+	}
+	public void setTeacherSubjectIrregularClassMap(
+			Map<String, Map<String, Integer>> teacherSubjectIrregularClassMap) {
+		this.teacherSubjectIrregularClassMap = teacherSubjectIrregularClassMap;
+	}
+	
 	
 	
 	

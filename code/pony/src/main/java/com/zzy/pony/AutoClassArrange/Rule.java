@@ -238,10 +238,12 @@ public class Rule {
 	}
 	//规则7:平课设置ruleSeven 对于一个老师如果在多个班上课，那么在每个班的上课进度应该一致
 	//map (key teacherId+subjectId  value (key classId  value count(用来计数，初始化为0)) )
-	public static int ruleSeven(Chromosome chromosome,Map<String, Map<String, Integer>> map){
+	//如果在安排上存在两个班课程不一样，即一个为3+1 (5节课)一个为4(4节课) 新增irregularMap 数据结构同map，只存放课程不平的classId
+	
+	public static int ruleSeven(Chromosome chromosome,Map<String, Map<String, Integer>> map,Map<String, Map<String, Integer>> irregularMap){
 		int result=0;
 		//重置,解决浅复制问题
-		for (String teacherSubject : map.keySet()) {
+		/*for (String teacherSubject : map.keySet()) {
 			Map<String , Integer> classMap = map.get(teacherSubject);
 			for (String classId : classMap.keySet()) {
 				classMap.put(classId, 0);
@@ -265,10 +267,15 @@ public class Rule {
 				for (String teacherSubject : map.keySet()) {
 					Map<String , Integer> classMap = map.get(teacherSubject);
 					Set<Integer> set = new HashSet<Integer>(); 
-					for (String classId : classMap.keySet()) {
-						set.add(classMap.get(classId));
+					if (irregularMap.containsKey(teacherSubject)) {
+						continue;//一旦该教师存在与不平课中，就不计算该规则分值
+					}else {
+						for (String classId : classMap.keySet()) {							
+							set.add(classMap.get(classId));
+						}
+						result += set.size()-1;
 					}
-				   result += set.size()-1;
+			
 				}
 				//重置
 				for (String teacherSubject : map.keySet()) {
@@ -293,7 +300,7 @@ public class Rule {
 				}												
 				}
 			}
-		}	
+		}	*/
 		
 		
 		return result;

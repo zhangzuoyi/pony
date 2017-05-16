@@ -107,10 +107,11 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		DNA.getInstance().setSubjectNoCourse(GAUtil.getSubjectNoCourse(subjectNoCourseVos));
 		DNA.getInstance().setGradeNoCourse(GAUtil.getGradeNoCourse(gradeNoCourseVos));
 		DNA.getInstance().setTeacherSubjectClassMap(GAUtil.getTeacherSubjectClass(vos));
+		DNA.getInstance().setTeacherSubjectIrregularClassMap(GAUtil.getTeacherSubjectIrregularClass(vos));
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		String bestChromosome =  geneticAlgorithm.caculte();	
 		List<ArrangeVo> list =   GAUtil.getLessonArranges(bestChromosome);
-		//GAUtil.print(bestChromosome);
+		GAUtil.print(bestChromosome);
 		this.save(list);
 	}
 
@@ -133,6 +134,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 			lessonArrange.setClassId(arrangeVo.getClassId());
 			lessonArrange.setCreateTime(new Date());
 			lessonArrange.setCreateUser(ShiroUtil.getLoginUser().getLoginName());
+			//lessonArrange.setCreateUser("test");
 			lessonArrange.setLessonPeriod(lessonPeriod);
 			lessonArrange.setSchoolYear(schoolYear);
 			lessonArrange.setSourceType("1");//自动排课
