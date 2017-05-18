@@ -4,6 +4,7 @@ package com.zzy.pony.property.controller;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -18,8 +19,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zzy.pony.property.model.Property;
+import com.zzy.pony.property.model.PropertyTrace;
 import com.zzy.pony.property.service.PropertyAdminService;
+import com.zzy.pony.property.service.PropertyTraceService;
 import com.zzy.pony.property.vo.PropertyVo;
+import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.service.UserService;
 
 
@@ -34,6 +38,8 @@ public class PropertyAdminController {
 	private PropertyAdminService propertyAdminService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private PropertyTraceService propertyTraceService;
 	
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
@@ -72,7 +78,15 @@ public class PropertyAdminController {
 		for (Integer propId : properties) {	
 			Property property = propertyAdminService.get(propId);
 			propertyAdminService.receive(property, teacherId);
+			
+			PropertyTrace propertyTrace = new PropertyTrace();
+			propertyTrace.setOperateTime(new Date());
+			propertyTrace.setOperation("领用");
+			propertyTrace.setOperator(ShiroUtil.getLoginUser().getLoginName());
+			propertyTrace.setProperty(property);
+			propertyTraceService.add(propertyTrace);
 		}
+		
 		
 	}
 	
@@ -83,6 +97,13 @@ public class PropertyAdminController {
 		for (Integer propId : properties) {
 			Property property = propertyAdminService.get(propId);
 			propertyAdminService.back(property);
+			
+			PropertyTrace propertyTrace = new PropertyTrace();
+			propertyTrace.setOperateTime(new Date());
+			propertyTrace.setOperation("退还");
+			propertyTrace.setOperator(ShiroUtil.getLoginUser().getLoginName());
+			propertyTrace.setProperty(property);
+			propertyTraceService.add(propertyTrace);
 		}
 		
 	}
@@ -93,6 +114,13 @@ public class PropertyAdminController {
 		for (Integer propId : properties) {
 			Property property =  propertyAdminService.get(propId);
 			propertyAdminService.cancle(property);
+			
+			PropertyTrace propertyTrace = new PropertyTrace();
+			propertyTrace.setOperateTime(new Date());
+			propertyTrace.setOperation("作废");
+			propertyTrace.setOperator(ShiroUtil.getLoginUser().getLoginName());
+			propertyTrace.setProperty(property);
+			propertyTraceService.add(propertyTrace);
 		}
 	}
 	

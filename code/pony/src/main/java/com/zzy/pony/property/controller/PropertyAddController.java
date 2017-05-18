@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zzy.pony.property.model.Property;
+import com.zzy.pony.property.model.PropertyTrace;
 import com.zzy.pony.property.service.DepartmentService;
 import com.zzy.pony.property.service.PropertyAddService;
+import com.zzy.pony.property.service.PropertyTraceService;
 import com.zzy.pony.property.service.PropertyTypeService;
 import com.zzy.pony.property.vo.PropertyVo;
 import com.zzy.pony.security.ShiroUtil;
@@ -39,6 +41,9 @@ public class PropertyAddController {
 	private PropertyTypeService propertyTypeService;
 	@Autowired
 	private PropertyAddService propertyAddService;
+	@Autowired
+	private PropertyTraceService propertyTraceService;
+	
 	
 	
 	
@@ -82,7 +87,16 @@ public class PropertyAddController {
 			String preffix =  DateTimeUtil.dateToStr(new Date(), DateTimeUtil.FORMAL_SHORT_FORMAT);
 			String suffix =  String.format("%04d", maxCode+i);
 			property.setPropCode(preffix+suffix);
-			propertyAddService.add(property);			
+			propertyAddService.add(property);
+			
+			
+			PropertyTrace propertyTrace = new PropertyTrace();
+			propertyTrace.setOperateTime(new Date());
+			propertyTrace.setOperation("新增");
+			propertyTrace.setOperator(ShiroUtil.getLoginUser().getLoginName());
+			propertyTrace.setProperty(property);
+			propertyTraceService.add(propertyTrace);
+			
 		}
 		
 		

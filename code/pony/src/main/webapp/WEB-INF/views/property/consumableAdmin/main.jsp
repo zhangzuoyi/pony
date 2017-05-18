@@ -49,7 +49,7 @@ width:200px;
                     border
                     style="width: 100%"
                     highlight-current-row
-                    @selection-change="handleSelectionChange"
+                    @current-change="handleCurrentChange"
                    > 
                              
                  
@@ -91,24 +91,20 @@ width:200px;
 			
 
         </el-card>
-		<el-dialog title="领用" v-model="dialogFormVisible" >
+		<el-dialog  v-model="dialogFormVisible" >
 		<div slot="title" class="dialog-title">
                     <b>{{title}}</b>
         </div>			
-			<el-form :model="ruleForm" :rules="rules" ref="ruleForm">			 
-			 <el-form-item label="使用人" prop="user" :label-width="formLabelWidth"> 
-			 <el-select v-model="ruleForm.user" placeholder="使用人" filterable> 
-					<el-option v-for="user in users"  :label="user.name" :value="user.teacherId+''"></el-option> 								
-			</el-select> 			 			
+			<el-form :model="ruleForm" >			 
+			 <el-form-item label="数量" prop="number" :label-width="formLabelWidth"> 
+			 <el-input-number size="large" v-model="ruleForm.number" style="width:200px;"></el-input-number>			 			
 			</el-form-item>
-			<el-form-item label="使用人" prop="user" :label-width="formLabelWidth"> 
-			 <el-select v-model="ruleForm.user" placeholder="使用人" filterable> 
-					<el-option v-for="user in users"  :label="user.name" :value="user.teacherId+''"></el-option> 								
-			</el-select> 			 			
+			<el-form-item label="备注" prop="comments" :label-width="formLabelWidth"> 
+			<el-input type="textarea" :rows="5" placeholder="请输入内容" v-model="ruleForm.comments"></el-input>			 			
 			</el-form-item>
 		    </el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button type="primary" @click="onSubmit('ruleForm')">确定</el-button>
+				<el-button type="primary" @click="onSubmit()">确定</el-button>
 				<el-button @click="dialogFormVisible = false">取 消</el-button>				
 			</div>
 		</el-dialog>
@@ -129,50 +125,19 @@ var app = new Vue({
 	data : { 		
 		
 		tableData:[],
-		propertysUrl:"<s:url value='/property/propertyAdmin/list'/>",
-		receiveUrl :"<s:url value='/property/propertyAdmin/receive'/>",		
-		backUrl :"<s:url value='/property/propertyAdmin/back'/>",
-		deleteUrl :"<s:url value='/property/propertyAdmin/cancle'/>",
-		selectPropertys:[],
-		usersUrl:"<s:url value='/teacherAdmin/list'/>",	//责任人和使用人取教师	
-		users:[],
-		ruleForm :{user : ''},
+		consumablesUrl:"<s:url value='/property/consumableAdmin/list'/>",
+		instockUrl :"<s:url value='/property/consumableAdmin/instock'/>",		
+		outstockUrl :"<s:url value='/property/consumableAdmin/outstock'/>",
+		selectConsumable:{},
+		ruleForm :{number : 0,comments:null},
 		dialogFormVisible:false,
 		formLabelWidth:"120px",
-		rules :{
-		 user: [{required: true, message: '请选择用户', trigger: 'change'}],
-		},
-		propertyTypeUrl:"<s:url value='/property/propertyType/list'/>",
-		propertyTypes:[],
-		userNameMapUrl:"<s:url value='/user/userNameMap'/>",
-		userNameMap:[],
-	
-	
+		title:null,
+		flag : true   //true入库，false出库
 		
 	},
-	filters: {    
-   		 /* typeFilter: function (value) {
-     		for(var index in app.propertyTypes){
-     		  if(app.propertyTypes[index].typeId == value){
-     		    return app.propertyTypes[index].name;
-     		  }
-     		}    		
- 		 }	, 
- 		  ownerFilter: function (value) {
-     		for(var index in app.userNameMap){
-     		  if(app.userNameMap[index].key == value){
-     		    return app.propertyTypes[index].value;
-     		  }
-     		}   
- 		 }	, 
- 		 userFilter: function (value) {
-     		 for(var index in app.userNameMap){
-     		  if(app.userNameMap[index].key == value){
-     		    return app.propertyTypes[index].value;
-     		  }
-     		} 
-    		}, */
- 		   
+	/* filters: {    
+   		   
  		 statusFilter: function (value) {
      		 if(value == '0'){return "空闲"; }
      		 if(value == '1'){return "使用中"; }
@@ -180,169 +145,102 @@ var app = new Vue({
      		 
     		
  		 }	, 
- 		},
+ 		}, */
 	
 	mounted : function() { 
-		this.getPropertys();
-		this.getUsers();
-		//this.getPropertyType();
-		//this.getUserNameMap(); 
+		this.getConsumables();
 		
 			
 	}, 
 	methods : { 
-		 handleSelectionChange:function(val) {
-		             this.selectPropertys = val;                                   
-		            },
-		  /*  getUserNameMap: function(){		 
-			this.$http.get(this.userNameMapUrl).then(
-			function(response){
-			this.userNameMap=response.data;},
-			function(response){}  			
-			); 
-			} , 
-		  getPropertyType : function(){		 
-			this.$http.get(this.propertyTypeUrl).then(
-			function(response){
-			this.propertyTypes=response.data;},
-			function(response){}  			
-			); 
-			} , */
-	     getUsers : function(){ 
-					this.$http.get(this.usersUrl).then(
-					function(response){
-					this.users=response.data;},
-					function(response){}  			
-					); 
-					} , 
-		 getPropertys : function(){
-			
-			 
-			this.$http.get(this.propertysUrl).then(
+		 handleCurrentChange:function(val) {
+		             this.selectConsumable = val;                                   
+		            },		  	    
+		 getConsumables : function(){						 
+			this.$http.get(this.consumablesUrl).then(
 			function(response){
 			this.tableData=response.data;},
 			function(response){}  			
 			); 
 			} , 
-		 receive : function(){
-			//只有空闲状态(0)才可以使用
-			if(this.selectPropertys == null || this.selectPropertys.length == 0){
-				this.$alert("请选择资产","提示",{
+		 instock : function(){
+			
+			if(this.selectConsumable == null){
+				this.$alert("请选择消耗品","提示",{
+				type:"warning",
+				confirmButtonText:'确认'
+				});
+				return ;
+			}										
+			this.dialogFormVisible = true;	
+			this.title = "入库";	
+			this.flag = true;	
+			},
+		outstock : function(){
+			
+			 
+			
+			if(this.selectConsumable == null){
+				this.$alert("请选择消耗品","提示",{
 				type:"warning",
 				confirmButtonText:'确认'
 				});
 				return ;
 			}			
-			for(var index in this.selectPropertys){
-			 if(this.selectPropertys[index].status != '0'){
-			 	this.$alert("只有空闲的资产才能领用","提示",{
-				type:"warning",
-				confirmButtonText:'确认'
-				});
-				return ;
-			 }
-			}				
-			this.dialogFormVisible = true;			
-			},
+			this.dialogFormVisible = true;	
+			this.title = "出库";	
+			this.flag = false;
+			  
+			} ,
 			
-			onSubmit :function(formName){
-			//传递数组
-			 this.$refs[formName].validate(function(valid){
-				if(valid){	
-				   var selectPropertys = []; 
-				   for(var index in app.selectPropertys){
-				    selectPropertys.push(app.selectPropertys[index].propId);
-				   }
-							   
-				    app.$http.post(app.receiveUrl,{selectPropertys:selectPropertys,user:app.ruleForm.user},{
-                            emulateJSON:true
-                        }
+			onSubmit :function(){
+				
+				   if(this.ruleForm.number==null ||this.ruleForm.number ==0){
+				   this.$alert("消耗品数量不能为空","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+					});
+					return ;
+				   }	
+				   if(this.flag){
+				   this.$http.get(this.instockUrl,{params:{selectConsumable:this.selectConsumable.cseId,number:this.ruleForm.number,comments:this.ruleForm.comments}}
 				    ).then(
 					function(response){
-					app.dialogFormVisible = false;
-					app.selectPropertys = [];
-					app.ruleForm={user : ''};
-					app.getPropertys();
-					app.$message({
+					this.dialogFormVisible = false;
+					this.selectConsumable = {};
+					this.ruleForm={number : 0,comments:null};
+					this.flag=true;
+					this.getConsumables();
+					this.$message({
 						type:"info",
-						message:"领取成功"
+						message:"入库成功"
 					});
 					},
 					function(response){}  			
-					);   				
-				}else{
-				
-				console.log("error submit!");				
-				}
-			}); 	
-			
+					);
+				   }else{
+				   this.$http.get(this.outstockUrl,{params:{selectConsumable:this.selectConsumable.cseId,number:this.ruleForm.number,comments:this.ruleForm.comments}}
+				    ).then(
+					function(response){
+					this.dialogFormVisible = false;
+					this.selectConsumable = {};
+					this.ruleForm={number : 0,comments:null};
+					this.flag=true;
+					this.getConsumables();
+					this.$message({
+						type:"info",
+						message:"出库成功"
+					});
+					},
+					function(response){}  			
+					);
+				   
+				   }						   		
 			
 			},	
 			
-		 back : function(){
 			
-			 
-			//只有使用状态(1)才可以使用
-			if(this.selectPropertys == null || this.selectPropertys.length == 0){
-				this.$alert("请选择资产","提示",{
-				type:"warning",
-				confirmButtonText:'确认'
-				});
-				return ;
-			}			
-			for(var index in this.selectPropertys){
-			 if(this.selectPropertys[index].status != '1'){
-			 	this.$alert("只有使用中的资产才能归还","提示",{
-				type:"warning",
-				confirmButtonText:'确认'
-				});
-				return ;
-			 }
-			}	
-			//传递数组
-			var selectPropertys = []; 
-				   for(var index in this.selectPropertys){
-				    selectPropertys.push(this.selectPropertys[index].propId);
-				   }		 
-			this.$http.post(this.backUrl,selectPropertys).then(
-			function(response){
-			this.selectPropertys = [];
-			this.getPropertys();
-			this.$message({
-				type:"info",
-				message:"归还成功"
-			});
-			},
-			function(response){}  			
-			);  
-			} ,	
-		cancle : function(){
-						 		
-			if(this.selectPropertys == null || this.selectPropertys.length == 0){
-				this.$alert("请选择资产","提示",{
-				type:"warning",
-				confirmButtonText:'确认'
-				});
-				return ;
-			}			
-			
-			//传递数组
-			var selectPropertys = []; 
-				   for(var index in this.selectPropertys){
-				    selectPropertys.push(this.selectPropertys[index].propId);
-				   }		 
-			this.$http.post(this.deleteUrl,selectPropertys).then(
-			function(response){
-			this.selectPropertys = [];
-			this.getPropertys();			
-			this.$message({
-				type:"info",
-				message:"删除成功"
-			});
-			},
-			function(response){}  			
-			);
-			} 					
+		 					
 				
 		
 		

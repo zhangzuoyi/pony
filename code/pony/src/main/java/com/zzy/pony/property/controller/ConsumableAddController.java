@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zzy.pony.property.model.Consumable;
+import com.zzy.pony.property.model.ConsumableTrace;
+import com.zzy.pony.property.model.PropertyTrace;
 import com.zzy.pony.property.service.ConsumableAddService;
+import com.zzy.pony.property.service.ConsumableTraceService;
 import com.zzy.pony.property.service.PropertyTypeService;
 import com.zzy.pony.property.vo.ConsumableVo;
 import com.zzy.pony.security.ShiroUtil;
@@ -37,6 +40,8 @@ public class ConsumableAddController {
 	private UserService userService;
 	@Autowired
 	private ConsumableAddService consumableAddService;
+	@Autowired
+	private ConsumableTraceService consumableTraceService;
 	
 	
 	
@@ -71,5 +76,14 @@ public class ConsumableAddController {
 		consumable.setUpdateUser(loginName);
 		consumable.setUser(userService.findByTeacherId(vo.getOwner()));
 		consumableAddService.add(consumable);
+		
+		ConsumableTrace consumableTrace = new ConsumableTrace();
+		consumableTrace.setAmountAfter(vo.getAmount());
+		consumableTrace.setConsumable(consumable);
+		consumableTrace.setNum(vo.getAmount());
+		consumableTrace.setOperateTime(new Date());
+		consumableTrace.setOperation("新增");
+		consumableTrace.setOperator(ShiroUtil.getLoginUser().getLoginName());
+		
     }
 }
