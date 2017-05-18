@@ -108,7 +108,7 @@ width:200px;
 			
 
         </el-card>
-		<el-dialog title="领用" v-model="dialogFormVisible" >			
+		<el-dialog  v-model="dialogFormVisible" >			
 			<el-form :model="ruleForm" :rules="rules" ref="ruleForm">			 
 			 <el-form-item label="使用人" prop="user" :label-width="formLabelWidth"> 
 			 <el-select v-model="ruleForm.user" placeholder="使用人" filterable> 

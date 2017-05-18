@@ -1,14 +1,12 @@
 package com.zzy.pony.AutoClassArrange;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.eclipse.jdt.internal.compiler.ast.ThisReference;
-
 import com.zzy.pony.util.GAUtil;
+
+
 
 
 
@@ -88,7 +86,8 @@ public class DNA {
 		Random random  = new Random();
 		int k = this.weekdayIdCandidate.length * this.seqIdCandidate.length;//总时间段数 5*7
 		//key:classId value( key:teacherId+subjectId value:weekArrange)	
-		Map<String, String> classMap = map.get(this.classIdCandidate[classIndex]);
+		Map<String, String> tmpMap = map.get(this.classIdCandidate[classIndex]);
+		Map<String, String> classMap =   GAUtil.sortMapByValue(tmpMap);
 		Map<Integer, String> randomMap = new HashMap<Integer, String>();	
 		for (String key : classMap.keySet()) {
 			
@@ -169,7 +168,7 @@ public class DNA {
 		this.dnaString = sb.toString();		
 		//System.out.println(this.dnaString);
 		//GAUtil.print2(this.dnaString);
-		return this.dnaString;	
+		return this.dnaString;
 	}
 
 	public String[] getTeacherIdCandidate() {

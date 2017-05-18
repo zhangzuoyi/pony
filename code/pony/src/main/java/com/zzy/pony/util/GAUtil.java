@@ -1,10 +1,14 @@
 package com.zzy.pony.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Map.Entry;
 
 import com.zzy.pony.AutoClassArrange.DNA;
 import com.zzy.pony.vo.ArrangeVo;
@@ -175,9 +179,16 @@ public class GAUtil {
 	 * @return
 	 */
 	public static boolean isExistClass(Map<Integer, String> randomMap,int classNumber,String key ){
+		int ceil = 0;
+		int floor = 0;
 		
-		int ceil =  (classNumber/7+1)*7;
-		int floor =  classNumber-classNumber%7;
+		if (classNumber%7 ==0 ) {
+			ceil = classNumber;
+			floor = classNumber-7;
+		}else{
+			ceil =  (classNumber/7+1)*7;
+			floor =  classNumber-classNumber%7;
+		}	
 		for (int i = floor+1; i <= ceil; i++) {
 			if (randomMap.containsKey(i)&&randomMap.get(i).equalsIgnoreCase(key)) {
 				return true;
@@ -185,6 +196,46 @@ public class GAUtil {
 		}
 		
 		return false;
+	}
+	
+	public static Map<String, String> sortMapByValue(Map<String, String> oriMap){
+		 Map<String, String> sortedMap = new LinkedHashMap<String, String>();  
+		    if (oriMap != null && !oriMap.isEmpty()) {  
+		        List<Map.Entry<String, String>> entryList = new ArrayList<Map.Entry<String, String>>(oriMap.entrySet());  
+		        Collections.sort(entryList,  
+		                new Comparator<Map.Entry<String, String>>() {  
+		                    public int compare(Entry<String, String> entry1,  
+		                            Entry<String, String> entry2) {  
+		                        int value1 = 0, value2 = 0;  
+		                        try {  
+		                            if (entry1.getValue().indexOf("+")>0) {
+										String[] a = entry1.getValue().split("\\+");
+										value1 = Integer.valueOf(a[0])+2*Integer.valueOf(a[1]);
+									}else {
+										value1 = Integer.valueOf(entry1.getValue());
+									}
+		                            if (entry2.getValue().indexOf("+")>0) {
+										String[] b = entry2.getValue().split("\\+");
+										value2 = Integer.valueOf(b[0])+2*Integer.valueOf(b[1]);
+									}else {
+										value2 = Integer.valueOf(entry2.getValue());
+									}	                        	 
+		                        } catch (NumberFormatException e) {  
+		                            value1 = 0;  
+		                            value2 = 0;  
+		                        }  
+		                        return value2 - value1;  
+		                    }  
+		                });  
+		        Iterator<Map.Entry<String, String>> iter = entryList.iterator();  
+		        Map.Entry<String, String> tmpEntry = null;  
+		        while (iter.hasNext()) {  
+		            tmpEntry = iter.next();  
+		            sortedMap.put(tmpEntry.getKey(), tmpEntry.getValue());  
+		        }  
+		    }  
+		    return sortedMap;
+		
 	}
 	
 	

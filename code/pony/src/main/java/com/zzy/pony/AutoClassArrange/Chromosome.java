@@ -230,8 +230,8 @@ public class Chromosome {
 		//允许变异
 		//int classCount = DNA.getInstance().getClassIdCandidate().length;
 		int classDNALength = DNA.getInstance().getDnaBit()*DNA.getInstance().getWeekdayIdCandidate().length*DNA.getInstance().getSeqIdCandidate().length;
-        char[] a =   DNA.getInstance().getDnaStringRuleTwo(classIndex, map).toCharArray();
-        for (int i = classIndex*classDNALength; i < classIndex*classDNALength+classDNALength; i++) {
+		char[] a =   DNA.getInstance().getDnaStringRuleTwo(classIndex, map).toCharArray();
+	    for (int i = classIndex*classDNALength; i < classIndex*classDNALength+classDNALength; i++) {
 			gene[i] = a[i-(classIndex*classDNALength)];			
 		}
         

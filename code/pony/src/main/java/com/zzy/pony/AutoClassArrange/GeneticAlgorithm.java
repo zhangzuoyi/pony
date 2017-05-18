@@ -49,18 +49,20 @@ public  class GeneticAlgorithm {
 			print();
 			generation++;
 		}*/
-		/*while(worstScore > 0){
+		while(worstScore > 0){
+			//种群遗传			
+			evolve();
+			//print();
+			generation++;
+		}
+		/*while(bestChromosome.getScoreOne() != 0 || bestChromosome.getScoreThree() != 0 || bestChromosome.getScoreFour() != 0 ||bestChromosome.getScoreFive() != 0 ||bestChromosome.getScoreSix() != 0||bestChromosome.getScoreSeven() != 0){
 			//种群遗传			
 			evolve();
 			print();
 			generation++;
 		}*/
-		while(bestChromosome.getScoreOne() != 0 || bestChromosome.getScoreThree() != 0 || bestChromosome.getScoreFour() != 0 ||bestChromosome.getScoreFive() != 0 ||bestChromosome.getScoreSix() != 0/*||bestChromosome.getScoreSeven() != 0*/){
-			//种群遗传			
-			evolve();
-			print();
-			generation++;
-		}
+		
+		
 		System.out.println("----------");
 		System.out.println("worstScore:"+worstScore);
 		System.out.println("bestScore:"+bestChromosome.getScore());

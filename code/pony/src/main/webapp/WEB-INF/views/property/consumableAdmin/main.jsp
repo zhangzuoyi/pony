@@ -51,10 +51,7 @@ width:200px;
                     highlight-current-row
                     @selection-change="handleSelectionChange"
                    > 
-                <el-table-column
-                        type="selection"
-                        width="50">
-                </el-table-column>              
+                             
                  
                 <el-table-column
                          inline-template
@@ -94,9 +91,17 @@ width:200px;
 			
 
         </el-card>
-		<el-dialog title="领用" v-model="dialogFormVisible" >			
+		<el-dialog title="领用" v-model="dialogFormVisible" >
+		<div slot="title" class="dialog-title">
+                    <b>{{title}}</b>
+        </div>			
 			<el-form :model="ruleForm" :rules="rules" ref="ruleForm">			 
 			 <el-form-item label="使用人" prop="user" :label-width="formLabelWidth"> 
+			 <el-select v-model="ruleForm.user" placeholder="使用人" filterable> 
+					<el-option v-for="user in users"  :label="user.name" :value="user.teacherId+''"></el-option> 								
+			</el-select> 			 			
+			</el-form-item>
+			<el-form-item label="使用人" prop="user" :label-width="formLabelWidth"> 
 			 <el-select v-model="ruleForm.user" placeholder="使用人" filterable> 
 					<el-option v-for="user in users"  :label="user.name" :value="user.teacherId+''"></el-option> 								
 			</el-select> 			 			
