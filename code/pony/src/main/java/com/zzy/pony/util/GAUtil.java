@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.zzy.pony.AutoClassArrange.DNA;
+import com.zzy.pony.model.Subject;
 import com.zzy.pony.vo.ArrangeVo;
 import com.zzy.pony.vo.ClassNoCourseVo;
 import com.zzy.pony.vo.GradeNoCourseVo;
@@ -198,9 +199,79 @@ public class GAUtil {
 		return false;
 	}
 	
+	public static  boolean isMorning(int classNumber){
+		
+		if ((classNumber>=4 && classNumber<=7)||(classNumber>=11 && classNumber<=14)||(classNumber>=18 && classNumber<=21)||(classNumber>=25 && classNumber<=28)||(classNumber>=32 && classNumber<=35)) {
+			return true;
+		}
+		
+		return false;
+	}
+	public static boolean isAfternoon(int classNumber){
+		
+		if ((classNumber>=1 && classNumber<=3)||(classNumber>=8 && classNumber<=10)||(classNumber>=15 && classNumber<=17)||(classNumber>=22 && classNumber<=24)||(classNumber>=29 && classNumber<=31)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public static Map<String, String> classInMorning(List<Subject> subjects){
+		Map<String, String> result = new HashMap<String, String>();
+		for (Subject subject : subjects) {
+			if ("语文".equalsIgnoreCase(subject.getName())) {
+				result.put(String.format("%02d", subject.getSubjectId()), subject.getName());
+			}
+			if ("数学".equalsIgnoreCase(subject.getName())) {
+				result.put(String.format("%02d", subject.getSubjectId()), subject.getName());
+			}
+			if ("英语".equalsIgnoreCase(subject.getName())) {
+				result.put(String.format("%02d", subject.getSubjectId()), subject.getName());
+			}			
+		}				
+		return result;		
+	}
+	
+	public static Map<String, String> classInAfternoon(List<Subject> subjects){
+		Map<String, String> result = new HashMap<String, String>();
+		for (Subject subject : subjects) {
+			if ("政治".equalsIgnoreCase(subject.getName())) {
+				result.put(String.format("%02d", subject.getSubjectId()), subject.getName());
+			}
+			if ("历史".equalsIgnoreCase(subject.getName())) {
+				result.put(String.format("%02d", subject.getSubjectId()), subject.getName());
+			}						
+		}				
+		return result;		
+	}
+	public static Map<String, String> sortMapByVPriority(Map<String, String> oriMap,Map<String, String> classInMorning,Map<String, String> classInAfternoon){
+		 Map<String, String> sortedMap = new LinkedHashMap<String, String>();  
+		    if (oriMap != null && !oriMap.isEmpty()) { 
+		    	for (String key : oriMap.keySet()) {
+					if(classInMorning.containsKey(key.substring(4, 6))){
+						sortedMap.put(key, oriMap.get(key));
+					}
+					if(classInAfternoon.containsKey(key.substring(4, 6))){
+						sortedMap.put(key, oriMap.get(key));
+					}
+				}
+		    	for (String key  : oriMap.keySet()) {
+					if (!sortedMap.containsKey(key)) {
+						sortedMap.put(key, oriMap.get(key));
+					}
+				}
+	       
+		    }  
+		    return sortedMap;
+		
+	}
+	
+	
+	
+	
 	public static Map<String, String> sortMapByValue(Map<String, String> oriMap){
 		 Map<String, String> sortedMap = new LinkedHashMap<String, String>();  
-		    if (oriMap != null && !oriMap.isEmpty()) {  
+		    if (oriMap != null && !oriMap.isEmpty()) { 		    	
 		        List<Map.Entry<String, String>> entryList = new ArrayList<Map.Entry<String, String>>(oriMap.entrySet());  
 		        Collections.sort(entryList,  
 		                new Comparator<Map.Entry<String, String>>() {  
@@ -223,7 +294,7 @@ public class GAUtil {
 		                        } catch (NumberFormatException e) {  
 		                            value1 = 0;  
 		                            value2 = 0;  
-		                        }  
+		                        } 		                        		                        		                        		                        
 		                        return value2 - value1;  
 		                    }  
 		                });  

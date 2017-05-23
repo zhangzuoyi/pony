@@ -300,7 +300,7 @@ public class Rule {
 				}												
 				}
 			}
-		}	*/
+		}*/	
 		
 		
 		return result;
