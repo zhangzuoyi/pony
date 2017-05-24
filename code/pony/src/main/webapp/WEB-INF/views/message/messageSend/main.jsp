@@ -65,7 +65,7 @@
                     icon="search"
                     v-model="users"
                     @click="handleUserClick"
-                    :disabled="true">
+                    readonly="true">
             </el-input>				
                </div>           
             </el-col>      
@@ -249,7 +249,9 @@ var app = new Vue({
 			}, 
 			 handleChange :function(value){
 			 this.groupId = value;
-			 this.listByGroupId(value);
+			 if(value != null){
+			 this.listByGroupId(value);			 
+			 }
 			 
 			 },
 			 handleUserClick:function(){
@@ -404,7 +406,10 @@ var app = new Vue({
 			 this.users = null;
 			 this.conditionVo.messageId =  response.data;			
              this.$refs.upload.submit();
-             this.clearFiles();			
+             this.clearFiles();		
+             this.$message({ type:'info',message:'发送成功'});
+             
+             	
 			},
 			function(response){}  			
 			); 
