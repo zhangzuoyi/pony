@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.zzy.pony.AutoClassArrange.DNA;
 import com.zzy.pony.model.Subject;
@@ -78,6 +83,9 @@ public class GAUtil {
 	public static Map<String, Map<String, Integer>>	 getTeacherSubjectClass(List<TeacherSubjectVo> list){
 		Map<String, Map<String, Integer>> result =  new HashMap<String, Map<String,Integer>>();
 		for (TeacherSubjectVo teacherSubjectVo : list) {
+			 
+				
+			
 			String teacherId = String.format("%04d", teacherSubjectVo.getTeacherId())  ;
 			String classId=String.format("%03d", teacherSubjectVo.getClassId()) ;
 			String subjectId =String.format("%02d", teacherSubjectVo.getSubjectId())  ;	
@@ -89,10 +97,48 @@ public class GAUtil {
 				innerMap.put(classId, 0);
 				result.put(key, innerMap);
 			}
+			}
+		
+		
+		return result;
+	}
+	/**
+	 * @param list   key teacherId+subjectId value(list<integer> 星期)
+	 * @return
+	 */
+	public static Map<String, Set<Integer>>	 getTeacherSubjectRegularClass(List<TeacherSubjectVo> list){
+		Map<String, Set<Integer>> result =  new HashMap<String,Set<Integer>>();
+		Random random = new Random();
+		for (TeacherSubjectVo teacherSubjectVo : list) {
+			if (teacherSubjectVo.getSubjectName().equalsIgnoreCase("语文")
+					||teacherSubjectVo.getSubjectName().equalsIgnoreCase("数学")
+					||teacherSubjectVo.getSubjectName().equalsIgnoreCase("英语")
+					||teacherSubjectVo.getSubjectName().equalsIgnoreCase("物理")
+					||teacherSubjectVo.getSubjectName().equalsIgnoreCase("化学")
+					){						
+			String teacherId = String.format("%04d", teacherSubjectVo.getTeacherId())  ;
+			String subjectId =String.format("%02d", teacherSubjectVo.getSubjectId())  ;	
+			String key = teacherId+subjectId;
+			int weekarranges = 0;
+			String weekarrange = teacherSubjectVo.getWeekArrange();
+			if (weekarrange.indexOf("+")>0) {
+				String[] a = weekarrange.split("\\+");
+				weekarranges =  Integer.valueOf(a[0]) + Integer.valueOf(a[1]);				
+			}else {
+				weekarranges = Integer.valueOf(weekarrange);
+			}	
+			Set<Integer> weekSet = new HashSet<Integer>();
+			while(weekSet.size()<weekarranges){
+				weekSet.add(random.nextInt(5)+1);
+			}		
+			result.put(key, weekSet);			
+		}
 		}
 		
 		return result;
 	}
+	
+	
 	/**
 	 * @param list   key teacherId+subjectId value classId   获取不平课的班级，即某个老师在A班上3节课，在B班上4节课
 	 * @return
@@ -211,6 +257,42 @@ public class GAUtil {
 		
 		if ((classNumber>=1 && classNumber<=3)||(classNumber>=8 && classNumber<=10)||(classNumber>=15 && classNumber<=17)||(classNumber>=22 && classNumber<=24)||(classNumber>=29 && classNumber<=31)) {
 			return true;
+		}
+		
+		return false;
+	}
+	public static boolean isInWeekSet(int classNumber,Set<Integer> weekSet){
+		
+		for (Integer integer : weekSet) {
+			switch (integer) {
+			case 5:
+				if (classNumber>=1&&classNumber<=7) {
+					return true;
+				}
+				break;
+			case 4:
+				if (classNumber>=8&&classNumber<=14) {
+					return true;
+				}
+				break;
+			case 3:
+				if (classNumber>=15&&classNumber<=21) {
+					return true;
+				}
+				break;
+			case 2:
+				if (classNumber>=22&&classNumber<=28) {
+					return true;
+				}
+				break;
+			case 1:
+				if (classNumber>=29&&classNumber<=35) {
+					return true;
+				}
+				break;	
+			default:
+				break;
+			}						
 		}
 		
 		return false;

@@ -14,24 +14,27 @@ left join t_teacher c on t.TEACHER_ID=c.TEACHER_ID
 	<select id="findByCondition" resultType="com.zzy.pony.vo.TeacherSubjectVo">
 		<include refid="base_select"></include>
 		 where 1=1 
-		 <if test=" classId != null and classId != 0">
-		 	and  t.class_Id=#{classId}
-		 </if>
-		 <if test=" subjectId != null and subjectId != 0">
-		 	and  t.subject_Id=#{subjectId}
-		 </if>
-		 <if test=" teacherId != null and teacherId != 0">
-		 	and  t.teacher_Id=#{teacherId}
-		 </if>
-		 <if test=" yearId != null and yearId != 0">
-		 	and  t.year_Id=#{yearId}
-		 </if>
-		 <if test=" termId != null and termId != 0">
-		 	and  t.term_Id=#{termId}
-		 </if>
 		 
-		 
-		 
-		 
+	 
 	</select>
+	
+	<select id="findCurrentByGroup" resultType="com.zzy.pony.vo.TeacherSubjectVo">
+		
+		select t.teacher_id as teacherId ,t.subject_id as subjectId,t.name as subjectName, t.week_arrange as weekArrange from( 
+			select t.TEACHER_ID,t.SUBJECT_ID,a.name,t.WEEK_ARRANGE,count(1) as count from t_teacher_subject t
+			left join  t_subject a on t.subject_id = a.subject_id
+			where 1=1			
+			<if test=" yearId != null and yearId != 0">
+		 	and  t.year_Id=#{yearId}
+			 </if>
+		 	<if test=" termId != null and termId != 0">
+		 	and  t.term_Id=#{termId}
+		 	</if>
+			group by t.TEACHER_ID,t.SUBJECT_ID,a.name,t.WEEK_ARRANGE) t 
+			where t.count>1
+		 		 
+		 
+	 
+	</select>
+	
 </mapper>

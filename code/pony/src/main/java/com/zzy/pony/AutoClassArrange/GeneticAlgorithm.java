@@ -119,7 +119,7 @@ public  class GeneticAlgorithm {
 	 * @Description:种群进行遗传
 	 */
 	private void evolve() {
-		List<Chromosome> childPopulation = new ArrayList<Chromosome>();
+		List<Chromosome> childPopulation = new ArrayList<Chromosome>();				
 		//生成下一代种群
 		while (childPopulation.size() < popSize) {
 			Chromosome p1 = getParentChromosome();

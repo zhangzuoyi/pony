@@ -92,6 +92,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		String[] weekdayIdCandidate =GAUtil.getCandidateStrings(weekdays, 1, false);
 		String[] seqIdCandidate=GAUtil.getCandidateStrings(seqs, 1, false);;
 		List<TeacherSubjectVo> vos = teacherSubjectService.findCurrentAll();
+		List<TeacherSubjectVo> voGroups = teacherSubjectService.findCurrentByGroup(); 
 		List<ClassNoCourseVo> classNoCourseVos = classNoCourseService.findCurrentAllVo();
 		List<TeacherNoCourseVo> teacherNoCourseVos = teacherNoCourseService.findCurrentAllVo();
 		List<SubjectNoCourseVo> subjectNoCourseVos = subjectNoCourseService.findCurrentAllVo();
@@ -110,6 +111,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		DNA.getInstance().setTeacherSubjectIrregularClassMap(GAUtil.getTeacherSubjectIrregularClass(vos));
 		DNA.getInstance().setClassInMorning(GAUtil.classInMorning(subjects));
 		DNA.getInstance().setClassInAfternoon(GAUtil.classInAfternoon(subjects));
+		DNA.getInstance().setTeacherSubjectRegularClassMap(GAUtil.getTeacherSubjectRegularClass(voGroups));
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		String bestChromosome =  geneticAlgorithm.caculte();	
 		List<ArrangeVo> list =   GAUtil.getLessonArranges(bestChromosome);

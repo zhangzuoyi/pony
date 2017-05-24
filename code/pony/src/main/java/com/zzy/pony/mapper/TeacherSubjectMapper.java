@@ -7,4 +7,6 @@ import com.zzy.pony.vo.conditionVo;
 
 public interface TeacherSubjectMapper {
 	List<TeacherSubjectVo> findByCondition(conditionVo cv);
+	List<TeacherSubjectVo> findCurrentByGroup(conditionVo cv);
+
 }

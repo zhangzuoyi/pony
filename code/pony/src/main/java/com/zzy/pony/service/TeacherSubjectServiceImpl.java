@@ -257,6 +257,19 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 		}
 		return null;
 	}
+
+	@Override
+	public List<TeacherSubjectVo> findCurrentByGroup() {
+		// TODO Auto-generated method stub
+		conditionVo cv = new conditionVo();
+		SchoolYear schoolYear = yearService.getCurrent();
+		Term term= termService.getCurrent();
+		cv.setYearId(schoolYear.getYearId());
+		cv.setTermId(term.getTermId());
+		return teacherSubjectMapper.findCurrentByGroup(cv);
+	}
+	
+	
 	
 	
 	
