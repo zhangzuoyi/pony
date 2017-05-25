@@ -28,6 +28,9 @@ public class Constants {
 	public static final String PROPERTY_STATUS_FREE=  "0" ;//资产状态  空闲
 	public static final String PROPERTY_STATUS_OCCUPY=  "1" ;//资产状态  使用中
 	public static final String PROPERTY_STATUS_DESTROY=  "2" ;//资产状态  作废
+	public static final int RESOURCE_PARENT_LEVEL=  1 ;//资源级别 一级
+	public static final int RESOURCE_CHILD_LEVEL=  2 ;//资源级别  二级
+
 
 	
 	public static final String MESSAGE_ATTACH_UPLOADPATH = "/home/upload";
