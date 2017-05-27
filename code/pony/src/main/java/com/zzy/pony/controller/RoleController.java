@@ -4,7 +4,9 @@ package com.zzy.pony.controller;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.zzy.pony.model.Resource;
 import com.zzy.pony.model.Role;
 import com.zzy.pony.service.ResourceService;
@@ -47,6 +51,29 @@ public class RoleController {
 		return   roleService.list();
 		
 	}
+	@RequestMapping(value="listTree",method = RequestMethod.GET)
+	@ResponseBody
+	public String listTree(){		
+			
+		StringBuilder result = new StringBuilder();
+		List<Map<String, Object>> lists = new ArrayList<Map<String,Object>>();		
+		List<Role> roles = roleService.findAll();
+		for (Role role : roles) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("roleCode", role.getRoleCode());
+			map.put("label", role.getRoleName());						
+			lists.add(map);			
+		}
+		GsonBuilder gb = new GsonBuilder();
+		Gson gson = gb.create();
+		String treeDatas= gson.toJson(lists);	
+		result.append("{\"treeData\"");
+		result.append(":");
+		result.append(treeDatas);
+		result.append("}");
+		return result.toString();
+	}
+	
 	
 	
 	

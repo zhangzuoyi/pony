@@ -3,6 +3,9 @@ package com.zzy.pony.service;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.zzy.pony.model.Role;
 import com.zzy.pony.model.Student;
 import com.zzy.pony.model.Teacher;
@@ -20,5 +23,11 @@ public interface UserService {
 	User findByStudentId(int studentId);
 	String findUserNameById(Integer id);
 	Map<Integer, String> getUserNameMap();
+	List<UserVo> list();
+	void add(User user);
+	void update(User user);
+	void delete(int	userId);
+	Boolean isExist(int userId);
+	Page<User> findAll(Pageable pageable);
 
 }

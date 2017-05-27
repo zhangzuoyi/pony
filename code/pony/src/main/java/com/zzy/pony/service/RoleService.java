@@ -7,7 +7,7 @@ import com.zzy.pony.vo.RoleVo;
 
 public interface RoleService {
 	
-	
+	List<Role>  findAll();
 	List<RoleVo> list();
 	void add(Role role);
 	void update(Role role);

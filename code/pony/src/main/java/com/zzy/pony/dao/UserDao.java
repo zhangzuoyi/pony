@@ -3,6 +3,8 @@ package com.zzy.pony.dao;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -18,4 +20,6 @@ public interface UserDao extends JpaRepository<User,Integer>{
 	List<Role> findRoles(Integer userId);
 	List<User> findByTeacher(Teacher teacher);
 	List<User> findByStudent(Student student);
+	Page<User> findAll(Pageable pageable);
+	
 }

@@ -18,6 +18,8 @@ public class UserVo {
 	private Integer studentId;
 	private String student;
 	
+	private String[] roles;
+	
 	public String getUserTypeName(){
 		return Constants.USER_TYPES.get(userType);
 	}
@@ -85,6 +87,15 @@ public class UserVo {
 	public void setPsw(String psw) {
 		this.psw = psw;
 	}
+
+	public String[] getRoles() {
+		return roles;
+	}
+
+	public void setRoles(String[] roles) {
+		this.roles = roles;
+	}
+	
 	
 	
 }

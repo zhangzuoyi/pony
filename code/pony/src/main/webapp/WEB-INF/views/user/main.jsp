@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>角色管理</title>
+<title>用户管理</title>
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/easyui/themes/default/easyui.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/style.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/icon.css' />" />
@@ -34,14 +34,14 @@ width:200px;
             <div slot="header" class="clearfix">
               <el-row>
               <el-col :span="4">
-              <b>角色管理</b>
+              <b>用户管理</b>
               </el-col>
               </el-row>
-              <el-row>                            
+              <!-- <el-row>                            
                <el-col :offset="20" :span="4">
-               <el-button type="primary" @click="addRole">新增角色</el-button>
+               <el-button type="primary" @click="addUser">新增用户</el-button>
                </el-col>             
-              </el-row>
+              </el-row> -->
             </div>
             <el-table
                     :data="tableData"
@@ -51,56 +51,94 @@ width:200px;
                    >               
                  
                 <el-table-column
-                        prop="roleCode"
-                        label="角色编码"
+                        prop="userId"
+                        label="序号"
                         >
                 </el-table-column>
                 <el-table-column
-                		prop="roleName"
-                        label="角色名称"
+                		prop="loginName"
+                        label="登录名"
                         >
-                </el-table-column>                                              
+                </el-table-column>
+                <el-table-column
+                		inline-template
+                        label="用户类型"
+                        >
+                        <div>{{row.userType | userTypeFilter }}</div>
+                </el-table-column>
+                <el-table-column
+                		prop="lastLoginTime"
+                        label="上次登陆时间"
+                        >                       
+                </el-table-column>                                                             
                 <el-table-column                       
                         label="操作"
                         >
                  <template scope="scope">
-                 <el-button size="small"  @click="setResource(scope.$index,scope.row)">设置资源</el-button>                              
-                 <el-button size="small" @click="handleEdit(scope.$index,scope.row)">编辑</el-button>
-                 <el-button size="small" type="danger" @click="handleDelete(scope.$index,scope.row)">删除</el-button>               
+                 <el-button size="small"  @click="setRole(scope.$index,scope.row)">授权</el-button>                                             
+                 <!-- <el-button size="small" @click="handleEdit(scope.$index,scope.row)">编辑</el-button>
+                 <el-button size="small" type="danger" @click="handleDelete(scope.$index,scope.row)">删除</el-button> -->               
                  </template>                             
                 </el-table-column>
-            </el-table> 
-
+                
+            </el-table>
+            <el-row>
+            <el-col :offset="18" :span="6">
+            <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-sizes="pageSizes"
+                :page-size="pageSize"
+                layout="total,sizes,prev,pager,next,jumper"
+                :total="total"
+                ></el-pagination>
+            </el-col>
+             
+			</el-row>
 			
 
         </el-card>
-			<el-dialog  v-model="dialogFormVisible" >
+			<%-- <el-dialog  v-model="dialogFormVisible" >
 			<div slot="title" class="dialog-title">
                     <b>{{title}}</b>
-                </div>
-			<el-form :model="role" :rules="rules" ref="ruleForm">
-			<el-form-item label="角色编码" :label-width="formLabelWidth" prop="roleCode"> 
-			 <el-input v-model="role.roleCode" auto-complete="off"   :disabled="!addOrUpdate"   required></el-input> 
-			 </el-form-item>			
-			 <el-form-item label="角色名称" :label-width="formLabelWidth" prop="roleName"> 
-			 <el-input v-model="role.roleName" auto-complete="off"   required></el-input> 
-			 </el-form-item> 			 
+            </div>
+			<el-form :model="user" :rules="rules" ref="ruleForm">						
+			 <el-form-item label="登录名" :label-width="formLabelWidth" prop="roleName"> 
+			 <el-input v-model="user.loginName" auto-complete="off"   required></el-input> 
+			 </el-form-item>
+			 <el-form-item label="密码" :label-width="formLabelWidth" prop="psw"> 
+			 <el-input v-model="user.psw" auto-complete="off"  v-if="addOrUpdate" required></el-input> 
+			 </el-form-item> 
+			 <el-form-item label="用户类型" :label-width="formLabelWidth" prop="userType"> 
+			 <el-select v-model="user.userType"     placeholder="请选择.." >
+               		 <el-option                       
+                        :label="'老师'"                   
+                        :value="'t'">
+                        <span style="float: left">老师</span>
+               		 </el-option>
+               		 <el-option                       
+                        :label="'学生'"                       
+                        :value="'s'">
+                        <span style="float: left">学生</span>
+               		 </el-option>
+           			 </el-select> 			 
+			 </el-form-item>			 
 		    </el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button type="primary" @click="onSubmit('ruleForm')"  >确定</el-button>
 				<el-button @click="dialogFormVisible = false">取 消</el-button>				
 			</div>
-			</el-dialog>
+			</el-dialog> --%>
 			
-			<el-dialog title="设置资源" v-model="dialogFormVisible2" >			
+			<el-dialog title="设置角色" v-model="dialogFormVisible2" >			
 			<el-tree           
             :data="treeData"
             :props="props"
             show-checkbox
-            node-key="resId"
+            node-key="roleCode"
             highlight-current
-            default-expand-all
-            :check-strictly="true"                       
+            default-expand-all           
             ref="tree"
             >           
             </el-tree>						
@@ -121,88 +159,117 @@ width:200px;
 var app = new Vue({ 
 	el : '#app' ,
 	data : { 		
-		role:{roleCode:null,roleName:null,resources:[]},
-		dialogFormVisible:false,
-		formLabelWidth:"120px",
+		user:{userId:null,loginName:null,userType:null,roles:[]},
+		/* dialogFormVisible:false,
+		formLabelWidth:"120px", */
 		tableData:[],
-		rolesUrl:"<s:url value='/roleAdmin/list'/>",				
-		deleteUrl :"<s:url value='/roleAdmin/delete'/>",
-		addUrl :"<s:url value='/roleAdmin/add'/>",
-		updateUrl :"<s:url value='/roleAdmin/update'/>",
-		resoureTreeUrl : "<s:url value='/resourceAdmin/listTree'/>",		
+		usersUrl:"<s:url value='/user/listPage'/>",
+		setRoleUrl:"<s:url value='/user/setRole'/>",										
+		/* deleteUrl :"<s:url value='/userAdmin/delete'/>",
+		addUrl :"<s:url value='/userAdmin/add'/>",
+		updateUrl :"<s:url value='/userAdmin/update'/>", */
+		roleTreeUrl : "<s:url value='/roleAdmin/listTree'/>",		
 		title:"",
-		rules :{	
-		roleCode: [{required :true,message:"请填写角色编码",trigger:"blur"}],	
-		roleName: [{required :true,message:"请填写角色名称",trigger:"blur"}]		
-		},
+		/* rules :{	
+		psw: [{required :true,message:"请填写密码",trigger:"blur"}],	
+		loginName: [{required :true,message:"请填写登录名",trigger:"blur"}],
+		psw: [{required :true,message:"请填写密码",trigger:"change"}]
+		
+		}, */
 		treeData:[],
 		props:{
 			children : 'children',
 			label : 'label'
 		},
 		dialogFormVisible2:true,
-		addOrUpdate: true
+		addOrUpdate: true,
+		currentPage : 1,
+		pageSizes :[20,50,100],
+		pageSize:[20],
+		total:null
 	
 	
 		
 	}, 
+	filters: {    
+    userTypeFilter: function (value) {
+      if(value == 't'){return "老师"; }
+      if(value == 's'){return "学生"; }
+    }
+  }	,
 	
 	mounted : function() { 
-		this.getRoles();
-		this.getResoureTree();
+		this.getUsers();
+		this.getRoleTree();
 		this.dialogFormVisible2 = false;//解决el-dialog中的el-tree第一次的动态渲染问题
 		
 			
 	}, 
 	methods : {
 	
+			handleSizeChange :function(val){
+			//console.log('每页  ${val}条');
+			this.currentPage = 1;
+			this.pageSize = val;
+			this.getUsers();
+			
+			},
+			handleCurrentChange: function(val){
+				this.currentPage = val;
+				this.getUsers();
+				//console.log('当前页 : ${val}');
+			},
+	
 			 
-			setResource:function(index,row){
-			if(row.roleCode == null){
-			 this.$message({type:"info",  message:"请选择角色"});
+			setRole:function(index,row){
+			if(row.userId == null){
+			 this.$message({type:"info",  message:"请选择用户"});
 			 return ;
 			}						 
-			this.role = row;
+			this.user = row;
 			this.dialogFormVisible2 = true;	
 			//this.$forceUpdate();
-			this.$refs.tree.setCheckedKeys(row.resources);
+			this.$refs.tree.setCheckedKeys(row.roles);
 			//this.$set(this.$data,'selectResource',row.resources);   //强制视图刷新 
 			},
 			submit:function(){
-			this.role.resources =  this.$refs.tree.getCheckedKeys();
+			this.user.roles =  this.$refs.tree.getCheckedKeys();
 			this.$refs.tree.setCheckedKeys([]);
 			this.dialogFormVisible2 = false;
-			this.$http.post(this.updateUrl,this.role).then(
+			this.$http.post(this.setRoleUrl,this.user).then(
 					function(response){
-						this.$message({message:"设置成功",type:"info"});
+						this.$message({message:"授权成功",type:"info"});
 						this.dialogFormVisible=false;
-						this.role = {roleCode:null,roleName:null};
-						this.getRoles();											 												
+						this.user = {userId:null,loginName:null,userType:null,roles:[]};
+						this.getUsers();											 												
 					 },
 					function(response){}  			
 					);												
 			},
-			getResoureTree : function(){
-			this.$http.get(this.resoureTreeUrl).then(
+			getRoleTree : function(){
+			this.$http.get(this.roleTreeUrl).then(
 			function(response){
-			var firstNode = {label:'知识库',children : response.data.treeData};			
+			var firstNode = {label:'根节点',children : response.data.treeData};			
 			this.treeData.push(firstNode); 
 			//this.treeData = [{label:'知识库',children : [{"id":1,"resKey":"sys_admin","children":[],"label":"系统管理","presId":0,"resLevel":1}]}];
 			},
 			function(response){}  			
 			); 
 			} ,
-			getRoles : function(){
-			this.$http.get(this.rolesUrl).then(
+			getUsers : function(){
+			this.$http.get(this.usersUrl,{params:{currentPage:this.currentPage-1,pageSize:this.pageSize}}).then(
 			function(response){
-			this.tableData=response.data;},
+			this.tableData=response.data.content;
+			this.total = response.data.totalElements;
+			
+			},
 			function(response){}  			
 			); 
 			} ,	   					
-		handleEdit : function(index,row){
-			this.title="修改角色";
+		/* handleEdit : function(index,row){
+			this.title="修改用户";
 			this.dialogFormVisible = true;
-			this.role = row;
+			this.user = row;
 			this.addOrUpdate = false;
 		},
 		handleDelete : function(index,row){
@@ -211,10 +278,10 @@ var app = new Vue({
 			cancleButtonText:'取消',
 			type:'warning'			
 			}).then(function(){  
-			  app.$http.get(app.deleteUrl,{params:{roleCode:row.roleCode}}).then(
+			  app.$http.get(app.deleteUrl,{params:{userId:row.userId}}).then(
 					function(response){
-						app.role = {roleCode:null,roleName:null};
-						app.getRoles();
+						app.user = {userId:null,loginName:null,userType:null,roles:[]};
+						app.getUsers();
 					 },
 					function(response){}  			
 					);  						
@@ -222,10 +289,10 @@ var app = new Vue({
 			.catch(function(){ app.$message({ type:'info',message:'已取消删除'})});
 			
 		},
-		addRole:function(){
-			this.title="新增角色";
+		addUser:function(){
+			this.title="新增用户";
 			this.dialogFormVisible = true;
-			this.role = {roleCode:null,roleName:null};
+			this.user = {userId:null,loginName:null,userType:null,roles:[]};
 			this.addOrUpdate = true;
 			
 		},		
@@ -240,11 +307,11 @@ var app = new Vue({
 		update : function(formName){
 			this.$refs[formName].validate(function(valid){
 				if(valid){
-				app.$http.post(app.updateUrl,app.role).then(
+				app.$http.post(app.updateUrl,app.user).then(
 					function(response){
 						app.dialogFormVisible=false;
-						app.role = {roleCode:null,roleName:null};
-						app.getRoles();	
+						app.user = {userId:null,loginName:null,userType:null,roles:[]};
+						app.getUsers();	
 																 												
 					 },
 					function(response){}  			
@@ -262,14 +329,14 @@ var app = new Vue({
 		add : function(formName){
 			this.$refs[formName].validate(function(valid){
 				if(valid){
-				app.$http.post(app.addUrl,app.role).then(
+				app.$http.post(app.addUrl,app.user).then(
 					function(response){
 						
 						app.dialogFormVisible=false;
-						app.role = {roleCode:null,roleName:null};
-						app.getRoles();	
+						app.user = {userId:null,loginName:null,userType:null,roles:[]};
+						app.getUsers();
 						if(response.data == "1"){
-							app.$alert("已存在相同的编码","提示",{
+							app.$alert("已存在相同的Id","提示",{
 		 							confirmButtonText : '确认',		 
 								 });
 						}	
@@ -288,7 +355,7 @@ var app = new Vue({
 			 
 			
 			
-		},
+		}, */
 		
 			
 			 

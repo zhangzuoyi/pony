@@ -18,6 +18,15 @@ public class RoleServiceImpl implements RoleService {
 	@Autowired
 	private RoleDao roleDao;
 
+	
+	
+	
+	@Override
+	public List<Role> findAll() {
+		// TODO Auto-generated method stub
+		return roleDao.findAll();
+	}
+
 	@Override
 	public List<RoleVo> list() {
 		// TODO Auto-generated method stub

@@ -179,7 +179,7 @@ width:200px;
 			getResoureTree : function(){
 			this.$http.get(this.resoureTreeUrl).then(
 			function(response){
-			var firstNode = {label:'知识库',children : response.data.treeData};			
+			var firstNode = {label:'根节点',children : response.data.treeData};			
 			this.treeData.push(firstNode); 
 			//this.treeData = [{label:'知识库',children : [{"id":1,"resKey":"sys_admin","children":[],"label":"系统管理","presId":0,"resLevel":1}]}];
 			},
