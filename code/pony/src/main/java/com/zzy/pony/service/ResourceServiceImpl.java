@@ -76,6 +76,13 @@ public class ResourceServiceImpl implements ResourceService {
 		resourceDao.save(old);
 		
 	}
+
+	@Override
+	public Resource get(int resId) {
+		// TODO Auto-generated method stub
+		return resourceDao.findOne(resId);
+	}
+	
 	
 	
 	

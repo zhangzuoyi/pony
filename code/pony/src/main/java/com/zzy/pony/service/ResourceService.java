@@ -12,5 +12,7 @@ public interface ResourceService {
 	void add(Resource resource);
 	void delete(int resId);
 	void update(Resource resource);
+	Resource get(int resId);
+	
 
 }

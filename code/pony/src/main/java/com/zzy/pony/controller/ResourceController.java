@@ -30,7 +30,7 @@ import com.zzy.pony.service.ResourceService;
 
 
 @Controller
-@RequestMapping(value = "/resource")
+@RequestMapping(value = "/resourceAdmin")
 public class ResourceController {
 	static Logger log=LoggerFactory.getLogger(ResourceController.class);
 	

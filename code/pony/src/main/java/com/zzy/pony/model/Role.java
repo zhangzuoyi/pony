@@ -57,6 +57,16 @@ public class Role implements Serializable {
 		this.roleName = roleName;
 	}
 
+	public List<Resource> getResources() {
+		return resources;
+	}
+
+	public void setResources(List<Resource> resources) {
+		this.resources = resources;
+	}
+	
+	
+
 //	public List<User> getUsers() {
 //		return this.users;
 //	}
