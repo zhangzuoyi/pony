@@ -30,6 +30,10 @@ public interface DictService {
 	 */
 	List<CommonDict> findStudentTypes();
 	List<CommonDict> findPropertyStatus();
+	List<CommonDict> findSubjectTypes();
+	List<CommonDict> findImportances();
+
+
 	
 	
 	

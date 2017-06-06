@@ -18,7 +18,7 @@ import com.zzy.pony.mapper.ExamResultRankMapper;
 import com.zzy.pony.model.Student;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.vo.ExamResultRankVo;
-import com.zzy.pony.vo.conditionVo;
+import com.zzy.pony.vo.ConditionVo;
 @Service
 @Transactional
 public class ClassComprehensiveCompareServiceImpl implements ClassComprehensiveCompareService {
@@ -37,7 +37,7 @@ public class ClassComprehensiveCompareServiceImpl implements ClassComprehensiveC
 	
 	
 	@Override
-	public List<Map<String, Object>> findByCondition(conditionVo cv) {
+	public List<Map<String, Object>> findByCondition(ConditionVo cv) {
 		// TODO Auto-generated method stub	
 		List<Map<String, Object>> resultList = new ArrayList<Map<String,Object>>();
 		//班级ID为键

@@ -20,7 +20,7 @@ import com.zzy.pony.model.Teacher;
 import com.zzy.pony.model.TeacherSubject;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.vo.TeacherSubjectVo;
-import com.zzy.pony.vo.conditionVo;
+import com.zzy.pony.vo.ConditionVo;
 @Service
 @Transactional
 public class TeacherSubjectServiceImpl implements TeacherSubjectService {
@@ -216,7 +216,7 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 	}
 
 	@Override
-	public List<TeacherSubjectVo> findCurrentVoByCondition(conditionVo cv) {
+	public List<TeacherSubjectVo> findCurrentVoByCondition(ConditionVo cv) {
 		// TODO Auto-generated method stub
 		List<TeacherSubjectVo> result = new ArrayList<TeacherSubjectVo>();
 		SchoolYear year = yearService.getCurrent();
@@ -261,7 +261,7 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 	@Override
 	public List<TeacherSubjectVo> findCurrentByGroup() {
 		// TODO Auto-generated method stub
-		conditionVo cv = new conditionVo();
+		ConditionVo cv = new ConditionVo();
 		SchoolYear schoolYear = yearService.getCurrent();
 		Term term= termService.getCurrent();
 		cv.setYearId(schoolYear.getYearId());

@@ -20,7 +20,7 @@ import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.Student;
 import com.zzy.pony.vo.ExamResultRankVo;
-import com.zzy.pony.vo.conditionVo;
+import com.zzy.pony.vo.ConditionVo;
 @Service
 @Transactional
 public class ExamResultRankServiceImpl implements ExamResultRankService {
@@ -34,7 +34,7 @@ public class ExamResultRankServiceImpl implements ExamResultRankService {
 	private ExamDao examDao;
 	
 	@Override
-	public List<Map<String, Object>> findByCondition(conditionVo cv) {
+	public List<Map<String, Object>> findByCondition(ConditionVo cv) {
 		// TODO Auto-generated method stub
 		//排名以及成绩展示需要处理  学生ID为键
 		//List<Map<Integer,Map<String, Object>>> lists = new ArrayList<Map<Integer,Map<String,Object>>>();

@@ -22,7 +22,7 @@ import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.vo.SchoolYearVo;
-import com.zzy.pony.vo.conditionVo;
+import com.zzy.pony.vo.ConditionVo;
 
 @Controller
 @RequestMapping(value = "/schoolYear")

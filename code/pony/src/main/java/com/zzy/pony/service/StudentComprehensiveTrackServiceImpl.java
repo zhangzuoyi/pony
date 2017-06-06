@@ -23,7 +23,7 @@ import com.zzy.pony.model.Student;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.vo.ExamResultRankVo;
-import com.zzy.pony.vo.conditionVo;
+import com.zzy.pony.vo.ConditionVo;
 @Service
 @Transactional
 public class StudentComprehensiveTrackServiceImpl implements StudentComprehensiveTrackService {
@@ -45,7 +45,7 @@ public class StudentComprehensiveTrackServiceImpl implements StudentComprehensiv
 	private ExamDao examDao;
 	
 	@Override
-	public List<Map<String, Object>> findByCondition(conditionVo cv) {
+	public List<Map<String, Object>> findByCondition(ConditionVo cv) {
 		// TODO Auto-generated method stub		
 		//排名以及成绩展示需要处理  学生ID为键		
 		//总成绩为考试对应科目的总成绩				

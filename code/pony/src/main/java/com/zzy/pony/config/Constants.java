@@ -52,6 +52,10 @@ public class Constants {
 	public static final String DICT_STUDENT_TYPE = "student_type";
 	public static final String DICT_STUDENT_STATUS= "student_status";
 	public static final String DICT_PROPERTY_STATUS= "property_status";
+	public static final String DICT_SUBJECT_TYPE= "subject_type";
+	public static final String DICT_IMPORTANCE= "importance";
+
+
 
 
 
@@ -67,6 +71,9 @@ public class Constants {
 			dictTypes.put(DICT_STUDENT_TYPE, "学生类型");
 			dictTypes.put(DICT_STUDENT_STATUS, "学生状态");
 			dictTypes.put(DICT_PROPERTY_STATUS, "资产状态");
+			dictTypes.put(DICT_SUBJECT_TYPE, "科目类型");
+			dictTypes.put(DICT_IMPORTANCE, "重要程度");
+
 			Collections.unmodifiableMap(dictTypes);
 		}
 		return dictTypes;

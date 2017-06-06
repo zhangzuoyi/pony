@@ -1,6 +1,6 @@
 package com.zzy.pony.vo;
 
-public class conditionVo {
+public class ConditionVo {
 	private int yearId;
 	private int termId;
 	private int gradeId;
@@ -18,7 +18,7 @@ public class conditionVo {
 	
 	private int messageId;
 	
-	public conditionVo(){
+	public ConditionVo(){
 		
 	}
 	

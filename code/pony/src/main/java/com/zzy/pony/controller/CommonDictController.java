@@ -104,6 +104,19 @@ public class CommonDictController {
 		return dictService.findPropertyStatus();
 	}
 	
+	@ResponseBody
+	@RequestMapping(value="subjectTypes",method = RequestMethod.GET)
+	public List<CommonDict> subjectTypes(){
+		
+		return dictService.findSubjectTypes();
+	}
+	@ResponseBody
+	@RequestMapping(value="importances",method = RequestMethod.GET)
+	public List<CommonDict> importances(){
+		
+		return dictService.findImportances();
+	}
+	
 	
 	
 	

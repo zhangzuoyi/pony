@@ -50,7 +50,7 @@ import com.zzy.pony.service.ExamService;
 import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.StudentComprehensiveTrackService;
 import com.zzy.pony.vo.ExamVo;
-import com.zzy.pony.vo.conditionVo;
+import com.zzy.pony.vo.ConditionVo;
 
 @Controller
 @RequestMapping(value = "/studentComprehensiveTrack")
@@ -88,7 +88,7 @@ public class StudentComprehensiveTrackController {
 	}
 	@RequestMapping(value="findByCondition",method = RequestMethod.POST)
 	@ResponseBody
-	public String findByCondition(@RequestBody conditionVo cv) {
+	public String findByCondition(@RequestBody ConditionVo cv) {
 		//新增默认全选功能
 		if (cv.getExamTypeIds()==null || cv.getExamTypeIds().length == 0) {
 			List<ExamType> examTypes = examTypeDao.findAll();				

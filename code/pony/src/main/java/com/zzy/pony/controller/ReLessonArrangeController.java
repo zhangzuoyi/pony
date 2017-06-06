@@ -54,7 +54,7 @@ import com.zzy.pony.service.SubjectService;
 import com.zzy.pony.service.TermService;
 import com.zzy.pony.service.WeekdayService;
 import com.zzy.pony.vo.ArrangeVo;
-import com.zzy.pony.vo.conditionVo;
+import com.zzy.pony.vo.ConditionVo;
 
 
 
@@ -147,7 +147,7 @@ public class ReLessonArrangeController {
 	
 	@RequestMapping(value="listTableData",method = RequestMethod.POST)
 	@ResponseBody
-	public String listTableData(@RequestBody conditionVo cv) {
+	public String listTableData(@RequestBody ConditionVo cv) {
 			//新增默认全选功能
 			SchoolYear year = schoolYearService.getCurrent();
 			Term term = termService.getCurrent();
