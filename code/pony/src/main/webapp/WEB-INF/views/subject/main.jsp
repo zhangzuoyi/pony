@@ -152,7 +152,7 @@ width:200px;
 		subjectTypes:[],
 		importances:[],
 		rules :{
-		name: [{required :true,message:"请填写科目名称..",trigger:"blue"}]				
+		name: [{required :true,message:"请填写科目名称..",trigger:"blur"}]				
 		}
 	
 	

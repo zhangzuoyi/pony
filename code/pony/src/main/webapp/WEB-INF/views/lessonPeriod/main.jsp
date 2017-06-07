@@ -9,259 +9,285 @@
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/easyui/themes/default/easyui.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/style.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/icon.css' />" />
+<%-- <link rel="stylesheet" type="text/css" href="<s:url value='/static/bootstrap/css/bootstrap.min.css' />" /> --%>
+<link rel="stylesheet" type="text/css" href="<s:url value='/static/elementUI/index.css' />" />
+<link rel="stylesheet" type="text/css" href="<s:url value='/static/elementUI/element.css' />" />
 <script type="text/javascript" src="<s:url value='/static/js/jquery.min.js' />"></script>
+<script type="text/javascript" src="<s:url value='/static/bootstrap/js/bootstrap.min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/easyui/jquery.easyui.min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/easyui/locale/easyui-lang-zh_CN.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/easyui/dateFormat.js' />"></script>
+<script type="text/javascript" src="<s:url value='/static/vue/vue.min.js' />"></script>
+<script type="text/javascript" src="<s:url value='/static/vue/vue-resource.min.js' />"></script>
+<script type="text/javascript" src="<s:url value='/static/vue/vue-validator.js' />"></script>
+<script type="text/javascript" src="<s:url value='/static/elementUI/index.js' />"></script>
+<style type="text/css">
+.el-input {
+width:200px;
+}
+</style>
 </head>
-<body class="easyui-layout">
-<div class="easyui-layout" data-options="fit:true">
-    <!-- Begin of toolbar -->
-    <div id="my-toolbar-2">
-        <div class="my-toolbar-button">
-            <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="openAdd()" plain="true">添加</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-edit" onclick="openEdit()" plain="true">修改</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-remove" onclick="removeItem()" plain="true">删除</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-reload" onclick="reload()" plain="true">刷新</a>
-        </div>
-    </div>
-    <!-- End of toolbar -->
-    <table id="my-datagrid-2" class="easyui-datagrid" toolbar="#my-toolbar-2"></table>
+<body>
+<div id="app">
+  <div>   	           	
+        	<el-card class="box-card content-margin">
+            <div slot="header" class="clearfix">
+              <el-row>
+              <el-col :span="4">
+              <b>上课时段管理</b>
+              </el-col>
+              </el-row>  
+              <el-row>             
+               <el-col :offset="18" :span="6">
+               <el-button type="primary" @click="addLessonPeriod">新增</el-button>       
+               </el-col>             
+              </el-row>            
+            </div>
+            <el-table
+                    :data="tableData"
+                    border
+                    style="width: 100%"
+                    highlight-current-row
+                   >               
+                 
+                <el-table-column
+                        prop="seq"
+                        label="顺序"
+                        >
+                </el-table-column>
+                <el-table-column
+                		prop="startTime"
+                        label="开始时间"
+                        >
+                </el-table-column>
+                <el-table-column
+                        prop="endTime"
+                        label="结束时间"
+                        >                      
+                </el-table-column>
+                <el-table-column
+                		prop="yearName"
+                        label="学年"
+                        >
+                </el-table-column>
+                <el-table-column
+                        prop="termName"
+                        label="学期"
+                        >                      
+                </el-table-column>
+               <el-table-column
+                        prop="importanceName"
+                        label="重要程度"
+                        >
+                </el-table-column>                              
+                <el-table-column                       
+                        label="操作"
+                        >
+                 <template scope="scope">
+                 <el-button size="small" @click="handleEdit(scope.$index,scope.row)">编辑</el-button>
+                 <el-button size="small" type="danger" @click="handleDelete(scope.$index,scope.row)">删除</el-button>               
+                 </template>                             
+                </el-table-column>
+            </el-table> 
+
+			
+
+        </el-card>
+			<el-dialog  v-model="dialogFormVisible" >
+			<div slot="title" class="dialog-title">
+                    <b>{{title}}</b>
+                </div>
+			<el-form :model="lessonPeriod" :rules="rules" ref="ruleForm">			
+			 <el-form-item label="学年" :label-width="formLabelWidth" prop="yearName" v-if="!addOrUpdate"> 
+			 <el-input v-model="lessonPeriod.yearName" auto-complete="off"  readonly ></el-input> 
+			 </el-form-item>
+			 <el-form-item label="学期" :label-width="formLabelWidth" prop="termName" v-if="!addOrUpdate"> 
+			 <el-input v-model="lessonPeriod.termName" auto-complete="off"   readonly></el-input> 
+			 </el-form-item>
+			 <el-form-item label="顺序" :label-width="formLabelWidth" prop="seq"> 
+            	<el-input-number v-model="lessonPeriod.seq"  :min="1" :max="10" required></el-input-number>
+			 </el-form-item> 
+			 <el-form-item label="开始时间" :label-width="formLabelWidth" prop="startTime"> 
+			  	<el-time-select
+			  			v-model="lessonPeriod.startTime"
+	                    :picker-options="{
+	                    start: '06:00',
+	                    step: '00:15',
+	                    end: '22:30'
+	                  }"
+	                    placeholder="选择开始时间">
+	            </el-time-select>
+            </el-form-item>
+            <el-form-item label="结束时间" :label-width="formLabelWidth" prop="endTime"> 
+			  	<el-time-select
+			  			v-model="lessonPeriod.endTime"			  		
+	                    :picker-options="{
+	                    start: '06:00',
+	                    step: '00:15',
+	                    end: '22:30'
+	                  }"
+	                    placeholder="选择结束时间">
+	            </el-time-select>
+			 </el-form-item>
+			 <el-form-item label="重要程度" :label-width="formLabelWidth" prop="importance"> 
+			 <el-select v-model="lessonPeriod.importance" placeholder="请选择.."  > 
+				<el-option v-for="x in importances" :label="x.value" :value="parseInt(x.code)">				
+				</el-option> 				
+				</el-select> 
+			 </el-form-item>
+		    </el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button type="primary" @click="onSubmit('ruleForm')"  >确定</el-button>
+				<el-button @click="dialogFormVisible = false">取 消</el-button>
+				
+			</div>
+			</el-dialog>
+
+
+		</div>
+ 
+
 </div>
-<!-- Begin of easyui-dialog -->
-<div id="my-dialog-2" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:400px; padding:10px;">
-	<form id="my-form-2" method="post">
-		<input type="hidden" name="periodId" />
-        <table>
-        	<tr>
-                <td width="60" align="right">学年:</td>
-                <td>
-                	${currentYear.name }
-                	<input type="hidden" name="schoolYear.yearId" value="${currentYear.yearId }" />
-                </td>
-            </tr>
-            <tr>
-                <td width="60" align="right">学期:</td>
-                <td>
-                	${currentTerm.name }
-                	<input type="hidden" name="term.termId" value="${currentTerm.termId }" />
-                </td>
-            </tr>
-            <tr>
-                <td width="60" align="right">顺序:</td>
-                <td><input type="text" name="seq" class="my-text" /></td>
-            </tr>
-            <tr>
-                <td width="60" align="right">开始时间:</td>
-                <td><input class="easyui-timespinner" name="startTime" style="width:100%;"></td>
-            </tr>
-            <tr>
-                <td width="60" align="right">结束时间:</td>
-                <td><input class="easyui-timespinner" name="endTime" style="width:100%;"></td>
-            </tr>
-        </table>
-    </form>
-</div>
-<!-- End of easyui-dialog -->
+
 <script type="text/javascript">
-	/**
-	* Name 添加记录
-	*/
-	function add(){
-		$('#my-form-2').form('submit', {
-			url:"<s:url value='/lessonPeriod/add' />",
-			success:function(data){
-				if(data){
-					$.messager.alert('信息提示','提交成功！','info');
-					$('#my-dialog-2').dialog('close');
-					reload();
-				}
-				else
-				{
-					$.messager.alert('信息提示','提交失败！','info');
-				}
+	var app = new Vue({ 
+	el : '#app' ,
+	data : { 		
+		lessonPeriod:{periodId:null,seq:null,startTime: null,endTime:null,yearName:null,termName:null,importance:null},
+		dialogFormVisible:false,
+		formLabelWidth:"120px",
+		tableData:[],
+		importancesUrl:"<s:url value='/commonDict/importances'/>",							
+		lessonPeriodsUrl:"<s:url value='/lessonPeriod/findBySchoolYearAndTerm'/>",		
+		deleteUrl :"<s:url value='/lessonPeriod/delete'/>",
+		addUrl :"<s:url value='/lessonPeriod/add'/>",
+		updateUrl :"<s:url value='/lessonPeriod/edit'/>",
+		title:"",
+		importances:[],
+		rules :{
+		/* seq: [{required :true,message:"请填写顺序..",trigger:"blur"}]	 */			
+		},
+		addOrUpdate: true
+		
+	
+		
+	}, 
+	/* filters: {    
+    subjectTypeFilter: function (value) {
+      if(value == 0 || value==1){return "上课科目"; }
+      if(value == 2){return "选修科目"; }     
+    }
+    
+  }	, */
+	
+	mounted : function() { 
+		this.getLessonPeriods();
+		this.getImportances();
+		
+		
+			
+	}, 
+	methods : { 
+			getLessonPeriods : function(){
+			this.$http.get(this.lessonPeriodsUrl).then(
+			function(response){
+			this.tableData=response.data;},
+			function(response){}  			
+			); 
+			} ,			
+			getImportances : function(){
+			this.$http.get(this.importancesUrl).then(
+			function(response){
+			this.importances=response.data;},
+			function(response){}  			
+			); 
+			} ,
+	   
+		 
+			
+		handleEdit : function(index,row){
+			this.title="修改上课时段";
+			this.dialogFormVisible = true;
+			this.lessonPeriod = row;
+			this.addOrUpdate = false;
+			
+		},
+		handleDelete : function(index,row){
+			this.$confirm("确认删除吗？","提示",{
+			confirmButtonText:'确认',
+			cancleButtonText:'取消',
+			type:'warning'			
+			}).then(function(){  
+			  app.$http.get(app.deleteUrl,{params:{id:row.periodId}}).then(
+					function(response){
+						app.getLessonPeriods();
+					 },
+					function(response){}  			
+					);  						
+			})
+			.catch(function(){ app.$message({ type:'info',message:'已取消删除'})});
+			
+		},
+		addLessonPeriod:function(){
+			this.title="新增上课时段";
+			this.dialogFormVisible = true;
+			this.lessonPeriod = {periodId:null,seq:null,startTime:null,endTime:null,yearName:null,termName:null,importance:null};
+			this.addOrUpdate = true;
+			
+			
+		},		
+		onSubmit :function(formName){
+			if(this.lessonPeriod.periodId == null){
+				this.add(formName);
+			}else{
+				this.update(formName);
 			}
-		});
-	}
-	
-	/**
-	* Name 修改记录
-	*/
-	function edit(){
-		$('#my-form-2').form('submit', {
-			url:"<s:url value='/lessonPeriod/edit' />",
-			success:function(data){
-				if(data){
-					$.messager.alert('信息提示','修改成功！','info');
-					$('#my-dialog-2').dialog('close');
-					reload();
+			
+		},
+		update : function(formName){
+			this.$refs[formName].validate(function(valid){
+				if(valid){
+				app.$http.post(app.updateUrl,app.lessonPeriod).then(
+					function(response){
+						app.dialogFormVisible=false;
+						app.lessonPeriod = {periodId:null,seq:null,startTime:null,endTime:null,yearName:null,termName:null,importance:null};
+						app.getLessonPeriods();												 												
+					 },
+					function(response){}  			
+					);
+				
+				
+				
+				}else{
+				console.log("error submit!");				
 				}
-				else
-				{
-					$.messager.alert('信息提示','提交失败！','info');
+			});
+			
+						
+			 
+			
+			
+		},
+		add : function(formName){
+			this.$refs[formName].validate(function(valid){
+				if(valid){
+				app.$http.post(app.addUrl,app.lessonPeriod).then(
+					function(response){
+						app.dialogFormVisible=false;
+						app.lessonPeriod = {periodId:null,seq:null,startTime:null,endTime:null,yearName:null,termName:null,importance:null};
+						app.getLessonPeriods();										
+					 },
+					function(response){}  			
+					);
+				
+				}else{
 				}
-			}
-		});
-	}
+			});									 						
+		}							 			   		  
+        }	        
+	 
 	
-	/**
-	* Name 删除记录
-	*/
-	function removeItem(){
-		$.messager.confirm('信息提示','确定要删除该记录？', function(result){
-			if(result){
-				var item = $('#my-datagrid-2').datagrid('getSelected');
-				$.ajax({
-					url:"<s:url value='/lessonPeriod/delete' />",
-					data:{id: item.periodId},
-					method:"POST",
-					success:function(data){
-						if(data){
-							$.messager.alert('信息提示','删除成功！','info');	
-							reload();
-						}
-						else
-						{
-							$.messager.alert('信息提示','删除失败！','info');		
-						}
-					}	
-				});
-			}	
-		});
-	}
-	
-	function openAdd(){
-		clearForm();
-		$('#my-dialog-2').dialog({
-			closed: false,
-			modal:true,
-            title: "添加信息",
-            buttons: [{
-                text: '确定',
-                iconCls: 'icon-ok',
-                handler: add
-            }, {
-                text: '取消',
-                iconCls: 'icon-cancel',
-                handler: function () {
-                    $('#my-dialog-2').dialog('close');                    
-                }
-            }]
-        });
-	}
-	
-	function openEdit(){
-		clearForm();
-		var item = $('#my-datagrid-2').datagrid('getSelected');
-		$.ajax({
-			url:"<s:url value='/lessonPeriod/get' />",
-			data:{id: item.periodId},
-			dataType:'json',
-			success:function(data){
-				if(data){
-					//绑定值
-					var formdata={};
-					formdata["periodId"]=data.periodId;
-					formdata["seq"]=data.seq;
-					formdata["startTime"]=data.startTime;
-					formdata["endTime"]=data.endTime;
-					formdata["schoolYear.yearId"]=data.schoolYear.yearId;
-					formdata["term.termId"]=data.term.termId;
-					$('#my-form-2').form('load', formdata);
-				}
-				else{
-					$('#my-dialog-2').dialog('close');
-				}
-			}	
-		});
-		$('#my-dialog-2').dialog({
-			closed: false,
-			modal:true,
-            title: "修改信息",
-            buttons: [{
-                text: '确定',
-                iconCls: 'icon-ok',
-                handler: edit
-            }, {
-                text: '取消',
-                iconCls: 'icon-cancel',
-                handler: function () {
-                    $('#my-dialog-2').dialog('close');                    
-                }
-            }]
-        });
-	}	
-	function clearForm(){
-		$('input[name="seq"]').val("");
-		$('input[name="startTime"]').val("");
-		$('input[name="endTime"]').val("");
-	}
-	
-	/**
-	* Name 分页过滤器
-	*/
-	function pagerFilter(data){            
-		if (typeof data.length == 'number' && typeof data.splice == 'function'){// is array                
-			data = {                   
-				total: data.length,                   
-				rows: data               
-			}            
-		}        
-		var dg = $(this);         
-		var opts = dg.datagrid('options');          
-		var pager = dg.datagrid('getPager');          
-		pager.pagination({                
-			onSelectPage:function(pageNum, pageSize){                 
-				opts.pageNumber = pageNum;                   
-				opts.pageSize = pageSize;                
-				pager.pagination('refresh',{pageNumber:pageNum,pageSize:pageSize});                  
-				dg.datagrid('loadData',data);                
-			}          
-		});           
-		if (!data.originalRows){               
-			data.originalRows = (data.rows);       
-		}         
-		var start = (opts.pageNumber-1)*parseInt(opts.pageSize);          
-		var end = start + parseInt(opts.pageSize);        
-		data.rows = (data.originalRows.slice(start, end));         
-		return data;       
-	}
-	
-	function reload(){
-		$('#my-datagrid-2').datagrid('reload');
-	}
-	
-	/**
-	* Name 载入数据
-	*/
-	$('#my-datagrid-2').datagrid({
-		url:"<s:url value='/lessonPeriod/findBySchoolYearAndTerm' />",
-		method:'get',
-		loadFilter:pagerFilter,		
-		rownumbers:true,
-		singleSelect:true,
-		pageSize:20,           
-		pagination:true,
-		multiSort:true,
-		fitColumns:true,
-		fit:true,
-		columns:[[
-			/* { checkbox:true}, */
-			{ field:'seq',title:'顺序',width:100,sortable:true},
-			{ field:'startTime',title:'开始时间',width:100,sortable:true},
-			{ field:'endTime',title:'结束时间',width:100,sortable:true},
-			{ field:'schoolYear',title:'学年',width:180,sortable:true,
-				formatter:function(value,rec){
-				   return rec.schoolYear.name;
-				}
-			},
-			{ field:'term',title:'学期',width:180,sortable:true,
-				formatter:function(value,rec){
-				   return rec.term.name;
-				}
-			}
-		]]
-	});
+});  
 	
 </script>
 </body>

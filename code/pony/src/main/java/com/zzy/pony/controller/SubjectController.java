@@ -23,6 +23,7 @@ import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.model.CommonDict;
 import com.zzy.pony.model.Subject;
+import com.zzy.pony.service.DictService;
 import com.zzy.pony.service.DictServiceImpl;
 import com.zzy.pony.service.SubjectService;
 import com.zzy.pony.vo.SubjectVo;
@@ -33,7 +34,7 @@ public class SubjectController {
 	@Autowired
 	private SubjectService service;
 	@Autowired
-	private DictServiceImpl dictServiceImpl;
+	private DictService dictService;
 	
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
@@ -45,7 +46,7 @@ public class SubjectController {
 	@ResponseBody
 	public List<SubjectVo> list(Model model){
 		List<Subject> list=service.findAll();
-		List<CommonDict> importances = dictServiceImpl.findImportances();
+		List<CommonDict> importances = dictService.findImportances();
 		List<SubjectVo> result = new ArrayList<SubjectVo>();
 		for (Subject subject : list) {
 			SubjectVo vo = new SubjectVo();

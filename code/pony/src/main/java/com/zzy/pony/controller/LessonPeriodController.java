@@ -1,6 +1,7 @@
 package com.zzy.pony.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,18 +13,22 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
+import com.zzy.pony.model.CommonDict;
 import com.zzy.pony.model.LessonPeriod;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Term;
+import com.zzy.pony.service.DictService;
 import com.zzy.pony.service.LessonPeriodService;
 import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.TermService;
+import com.zzy.pony.vo.LessonPeriodVo;
 
 @Controller
 @RequestMapping(value = "/lessonPeriod")
@@ -34,6 +39,8 @@ public class LessonPeriodController {
 	private SchoolYearService yearService;
 	@Autowired
 	private TermService termService;
+	@Autowired
+	private DictService dictService;
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
 	public String main(Model model){
@@ -52,17 +59,21 @@ public class LessonPeriodController {
 	}
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody
-	public String add(LessonPeriod sy, Model model){
+	public String add(@RequestBody LessonPeriod sy, Model model){
+		SchoolYear schoolYear =	  yearService.getCurrent();
+		Term term = termService.getCurrent();
+		sy.setSchoolYear(schoolYear);
+		sy.setTerm(term);
 		service.add(sy);
 		return "success";
 	}
 	@RequestMapping(value="edit",method = RequestMethod.POST)
 	@ResponseBody
-	public String edit(LessonPeriod sy, Model model){
+	public String edit(@RequestBody LessonPeriod sy, Model model){
 		service.update(sy);
 		return "success";
 	}
-	@RequestMapping(value="delete",method = RequestMethod.POST)
+	@RequestMapping(value="delete",method = RequestMethod.GET)
 	@ResponseBody
 	public String delete(@RequestParam(value="id") int id, Model model){
 		service.delete(id);
@@ -76,11 +87,32 @@ public class LessonPeriodController {
 	}
 	@RequestMapping(value="findBySchoolYearAndTerm",method = RequestMethod.GET)
 	@ResponseBody
-	public List<LessonPeriod> findBySchoolYearAndTerm(Model model){
+	public List<LessonPeriodVo> findBySchoolYearAndTerm(Model model){
+		List<LessonPeriodVo> result = new ArrayList<LessonPeriodVo>();
 		SchoolYear schoolYear =	  yearService.getCurrent();
 		Term term = termService.getCurrent();
-		List<LessonPeriod> lessonPeriods = service.findBySchoolYearAndTerm(schoolYear, term);	
-		return lessonPeriods;
+		List<CommonDict> importances = dictService.findImportances();
+		List<LessonPeriod> lessonPeriods = service.findBySchoolYearAndTerm(schoolYear, term);
+		for (LessonPeriod lessonPeriod : lessonPeriods) {
+			LessonPeriodVo vo = new LessonPeriodVo();
+			vo.setEndTime(lessonPeriod.getEndTime());
+			vo.setImportance(lessonPeriod.getImportance());
+			vo.setPeriodId(lessonPeriod.getPeriodId());
+			vo.setSeq(lessonPeriod.getSeq());
+			vo.setStage(lessonPeriod.getStage());
+			vo.setStartTime(lessonPeriod.getStartTime());
+			vo.setTermName(schoolYear.getName());
+			vo.setYearName(term.getName());
+			for (CommonDict commonDict : importances) {
+				if (lessonPeriod.getImportance()!=null && commonDict.getCode().equalsIgnoreCase(lessonPeriod.getImportance().toString())) {
+					vo.setImportanceName(commonDict.getValue());
+					break;
+				}
+			}
+			result.add(vo);
+			
+		}		
+		return result;
 	}
 	
 	
