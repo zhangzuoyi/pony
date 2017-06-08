@@ -3,7 +3,9 @@ package com.zzy.pony.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -74,16 +76,34 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		for (Weekday weekday : weekdayList) {
 			weekdays.add(weekday.getSeq());
 		}
-		List<Integer> seqs = new ArrayList<Integer>();
-		List<LessonPeriod> lessonPeriods = lessonPeriodService.findBySchoolYearAndTerm(schoolYear, term);
-		for (LessonPeriod lessonPeriod : lessonPeriods) {
-			seqs.add(lessonPeriod.getSeq());
-		}
 		List<Subject> subjects = subjectService.findAll();
 		List<Integer> subjectIntegers = new ArrayList<Integer>();
 		for (Subject subject : subjects) {
 			subjectIntegers.add(subject.getSubjectId());
 		}
+		
+		List<Integer> seqs = new ArrayList<Integer>();
+		List<LessonPeriod> lessonPeriods = lessonPeriodService.findBySchoolYearAndTerm(schoolYear, term);
+		
+		Map<String, List<String>> seqSubjectMap = new HashMap<String, List<String>>();
+		
+		for (LessonPeriod lessonPeriod : lessonPeriods) {
+			seqs.add(lessonPeriod.getSeq());
+			List<String>  subjectString = new ArrayList<String>();
+			for (Subject subject : subjects) {
+				if (lessonPeriod.getImportance() == subject.getImportance()) {
+					subjectString.add(String.format("%02d", subject.getSubjectId()));
+				}
+			}
+			seqSubjectMap.put(lessonPeriod.getSeq().toString(), subjectString);
+		}
+		
+		
+		
+		
+		
+		
+		
 		
 		String[] classIdCandidate =   GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllClassId(), 3,false);    
 		//String[] subjectIdCandidate =GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllSubjectId(), 2,true);

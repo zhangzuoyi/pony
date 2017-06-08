@@ -14,6 +14,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jdt.internal.compiler.ast.ThisReference;
 
 import com.zzy.pony.AutoClassArrange.DNA;
 import com.zzy.pony.model.Subject;
@@ -209,6 +210,32 @@ public class GAUtil {
 		}
 		return result;		
 	}
+	/*** 
+	* <p>Description: 获取星期几</p>
+	* @author  WANGCHAO262
+	* @date  2017年6月8日 上午9:14:54
+	*/
+	public static String getSeq(int classNumber,int seqLength){
+		
+		int result = (classNumber-1)/seqLength +1;		
+		return result+"";
+	}
+	
+	/*** 
+	* <p>Description: seqSubjectMap:seq与subject映射关系,classNumber key:techerId+subjectId</p>
+	* @author  wangchao262
+	* @date  2017年6月7日 下午5:26:22
+	*/
+	public static boolean  isSeqSubjectMatch(Map<String, List<String>> seqSubjectMap,int classNumber,int seqLength,String key){
+		String seq = getSeq(classNumber, seqLength);	
+		List<String> subjectList = seqSubjectMap.get(seq);
+		for (String string : subjectList) {
+			if (string.equalsIgnoreCase(key.substring(4))) {
+				return true;
+			}
+		}				
+		return false;
+	}
 	
 	
 	/**
@@ -225,16 +252,16 @@ public class GAUtil {
 						  29 22 15  8 1
 	 * @return
 	 */
-	public static boolean isExistClass(Map<Integer, String> randomMap,int classNumber,String key ){
+	public static boolean isExistClass(Map<Integer, String> randomMap,int classNumber,String key,int seqLength ){
 		int ceil = 0;
 		int floor = 0;
 		
-		if (classNumber%7 ==0 ) {
+		if (classNumber%seqLength ==0 ) {
 			ceil = classNumber;
-			floor = classNumber-7;
+			floor = classNumber-seqLength;
 		}else{
-			ceil =  (classNumber/7+1)*7;
-			floor =  classNumber-classNumber%7;
+			ceil =  (classNumber/seqLength+1)*seqLength;
+			floor =  classNumber-classNumber%seqLength;
 		}	
 		for (int i = floor+1; i <= ceil; i++) {
 			if (randomMap.containsKey(i)&&randomMap.get(i).equalsIgnoreCase(key)) {
@@ -261,32 +288,32 @@ public class GAUtil {
 		
 		return false;
 	}
-	public static boolean isInWeekSet(int classNumber,Set<Integer> weekSet){
+	public static boolean isInWeekSet(int classNumber,Set<Integer> weekSet,int seqLength){
 		
 		for (Integer integer : weekSet) {
 			switch (integer) {
 			case 5:
-				if (classNumber>=1&&classNumber<=7) {
+				if (classNumber>=1&&classNumber<=seqLength) {
 					return true;
 				}
 				break;
 			case 4:
-				if (classNumber>=8&&classNumber<=14) {
+				if (classNumber>=(seqLength+1)&&classNumber<=(2*seqLength)) {
 					return true;
 				}
 				break;
 			case 3:
-				if (classNumber>=15&&classNumber<=21) {
+				if (classNumber>=(2*seqLength+1)&&classNumber<=(3*seqLength)) {
 					return true;
 				}
 				break;
 			case 2:
-				if (classNumber>=22&&classNumber<=28) {
+				if (classNumber>=(3*seqLength+1)&&classNumber<=(4*seqLength)) {
 					return true;
 				}
 				break;
 			case 1:
-				if (classNumber>=29&&classNumber<=35) {
+				if (classNumber>=(4*seqLength+1)&&classNumber<=(5*seqLength)) {
 					return true;
 				}
 				break;	

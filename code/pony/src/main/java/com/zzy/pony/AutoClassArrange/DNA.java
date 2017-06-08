@@ -1,6 +1,7 @@
 package com.zzy.pony.AutoClassArrange;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -37,6 +38,7 @@ public class DNA {
 	private Map<String, String> classInMorning;
 	private Map<String, String> classInAfternoon;
 	private Map<String, Set<Integer>> teacherSubjectRegularClassMap;
+	private Map<String, List<String>> seqSubjectMap;
 
 
 	
@@ -103,10 +105,11 @@ public class DNA {
 			if (classMap.get(key).indexOf("+")<0) {
 				for (int i = 0; i <  Integer.valueOf(classMap.get(key)) ; i++) {
 					int classNumber = random.nextInt(k)+1;
-					while(randomMap.containsKey(classNumber) ||GAUtil.isExistClass(randomMap, classNumber,key)
+					while(randomMap.containsKey(classNumber) ||GAUtil.isExistClass(randomMap, classNumber,key,this.seqIdCandidate.length)
 							||(this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber))
 							||(this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber))
-							||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key)))
+							||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key),this.seqIdCandidate.length)
+							||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key))
 							){
 						classNumber = random.nextInt(k)+1;
 					}
@@ -117,10 +120,11 @@ public class DNA {
 				   String[] a = classMap.get(key).split("\\+");
 				   for (int i = 0; i <  Integer.valueOf(a[0]) ; i++) {
 						int classNumber = random.nextInt(k)+1;
-						while(randomMap.containsKey(classNumber) ||GAUtil.isExistClass(randomMap, classNumber,key)
+						while(randomMap.containsKey(classNumber) ||GAUtil.isExistClass(randomMap, classNumber,key,this.seqIdCandidate.length)
 								||(this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber))
 								||(this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber))
-								||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key)))){
+								||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key),this.seqIdCandidate.length))
+								||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key)){
 							classNumber = random.nextInt(k)+1;
 						}
 						randomMap.put(classNumber, key);									
@@ -139,10 +143,11 @@ public class DNA {
 						  30 23 16  9 2
 						  29 22 15  8 1*/
 				       //当天已经上过该课就不能再上
-						while(randomMap.containsKey(classNumber)||randomMap.containsKey(classNumber+1)||classNumber+1>k||classNumber%this.seqIdCandidate.length == 0|| classNumber%this.seqIdCandidate.length == 3 ||GAUtil.isExistClass(randomMap, classNumber,key)
+						while(randomMap.containsKey(classNumber)||randomMap.containsKey(classNumber+1)||classNumber+1>k||classNumber%this.seqIdCandidate.length == 0|| classNumber%this.seqIdCandidate.length == 3 ||GAUtil.isExistClass(randomMap, classNumber,key,this.seqIdCandidate.length)
 								||(this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber))
 								||(this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber))
-								||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key)))){
+								||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key),this.seqIdCandidate.length))
+								||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key)){
 							classNumber = random.nextInt(k)+1;
 						}
 						randomMap.put(classNumber, key);
@@ -300,6 +305,13 @@ public class DNA {
 			Map<String, Set<Integer>> teacherSubjectRegularClassMap) {
 		this.teacherSubjectRegularClassMap = teacherSubjectRegularClassMap;
 	}
+	public Map<String, List<String>> getSeqSubjectMap() {
+		return seqSubjectMap;
+	}
+	public void setSeqSubjectMap(Map<String, List<String>> seqSubjectMap) {
+		this.seqSubjectMap = seqSubjectMap;
+	}
+	
 	
 	
 	
