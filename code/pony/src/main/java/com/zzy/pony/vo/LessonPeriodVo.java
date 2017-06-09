@@ -55,6 +55,8 @@ public class LessonPeriodVo {
 		this.stage = stage;
 	}
 
+	
+
 	public Integer getImportance() {
 		return importance;
 	}

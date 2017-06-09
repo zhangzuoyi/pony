@@ -130,7 +130,7 @@ width:200px;
 	            </el-time-select>
 			 </el-form-item>
 			 <el-form-item label="重要程度" :label-width="formLabelWidth" prop="importance"> 
-			 <el-select v-model="lessonPeriod.importance" placeholder="请选择.."  > 
+			 <el-select v-model="lessonPeriod.importance"  placeholder="请选择.."  > 
 				<el-option v-for="x in importances" :label="x.value" :value="parseInt(x.code)">				
 				</el-option> 				
 				</el-select> 

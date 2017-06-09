@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jdt.internal.compiler.ast.ThisReference;
 
 import com.zzy.pony.AutoClassArrange.DNA;
+import com.zzy.pony.config.Constants;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.vo.ArrangeVo;
 import com.zzy.pony.vo.ClassNoCourseVo;
@@ -211,14 +212,24 @@ public class GAUtil {
 		return result;		
 	}
 	/*** 
-	* <p>Description: 获取星期几</p>
+	* <p>Description: 获取seq</p>
 	* @author  WANGCHAO262
 	* @date  2017年6月8日 上午9:14:54
 	*/
 	public static String getSeq(int classNumber,int seqLength){
 		
-		int result = (classNumber-1)/seqLength +1;		
+		int result = seqLength - (classNumber-1)%seqLength ;		
 		return result+"";
+	}
+	/*** 
+	* <p>Description:获取星期几 </p>
+	* @author  WANGCHAO262
+	* @date  2017年6月9日 下午3:42:38
+	*/
+	public static Integer getWeek(int classNumber,int seqLength){
+		
+		int result = 5- (classNumber-1)/seqLength  ;		
+		return result;
 	}
 	
 	/*** 
@@ -226,14 +237,50 @@ public class GAUtil {
 	* @author  wangchao262
 	* @date  2017年6月7日 下午5:26:22
 	*/
-	public static boolean  isSeqSubjectMatch(Map<String, List<String>> seqSubjectMap,int classNumber,int seqLength,String key){
+	public static boolean  isSeqSubjectMatch(Map<String, List<String>> seqSubjectMap,int classNumber,int seqLength,String key,Set<Integer> alreadyClassNumber,
+			List<Integer> significantSeq,List<Integer> importantSeq,List<Integer> commonSeq,Map<String, Integer> subjectImportanceMap){
 		String seq = getSeq(classNumber, seqLength);	
 		List<String> subjectList = seqSubjectMap.get(seq);
 		for (String string : subjectList) {
 			if (string.equalsIgnoreCase(key.substring(4))) {
 				return true;
 			}
-		}				
+		}
+		//若上述条件不满足，在判断当天的   非常重要--》重要--》一般
+		int week = getWeek(classNumber, seqLength); 
+		if (Constants.SUBJECT_SIGNIFICANT==subjectImportanceMap.get(key.substring(4))) {
+			for (Integer seqInt : significantSeq) {
+				if (!alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt+1))) {
+					return false;
+				}								
+			}	
+			if(importantSeq.contains(Integer.valueOf(seq))){
+				return true;
+			}
+			for (Integer seqInt : importantSeq) {
+				if (!alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt+1))) {
+					return false;
+				}								
+			}
+			if(commonSeq.contains(Integer.valueOf(seq))){
+				return true;
+			}									
+		}
+		if (Constants.SUBJECT_IMPORTANT==subjectImportanceMap.get(key.substring(4))) {
+			for (Integer seqInt : importantSeq) {
+				if (!alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt+1))) {
+					return false;
+				}								
+			}
+			if(commonSeq.contains(Integer.valueOf(seq))){
+				return true;
+			}									
+		}
+		
+		
+		
+		
+		
 		return false;
 	}
 	
@@ -272,17 +319,17 @@ public class GAUtil {
 		return false;
 	}
 	
-	public static  boolean isMorning(int classNumber){
+	public static  boolean isMorning(int classNumber,int seqLength, int seqMornigLength){
 		
-		if ((classNumber>=4 && classNumber<=7)||(classNumber>=11 && classNumber<=14)||(classNumber>=18 && classNumber<=21)||(classNumber>=25 && classNumber<=28)||(classNumber>=32 && classNumber<=35)) {
+		if ((classNumber>=(seqLength-seqMornigLength+1) && classNumber<=seqLength)||(classNumber>=(seqLength*2-seqMornigLength+1) && classNumber<=seqLength*2)||(classNumber>=(seqLength*3-seqMornigLength+1) && classNumber<=seqLength*3)||(classNumber>=(seqLength*4-seqMornigLength+1) && classNumber<=seqLength*4)||(classNumber>=(seqLength*5-seqMornigLength+1) && classNumber<=seqLength*5)) {
 			return true;
 		}
 		
 		return false;
 	}
-	public static boolean isAfternoon(int classNumber){
+	public static boolean isAfternoon(int classNumber,int seqLength, int seqAfternoonLength){
 		
-		if ((classNumber>=1 && classNumber<=3)||(classNumber>=8 && classNumber<=10)||(classNumber>=15 && classNumber<=17)||(classNumber>=22 && classNumber<=24)||(classNumber>=29 && classNumber<=31)) {
+		if ((classNumber>=1 && classNumber<=seqAfternoonLength)||(classNumber>=(seqLength+1) && classNumber<=(seqLength+seqAfternoonLength))||(classNumber>=(seqLength*2+1) && classNumber<=(seqLength*2+seqAfternoonLength))||(classNumber>=(seqLength*3+1) && classNumber<=(seqLength*3+seqAfternoonLength))||(classNumber>=(seqLength*4+1) && classNumber<=(seqLength*4+seqAfternoonLength))) {
 			return true;
 		}
 		

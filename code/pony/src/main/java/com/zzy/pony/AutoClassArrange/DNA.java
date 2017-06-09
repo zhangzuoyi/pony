@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+
 import com.zzy.pony.util.GAUtil;
 
 
@@ -22,6 +23,10 @@ public class DNA {
 	private  int seqIdBit = 1;
 	private  int classIdBit = 3;
 	private  int dnaBit = 11;
+	private  int seqMornigLength = 4;  //早上上课数
+	private  int seqAfternoonLength = 3;//下午上课数
+
+	
 
 	private String[] teacherIdCandidate;  
 	private String[] subjectIdCandidate;
@@ -39,6 +44,11 @@ public class DNA {
 	private Map<String, String> classInAfternoon;
 	private Map<String, Set<Integer>> teacherSubjectRegularClassMap;
 	private Map<String, List<String>> seqSubjectMap;
+	private List<Integer> significantSeq;
+	private List<Integer> importantSeq;
+	private List<Integer> commonSeq;
+	private Map<String, Integer> subjectImportanceMap;
+
 
 
 	
@@ -106,10 +116,10 @@ public class DNA {
 				for (int i = 0; i <  Integer.valueOf(classMap.get(key)) ; i++) {
 					int classNumber = random.nextInt(k)+1;
 					while(randomMap.containsKey(classNumber) ||GAUtil.isExistClass(randomMap, classNumber,key,this.seqIdCandidate.length)
-							||(this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber))
-							||(this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber))
+							/*||(this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber,this.seqIdCandidate.length,this.seqMornigLength))
+							||(this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber,this.seqIdCandidate.length,this.seqAfternoonLength))*/
 							||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key),this.seqIdCandidate.length)
-							||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key))
+							||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key,randomMap.keySet(),this.significantSeq,this.importantSeq,this.commonSeq,this.subjectImportanceMap))
 							){
 						classNumber = random.nextInt(k)+1;
 					}
@@ -121,10 +131,10 @@ public class DNA {
 				   for (int i = 0; i <  Integer.valueOf(a[0]) ; i++) {
 						int classNumber = random.nextInt(k)+1;
 						while(randomMap.containsKey(classNumber) ||GAUtil.isExistClass(randomMap, classNumber,key,this.seqIdCandidate.length)
-								||(this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber))
-								||(this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber))
+								/*||(this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber,this.seqIdCandidate.length,this.seqMornigLength))
+								||(this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber,this.seqIdCandidate.length,this.seqAfternoonLength))*/
 								||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key),this.seqIdCandidate.length))
-								||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key)){
+								||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key,randomMap.keySet(),this.significantSeq,this.importantSeq,this.commonSeq,this.subjectImportanceMap)){
 							classNumber = random.nextInt(k)+1;
 						}
 						randomMap.put(classNumber, key);									
@@ -144,10 +154,10 @@ public class DNA {
 						  29 22 15  8 1*/
 				       //当天已经上过该课就不能再上
 						while(randomMap.containsKey(classNumber)||randomMap.containsKey(classNumber+1)||classNumber+1>k||classNumber%this.seqIdCandidate.length == 0|| classNumber%this.seqIdCandidate.length == 3 ||GAUtil.isExistClass(randomMap, classNumber,key,this.seqIdCandidate.length)
-								||(this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber))
-								||(this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber))
+								/*||(this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber,this.seqIdCandidate.length,this.seqMornigLength))
+								||(this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber,this.seqIdCandidate.length,this.seqAfternoonLength))*/
 								||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key),this.seqIdCandidate.length))
-								||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key)){
+								||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key,randomMap.keySet(),this.significantSeq,this.importantSeq,this.commonSeq,this.subjectImportanceMap)){
 							classNumber = random.nextInt(k)+1;
 						}
 						randomMap.put(classNumber, key);
@@ -311,6 +321,32 @@ public class DNA {
 	public void setSeqSubjectMap(Map<String, List<String>> seqSubjectMap) {
 		this.seqSubjectMap = seqSubjectMap;
 	}
+	public List<Integer> getSignificantSeq() {
+		return significantSeq;
+	}
+	public void setSignificantSeq(List<Integer> significantSeq) {
+		this.significantSeq = significantSeq;
+	}
+	public List<Integer> getImportantSeq() {
+		return importantSeq;
+	}
+	public void setImportantSeq(List<Integer> importantSeq) {
+		this.importantSeq = importantSeq;
+	}
+	public List<Integer> getCommonSeq() {
+		return commonSeq;
+	}
+	public void setCommonSeq(List<Integer> commonSeq) {
+		this.commonSeq = commonSeq;
+	}
+	public Map<String, Integer> getSubjectImportanceMap() {
+		return subjectImportanceMap;
+	}
+	public void setSubjectImportanceMap(Map<String, Integer> subjectImportanceMap) {
+		this.subjectImportanceMap = subjectImportanceMap;
+	}
+	
+	
 	
 	
 	

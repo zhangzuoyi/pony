@@ -78,14 +78,19 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		}
 		List<Subject> subjects = subjectService.findAll();
 		List<Integer> subjectIntegers = new ArrayList<Integer>();
+		Map<String, Integer> subjectImportanceMap = new HashMap<String, Integer>();
 		for (Subject subject : subjects) {
 			subjectIntegers.add(subject.getSubjectId());
+			subjectImportanceMap.put(String.format("%02d", subject.getSubjectId()), subject.getImportance());
 		}
 		
 		List<Integer> seqs = new ArrayList<Integer>();
 		List<LessonPeriod> lessonPeriods = lessonPeriodService.findBySchoolYearAndTerm(schoolYear, term);
 		
-		Map<String, List<String>> seqSubjectMap = new HashMap<String, List<String>>();
+		Map<String, List<String>> seqSubjectMap = new HashMap<String, List<String>>();		
+		List<Integer> significantSeq = new ArrayList<Integer>();
+		List<Integer> importantSeq = new ArrayList<Integer>();
+		List<Integer> commonSeq = new ArrayList<Integer>();
 		
 		for (LessonPeriod lessonPeriod : lessonPeriods) {
 			seqs.add(lessonPeriod.getSeq());
@@ -96,6 +101,15 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 				}
 			}
 			seqSubjectMap.put(lessonPeriod.getSeq().toString(), subjectString);
+			if (lessonPeriod.getImportance() == Constants.SUBJECT_SIGNIFICANT) {
+				significantSeq.add(lessonPeriod.getSeq());
+			}
+			if (lessonPeriod.getImportance() == Constants.SUBJECT_IMPORTANT) {
+				importantSeq.add(lessonPeriod.getSeq());
+			}
+			if (lessonPeriod.getImportance() == Constants.SUBJECT_COMMON) {
+				commonSeq.add(lessonPeriod.getSeq());
+			}						
 		}
 		
 		
@@ -132,6 +146,11 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		DNA.getInstance().setClassInMorning(GAUtil.classInMorning(subjects));
 		DNA.getInstance().setClassInAfternoon(GAUtil.classInAfternoon(subjects));
 		DNA.getInstance().setTeacherSubjectRegularClassMap(GAUtil.getTeacherSubjectRegularClass(voGroups));
+		DNA.getInstance().setSeqSubjectMap(seqSubjectMap);
+		DNA.getInstance().setSignificantSeq(significantSeq);
+		DNA.getInstance().setImportantSeq(importantSeq);
+		DNA.getInstance().setCommonSeq(commonSeq);
+		DNA.getInstance().setSubjectImportanceMap(subjectImportanceMap);
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		String bestChromosome =  geneticAlgorithm.caculte();	
 		List<ArrangeVo> list =   GAUtil.getLessonArranges(bestChromosome);

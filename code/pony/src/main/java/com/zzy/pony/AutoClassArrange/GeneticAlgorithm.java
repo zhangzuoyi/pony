@@ -88,6 +88,7 @@ public  class GeneticAlgorithm {
 		System.out.println("the worst fitness is:" + worstScore);
 		System.out.println("the average fitness is:" + averageScore);
 		System.out.println("the total fitness is:" + totalScore);
+
 		//System.out.println("geneI:" + geneI + "\tx:" + x + "\ty:" + y);
 		System.out.println("geneI:" + geneI );
 
