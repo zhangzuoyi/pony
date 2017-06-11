@@ -60,7 +60,7 @@ public class User implements Serializable {
 	@JoinColumn(name="STUDENT_ID")
 	private Student student;
 	
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(
 		name="t_user_role"
 		, joinColumns={

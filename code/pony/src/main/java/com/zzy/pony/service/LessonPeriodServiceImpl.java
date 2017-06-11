@@ -41,6 +41,7 @@ public class LessonPeriodServiceImpl implements LessonPeriodService {
 		old.setSeq(sy.getSeq());
 		old.setStartTime(sy.getStartTime());
 //		old.setTerm(sy.getTerm());
+		old.setImportance(sy.getImportance());
 		
 		dao.save(old);
 	}

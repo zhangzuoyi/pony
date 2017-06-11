@@ -46,7 +46,7 @@ import com.zzy.pony.model.Teacher;
 import com.zzy.pony.model.TeacherSubject;
 import com.zzy.pony.service.TeacherSubjectService;
 import com.zzy.pony.vo.TeacherSubjectVo;
-import com.zzy.pony.vo.conditionVo;
+import com.zzy.pony.vo.ConditionVo;
 
 @Controller
 @RequestMapping(value = "/teacherLesson")
@@ -70,7 +70,7 @@ public class TeacherLessonController {
 	
 	@RequestMapping(value="list",method = RequestMethod.POST)
 	@ResponseBody
-	public List<TeacherSubjectVo> list(@RequestBody conditionVo cv ){
+	public List<TeacherSubjectVo> list(@RequestBody ConditionVo cv ){
 		List<TeacherSubjectVo> resultList = new ArrayList<TeacherSubjectVo>();
 		
 		resultList = teacherSubjectService.findCurrentVoByCondition(cv);

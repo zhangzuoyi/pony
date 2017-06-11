@@ -1,5 +1,6 @@
 package com.zzy.pony.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.Map;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.zzy.pony.config.Constants;
@@ -17,6 +20,7 @@ import com.zzy.pony.model.Role;
 import com.zzy.pony.model.Student;
 import com.zzy.pony.model.Teacher;
 import com.zzy.pony.model.User;
+import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.util.Sha1HashUtil;
 import com.zzy.pony.vo.UserVo;
 
@@ -139,6 +143,76 @@ public class UserServiceImpl implements UserService {
 		
 		return result;
 	}
+
+	@Override
+	public List<UserVo> list() {
+		// TODO Auto-generated method stub
+		List<UserVo> result = new ArrayList<UserVo>();
+		List<User> users = dao.findAll();
+		for (User user : users) {
+			UserVo vo = new UserVo();
+			vo.setLastLoginTime(user.getLastLoginTime());
+			vo.setLoginName(user.getLoginName());
+			vo.setPsw(user.getPsw());
+			vo.setUserId(user.getUserId());
+			vo.setUserType(vo.getUserType());
+			List<String> roles = new ArrayList<String>();
+			for(Role role : user.getRoles()){
+				roles.add(role.getRoleCode());
+			}
+			vo.setRoles(roles.toArray(new String[0]));	
+			result.add(vo);
+		}
+		
+		
+		
+		return result;
+	}
+
+	@Override
+	public void add(User user) {
+		// TODO Auto-generated method stub
+		user.setCreateTime(new Date());
+		user.setCreateUser(ShiroUtil.getLoginUser().getLoginName());
+		user.setUpdateTime(new Date());
+		user.setUpdateUser(ShiroUtil.getLoginUser().getLoginName());
+		dao.save(user);
+	}
+
+	@Override
+	public void update(User user) {
+		// TODO Auto-generated method stub
+		User old = dao.findOne(user.getUserId());
+		old.setRoles(user.getRoles());
+		old.setUpdateTime(new Date());
+		old.setUpdateUser(ShiroUtil.getLoginUser().getLoginName());
+		dao.save(old);
+	}
+
+	@Override
+	public void delete(int userId) {
+		// TODO Auto-generated method stub
+		dao.delete(userId);
+	}
+
+	@Override
+	public Boolean isExist(int userId) {
+		// TODO Auto-generated method stub
+		User user = dao.findOne(userId);
+		if (user == null) {
+			return false;
+		}	
+		return true;
+	}
+
+	@Override
+	public Page<User> findAll(Pageable pageable) {
+		// TODO Auto-generated method stub
+		return dao.findAll(pageable);
+	}
+	
+	
+	
 	
 	
 	

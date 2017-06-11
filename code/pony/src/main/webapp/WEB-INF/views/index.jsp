@@ -42,6 +42,9 @@
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examResult/main/' />" iframe="1">成绩管理</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examResultRank/main/' />" iframe="1">成绩排名管理</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/commonDict/main/' />" iframe="1">通用字典管理</a></li>
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/resourceAdmin/main/' />" iframe="1">资源管理</a></li>
+                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/roleAdmin/main/' />" iframe="1">角色管理</a></li>
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/user/main/' />" iframe="1">用户管理</a></li>
                     
                 </ul>
             </div>

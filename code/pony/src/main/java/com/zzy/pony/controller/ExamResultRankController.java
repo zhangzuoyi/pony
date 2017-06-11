@@ -38,7 +38,7 @@ import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.SubjectService;
 import com.zzy.pony.service.TermService;
-import com.zzy.pony.vo.conditionVo;
+import com.zzy.pony.vo.ConditionVo;
 
 @Controller
 @RequestMapping(value = "/examResultRank")
@@ -81,7 +81,7 @@ public class ExamResultRankController {
 	}
 	@RequestMapping(value="findByCondition",method = RequestMethod.POST)
 	@ResponseBody
-	public String findByCondition(@RequestBody conditionVo cv) {
+	public String findByCondition(@RequestBody ConditionVo cv) {
 		
 		
 		//新增默认全选功能

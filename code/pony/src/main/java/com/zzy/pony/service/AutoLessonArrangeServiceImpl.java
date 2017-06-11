@@ -3,7 +3,9 @@ package com.zzy.pony.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -74,16 +76,48 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		for (Weekday weekday : weekdayList) {
 			weekdays.add(weekday.getSeq());
 		}
-		List<Integer> seqs = new ArrayList<Integer>();
-		List<LessonPeriod> lessonPeriods = lessonPeriodService.findBySchoolYearAndTerm(schoolYear, term);
-		for (LessonPeriod lessonPeriod : lessonPeriods) {
-			seqs.add(lessonPeriod.getSeq());
-		}
 		List<Subject> subjects = subjectService.findAll();
 		List<Integer> subjectIntegers = new ArrayList<Integer>();
+		Map<String, Integer> subjectImportanceMap = new HashMap<String, Integer>();
 		for (Subject subject : subjects) {
 			subjectIntegers.add(subject.getSubjectId());
+			subjectImportanceMap.put(String.format("%02d", subject.getSubjectId()), subject.getImportance());
 		}
+		
+		List<Integer> seqs = new ArrayList<Integer>();
+		List<LessonPeriod> lessonPeriods = lessonPeriodService.findBySchoolYearAndTerm(schoolYear, term);
+		
+		Map<String, List<String>> seqSubjectMap = new HashMap<String, List<String>>();		
+		List<Integer> significantSeq = new ArrayList<Integer>();
+		List<Integer> importantSeq = new ArrayList<Integer>();
+		List<Integer> commonSeq = new ArrayList<Integer>();
+		
+		for (LessonPeriod lessonPeriod : lessonPeriods) {
+			seqs.add(lessonPeriod.getSeq());
+			List<String>  subjectString = new ArrayList<String>();
+			for (Subject subject : subjects) {
+				if (lessonPeriod.getImportance() == subject.getImportance()) {
+					subjectString.add(String.format("%02d", subject.getSubjectId()));
+				}
+			}
+			seqSubjectMap.put(lessonPeriod.getSeq().toString(), subjectString);
+			if (lessonPeriod.getImportance() == Constants.SUBJECT_SIGNIFICANT) {
+				significantSeq.add(lessonPeriod.getSeq());
+			}
+			if (lessonPeriod.getImportance() == Constants.SUBJECT_IMPORTANT) {
+				importantSeq.add(lessonPeriod.getSeq());
+			}
+			if (lessonPeriod.getImportance() == Constants.SUBJECT_COMMON) {
+				commonSeq.add(lessonPeriod.getSeq());
+			}						
+		}
+		
+		
+		
+		
+		
+		
+		
 		
 		String[] classIdCandidate =   GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllClassId(), 3,false);    
 		//String[] subjectIdCandidate =GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllSubjectId(), 2,true);
@@ -92,6 +126,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		String[] weekdayIdCandidate =GAUtil.getCandidateStrings(weekdays, 1, false);
 		String[] seqIdCandidate=GAUtil.getCandidateStrings(seqs, 1, false);;
 		List<TeacherSubjectVo> vos = teacherSubjectService.findCurrentAll();
+		List<TeacherSubjectVo> voGroups = teacherSubjectService.findCurrentByGroup(); 
 		List<ClassNoCourseVo> classNoCourseVos = classNoCourseService.findCurrentAllVo();
 		List<TeacherNoCourseVo> teacherNoCourseVos = teacherNoCourseService.findCurrentAllVo();
 		List<SubjectNoCourseVo> subjectNoCourseVos = subjectNoCourseService.findCurrentAllVo();
@@ -108,6 +143,14 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		DNA.getInstance().setGradeNoCourse(GAUtil.getGradeNoCourse(gradeNoCourseVos));
 		DNA.getInstance().setTeacherSubjectClassMap(GAUtil.getTeacherSubjectClass(vos));
 		DNA.getInstance().setTeacherSubjectIrregularClassMap(GAUtil.getTeacherSubjectIrregularClass(vos));
+		DNA.getInstance().setClassInMorning(GAUtil.classInMorning(subjects));
+		DNA.getInstance().setClassInAfternoon(GAUtil.classInAfternoon(subjects));
+		DNA.getInstance().setTeacherSubjectRegularClassMap(GAUtil.getTeacherSubjectRegularClass(voGroups));
+		DNA.getInstance().setSeqSubjectMap(seqSubjectMap);
+		DNA.getInstance().setSignificantSeq(significantSeq);
+		DNA.getInstance().setImportantSeq(importantSeq);
+		DNA.getInstance().setCommonSeq(commonSeq);
+		DNA.getInstance().setSubjectImportanceMap(subjectImportanceMap);
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		String bestChromosome =  geneticAlgorithm.caculte();	
 		List<ArrangeVo> list =   GAUtil.getLessonArranges(bestChromosome);

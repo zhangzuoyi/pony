@@ -4,13 +4,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jdt.internal.compiler.ast.ThisReference;
 
 import com.zzy.pony.AutoClassArrange.DNA;
+import com.zzy.pony.config.Constants;
+import com.zzy.pony.model.Subject;
 import com.zzy.pony.vo.ArrangeVo;
 import com.zzy.pony.vo.ClassNoCourseVo;
 import com.zzy.pony.vo.GradeNoCourseVo;
@@ -77,6 +85,9 @@ public class GAUtil {
 	public static Map<String, Map<String, Integer>>	 getTeacherSubjectClass(List<TeacherSubjectVo> list){
 		Map<String, Map<String, Integer>> result =  new HashMap<String, Map<String,Integer>>();
 		for (TeacherSubjectVo teacherSubjectVo : list) {
+			 
+				
+			
 			String teacherId = String.format("%04d", teacherSubjectVo.getTeacherId())  ;
 			String classId=String.format("%03d", teacherSubjectVo.getClassId()) ;
 			String subjectId =String.format("%02d", teacherSubjectVo.getSubjectId())  ;	
@@ -88,10 +99,48 @@ public class GAUtil {
 				innerMap.put(classId, 0);
 				result.put(key, innerMap);
 			}
+			}
+		
+		
+		return result;
+	}
+	/**
+	 * @param list   key teacherId+subjectId value(list<integer> 星期)
+	 * @return
+	 */
+	public static Map<String, Set<Integer>>	 getTeacherSubjectRegularClass(List<TeacherSubjectVo> list){
+		Map<String, Set<Integer>> result =  new HashMap<String,Set<Integer>>();
+		Random random = new Random();
+		for (TeacherSubjectVo teacherSubjectVo : list) {
+			if (teacherSubjectVo.getSubjectName().equalsIgnoreCase("语文")
+					||teacherSubjectVo.getSubjectName().equalsIgnoreCase("数学")
+					||teacherSubjectVo.getSubjectName().equalsIgnoreCase("英语")
+					||teacherSubjectVo.getSubjectName().equalsIgnoreCase("物理")
+					||teacherSubjectVo.getSubjectName().equalsIgnoreCase("化学")
+					){						
+			String teacherId = String.format("%04d", teacherSubjectVo.getTeacherId())  ;
+			String subjectId =String.format("%02d", teacherSubjectVo.getSubjectId())  ;	
+			String key = teacherId+subjectId;
+			int weekarranges = 0;
+			String weekarrange = teacherSubjectVo.getWeekArrange();
+			if (weekarrange.indexOf("+")>0) {
+				String[] a = weekarrange.split("\\+");
+				weekarranges =  Integer.valueOf(a[0]) + Integer.valueOf(a[1]);				
+			}else {
+				weekarranges = Integer.valueOf(weekarrange);
+			}	
+			Set<Integer> weekSet = new HashSet<Integer>();
+			while(weekSet.size()<weekarranges){
+				weekSet.add(random.nextInt(5)+1);
+			}		
+			result.put(key, weekSet);			
+		}
 		}
 		
 		return result;
 	}
+	
+	
 	/**
 	 * @param list   key teacherId+subjectId value classId   获取不平课的班级，即某个老师在A班上3节课，在B班上4节课
 	 * @return
@@ -162,6 +211,78 @@ public class GAUtil {
 		}
 		return result;		
 	}
+	/*** 
+	* <p>Description: 获取seq</p>
+	* @author  WANGCHAO262
+	* @date  2017年6月8日 上午9:14:54
+	*/
+	public static String getSeq(int classNumber,int seqLength){
+		
+		int result = seqLength - (classNumber-1)%seqLength ;		
+		return result+"";
+	}
+	/*** 
+	* <p>Description:获取星期几 </p>
+	* @author  WANGCHAO262
+	* @date  2017年6月9日 下午3:42:38
+	*/
+	public static Integer getWeek(int classNumber,int seqLength){
+		
+		int result = 5- (classNumber-1)/seqLength  ;		
+		return result;
+	}
+	
+	/*** 
+	* <p>Description: seqSubjectMap:seq与subject映射关系,classNumber key:techerId+subjectId</p>
+	* @author  wangchao262
+	* @date  2017年6月7日 下午5:26:22
+	*/
+	public static boolean  isSeqSubjectMatch(Map<String, List<String>> seqSubjectMap,int classNumber,int seqLength,String key,Set<Integer> alreadyClassNumber,
+			List<Integer> significantSeq,List<Integer> importantSeq,List<Integer> commonSeq,Map<String, Integer> subjectImportanceMap){
+		String seq = getSeq(classNumber, seqLength);	
+		List<String> subjectList = seqSubjectMap.get(seq);
+		for (String string : subjectList) {
+			if (string.equalsIgnoreCase(key.substring(4))) {
+				return true;
+			}
+		}
+		//若上述条件不满足，在判断当天的   非常重要--》重要--》一般
+		int week = getWeek(classNumber, seqLength); 
+		if (Constants.SUBJECT_SIGNIFICANT==subjectImportanceMap.get(key.substring(4))) {
+			for (Integer seqInt : significantSeq) {
+				if (!alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt+1))) {
+					return false;
+				}								
+			}	
+			if(importantSeq.contains(Integer.valueOf(seq))){
+				return true;
+			}
+			for (Integer seqInt : importantSeq) {
+				if (!alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt+1))) {
+					return false;
+				}								
+			}
+			if(commonSeq.contains(Integer.valueOf(seq))){
+				return true;
+			}									
+		}
+		if (Constants.SUBJECT_IMPORTANT==subjectImportanceMap.get(key.substring(4))) {
+			for (Integer seqInt : importantSeq) {
+				if (!alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt+1))) {
+					return false;
+				}								
+			}
+			if(commonSeq.contains(Integer.valueOf(seq))){
+				return true;
+			}									
+		}
+		
+		
+		
+		
+		
+		return false;
+	}
 	
 	
 	/**
@@ -178,16 +299,16 @@ public class GAUtil {
 						  29 22 15  8 1
 	 * @return
 	 */
-	public static boolean isExistClass(Map<Integer, String> randomMap,int classNumber,String key ){
+	public static boolean isExistClass(Map<Integer, String> randomMap,int classNumber,String key,int seqLength ){
 		int ceil = 0;
 		int floor = 0;
 		
-		if (classNumber%7 ==0 ) {
+		if (classNumber%seqLength ==0 ) {
 			ceil = classNumber;
-			floor = classNumber-7;
+			floor = classNumber-seqLength;
 		}else{
-			ceil =  (classNumber/7+1)*7;
-			floor =  classNumber-classNumber%7;
+			ceil =  (classNumber/seqLength+1)*seqLength;
+			floor =  classNumber-classNumber%seqLength;
 		}	
 		for (int i = floor+1; i <= ceil; i++) {
 			if (randomMap.containsKey(i)&&randomMap.get(i).equalsIgnoreCase(key)) {
@@ -198,9 +319,115 @@ public class GAUtil {
 		return false;
 	}
 	
+	public static  boolean isMorning(int classNumber,int seqLength, int seqMornigLength){
+		
+		if ((classNumber>=(seqLength-seqMornigLength+1) && classNumber<=seqLength)||(classNumber>=(seqLength*2-seqMornigLength+1) && classNumber<=seqLength*2)||(classNumber>=(seqLength*3-seqMornigLength+1) && classNumber<=seqLength*3)||(classNumber>=(seqLength*4-seqMornigLength+1) && classNumber<=seqLength*4)||(classNumber>=(seqLength*5-seqMornigLength+1) && classNumber<=seqLength*5)) {
+			return true;
+		}
+		
+		return false;
+	}
+	public static boolean isAfternoon(int classNumber,int seqLength, int seqAfternoonLength){
+		
+		if ((classNumber>=1 && classNumber<=seqAfternoonLength)||(classNumber>=(seqLength+1) && classNumber<=(seqLength+seqAfternoonLength))||(classNumber>=(seqLength*2+1) && classNumber<=(seqLength*2+seqAfternoonLength))||(classNumber>=(seqLength*3+1) && classNumber<=(seqLength*3+seqAfternoonLength))||(classNumber>=(seqLength*4+1) && classNumber<=(seqLength*4+seqAfternoonLength))) {
+			return true;
+		}
+		
+		return false;
+	}
+	public static boolean isInWeekSet(int classNumber,Set<Integer> weekSet,int seqLength){
+		
+		for (Integer integer : weekSet) {
+			switch (integer) {
+			case 5:
+				if (classNumber>=1&&classNumber<=seqLength) {
+					return true;
+				}
+				break;
+			case 4:
+				if (classNumber>=(seqLength+1)&&classNumber<=(2*seqLength)) {
+					return true;
+				}
+				break;
+			case 3:
+				if (classNumber>=(2*seqLength+1)&&classNumber<=(3*seqLength)) {
+					return true;
+				}
+				break;
+			case 2:
+				if (classNumber>=(3*seqLength+1)&&classNumber<=(4*seqLength)) {
+					return true;
+				}
+				break;
+			case 1:
+				if (classNumber>=(4*seqLength+1)&&classNumber<=(5*seqLength)) {
+					return true;
+				}
+				break;	
+			default:
+				break;
+			}						
+		}
+		
+		return false;
+	}
+	
+	public static Map<String, String> classInMorning(List<Subject> subjects){
+		Map<String, String> result = new HashMap<String, String>();
+		for (Subject subject : subjects) {
+			if ("语文".equalsIgnoreCase(subject.getName())) {
+				result.put(String.format("%02d", subject.getSubjectId()), subject.getName());
+			}
+			if ("数学".equalsIgnoreCase(subject.getName())) {
+				result.put(String.format("%02d", subject.getSubjectId()), subject.getName());
+			}
+			if ("英语".equalsIgnoreCase(subject.getName())) {
+				result.put(String.format("%02d", subject.getSubjectId()), subject.getName());
+			}			
+		}				
+		return result;		
+	}
+	
+	public static Map<String, String> classInAfternoon(List<Subject> subjects){
+		Map<String, String> result = new HashMap<String, String>();
+		for (Subject subject : subjects) {
+			if ("政治".equalsIgnoreCase(subject.getName())) {
+				result.put(String.format("%02d", subject.getSubjectId()), subject.getName());
+			}
+			if ("历史".equalsIgnoreCase(subject.getName())) {
+				result.put(String.format("%02d", subject.getSubjectId()), subject.getName());
+			}						
+		}				
+		return result;		
+	}
+	public static Map<String, String> sortMapByVPriority(Map<String, String> oriMap,Map<String, String> classInMorning,Map<String, String> classInAfternoon){
+		 Map<String, String> sortedMap = new LinkedHashMap<String, String>();  
+		    if (oriMap != null && !oriMap.isEmpty()) { 
+		    	for (String key : oriMap.keySet()) {
+					if(classInMorning.containsKey(key.substring(4, 6))){
+						sortedMap.put(key, oriMap.get(key));
+					}
+					if(classInAfternoon.containsKey(key.substring(4, 6))){
+						sortedMap.put(key, oriMap.get(key));
+					}
+				}
+		    	for (String key  : oriMap.keySet()) {
+					if (!sortedMap.containsKey(key)) {
+						sortedMap.put(key, oriMap.get(key));
+					}
+				}
+	       
+		    }  
+		    return sortedMap;
+		
+	}
+	
+	
+	
+	
 	public static Map<String, String> sortMapByValue(Map<String, String> oriMap){
 		 Map<String, String> sortedMap = new LinkedHashMap<String, String>();  
-		    if (oriMap != null && !oriMap.isEmpty()) {  
+		    if (oriMap != null && !oriMap.isEmpty()) { 		    	
 		        List<Map.Entry<String, String>> entryList = new ArrayList<Map.Entry<String, String>>(oriMap.entrySet());  
 		        Collections.sort(entryList,  
 		                new Comparator<Map.Entry<String, String>>() {  
@@ -223,7 +450,7 @@ public class GAUtil {
 		                        } catch (NumberFormatException e) {  
 		                            value1 = 0;  
 		                            value2 = 0;  
-		                        }  
+		                        } 		                        		                        		                        		                        
 		                        return value2 - value1;  
 		                    }  
 		                });  

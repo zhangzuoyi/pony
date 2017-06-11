@@ -1,6 +1,7 @@
 package com.zzy.pony.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,15 +21,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
 import com.zzy.pony.config.Constants;
-import com.zzy.pony.dao.SubjectDao;
+import com.zzy.pony.model.CommonDict;
 import com.zzy.pony.model.Subject;
+import com.zzy.pony.service.DictService;
+import com.zzy.pony.service.DictServiceImpl;
 import com.zzy.pony.service.SubjectService;
+import com.zzy.pony.vo.SubjectVo;
 
 @Controller
 @RequestMapping(value = "/subject")
 public class SubjectController {
 	@Autowired
 	private SubjectService service;
+	@Autowired
+	private DictService dictService;
 	
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
@@ -37,10 +44,26 @@ public class SubjectController {
 	}
 	@RequestMapping(value="list",method = RequestMethod.GET)
 	@ResponseBody
-	public List<Subject> list(Model model){
+	public List<SubjectVo> list(Model model){
 		List<Subject> list=service.findAll();
+		List<CommonDict> importances = dictService.findImportances();
+		List<SubjectVo> result = new ArrayList<SubjectVo>();
+		for (Subject subject : list) {
+			SubjectVo vo = new SubjectVo();
+			vo.setImportance(subject.getImportance());
+			vo.setName(subject.getName());
+			vo.setSubjectId(subject.getSubjectId());
+			vo.setType(subject.getType());
+			for (CommonDict commonDict : importances) {
+				if (subject.getImportance()!=null && commonDict.getCode().equalsIgnoreCase(subject.getImportance().toString())) {
+					vo.setImportanceName(commonDict.getValue());
+					break;
+				}
+			}
+			result.add(vo);			
+		}
 
-		return list;
+		return result;
 	}
 	@RequestMapping(value="findClassSubject",method = RequestMethod.GET)
 	@ResponseBody
@@ -65,17 +88,17 @@ public class SubjectController {
 	
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody
-	public String add(Subject sy, Model model){
+	public String add(@RequestBody Subject sy, Model model){
 		service.add(sy);
 		return "success";
 	}
 	@RequestMapping(value="edit",method = RequestMethod.POST)
 	@ResponseBody
-	public String edit(Subject sy, Model model){
+	public String edit(@RequestBody Subject sy, Model model){
 		service.update(sy);
 		return "success";
 	}
-	@RequestMapping(value="delete",method = RequestMethod.POST)
+	@RequestMapping(value="delete",method = RequestMethod.GET)
 	@ResponseBody
 	public String delete(@RequestParam(value="id") int id, Model model){
 		service.delete(id);

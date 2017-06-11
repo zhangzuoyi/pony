@@ -59,7 +59,7 @@
                         inline-template                        
                         label="标题"
                         >
-                        <div><a href="javascript:void(0)" @click="watchMessage(row.id)">{{row.title}}</a></div>
+                        <div><a href="javascript:void(0)" @click="watchMessage(row.messageId)">{{row.title}}</a></div>
                 </el-table-column>
                 <el-table-column
                			inline-template
@@ -98,13 +98,13 @@
         <el-dialog title="消息" v-model="dialogFormVisible" size="large">
                <el-form>                   
                     <el-form-item label="发件人" :label-width="formLabelWidth">                          			 
-           			 <el-input v-model="selectMessage.sendUser" :disabled="true"></el-input>          			          			 
+           			 <el-input v-model="selectMessage.sendUser" readonly="true"></el-input>          			          			 
                     </el-form-item>
                     <el-form-item label="标题" :label-width="formLabelWidth">                          			 
-           			 <el-input v-model="selectMessage.title" :disabled="true"></el-input>          			          			 
+           			 <el-input v-model="selectMessage.title" readonly="true"></el-input>          			          			 
                     </el-form-item>
                     <el-form-item label="内容" :label-width="formLabelWidth">                          			 
-           			 <el-input v-model="selectMessage.content" type="textarea" :rows="5" :disabled="true"></el-input>          			          			 
+           			 <el-input v-model="selectMessage.content" type="textarea" :rows="5" readonly="true"></el-input>          			          			 
                     </el-form-item>           
              </el-form>
          	 <div slot="footer" class="dialog-footer">                                     
@@ -183,12 +183,21 @@ var app = new Vue({
 		watchMessage : function(id){ 
 						this.dialogFormVisible = true;
 						for(var i=0;i<this.tableData.length;i++){
-						if(id == this.tableData[i].id){
+						if(id == this.tableData[i].messageId){
 								this.selectMessage = this.tableData[i];
 								break;
 							}
 						
-						}						
+						}
+						var selectMessage = [];
+						selectMessage.push(id);
+						this.$http.get(this.readMessageUrl,{params:{selectMessage:selectMessage}}).then(
+							function(response){
+							this.getMessageReceive();},
+							function(response){}  			
+							); 
+						
+												
 					} ,	
 		downloadAttach:function(messageId,attachName){
 		  var exportParams = {

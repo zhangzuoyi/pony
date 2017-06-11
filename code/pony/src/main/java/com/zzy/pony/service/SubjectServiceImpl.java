@@ -55,6 +55,7 @@ public class SubjectServiceImpl implements SubjectService {
 		Subject old=dao.findOne(sy.getSubjectId());
 		old.setName(sy.getName());
 		old.setType(sy.getType());
+		old.setImportance(sy.getImportance());
 		
 		dao.save(old);
 	}

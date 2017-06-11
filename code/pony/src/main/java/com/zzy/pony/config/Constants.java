@@ -28,6 +28,13 @@ public class Constants {
 	public static final String PROPERTY_STATUS_FREE=  "0" ;//资产状态  空闲
 	public static final String PROPERTY_STATUS_OCCUPY=  "1" ;//资产状态  使用中
 	public static final String PROPERTY_STATUS_DESTROY=  "2" ;//资产状态  作废
+	public static final int RESOURCE_PARENT_LEVEL=  1 ;//资源级别 一级
+	public static final int RESOURCE_CHILD_LEVEL=  2 ;//资源级别  二级
+	public static final int SUBJECT_SIGNIFICANT=  1;
+	public static final int SUBJECT_IMPORTANT=  2;
+	public static final int SUBJECT_COMMON=  3;
+
+
 
 	
 	public static final String MESSAGE_ATTACH_UPLOADPATH = "/home/upload";
@@ -49,6 +56,10 @@ public class Constants {
 	public static final String DICT_STUDENT_TYPE = "student_type";
 	public static final String DICT_STUDENT_STATUS= "student_status";
 	public static final String DICT_PROPERTY_STATUS= "property_status";
+	public static final String DICT_SUBJECT_TYPE= "subject_type";
+	public static final String DICT_IMPORTANCE= "importance";
+
+
 
 
 
@@ -64,6 +75,9 @@ public class Constants {
 			dictTypes.put(DICT_STUDENT_TYPE, "学生类型");
 			dictTypes.put(DICT_STUDENT_STATUS, "学生状态");
 			dictTypes.put(DICT_PROPERTY_STATUS, "资产状态");
+			dictTypes.put(DICT_SUBJECT_TYPE, "科目类型");
+			dictTypes.put(DICT_IMPORTANCE, "重要程度");
+
 			Collections.unmodifiableMap(dictTypes);
 		}
 		return dictTypes;

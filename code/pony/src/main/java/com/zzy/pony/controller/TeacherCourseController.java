@@ -56,7 +56,7 @@ import com.zzy.pony.service.TeacherService;
 import com.zzy.pony.service.TeacherSubjectService;
 import com.zzy.pony.service.TermService;
 import com.zzy.pony.service.WeekdayService;
-import com.zzy.pony.vo.conditionVo;
+import com.zzy.pony.vo.ConditionVo;
 
 
 

@@ -100,6 +100,20 @@ public class DictServiceImpl implements DictService {
 		return dao.findByDictType(Constants.DICT_PROPERTY_STATUS);
 	}
 
+	@Override
+	public List<CommonDict> findSubjectTypes() {
+		// TODO Auto-generated method stub
+		return dao.findByDictType(Constants.DICT_SUBJECT_TYPE);
+	}
+
+	@Override
+	public List<CommonDict> findImportances() {
+		// TODO Auto-generated method stub
+		return dao.findByDictType(Constants.DICT_IMPORTANCE);
+	}
+	
+	
+
 	
 	
 	

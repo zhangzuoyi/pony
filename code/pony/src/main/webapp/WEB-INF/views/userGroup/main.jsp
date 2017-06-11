@@ -415,14 +415,24 @@ var app = new Vue({
 			
 			this.getListTableData();
 		},
-		handleDelete : function(index,row){		
+		handleDelete : function(index,row){	
 			
-			this.$http.get(this.deleteUrl,{params:{groupId:row.groupId}}).then(
+			this.$confirm("确认删除吗？","提示",{
+			confirmButtonText:'确认',
+			cancleButtonText:'取消',
+			type:'warning'			
+			}).then(function(){  
+			  app.$http.get(app.deleteUrl,{params:{groupId:row.groupId}}).then(
 							function(response){
-								this.getListTableData();
+								app.getListTableData();
 							 },
 							function(response){}  			
-							);   	
+							);  						
+			})
+			.catch(function(){ app.$message({ type:'info',message:'已取消删除'})});
+			
+			
+			  	
 							
 
 		},	

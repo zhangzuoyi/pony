@@ -9,7 +9,7 @@ import com.zzy.pony.model.Teacher;
 import com.zzy.pony.model.TeacherSubject;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.vo.TeacherSubjectVo;
-import com.zzy.pony.vo.conditionVo;
+import com.zzy.pony.vo.ConditionVo;
 
 public interface TeacherSubjectService {
 	void add(TeacherSubject sy);
@@ -29,8 +29,15 @@ public interface TeacherSubjectService {
 	
 	List<TeacherSubjectVo> findCurrentVoByTeacherAndSubject(int teacherId,int subjectId);
 	
-	List<TeacherSubjectVo> findCurrentVoByCondition(conditionVo cv);
-
+	List<TeacherSubjectVo> findCurrentVoByCondition(ConditionVo cv);
+	
+	
+	/*** 
+	* <p>Description: 需要平课的记录</p>
+	* @author  WANGCHAO262
+	* @date  2017年5月24日 上午10:24:17
+	*/
+	List<TeacherSubjectVo> findCurrentByGroup();
 
 	
 	List<TeacherSubjectVo> findCurrentAll();
@@ -40,6 +47,8 @@ public interface TeacherSubjectService {
 	List<Integer> findCurrentAllSubjectId();
 	Boolean isExists(Teacher teacher,SchoolYear schoolYear,Term term,SchoolClass schoolClass,Subject subject);
 	TeacherSubject findCurrentByClassAndSubject(SchoolClass schoolClass,Subject subject);
+	
+	
 
 	
 }

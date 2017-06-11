@@ -23,6 +23,8 @@ public class Subject implements Serializable {
 	private String name;
 	
 	private Integer type;
+	
+	private Integer importance;
 
 	public Subject() {
 	}
@@ -49,6 +51,14 @@ public class Subject implements Serializable {
 
 	public void setType(Integer type) {
 		this.type = type;
+	}
+
+	public Integer getImportance() {
+		return importance;
+	}
+
+	public void setImportance(Integer importance) {
+		this.importance = importance;
 	}
 
 	@Override

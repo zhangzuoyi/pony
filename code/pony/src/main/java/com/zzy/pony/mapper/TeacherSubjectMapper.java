@@ -3,8 +3,10 @@ package com.zzy.pony.mapper;
 import java.util.List;
 
 import com.zzy.pony.vo.TeacherSubjectVo;
-import com.zzy.pony.vo.conditionVo;
+import com.zzy.pony.vo.ConditionVo;
 
 public interface TeacherSubjectMapper {
-	List<TeacherSubjectVo> findByCondition(conditionVo cv);
+	List<TeacherSubjectVo> findByCondition(ConditionVo cv);
+	List<TeacherSubjectVo> findCurrentByGroup(ConditionVo cv);
+
 }
