@@ -66,7 +66,11 @@ public class TeacherLessonArrangeController {
 			ts.setTeacher(teacherDao.findOne(tsv.getTeacherId()));
 			ts.setTerm(termDao.findOne(tsv.getTermId()));
 			ts.setYear(schoolYearDao.findOne(tsv.getYearId()));
-			teacherSubjectDao.save(ts);
+			if (teacherSubjectDao.findByTeacherAndYearAndTermAndSchoolClassAndSubject(ts.getTeacher(), ts.getYear(), ts.getTerm(), ts.getSchoolClass(), ts.getSubject()).isEmpty()) {
+				teacherSubjectDao.save(ts);
+			}
+			
+			
 		}
 		
 	}

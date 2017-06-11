@@ -239,48 +239,105 @@ public class GAUtil {
 	*/
 	public static boolean  isSeqSubjectMatch(Map<String, List<String>> seqSubjectMap,int classNumber,int seqLength,String key,Set<Integer> alreadyClassNumber,
 			List<Integer> significantSeq,List<Integer> importantSeq,List<Integer> commonSeq,Map<String, Integer> subjectImportanceMap){
+		
 		String seq = getSeq(classNumber, seqLength);	
-		List<String> subjectList = seqSubjectMap.get(seq);
+		/*List<String> subjectList = seqSubjectMap.get(seq);
 		for (String string : subjectList) {
 			if (string.equalsIgnoreCase(key.substring(4))) {
 				return true;
 			}
-		}
+		}*/
 		//若上述条件不满足，在判断当天的   非常重要--》重要--》一般
+		/*if (alreadyClassNumber == null || alreadyClassNumber.size() == 0) {
+			return true;
+		}*/
 		int week = getWeek(classNumber, seqLength); 
 		if (Constants.SUBJECT_SIGNIFICANT==subjectImportanceMap.get(key.substring(4))) {
+			
+			boolean flag = false ;
+			boolean flag2 = false;
+			int count = 0;
+			
 			for (Integer seqInt : significantSeq) {
-				if (!alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt+1))) {
-					return false;
+				
+				if (alreadyClassNumber.isEmpty() &&  classNumber ==(5-week)*seqLength+(seqLength-seqInt+1))  {
+					flag = true;
 				}								
-			}	
-			if(importantSeq.contains(Integer.valueOf(seq))){
+				if (alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt+1))) {
+					count ++;
+				}
+				if (classNumber == ((5-week)*seqLength+(seqLength-seqInt+1))) {
+					flag2 = true;
+				}
+			}
+			if(flag){
 				return true;
 			}
+			if (flag2) {
+				return true;
+			}
+			if(!flag2 && count!=significantSeq.size()){
+				return false;
+			}									
+			if(importantSeq.contains(Integer.valueOf(seq))){
+				return true;
+			}			
+			flag = false ;
+			count = 0;			
 			for (Integer seqInt : importantSeq) {
-				if (!alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt+1))) {
-					return false;
+				if (alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt+1))) {
+					count ++;
 				}								
+			}
+			if(count!=importantSeq.size()){
+				return false;
 			}
 			if(commonSeq.contains(Integer.valueOf(seq))){
 				return true;
 			}									
 		}
 		if (Constants.SUBJECT_IMPORTANT==subjectImportanceMap.get(key.substring(4))) {
+			boolean flag = false ;
+			boolean flag2 = false ;
+			int count = 0;
 			for (Integer seqInt : importantSeq) {
-				if (!alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt+1))) {
-					return false;
+				if (alreadyClassNumber.isEmpty() &&  classNumber ==(5-week)*seqLength+(seqLength-seqInt+1))  {
+					flag = true;
 				}								
+				if (alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt+1))) {
+					count ++;
+				}
+				if (classNumber == ((5-week)*seqLength+(seqLength-seqInt+1))) {
+					flag2 = true;
+				}
+			}
+			if(flag){
+				return true;
+			}
+			if (flag2) {
+				return true;
+			}
+			if(!flag2&&count!=importantSeq.size()){
+				return false;
 			}
 			if(commonSeq.contains(Integer.valueOf(seq))){
 				return true;
 			}									
 		}
-		
-		
-		
-		
-		
+		if (Constants.SUBJECT_COMMON==subjectImportanceMap.get(key.substring(4))) {
+			boolean flag = false ;
+			for (Integer seqInt : commonSeq) {
+				if (alreadyClassNumber.isEmpty() &&  classNumber ==(5-week)*seqLength+(seqLength-seqInt+1))  {
+					flag = true;
+				}																
+			}
+			if(flag){
+				return true;
+			}						
+			if(commonSeq.contains(Integer.valueOf(seq))){
+				return true;
+			}									
+		}
 		return false;
 	}
 	

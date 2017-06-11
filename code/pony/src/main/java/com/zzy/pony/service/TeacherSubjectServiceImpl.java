@@ -225,7 +225,7 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 		cv.setTermId(term.getTermId());
 		//选择了年级未选择班级
 		if (cv.getGradeId()!=0 && cv.getClassId() ==0) {
-			List<SchoolClass> classes = schoolClassService.findByGrade(cv.getGradeId());
+			List<SchoolClass> classes = schoolClassService.findByYearAndGrade(year.getYearId(),cv.getGradeId());
 			for (SchoolClass schoolClass : classes) {
 				cv.setClassId(schoolClass.getClassId());
 				List<TeacherSubjectVo> list = teacherSubjectMapper.findByCondition(cv);
