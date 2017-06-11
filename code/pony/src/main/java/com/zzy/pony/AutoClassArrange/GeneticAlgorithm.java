@@ -20,7 +20,7 @@ public  class GeneticAlgorithm {
 	private int popSize = 10;//种群数量
 	//private int geneSize;//基因最大长度
 	private int maxIterNum = 10000;//最大迭代次数
-	private double mutationRate = 0.1;//基因变异的概率  (285s)
+	private double mutationRate = 0.05;//基因变异的概率  (285s)
 	//private int maxMutationNum = 3;//最大变异步长
 	
 	private int generation = 1;//当前遗传到第几代
@@ -52,7 +52,7 @@ public  class GeneticAlgorithm {
 		while(worstScore > 0){
 			//种群遗传			
 			evolve();
-			//print();
+			print();
 			generation++;
 		}
 		/*while(bestChromosome.getScoreOne() != 0 || bestChromosome.getScoreThree() != 0 || bestChromosome.getScoreFour() != 0 ||bestChromosome.getScoreFive() != 0 ||bestChromosome.getScoreSix() != 0||bestChromosome.getScoreSeven() != 0){
@@ -88,6 +88,7 @@ public  class GeneticAlgorithm {
 		System.out.println("the worst fitness is:" + worstScore);
 		System.out.println("the average fitness is:" + averageScore);
 		System.out.println("the total fitness is:" + totalScore);
+
 		//System.out.println("geneI:" + geneI + "\tx:" + x + "\ty:" + y);
 		System.out.println("geneI:" + geneI );
 
@@ -119,7 +120,7 @@ public  class GeneticAlgorithm {
 	 * @Description:种群进行遗传
 	 */
 	private void evolve() {
-		List<Chromosome> childPopulation = new ArrayList<Chromosome>();
+		List<Chromosome> childPopulation = new ArrayList<Chromosome>();				
 		//生成下一代种群
 		while (childPopulation.size() < popSize) {
 			Chromosome p1 = getParentChromosome();

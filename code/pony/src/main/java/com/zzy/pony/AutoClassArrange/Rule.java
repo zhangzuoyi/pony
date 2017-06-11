@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.zzy.pony.util.GAUtil;
+
 public class Rule {
 // classLength * [teacherId(4)+classId(3)+subjectId(2)+weekdayId(1)+seqId(1)]*weekdayLength*seqLength
 	//个体适应度函数定义为 如下规则对于满足得1分，不满足则得0分
@@ -42,6 +44,7 @@ public class Rule {
 				result+=classLength-teacherSubjectSet.size()-noClassCount;			
 			}
 		}	
+		//GAUtil.print2(String.valueOf(chromosome.getGene()));
 		return result;
 	}
 	//同一班级在同一时间段最多只能上1节课ruleTwo  由编码已经决定了该情况不可能发生
@@ -300,7 +303,7 @@ public class Rule {
 				}												
 				}
 			}
-		}	*/
+		}*/	
 		
 		
 		return result;
