@@ -1,8 +1,11 @@
 package com.zzy.pony.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 
@@ -18,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.zzy.pony.model.Role;
 import com.zzy.pony.model.TeacherSubject;
 import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.SubjectService;
@@ -52,6 +58,29 @@ public class TeacherSubjectController {
 
 		return list;
 	}
+	@RequestMapping(value="listTree",method = RequestMethod.GET)
+	@ResponseBody
+	public String listTree(){		
+			
+		StringBuilder result = new StringBuilder();
+		List<Map<String, Object>> lists = new ArrayList<Map<String,Object>>();		
+		List<TeacherSubjectVo> teacherSubjects = service.findCurrentAll();
+		for (TeacherSubjectVo teacherSubjectVo : teacherSubjects) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("tsId", teacherSubjectVo.getTsId());
+			map.put("label", teacherSubjectVo.getClassName()+":"+teacherSubjectVo.getTeacherName()+"("+teacherSubjectVo.getSubjectName()+")");						
+			lists.add(map);			
+		}
+		GsonBuilder gb = new GsonBuilder();
+		Gson gson = gb.create();
+		String treeDatas= gson.toJson(lists);	
+		result.append("{\"treeData\"");
+		result.append(":");
+		result.append(treeDatas);
+		result.append("}");
+		return result.toString();
+	}
+	
 	@RequestMapping(value="findByTeacherAndSubject",method = RequestMethod.GET)
 	@ResponseBody
 	public List<TeacherSubjectVo> findByTeacherAndSubject(@RequestParam(value="teacherId") int teacherId,@RequestParam(value="subjectId") int subjectId){

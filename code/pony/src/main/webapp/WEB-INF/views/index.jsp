@@ -84,6 +84,8 @@
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/classNoCourse/main/' />" iframe="1">班级不排课设置</a></li>
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/teacherNoCourse/main/' />" iframe="1">老师不排课设置</a></li>
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/subjectNoCourse/main/' />" iframe="1">科目不排课设置</a></li>
+                	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/arrangeCombine/main/' />" iframe="1">合班设置</a></li>
+                	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/arrangeRotation/main/' />" iframe="1">走班设置</a></li>              	
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/preLessonArrange/main/' />" iframe="1">预排</a></li>
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/autoLessonArrange/main/' />" iframe="1">自动排课</a></li>
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/reLessonArrange/main/' />" iframe="1">调课</a></li>

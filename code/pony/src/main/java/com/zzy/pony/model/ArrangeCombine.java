@@ -31,7 +31,7 @@ public class ArrangeCombine implements Serializable {
 	private SchoolYear schoolYear;
 
 	//bi-directional many-to-many association to TeacherSubject
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(
 			name="t_teacher_arrange_combine"
 			, joinColumns={

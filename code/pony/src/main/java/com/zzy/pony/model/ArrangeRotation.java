@@ -31,7 +31,7 @@ public class ArrangeRotation implements Serializable {
 	private Term term;
 
 	//bi-directional many-to-many association to TeacherSubject
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(
 			name="t_teacher_arrange_rotation"
 			, joinColumns={
