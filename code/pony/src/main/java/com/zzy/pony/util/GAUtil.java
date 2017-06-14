@@ -18,9 +18,11 @@ import org.eclipse.jdt.internal.compiler.ast.ThisReference;
 
 import com.zzy.pony.AutoClassArrange.DNA;
 import com.zzy.pony.config.Constants;
+import com.zzy.pony.model.ArrangeRotation;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.vo.ArrangeVo;
 import com.zzy.pony.vo.ClassNoCourseVo;
+import com.zzy.pony.vo.CombineAndRotationVo;
 import com.zzy.pony.vo.GradeNoCourseVo;
 import com.zzy.pony.vo.SubjectNoCourseVo;
 import com.zzy.pony.vo.TeacherNoCourseVo;
@@ -190,23 +192,37 @@ public class GAUtil {
 	
 	/*** 
 	* <p>Description:
-	* input   key:teacherId+classId+subjectId value weekArrange
+	* input   key:teacherId+classId+subjectId value weekArrange  rotationMap key: teacherId+classId+subjectId,value:rotationId
 	* output  key:classId value( key:teacherId+subjectId value:weekArrange) </p>
 	* @author  WANGCHAO262
 	* @date  2017年5月3日 下午2:14:46
+	* @add 增加支持走课   其中走课key  R+%05d 其中为rotationId
 	*/
-	public static Map<String, Map<String, String>> getClassTeacherSubjectweekArrange(Map<String,String> map){
+	public static Map<String, Map<String, String>> getClassTeacherSubjectweekArrange(Map<String,String> map,Map<String, Integer> rotationMap){
 		Map<String, Map<String, String>> result = new HashMap<String, Map<String,String>>();
 		for (String key : map.keySet()) {
 			String classId = key.substring(4, 7);//key
 			if (result.containsKey(classId)) {
 				Map<String, String> innerMap = result.get(classId);
-				innerMap.put(key.substring(0, 4)+key.substring(7, 9), map.get(key));
-				
+				if (rotationMap.get(key)!=null) {
+					if (!innerMap.containsKey("R"+String.format("%05d",rotationMap.get(key) ))) {
+						innerMap.put("R"+String.format("%05d",rotationMap.get(key) ), map.get(key));
+					}
+				}else{
+					innerMap.put(key.substring(0, 4)+key.substring(7, 9), map.get(key));
+
+				}													
 			}else{
 				Map<String, String> innerMap = new HashMap<String, String>();
-				innerMap.put(key.substring(0, 4)+key.substring(7, 9), map.get(key));
+				
+				if (rotationMap.get(key)!=null) {
+					innerMap.put("R"+String.format("%05d",rotationMap.get(key) ), map.get(key));
+				}else{
+					innerMap.put(key.substring(0, 4)+key.substring(7, 9), map.get(key));
+				}
 				result.put(classId, innerMap);
+
+					
 			}		
 		}
 		return result;		
@@ -338,7 +354,7 @@ public class GAUtil {
 				return true;
 			}									
 		}
-		return false;
+		return true;
 	}
 	
 	
@@ -597,17 +613,32 @@ public class GAUtil {
 				ArrangeVo vo = new ArrangeVo();
 				String dnaString = bestChromosome.substring((i*seqLength+j)*dnaBit+k*classDNALength, (i*seqLength+j)*dnaBit+k*classDNALength+dnaBit);
 				
-				Integer teacherId = Integer.valueOf(dnaString.substring(0, teacherIdBit)); 
-				Integer classId = Integer.valueOf(dnaString.substring(teacherIdBit, teacherIdBit+classIdBit)); 
-				Integer subjectId = Integer.valueOf(dnaString.substring(teacherIdBit+classIdBit, teacherIdBit+classIdBit+subjectIdBit)); 
-				Integer weekdayId = Integer.valueOf(dnaString.substring(teacherIdBit+classIdBit+subjectIdBit, teacherIdBit+classIdBit+subjectIdBit+weekdayIdBit)); 
-				Integer seqId = Integer.valueOf(dnaString.substring(teacherIdBit+classIdBit+subjectIdBit+weekdayIdBit, teacherIdBit+classIdBit+subjectIdBit+weekdayIdBit+seqIdBit)); 
-				vo.setTeacherId(teacherId);
-				vo.setClassId(classId);
-				vo.setSubjectId(subjectId);
-				vo.setWeekdayId(weekdayId);
-				vo.setSeqId(seqId);
-				vo.setSourceType("1");
+				if (dnaString.substring(0, teacherIdBit).startsWith("R")) {
+					Integer rotationId = Integer.valueOf(dnaString.substring(1, teacherIdBit)+dnaString.substring(teacherIdBit+classIdBit, teacherIdBit+classIdBit+subjectIdBit));
+					Integer classId = Integer.valueOf(dnaString.substring(teacherIdBit, teacherIdBit+classIdBit)); 
+					Integer weekdayId = Integer.valueOf(dnaString.substring(teacherIdBit+classIdBit+subjectIdBit, teacherIdBit+classIdBit+subjectIdBit+weekdayIdBit)); 
+					Integer seqId = Integer.valueOf(dnaString.substring(teacherIdBit+classIdBit+subjectIdBit+weekdayIdBit, teacherIdBit+classIdBit+subjectIdBit+weekdayIdBit+seqIdBit)); 
+					vo.setRotationId(rotationId);
+					vo.setClassId(classId);
+					vo.setWeekdayId(weekdayId);
+					vo.setSeqId(seqId);
+					vo.setSourceType("1");
+									
+					
+				}else{
+					Integer teacherId = Integer.valueOf(dnaString.substring(0, teacherIdBit)); 
+					Integer classId = Integer.valueOf(dnaString.substring(teacherIdBit, teacherIdBit+classIdBit)); 
+					Integer subjectId = Integer.valueOf(dnaString.substring(teacherIdBit+classIdBit, teacherIdBit+classIdBit+subjectIdBit)); 
+					Integer weekdayId = Integer.valueOf(dnaString.substring(teacherIdBit+classIdBit+subjectIdBit, teacherIdBit+classIdBit+subjectIdBit+weekdayIdBit)); 
+					Integer seqId = Integer.valueOf(dnaString.substring(teacherIdBit+classIdBit+subjectIdBit+weekdayIdBit, teacherIdBit+classIdBit+subjectIdBit+weekdayIdBit+seqIdBit)); 
+					vo.setTeacherId(teacherId);
+					vo.setClassId(classId);
+					vo.setSubjectId(subjectId);
+					vo.setWeekdayId(weekdayId);
+					vo.setSeqId(seqId);
+					vo.setSourceType("1");
+					
+				}
 				result.add(vo);
 				
 				}
@@ -616,6 +647,29 @@ public class GAUtil {
 	
 		return result;
 	}
+	
+	/*** 
+	* <p>Description: 获取rotationMap</p>
+	* @author  WANGCHAO262
+	* @date  2017年6月14日 下午3:33:55
+	*/
+	public static Map<String, Integer> getArrangeRotation(List<CombineAndRotationVo> combineAndRotationVos){
+		Map<String, Integer> result = new HashMap<String, Integer>();
+		for (CombineAndRotationVo vo : combineAndRotationVos) {
+			String classId = String.format("%04d", vo.getClassId())  ;
+			String teacherId = String.format("%03d", vo.getTeacherId())  ;
+			String subjectId = String.format("%02d", vo.getSubjectId())  ;
+			
+			result.put(classId+teacherId+subjectId, vo.getRotationId());								
+		}
+		
+		
+		
+		return result;
+		
+		
+	}
+	
 	public static void print(String a){
 		System.out.println();	
 

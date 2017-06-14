@@ -21,6 +21,8 @@ public class ArrangeVo {
 	private Integer weekdayId;
 	private Integer seqId; 
 	
+	private Integer rotationId;
+	
 	
 	public ArrangeVo(){}
 	public Integer getArrangeId() {
@@ -119,7 +121,14 @@ public class ArrangeVo {
 	}
 	public void setSeqId(Integer seqId) {
 		this.seqId = seqId;
+	}
+	public Integer getRotationId() {
+		return rotationId;
+	}
+	public void setRotationId(Integer rotationId) {
+		this.rotationId = rotationId;
 	}	
+	
 	
 	
 

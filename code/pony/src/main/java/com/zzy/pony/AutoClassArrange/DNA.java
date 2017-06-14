@@ -48,6 +48,9 @@ public class DNA {
 	private List<Integer> importantSeq;
 	private List<Integer> commonSeq;
 	private Map<String, Integer> subjectImportanceMap;
+	private Map<String, Integer> arrangeRotationMap;
+
+ 
 
 
 
@@ -96,6 +99,9 @@ public class DNA {
 	* @date  2017年4月7日 下午2:22:42
 	* 
 	* modify 支持2+1形式
+	* 
+	* 合班: 配置表中的课程一起上(主要不同班级)
+	* 走班: 配置表中的课程一起上(主要同一班级，在某一时间点可以同时上两门课,保证两节课上的课时数是一致的)
 	* 
 	*/
 	public String getDnaStringRuleTwo(int classIndex,Map<String, Map<String, String>> map){
@@ -169,9 +175,12 @@ public class DNA {
 		for (int i = 0; i < this.weekdayIdCandidate.length; i++) {
 			for (int j = 0; j < this.seqIdCandidate.length; j++) {								
 				if (randomMap.containsKey(k)) {
-					sb.append(randomMap.get(k).substring(0, this.teacherIdBit));
-					sb.append(this.classIdCandidate[classIndex]);	
-					sb.append(randomMap.get(k).substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit));
+					
+						sb.append(randomMap.get(k).substring(0, this.teacherIdBit));
+						sb.append(this.classIdCandidate[classIndex]);	
+						sb.append(randomMap.get(k).substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit));
+					
+					
 				}else {
 					String noClassTeacherString =  this.teacherIdCandidate[random.nextInt(this.teacherIdCandidate.length)] ;
 					sb.append(noClassTeacherString);
@@ -345,6 +354,13 @@ public class DNA {
 	public void setSubjectImportanceMap(Map<String, Integer> subjectImportanceMap) {
 		this.subjectImportanceMap = subjectImportanceMap;
 	}
+	public Map<String, Integer> getArrangeRotationMap() {
+		return arrangeRotationMap;
+	}
+	public void setArrangeRotationMap(Map<String, Integer> arrangeRotationMap) {
+		this.arrangeRotationMap = arrangeRotationMap;
+	}
+	
 	
 	
 	

@@ -15,19 +15,23 @@ import org.springframework.stereotype.Service;
 import com.zzy.pony.AutoClassArrange.DNA;
 import com.zzy.pony.AutoClassArrange.GeneticAlgorithm;
 import com.zzy.pony.config.Constants;
+import com.zzy.pony.dao.ArrangeRotationDao;
 import com.zzy.pony.dao.LessonArrangeDao;
+import com.zzy.pony.model.ArrangeRotation;
 import com.zzy.pony.model.LessonArrange;
 import com.zzy.pony.model.LessonPeriod;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.model.Teacher;
+import com.zzy.pony.model.TeacherSubject;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.model.Weekday;
 import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.util.GAUtil;
 import com.zzy.pony.vo.ArrangeVo;
 import com.zzy.pony.vo.ClassNoCourseVo;
+import com.zzy.pony.vo.CombineAndRotationVo;
 import com.zzy.pony.vo.GradeNoCourseVo;
 import com.zzy.pony.vo.SubjectNoCourseVo;
 import com.zzy.pony.vo.TeacherNoCourseVo;
@@ -64,6 +68,8 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 	private LessonArrangeDao lessonArrangeDao;
 	@Autowired
 	private WeekdayService weekdayService;
+	@Autowired
+	private ArrangeRotationService	 arrangeRotationService;
 	
 	
 	@Override
@@ -131,6 +137,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		List<TeacherNoCourseVo> teacherNoCourseVos = teacherNoCourseService.findCurrentAllVo();
 		List<SubjectNoCourseVo> subjectNoCourseVos = subjectNoCourseService.findCurrentAllVo();
 		List<GradeNoCourseVo> gradeNoCourseVos = gradeNoCourseService.findCurrentAllVo();
+		List<CombineAndRotationVo> combineAndRotationVos = arrangeRotationService.findAllVo();
 		DNA.getInstance().setClassIdCandidate(classIdCandidate);
 		DNA.getInstance().setSeqIdCandidate(seqIdCandidate);
 		DNA.getInstance().setSubjectIdCandidate(subjectIdCandidate);
@@ -151,6 +158,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		DNA.getInstance().setImportantSeq(importantSeq);
 		DNA.getInstance().setCommonSeq(commonSeq);
 		DNA.getInstance().setSubjectImportanceMap(subjectImportanceMap);
+		DNA.getInstance().setArrangeRotationMap(GAUtil.getArrangeRotation(combineAndRotationVos));
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		String bestChromosome =  geneticAlgorithm.caculte();	
 		List<ArrangeVo> list =   GAUtil.getLessonArranges(bestChromosome);
@@ -168,24 +176,49 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		for (ArrangeVo arrangeVo : list) {
 			LessonPeriod lessonPeriod = lessonPeriodService.findBySchoolYearAndTermAndSeq(schoolYear, term, arrangeVo.getSeqId());
 			//Weekday weekDay = weekdayService.get(arrangeVo.getWeekdayId());
-			Teacher teacher =  teacherService.get(arrangeVo.getTeacherId());
 			SchoolClass schoolClass =  schoolClassService.get(arrangeVo.getClassId());
-			Subject subject =  subjectService.get(arrangeVo.getSubjectId());
-			Boolean flag = teacherSubjectService.isExists(teacher, schoolYear, term, schoolClass, subject);
-			if (flag) {
-			LessonArrange lessonArrange = new LessonArrange();
-			lessonArrange.setClassId(arrangeVo.getClassId());
-			lessonArrange.setCreateTime(new Date());
-			lessonArrange.setCreateUser(ShiroUtil.getLoginUser().getLoginName());
-			//lessonArrange.setCreateUser("test");
-			lessonArrange.setLessonPeriod(lessonPeriod);
-			lessonArrange.setSchoolYear(schoolYear);
-			lessonArrange.setSourceType("1");//自动排课
-			lessonArrange.setSubject(subject);
-			lessonArrange.setTerm(term);
-			lessonArrange.setWeekDay(arrangeVo.getWeekdayId()+"");
-			lessonArrangeDao.save(lessonArrange);
+			if (arrangeVo.getRotationId()!=null) {
+				ArrangeRotation ar = arrangeRotationService.get(arrangeVo.getRotationId());
+				for (TeacherSubject	 teacherSubject : ar.getTeacherSubjects()) {
+					Teacher teacher =  teacherSubject.getTeacher();
+					Subject subject =  teacherSubject.getSubject();
+					Boolean flag = teacherSubjectService.isExists(teacher, schoolYear, term, schoolClass, subject);
+					if (flag) {
+					LessonArrange lessonArrange = new LessonArrange();
+					lessonArrange.setClassId(arrangeVo.getClassId());
+					lessonArrange.setCreateTime(new Date());
+					lessonArrange.setCreateUser(ShiroUtil.getLoginUser().getLoginName());
+					//lessonArrange.setCreateUser("test");
+					lessonArrange.setLessonPeriod(lessonPeriod);
+					lessonArrange.setSchoolYear(schoolYear);
+					lessonArrange.setSourceType("1");//自动排课
+					lessonArrange.setSubject(subject);
+					lessonArrange.setTerm(term);
+					lessonArrange.setWeekDay(arrangeVo.getWeekdayId()+"");
+					lessonArrangeDao.save(lessonArrange);
+					}										
+				}								
+			}else{
+				Teacher teacher =  teacherService.get(arrangeVo.getTeacherId());
+				Subject subject =  subjectService.get(arrangeVo.getSubjectId());
+				Boolean flag = teacherSubjectService.isExists(teacher, schoolYear, term, schoolClass, subject);
+				if (flag) {
+				LessonArrange lessonArrange = new LessonArrange();
+				lessonArrange.setClassId(arrangeVo.getClassId());
+				lessonArrange.setCreateTime(new Date());
+				lessonArrange.setCreateUser(ShiroUtil.getLoginUser().getLoginName());
+				//lessonArrange.setCreateUser("test");
+				lessonArrange.setLessonPeriod(lessonPeriod);
+				lessonArrange.setSchoolYear(schoolYear);
+				lessonArrange.setSourceType("1");//自动排课
+				lessonArrange.setSubject(subject);
+				lessonArrange.setTerm(term);
+				lessonArrange.setWeekDay(arrangeVo.getWeekdayId()+"");
+				lessonArrangeDao.save(lessonArrange);
+				}
 			}
+			
+			
 		
 		}
 		

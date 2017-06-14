@@ -13,6 +13,12 @@ public class CombineAndRotationVo {
 	private String yearName;
 	private List<Integer> tsIds;
 	private List<String> tsNames;
+	private Integer classId;
+	private String className;
+	private Integer teacherId;
+	private String teacherName;
+	private Integer subjectId;
+	private String subjectName;
 	
 	
 	
@@ -113,6 +119,80 @@ public class CombineAndRotationVo {
 	public void setTsNames(List<String> tsNames) {
 		this.tsNames = tsNames;
 	}
+
+
+
+	public Integer getClassId() {
+		return classId;
+	}
+
+
+
+	public void setClassId(Integer classId) {
+		this.classId = classId;
+	}
+
+
+
+	public String getClassName() {
+		return className;
+	}
+
+
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+
+
+	public Integer getTeacherId() {
+		return teacherId;
+	}
+
+
+
+	public void setTeacherId(Integer teacherId) {
+		this.teacherId = teacherId;
+	}
+
+
+
+	public String getTeacherName() {
+		return teacherName;
+	}
+
+
+
+	public void setTeacherName(String teacherName) {
+		this.teacherName = teacherName;
+	}
+
+
+
+	public Integer getSubjectId() {
+		return subjectId;
+	}
+
+
+
+	public void setSubjectId(Integer subjectId) {
+		this.subjectId = subjectId;
+	}
+
+
+
+	public String getSubjectName() {
+		return subjectName;
+	}
+
+
+
+	public void setSubjectName(String subjectName) {
+		this.subjectName = subjectName;
+	}
+	
+	
 
 
 
