@@ -1,11 +1,11 @@
 package com.zzy.pony.AutoClassArrange;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-
 
 import com.zzy.pony.util.GAUtil;
 
@@ -49,6 +49,9 @@ public class DNA {
 	private List<Integer> commonSeq;
 	private Map<String, Integer> subjectImportanceMap;
 	private Map<String, Integer> arrangeRotationMap;
+	private Map<String, Integer> arrangeCombineMap;
+	private Map<String, Set<Integer>> combineMap;//合班资源池
+
 
  
 
@@ -120,16 +123,36 @@ public class DNA {
 			//第一种
 			if (classMap.get(key).indexOf("+")<0) {
 				for (int i = 0; i <  Integer.valueOf(classMap.get(key)) ; i++) {
-					int classNumber = random.nextInt(k)+1;
+					int classNumber=0 ;
+					
+					if (!combineMap.isEmpty()&& combineMap.containsKey(key)) {
+						//@todo  随机从set中取值赋给当前classNumber且不能够重复
+						
+					}else {	
+						classNumber = random.nextInt(k)+1;
+						//@todo  增加规则在combineMap已经排过的不能够在下面排
 					while(randomMap.containsKey(classNumber) ||GAUtil.isExistClass(randomMap, classNumber,key,this.seqIdCandidate.length)
-							||( !key.startsWith("R")&&  this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber,this.seqIdCandidate.length,this.seqMornigLength))
-							||(!key.startsWith("R")&&this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber,this.seqIdCandidate.length,this.seqAfternoonLength))
+							||( !key.startsWith("C")&&!key.startsWith("R")&&  this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber,this.seqIdCandidate.length,this.seqMornigLength))
+							||(!key.startsWith("C")&&!key.startsWith("R")&&this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber,this.seqIdCandidate.length,this.seqAfternoonLength))
 							||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key),this.seqIdCandidate.length)
 							||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key,randomMap.keySet(),this.significantSeq,this.importantSeq,this.commonSeq,this.subjectImportanceMap))
 							){
 						classNumber = random.nextInt(k)+1;
+						}
 					}
-					randomMap.put(classNumber, key);									
+					
+					randomMap.put(classNumber, key);
+					
+					if (key.startsWith("C")) {
+						if (combineMap.containsKey(key)) {
+							combineMap.get(key).add(classNumber);
+						}else {
+							Set<Integer> set = new HashSet<Integer>();
+							set.add(classNumber);
+							combineMap.put(key, set);
+						}
+					}
+					
 				}
 			}else {
 				//第二种  2+1
@@ -137,13 +160,24 @@ public class DNA {
 				   for (int i = 0; i <  Integer.valueOf(a[0]) ; i++) {
 						int classNumber = random.nextInt(k)+1;
 						while(randomMap.containsKey(classNumber) ||GAUtil.isExistClass(randomMap, classNumber,key,this.seqIdCandidate.length)
-								||(!key.startsWith("R")&&this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber,this.seqIdCandidate.length,this.seqMornigLength))
-								||(!key.startsWith("R")&&this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber,this.seqIdCandidate.length,this.seqAfternoonLength))
+								||(!key.startsWith("C")&&!key.startsWith("R")&&this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber,this.seqIdCandidate.length,this.seqMornigLength))
+								||(!key.startsWith("C")&&!key.startsWith("R")&&this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber,this.seqIdCandidate.length,this.seqAfternoonLength))
 								||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key),this.seqIdCandidate.length))
 								||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key,randomMap.keySet(),this.significantSeq,this.importantSeq,this.commonSeq,this.subjectImportanceMap)){
 							classNumber = random.nextInt(k)+1;
 						}
-						randomMap.put(classNumber, key);									
+						randomMap.put(classNumber, key);	
+						
+						if (key.startsWith("C")) {
+							if (combineMap.containsKey(key)) {
+								combineMap.get(key).add(classNumber);
+							}else {
+								Set<Integer> set = new HashSet<Integer>();
+								set.add(classNumber);
+								combineMap.put(key, set);
+							}
+						}
+						
 					}
 				   for (int i = 0; i <  Integer.valueOf(a[1]) ; i++) {
 						int classNumber = random.nextInt(k)+1;		
@@ -160,14 +194,27 @@ public class DNA {
 						  29 22 15  8 1*/
 				       //当天已经上过该课就不能再上
 						while(randomMap.containsKey(classNumber)||randomMap.containsKey(classNumber-1)||classNumber%this.seqIdCandidate.length == 1|| classNumber%this.seqIdCandidate.length == 4 ||GAUtil.isExistClass(randomMap, classNumber,key,this.seqIdCandidate.length)
-								||(!key.startsWith("R")&&this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber,this.seqIdCandidate.length,this.seqMornigLength))
-								||(!key.startsWith("R")&&this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber,this.seqIdCandidate.length,this.seqAfternoonLength))
+								||(!key.startsWith("C")&&!key.startsWith("R")&&this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber,this.seqIdCandidate.length,this.seqMornigLength))
+								||(!key.startsWith("C")&&!key.startsWith("R")&&this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber,this.seqIdCandidate.length,this.seqAfternoonLength))
 								||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key),this.seqIdCandidate.length))
 								||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key,randomMap.keySet(),this.significantSeq,this.importantSeq,this.commonSeq,this.subjectImportanceMap)){
 							classNumber = random.nextInt(k)+1;
 						}
 						randomMap.put(classNumber, key);
 						randomMap.put(classNumber-1, key);
+						
+						if (key.startsWith("C")) {
+							if (combineMap.containsKey(key)) {
+								combineMap.get(key).add(classNumber);
+								combineMap.get(key).add(classNumber-1);
+
+							}else {
+								Set<Integer> set = new HashSet<Integer>();
+								set.add(classNumber);
+								set.add(classNumber-1);
+								combineMap.put(key, set);
+							}
+						}
 					}			
 				
 			}					
@@ -360,6 +407,13 @@ public class DNA {
 	public void setArrangeRotationMap(Map<String, Integer> arrangeRotationMap) {
 		this.arrangeRotationMap = arrangeRotationMap;
 	}
+	public Map<String, Integer> getArrangeCombineMap() {
+		return arrangeCombineMap;
+	}
+	public void setArrangeCombineMap(Map<String, Integer> arrangeCombineMap) {
+		this.arrangeCombineMap = arrangeCombineMap;
+	}
+	
 	
 	
 	

@@ -197,8 +197,9 @@ public class GAUtil {
 	* @author  WANGCHAO262
 	* @date  2017年5月3日 下午2:14:46
 	* @add 增加支持走课   其中走课key  R+%05d 其中为rotationId
+	* @add 增加支持合课   其中合课key  C+%05d 其中为combineId
 	*/
-	public static Map<String, Map<String, String>> getClassTeacherSubjectweekArrange(Map<String,String> map,Map<String, Integer> rotationMap){
+	public static Map<String, Map<String, String>> getClassTeacherSubjectweekArrange(Map<String,String> map,Map<String, Integer> rotationMap,Map<String, Integer> combineMap){
 		Map<String, Map<String, String>> result = new HashMap<String, Map<String,String>>();
 		for (String key : map.keySet()) {
 			String classId = key.substring(4, 7);//key
@@ -208,6 +209,8 @@ public class GAUtil {
 					if (!innerMap.containsKey("R"+String.format("%05d",rotationMap.get(key) ))) {
 						innerMap.put("R"+String.format("%05d",rotationMap.get(key) ), map.get(key));
 					}
+				}else if (combineMap.get(key)!= null) {
+					innerMap.put("R"+String.format("%05d",combineMap.get(key) ), map.get(key));
 				}else{
 					innerMap.put(key.substring(0, 4)+key.substring(7, 9), map.get(key));
 
@@ -217,6 +220,8 @@ public class GAUtil {
 				
 				if (rotationMap.get(key)!=null) {
 					innerMap.put("R"+String.format("%05d",rotationMap.get(key) ), map.get(key));
+				}else if (combineMap.get(key)!= null) {
+					innerMap.put("R"+String.format("%05d",combineMap.get(key) ), map.get(key));
 				}else{
 					innerMap.put(key.substring(0, 4)+key.substring(7, 9), map.get(key));
 				}
@@ -669,6 +674,28 @@ public class GAUtil {
 		
 		
 	}
+	/*** 
+	* <p>Description: 获取combineMap</p>
+	* @author  WANGCHAO262
+	* @date  2017年6月15日 下午5:05:08
+	*/
+	public static Map<String, Integer> getArrangeCombine(List<CombineAndRotationVo> combineAndRotationVos){
+		Map<String, Integer> result = new HashMap<String, Integer>();
+		for (CombineAndRotationVo vo : combineAndRotationVos) {
+			String teacherId = String.format("%04d", vo.getTeacherId())  ;
+			String classId = String.format("%03d", vo.getClassId())  ;
+			String subjectId = String.format("%02d", vo.getSubjectId())  ;
+			
+			result.put(teacherId+classId+subjectId, vo.getCombineId());								
+		}
+		
+		
+		
+		return result;
+		
+		
+	}
+	
 	
 	public static void print(String a){
 		System.out.println();	

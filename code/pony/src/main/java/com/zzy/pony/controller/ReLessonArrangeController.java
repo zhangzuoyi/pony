@@ -121,21 +121,21 @@ public class ReLessonArrangeController {
 		}
 		//二者均非空
 		if(beforeSubject!=null && afterSubject!= null ){
-		LessonArrange	beforeLessonArrange =  lessonArrangeService.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(beforeSelect.getClassId(), year, term, beforeWeekday, beforeLessonPeriod);
-		LessonArrange	afterLessonArrange =  lessonArrangeService.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(afterSelect.getClassId(), year, term, afterWeekday, afterLessonPeriod);
+		LessonArrange	beforeLessonArrange =  lessonArrangeService.findByClassIdAndSubjectAndSchoolYearAndTermAndWeekDayAndLessonPeriod(beforeSelect.getClassId(),beforeSubject, year, term, beforeWeekday, beforeLessonPeriod);
+		LessonArrange	afterLessonArrange =  lessonArrangeService.findByClassIdAndSubjectAndSchoolYearAndTermAndWeekDayAndLessonPeriod(afterSelect.getClassId(),afterSubject, year, term, afterWeekday, afterLessonPeriod);
 		beforeLessonArrange.setSubject(afterSubject);
 		afterLessonArrange.setSubject(beforeSubject);
 		lessonArrangeDao.save(beforeLessonArrange);
 		lessonArrangeDao.save(afterLessonArrange);	
 		}
 		if (beforeSubject!=null&&afterSubject==null) {
-			LessonArrange	beforeLessonArrange =  lessonArrangeService.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(beforeSelect.getClassId(), year, term, beforeWeekday, beforeLessonPeriod);
+			LessonArrange	beforeLessonArrange =  lessonArrangeService.findByClassIdAndSubjectAndSchoolYearAndTermAndWeekDayAndLessonPeriod(beforeSelect.getClassId(),beforeSubject, year, term, beforeWeekday, beforeLessonPeriod);
 			beforeLessonArrange.setWeekDay(afterWeekday);
 			beforeLessonArrange.setLessonPeriod(afterLessonPeriod);
 			lessonArrangeDao.save(beforeLessonArrange);
 		}
 		if (beforeSubject==null&&afterSubject!=null) {
-			LessonArrange	afterLessonArrange =  lessonArrangeService.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(afterSelect.getClassId(), year, term, afterWeekday, afterLessonPeriod);
+			LessonArrange	afterLessonArrange =  lessonArrangeService.findByClassIdAndSubjectAndSchoolYearAndTermAndWeekDayAndLessonPeriod(afterSelect.getClassId(),afterSubject, year, term, afterWeekday, afterLessonPeriod);
 			afterLessonArrange.setWeekDay(beforeWeekday);
 			afterLessonArrange.setLessonPeriod(beforeLessonPeriod);
 			lessonArrangeDao.save(afterLessonArrange);
@@ -159,9 +159,15 @@ public class ReLessonArrangeController {
 				//map.put("period",lessonPeriod.getStartTime()+"--"+lessonPeriod.getEndTime());
 				map.put("period", lessonPeriod.getSeq()+"");
 				for (Weekday weekday : weekdays) {
-					LessonArrange lessonArrange =  lessonArrangeService.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(cv.getClassId(), year, term, weekday.getSeq()+"", lessonPeriod);
-					if (lessonArrange != null && lessonArrange.getSubject() !=null) {
-						map.put( Constants.WEEKDAYMAP.get(weekday.getSeq()+"") , lessonArrange.getSubject().getName());
+					List<LessonArrange> lessonArranges =  lessonArrangeService.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(cv.getClassId(), year, term, weekday.getSeq()+"", lessonPeriod);
+					if (!lessonArranges.isEmpty()) {
+						StringBuilder sb = new StringBuilder();
+						for (LessonArrange la : lessonArranges) {
+							if (la.getSubject()!=null) {
+								sb.append(la.getSubject().getName());
+							}
+						}											
+						map.put( Constants.WEEKDAYMAP.get(weekday.getSeq()+"") , sb);
 					}					
 				}
 				dataList.add(map);

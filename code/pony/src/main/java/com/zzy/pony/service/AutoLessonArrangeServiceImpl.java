@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import com.zzy.pony.AutoClassArrange.DNA;
 import com.zzy.pony.AutoClassArrange.GeneticAlgorithm;
 import com.zzy.pony.config.Constants;
-import com.zzy.pony.dao.ArrangeRotationDao;
 import com.zzy.pony.dao.LessonArrangeDao;
 import com.zzy.pony.model.ArrangeRotation;
 import com.zzy.pony.model.LessonArrange;
@@ -27,7 +26,6 @@ import com.zzy.pony.model.Teacher;
 import com.zzy.pony.model.TeacherSubject;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.model.Weekday;
-import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.util.GAUtil;
 import com.zzy.pony.vo.ArrangeVo;
 import com.zzy.pony.vo.ClassNoCourseVo;
@@ -70,6 +68,10 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 	private WeekdayService weekdayService;
 	@Autowired
 	private ArrangeRotationService	 arrangeRotationService;
+	@Autowired
+	private ArrangeCombineService arrangeCombineService;
+	
+	
 	
 	
 	@Override
@@ -138,6 +140,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		List<SubjectNoCourseVo> subjectNoCourseVos = subjectNoCourseService.findCurrentAllVo();
 		List<GradeNoCourseVo> gradeNoCourseVos = gradeNoCourseService.findCurrentAllVo();
 		List<CombineAndRotationVo> combineAndRotationVos = arrangeRotationService.findAllVo();
+		List<CombineAndRotationVo> combineAndRotationVos2 = arrangeCombineService.findAllVo();
 		DNA.getInstance().setClassIdCandidate(classIdCandidate);
 		DNA.getInstance().setSeqIdCandidate(seqIdCandidate);
 		DNA.getInstance().setSubjectIdCandidate(subjectIdCandidate);
@@ -159,6 +162,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		DNA.getInstance().setCommonSeq(commonSeq);
 		DNA.getInstance().setSubjectImportanceMap(subjectImportanceMap);
 		DNA.getInstance().setArrangeRotationMap(GAUtil.getArrangeRotation(combineAndRotationVos));
+		DNA.getInstance().setArrangeCombineMap(GAUtil.getArrangeCombine(combineAndRotationVos2));
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		String bestChromosome =  geneticAlgorithm.caculte();	
 		List<ArrangeVo> list =   GAUtil.getLessonArranges(bestChromosome);
