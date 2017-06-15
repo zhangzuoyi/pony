@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.zzy.pony.model.LessonArrange;
 import com.zzy.pony.model.LessonPeriod;
-import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.model.Term;
@@ -18,7 +17,7 @@ public interface LessonArrangeService {
 	void delete(int id);
 	LessonArrangeVo findArrangeVo(Integer classId);
 	List<LessonArrange> findByClassIdAndSchoolYearAndTerm(Integer classId, SchoolYear year, Term term);
-	LessonArrange findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(Integer classId, SchoolYear year, Term term,String weekDay,LessonPeriod lessonPeriod);
+	List<LessonArrange> findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(Integer classId, SchoolYear year, Term term,String weekDay,LessonPeriod lessonPeriod);
 	LessonArrange findByClassIdAndSubjectAndSchoolYearAndTermAndWeekDayAndLessonPeriod(int classId,Subject subject, SchoolYear year, Term term,String weekDay,LessonPeriod lessonPeriod);
 	List<LessonArrange> findBySchooleYearAndTermAndSourceType(SchoolYear year ,Term term,String sourceType);
 	void deleteList(List<LessonArrange> list);

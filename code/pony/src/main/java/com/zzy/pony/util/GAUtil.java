@@ -656,11 +656,11 @@ public class GAUtil {
 	public static Map<String, Integer> getArrangeRotation(List<CombineAndRotationVo> combineAndRotationVos){
 		Map<String, Integer> result = new HashMap<String, Integer>();
 		for (CombineAndRotationVo vo : combineAndRotationVos) {
-			String classId = String.format("%04d", vo.getClassId())  ;
-			String teacherId = String.format("%03d", vo.getTeacherId())  ;
+			String teacherId = String.format("%04d", vo.getTeacherId())  ;
+			String classId = String.format("%03d", vo.getClassId())  ;
 			String subjectId = String.format("%02d", vo.getSubjectId())  ;
 			
-			result.put(classId+teacherId+subjectId, vo.getRotationId());								
+			result.put(teacherId+classId+subjectId, vo.getRotationId());								
 		}
 		
 		

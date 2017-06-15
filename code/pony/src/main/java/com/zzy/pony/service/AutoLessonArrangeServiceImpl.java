@@ -187,8 +187,8 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 					LessonArrange lessonArrange = new LessonArrange();
 					lessonArrange.setClassId(arrangeVo.getClassId());
 					lessonArrange.setCreateTime(new Date());
-					lessonArrange.setCreateUser(ShiroUtil.getLoginUser().getLoginName());
-					//lessonArrange.setCreateUser("test");
+					//lessonArrange.setCreateUser(ShiroUtil.getLoginUser().getLoginName());
+					lessonArrange.setCreateUser("test");
 					lessonArrange.setLessonPeriod(lessonPeriod);
 					lessonArrange.setSchoolYear(schoolYear);
 					lessonArrange.setSourceType("1");//自动排课
@@ -206,8 +206,8 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 				LessonArrange lessonArrange = new LessonArrange();
 				lessonArrange.setClassId(arrangeVo.getClassId());
 				lessonArrange.setCreateTime(new Date());
-				lessonArrange.setCreateUser(ShiroUtil.getLoginUser().getLoginName());
-				//lessonArrange.setCreateUser("test");
+				//lessonArrange.setCreateUser(ShiroUtil.getLoginUser().getLoginName());
+				lessonArrange.setCreateUser("test");
 				lessonArrange.setLessonPeriod(lessonPeriod);
 				lessonArrange.setSchoolYear(schoolYear);
 				lessonArrange.setSourceType("1");//自动排课

@@ -107,14 +107,20 @@ public class AutoLessonArrangeController {
 				//map.put("period",lessonPeriod.getStartTime()+"--"+lessonPeriod.getEndTime());
 				map.put("period", lessonPeriod.getSeq()+"");
 				for (Weekday weekday : weekdays) {
-					LessonArrange lessonArrange =  lessonArrangeService.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(cv.getClassId(), year, term, weekday.getSeq()+"", lessonPeriod);
+					List<LessonArrange> lessonArranges =  lessonArrangeService.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(cv.getClassId(), year, term, weekday.getSeq()+"", lessonPeriod);
 					//新增老师名字
 					SchoolClass schoolClass = schoolClassService.get(cv.getClassId());
 					
 					
-					if (lessonArrange != null && lessonArrange.getSubject() !=null ) {
-						TeacherSubject  teacherSubject = teacherSubjectService.findCurrentByClassAndSubject(schoolClass,lessonArrange.getSubject());						
-						map.put( Constants.WEEKDAYMAP.get(weekday.getSeq()+"") , lessonArrange.getSubject().getName()+"("+teacherSubject.getTeacher().getName()+")");
+					if (lessonArranges != null && lessonArranges.size()>0 ) {					
+						StringBuilder sb  = new StringBuilder();
+						for (LessonArrange la : lessonArranges) {
+							if (la.getSubject() !=null ) {
+								TeacherSubject  teacherSubject = teacherSubjectService.findCurrentByClassAndSubject(schoolClass,la.getSubject());						
+								sb.append(la.getSubject().getName()+"("+teacherSubject.getTeacher().getName()+");");														
+							}
+						}																		
+						map.put( Constants.WEEKDAYMAP.get(weekday.getSeq()+"") ,sb);
 					}					
 				}
 				dataList.add(map);

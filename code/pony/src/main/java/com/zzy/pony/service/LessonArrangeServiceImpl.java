@@ -126,15 +126,13 @@ public class LessonArrangeServiceImpl implements LessonArrangeService {
 	}
 
 	@Override
-	public LessonArrange findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(
+	public List<LessonArrange> findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(
 			Integer classId, SchoolYear year, Term term, String weekDay,
 			LessonPeriod lessonPeriod) {
 		// TODO Auto-generated method stub
 		List<LessonArrange> list = dao.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(classId, year, term, weekDay, lessonPeriod);
-		if (list != null && list.size()>0) {
-			return list.get(0);
-		}
-		return null;
+		
+		return list;
 	}
 
 	@Override
@@ -158,9 +156,10 @@ public class LessonArrangeServiceImpl implements LessonArrangeService {
 			String weekDay, LessonPeriod lessonPeriod) {
 		// TODO Auto-generated method stub
 		List<LessonArrange> list = dao.findByClassIdAndSubjectAndSchoolYearAndTermAndWeekDayAndLessonPeriod(classId, subject, year, term, weekDay, lessonPeriod);
-		if (list != null && list.size()>0) {
+		if(list != null &&list.size()>0){
 			return list.get(0);
 		}
+		
 		return null;
 	}
 	
