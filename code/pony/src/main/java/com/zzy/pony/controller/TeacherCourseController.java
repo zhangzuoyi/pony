@@ -11,11 +11,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 
 
 
@@ -41,22 +41,19 @@ import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.model.LessonArrange;
 import com.zzy.pony.model.LessonPeriod;
-import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Teacher;
 import com.zzy.pony.model.TeacherSubject;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.model.Weekday;
-import com.zzy.pony.service.AutoLessonArrangeService;
+import com.zzy.pony.service.ArrangeCombineService;
 import com.zzy.pony.service.LessonArrangeService;
 import com.zzy.pony.service.LessonPeriodService;
-import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.TeacherService;
 import com.zzy.pony.service.TeacherSubjectService;
 import com.zzy.pony.service.TermService;
 import com.zzy.pony.service.WeekdayService;
-import com.zzy.pony.vo.ConditionVo;
 
 
 
@@ -79,6 +76,8 @@ public class TeacherCourseController {
 	private TeacherService teacherService;
 	@Autowired
 	private LessonArrangeService lessonArrangeService ;
+	@Autowired
+	private ArrangeCombineService arrangeCombineService;
 	
 
 	@RequestMapping(value="main",method = RequestMethod.GET)
@@ -106,10 +105,17 @@ public class TeacherCourseController {
 				map.put("period", lessonPeriod.getSeq()+"");
 				for (Weekday weekday : weekdays) {
 					for (TeacherSubject teacherSubject : teacherSubjects) {
-						
+						List<TeacherSubject> list = new ArrayList<TeacherSubject>();
+						list.add(teacherSubject);
+						Boolean flag = arrangeCombineService.isTeacherSubjectExist(list);
 						LessonArrange lessonArrange =  lessonArrangeService.findByClassIdAndSubjectAndSchoolYearAndTermAndWeekDayAndLessonPeriod(teacherSubject.getSchoolClass().getClassId(), teacherSubject.getSubject(), year, term, weekday.getSeq()+"", lessonPeriod);
 						if (lessonArrange != null ) {
-							map.put(Constants.WEEKDAYMAP.get(weekday.getSeq()+""), teacherSubject.getSchoolClass().getName()+"("+teacherSubject.getSubject().getName()+")");
+							if(flag&&map.get(Constants.WEEKDAYMAP.get(weekday.getSeq()+""))!= null ){
+								map.put(Constants.WEEKDAYMAP.get(weekday.getSeq()+""),map.get(Constants.WEEKDAYMAP.get(weekday.getSeq()+""))+";"+ teacherSubject.getSchoolClass().getName()+"("+teacherSubject.getSubject().getName()+")");
+							}else {
+								map.put(Constants.WEEKDAYMAP.get(weekday.getSeq()+""), teacherSubject.getSchoolClass().getName()+"("+teacherSubject.getSubject().getName()+")");
+							}
+							
 						}
 						
 					}

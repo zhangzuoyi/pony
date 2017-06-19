@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -16,6 +17,7 @@ import com.zzy.pony.AutoClassArrange.DNA;
 import com.zzy.pony.AutoClassArrange.GeneticAlgorithm;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.dao.LessonArrangeDao;
+import com.zzy.pony.model.ArrangeCombine;
 import com.zzy.pony.model.ArrangeRotation;
 import com.zzy.pony.model.LessonArrange;
 import com.zzy.pony.model.LessonPeriod;
@@ -70,6 +72,8 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 	private ArrangeRotationService	 arrangeRotationService;
 	@Autowired
 	private ArrangeCombineService arrangeCombineService;
+	@Autowired
+	private LessonArrangeService lessonArrangeService;
 	
 	
 	
@@ -141,6 +145,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		List<GradeNoCourseVo> gradeNoCourseVos = gradeNoCourseService.findCurrentAllVo();
 		List<CombineAndRotationVo> combineAndRotationVos = arrangeRotationService.findAllVo();
 		List<CombineAndRotationVo> combineAndRotationVos2 = arrangeCombineService.findAllVo();
+		Map<String, Set<Integer>> combineMap = new HashMap<String, Set<Integer>>();
 		DNA.getInstance().setClassIdCandidate(classIdCandidate);
 		DNA.getInstance().setSeqIdCandidate(seqIdCandidate);
 		DNA.getInstance().setSubjectIdCandidate(subjectIdCandidate);
@@ -163,6 +168,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		DNA.getInstance().setSubjectImportanceMap(subjectImportanceMap);
 		DNA.getInstance().setArrangeRotationMap(GAUtil.getArrangeRotation(combineAndRotationVos));
 		DNA.getInstance().setArrangeCombineMap(GAUtil.getArrangeCombine(combineAndRotationVos2));
+		DNA.getInstance().setCombineMap(combineMap);
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		String bestChromosome =  geneticAlgorithm.caculte();	
 		List<ArrangeVo> list =   GAUtil.getLessonArranges(bestChromosome);
@@ -202,6 +208,29 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 					lessonArrangeDao.save(lessonArrange);
 					}										
 				}								
+			}else if (arrangeVo.getCombineId()!=null) {
+				ArrangeCombine ac  = arrangeCombineService.get(arrangeVo.getCombineId());
+				for (TeacherSubject teacherSubject : ac.getTeacherSubjects()) {
+					Teacher teacher =  teacherSubject.getTeacher();
+					Subject subject =  teacherSubject.getSubject();
+					Boolean flag = teacherSubjectService.isExists(teacher, schoolYear, term, schoolClass, subject);
+					LessonArrange la =  lessonArrangeService.findByClassIdAndSubjectAndSchoolYearAndTermAndWeekDayAndLessonPeriod(schoolClass.getClassId(), subject, schoolYear, term, arrangeVo.getWeekdayId()+"", lessonPeriod);
+					if (flag && la == null) {
+						LessonArrange lessonArrange = new LessonArrange();
+						lessonArrange.setClassId(arrangeVo.getClassId());
+						lessonArrange.setCreateTime(new Date());
+						//lessonArrange.setCreateUser(ShiroUtil.getLoginUser().getLoginName());
+						lessonArrange.setCreateUser("test");
+						lessonArrange.setLessonPeriod(lessonPeriod);
+						lessonArrange.setSchoolYear(schoolYear);
+						lessonArrange.setSourceType("1");//自动排课
+						lessonArrange.setSubject(subject);
+						lessonArrange.setTerm(term);
+						lessonArrange.setWeekDay(arrangeVo.getWeekdayId()+"");
+						lessonArrangeDao.save(lessonArrange);
+					}
+				}
+				
 			}else{
 				Teacher teacher =  teacherService.get(arrangeVo.getTeacherId());
 				Subject subject =  subjectService.get(arrangeVo.getSubjectId());

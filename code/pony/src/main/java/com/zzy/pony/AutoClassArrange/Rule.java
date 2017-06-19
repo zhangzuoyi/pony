@@ -29,6 +29,7 @@ public class Rule {
 			for (int j = 0; j < seqLength; j++) {
 				Set<String> teacherSubjectSet =  new HashSet<String>();
 				int noClassCount = 0;//不排课编码计数
+				int combineCount = 0;//合班计数
 				for (int k = 0; k < classLength; k++) {
 				
 				//老师所教的科目不一样，所以此处应改为teacherId+subjectId进行判断	
@@ -36,12 +37,14 @@ public class Rule {
 						+geneString.substring((i*seqLength+j)*dnaBit+k*classDNALength+teacherIdBit+classIdBit, (i*seqLength+j)*dnaBit+k*classDNALength+teacherIdBit+classIdBit+subjectIdBit);
 				if (teacherSubjectString.equalsIgnoreCase("000000")) {
 					noClassCount++;
+				}else if (teacherSubjectString.startsWith("C")) {
+					combineCount++;
 				}else {
 					teacherSubjectSet.add(teacherSubjectString);				
 				}
 				
 				}
-				result+=classLength-teacherSubjectSet.size()-noClassCount;			
+				result+=classLength-teacherSubjectSet.size()-noClassCount-combineCount;			
 			}
 		}	
 		//GAUtil.print2(String.valueOf(chromosome.getGene()));

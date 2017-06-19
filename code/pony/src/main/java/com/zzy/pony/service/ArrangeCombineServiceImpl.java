@@ -36,7 +36,7 @@ public class ArrangeCombineServiceImpl implements ArrangeCombineService {
 				CombineAndRotationVo vo =new CombineAndRotationVo();
 				vo.setClassId(teacherSubject.getSchoolClass().getClassId());
 				vo.setClassName(teacherSubject.getSchoolClass().getName());
-				vo.setRotationId(arrangeCombine.getCombineId());
+				vo.setCombineId(arrangeCombine.getCombineId());
 				vo.setSubjectId(teacherSubject.getSubject().getSubjectId());
 				vo.setSubjectName(teacherSubject.getSubject().getName());
 				vo.setTeacherId(teacherSubject.getTeacher().getTeacherId());
@@ -53,6 +53,18 @@ public class ArrangeCombineServiceImpl implements ArrangeCombineService {
 		// TODO Auto-generated method stub
 		return arrangeCombineDao.findOne(id);
 	}
+
+	@Override
+	public boolean isTeacherSubjectExist(List<TeacherSubject> teacherSubjects) {
+		// TODO Auto-generated method stub
+		List<ArrangeCombine> list =  arrangeCombineDao.findByteacherSubjects(teacherSubjects);
+		if (!list.isEmpty()) {
+			return true;
+		}
+		return false;
+	}
+	
+	
 	
 	
 	

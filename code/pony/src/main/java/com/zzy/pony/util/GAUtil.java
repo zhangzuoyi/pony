@@ -210,7 +210,7 @@ public class GAUtil {
 						innerMap.put("R"+String.format("%05d",rotationMap.get(key) ), map.get(key));
 					}
 				}else if (combineMap.get(key)!= null) {
-					innerMap.put("R"+String.format("%05d",combineMap.get(key) ), map.get(key));
+					innerMap.put("C"+String.format("%05d",combineMap.get(key) ), map.get(key));
 				}else{
 					innerMap.put(key.substring(0, 4)+key.substring(7, 9), map.get(key));
 
@@ -221,7 +221,7 @@ public class GAUtil {
 				if (rotationMap.get(key)!=null) {
 					innerMap.put("R"+String.format("%05d",rotationMap.get(key) ), map.get(key));
 				}else if (combineMap.get(key)!= null) {
-					innerMap.put("R"+String.format("%05d",combineMap.get(key) ), map.get(key));
+					innerMap.put("C"+String.format("%05d",combineMap.get(key) ), map.get(key));
 				}else{
 					innerMap.put(key.substring(0, 4)+key.substring(7, 9), map.get(key));
 				}
@@ -273,7 +273,7 @@ public class GAUtil {
 			return true;
 		}*/
 		int week = getWeek(classNumber, seqLength); 
-		if (Constants.SUBJECT_SIGNIFICANT==subjectImportanceMap.get(key.substring(4))) {
+		if (!key.startsWith("C")&&!key.startsWith("R")&&Constants.SUBJECT_SIGNIFICANT==subjectImportanceMap.get(key.substring(4))) {
 			
 			boolean flag = false ;
 			boolean flag2 = false;
@@ -317,7 +317,7 @@ public class GAUtil {
 				return true;
 			}									
 		}
-		if (Constants.SUBJECT_IMPORTANT==subjectImportanceMap.get(key.substring(4))) {
+		if (!key.startsWith("C")&&!key.startsWith("R")&&Constants.SUBJECT_IMPORTANT==subjectImportanceMap.get(key.substring(4))) {
 			boolean flag = false ;
 			boolean flag2 = false ;
 			int count = 0;
@@ -345,7 +345,7 @@ public class GAUtil {
 				return true;
 			}									
 		}
-		if (Constants.SUBJECT_COMMON==subjectImportanceMap.get(key.substring(4))) {
+		if (!key.startsWith("C")&&!key.startsWith("R")&&Constants.SUBJECT_COMMON==subjectImportanceMap.get(key.substring(4))) {
 			boolean flag = false ;
 			for (Integer seqInt : commonSeq) {
 				if (alreadyClassNumber.isEmpty() &&  classNumber ==(5-week)*seqLength+(seqLength-seqInt+1))  {
@@ -630,6 +630,17 @@ public class GAUtil {
 					vo.setSourceType("1");
 									
 					
+				}else if (dnaString.substring(0, teacherIdBit).startsWith("C")) {
+					Integer combineId = Integer.valueOf(dnaString.substring(1, teacherIdBit)+dnaString.substring(teacherIdBit+classIdBit, teacherIdBit+classIdBit+subjectIdBit));
+					Integer classId = Integer.valueOf(dnaString.substring(teacherIdBit, teacherIdBit+classIdBit)); 
+					Integer weekdayId = Integer.valueOf(dnaString.substring(teacherIdBit+classIdBit+subjectIdBit, teacherIdBit+classIdBit+subjectIdBit+weekdayIdBit)); 
+					Integer seqId = Integer.valueOf(dnaString.substring(teacherIdBit+classIdBit+subjectIdBit+weekdayIdBit, teacherIdBit+classIdBit+subjectIdBit+weekdayIdBit+seqIdBit)); 
+					vo.setCombineId(combineId);
+					vo.setClassId(classId);
+					vo.setWeekdayId(weekdayId);
+					vo.setSeqId(seqId);
+					vo.setSourceType("1");
+					
 				}else{
 					Integer teacherId = Integer.valueOf(dnaString.substring(0, teacherIdBit)); 
 					Integer classId = Integer.valueOf(dnaString.substring(teacherIdBit, teacherIdBit+classIdBit)); 
@@ -696,18 +707,19 @@ public class GAUtil {
 		
 	}
 	
-	public static boolean isInCombineMap(Map<String, Set<Integer>> combineMap,int classNumber,String key){
-		if (combineMap.get(key) != null) {
-			Iterator<Integer> iterator = combineMap.get(key).iterator();
-			while (iterator.hasNext()) {
-				Integer integer = (Integer) iterator.next();
-				if (integer == classNumber) {
-					return true;
+	public static boolean isInCombineMap(Map<String, Set<Integer>> combineMap,int classNumber){
+		if (combineMap!= null) {			
+			for (String	 key : combineMap.keySet()) {
+				Iterator<Integer> iterator = combineMap.get(key).iterator();
+				while (iterator.hasNext()) {
+					Integer integer = (Integer) iterator.next();
+					if (integer == classNumber) {
+						return true;
+					}
 				}
 			}
-		}
-		
-		
+			
+		}				
 		return false;
 		
 	}

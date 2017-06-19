@@ -22,6 +22,8 @@ public class ArrangeVo {
 	private Integer seqId; 
 	
 	private Integer rotationId;
+	private Integer combineId;
+
 	
 	
 	public ArrangeVo(){}
@@ -127,7 +129,14 @@ public class ArrangeVo {
 	}
 	public void setRotationId(Integer rotationId) {
 		this.rotationId = rotationId;
-	}	
+	}
+	public Integer getCombineId() {
+		return combineId;
+	}
+	public void setCombineId(Integer combineId) {
+		this.combineId = combineId;
+	}
+	
 	
 	
 	
