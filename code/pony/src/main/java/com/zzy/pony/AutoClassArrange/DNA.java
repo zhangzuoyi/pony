@@ -2,6 +2,7 @@ package com.zzy.pony.AutoClassArrange;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -127,7 +128,15 @@ public class DNA {
 					
 					if (!combineMap.isEmpty()&& combineMap.containsKey(key)) {
 						//@todo  随机从set中取值赋给当前classNumber且不能够重复
-						
+						Iterator<Integer> iterator =   combineMap.get(key).iterator();
+						while (iterator.hasNext()) {
+							Integer integer = (Integer) iterator.next();
+							if (!randomMap.containsKey(integer)) {
+								randomMap.put(integer, key);
+								break;
+							}							
+						}
+												
 					}else {	
 						classNumber = random.nextInt(k)+1;
 						//@todo  增加规则在combineMap已经排过的不能够在下面排
@@ -135,7 +144,8 @@ public class DNA {
 							||( !key.startsWith("C")&&!key.startsWith("R")&&  this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber,this.seqIdCandidate.length,this.seqMornigLength))
 							||(!key.startsWith("C")&&!key.startsWith("R")&&this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber,this.seqIdCandidate.length,this.seqAfternoonLength))
 							||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key),this.seqIdCandidate.length)
-							||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key,randomMap.keySet(),this.significantSeq,this.importantSeq,this.commonSeq,this.subjectImportanceMap))
+							||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key,randomMap.keySet(),this.significantSeq,this.importantSeq,this.commonSeq,this.subjectImportanceMap)
+							|| GAUtil.isInCombineMap(combineMap, classNumber, key)	)
 							){
 						classNumber = random.nextInt(k)+1;
 						}

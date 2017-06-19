@@ -127,7 +127,7 @@ public class Chromosome {
 			return;
 		}
 	   StringBuilder sb = new StringBuilder();
-	   Map<String, Map<String, String>> classMap = GAUtil.getClassTeacherSubjectweekArrange(map,DNA.getInstance().getArrangeRotationMap());
+	   Map<String, Map<String, String>> classMap = GAUtil.getClassTeacherSubjectweekArrange(map,DNA.getInstance().getArrangeRotationMap(),DNA.getInstance().getArrangeCombineMap());
 	   for (int i = 0; i < classIdCandidate.length; i++) {
 		  sb.append(DNA.getInstance().getDnaStringRuleTwo(i,classMap));
 	  }	   

@@ -209,7 +209,7 @@ public  class GeneticAlgorithm {
 	 */
 	private void mutation() {
 		Map<String, Map<String, String>> map = new HashMap<String, Map<String,String>>();
-		map = GAUtil.getClassTeacherSubjectweekArrange(DNA.getInstance().getTeacherSubjectweekArrange(),DNA.getInstance().getArrangeRotationMap());
+		map = GAUtil.getClassTeacherSubjectweekArrange(DNA.getInstance().getTeacherSubjectweekArrange(),DNA.getInstance().getArrangeRotationMap(),DNA.getInstance().getArrangeCombineMap());
 		Random random =  new Random();
 		for (Chromosome chro : population) {
 			if (Math.random() < mutationRate) { //发生基因突变				

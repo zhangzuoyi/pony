@@ -696,6 +696,22 @@ public class GAUtil {
 		
 	}
 	
+	public static boolean isInCombineMap(Map<String, Set<Integer>> combineMap,int classNumber,String key){
+		if (combineMap.get(key) != null) {
+			Iterator<Integer> iterator = combineMap.get(key).iterator();
+			while (iterator.hasNext()) {
+				Integer integer = (Integer) iterator.next();
+				if (integer == classNumber) {
+					return true;
+				}
+			}
+		}
+		
+		
+		return false;
+		
+	}
+	
 	
 	public static void print(String a){
 		System.out.println();	
