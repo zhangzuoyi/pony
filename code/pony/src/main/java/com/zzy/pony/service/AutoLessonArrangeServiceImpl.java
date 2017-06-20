@@ -113,15 +113,21 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 				}
 			}
 			seqSubjectMap.put(lessonPeriod.getSeq().toString(), subjectString);
-			if (lessonPeriod.getImportance() == Constants.SUBJECT_SIGNIFICANT) {
-				significantSeq.add(lessonPeriod.getSeq());
-			}
-			if (lessonPeriod.getImportance() == Constants.SUBJECT_IMPORTANT) {
-				importantSeq.add(lessonPeriod.getSeq());
-			}
-			if (lessonPeriod.getImportance() == Constants.SUBJECT_COMMON) {
+			if (lessonPeriod.getImportance() != null) {
+				if (lessonPeriod.getImportance() == Constants.SUBJECT_SIGNIFICANT) {
+					significantSeq.add(lessonPeriod.getSeq());
+				}
+				if (lessonPeriod.getImportance() == Constants.SUBJECT_IMPORTANT) {
+					importantSeq.add(lessonPeriod.getSeq());
+				}
+				if (lessonPeriod.getImportance() == Constants.SUBJECT_COMMON) {
+					commonSeq.add(lessonPeriod.getSeq());
+				}
+			}else{
 				commonSeq.add(lessonPeriod.getSeq());
-			}						
+			}
+				
+									
 		}
 		
 		
