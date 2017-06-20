@@ -11,4 +11,5 @@ public interface GradeService {
 	void update(Grade sy);
 	void delete(int id);
 	List<Grade> findByGradeIdIn(Integer[] gradeIds);
+	Grade findBySeq(int seq);
 }

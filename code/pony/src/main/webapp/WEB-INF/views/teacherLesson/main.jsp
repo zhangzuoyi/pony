@@ -99,7 +99,9 @@
                 <el-col :span="6">
                     <div class="grid-content bg-purple-light">
                      <el-button type="primary" v-on:click="list">查询</el-button> 
-                     <el-button type="primary" @click.native="dialogFormVisible = true">每周课时设置</el-button>                    
+                     <el-button type="primary" @click.native="dialogFormVisible = true">每周课时设置</el-button> 
+                     <el-button type="primary" v-on:click="exportData">导出</el-button> 
+                                        
                     </div>
                 </el-col>              
             </el-row>
@@ -107,7 +109,7 @@
             <el-dialog title="每周课时设置" v-model="dialogFormVisible">
                 <el-form :model="selectTeachers">
                     <el-form-item label="课时数" :label-width="formLabelWidth">
-                        <el-input v-model="selectTeachers.weekArrange"   ></el-input>
+                        <el-input v-model="selectTeachers.weekArrange"  style="width:200px;" ></el-input>
                     </el-form-item>                  
                 </el-form>
                 <div slot="footer" class="dialog-footer">
@@ -269,11 +271,15 @@
 			function(response){}  			
 			); 
 		}else{
-			this.$alert("请选择完整..","提示",{
+			this.$alert("请选择老师..","提示",{
 		 							confirmButtonText : '确认',		 
 								 });
 			this.dialogFormVisible=false;
 		}				
+		},
+		exportData : function(){
+			var url = "../exportData";
+			window.open(url);
 		}
 		
            

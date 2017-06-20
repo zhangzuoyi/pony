@@ -11,4 +11,5 @@ import com.zzy.pony.model.Grade;
 public interface GradeDao extends JpaRepository<Grade,Integer>{
 	List<Grade> findAllByOrderBySeq();
 	List<Grade> findByGradeIdIn(Integer[] gradeIds);
+	List<Grade> findBySeq(int seq);
 }

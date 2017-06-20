@@ -51,4 +51,16 @@ public class GradeServiceImpl implements GradeService {
 		return dao.findByGradeIdIn(gradeIds);
 	}
 
+	@Override
+	public Grade findBySeq(int seq) {
+		// TODO Auto-generated method stub
+		List<Grade> grades = dao.findBySeq(seq);
+		if (grades != null) {
+			return grades.get(0);
+		}
+		return null;
+	}
+	
+	
+
 }

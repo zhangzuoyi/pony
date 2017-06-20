@@ -44,6 +44,8 @@ public class TestService {
 	@Autowired
 	private LessonArrangeService lessonArrangeService;
 	
+	 
+	
 	@Test
 	public void testAutoLessonArrange(){
 		
@@ -57,5 +59,6 @@ public class TestService {
 		autoLessonArrangeService.autoLessonArrange();
 		
 	}
+	
 	
 }
