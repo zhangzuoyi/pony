@@ -37,6 +37,8 @@ public class LessonArrangeServiceImpl implements LessonArrangeService {
 	private TermService termService;
 	@Autowired
 	private SubjectService subjectService;
+	@Autowired
+	private SchoolClassService schoolClassService;
 
 	@Override
 	public void add(LessonArrange sy) {
@@ -141,6 +143,21 @@ public class LessonArrangeServiceImpl implements LessonArrangeService {
 		// TODO Auto-generated method stub
 		List<LessonArrange> result = dao.findBySchoolYearAndTermAndSourceType(year, term, sourceType);
 		
+		return result;
+	}
+	
+	
+
+	@Override
+	public List<LessonArrange> findBySchooleYearAndTermAndGradeIdAndSourceType(
+			SchoolYear year, Term term, int gradeId, String sourceType) {
+		// TODO Auto-generated method stub
+		List<LessonArrange> result = new ArrayList<LessonArrange>();
+		List<SchoolClass> schoolClasses = schoolClassService.findByGrade(gradeId);
+		for (SchoolClass schoolClass : schoolClasses) {
+			List<LessonArrange> lessonArranges = dao.findBySchoolYearAndTermAndClassIdAndSourceType(year, term, schoolClass.getClassId(), sourceType);
+			result.addAll(lessonArranges);
+		}		
 		return result;
 	}
 

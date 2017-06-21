@@ -37,13 +37,15 @@ public interface TeacherSubjectService {
 	* @author  WANGCHAO262
 	* @date  2017年5月24日 上午10:24:17
 	*/
-	List<TeacherSubjectVo> findCurrentByGroup();
+	List<TeacherSubjectVo> findCurrentByGroup(int gradeId);
 
 	
+	
+	List<TeacherSubjectVo> findCurrentAll(int gradeId);
 	List<TeacherSubjectVo> findCurrentAll();
 	
 	List<Integer> findCurrentAllTeacherId();
-	List<Integer> findCurrentAllClassId();
+	List<Integer> findCurrentAllClassId(int gradeId);
 	List<Integer> findCurrentAllSubjectId();
 	Boolean isExists(Teacher teacher,SchoolYear schoolYear,Term term,SchoolClass schoolClass,Subject subject);
 	TeacherSubject findCurrentByClassAndSubject(SchoolClass schoolClass,Subject subject);

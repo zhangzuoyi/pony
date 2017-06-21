@@ -38,15 +38,21 @@ left join t_teacher c on t.TEACHER_ID=c.TEACHER_ID
 		select t.teacher_id as teacherId ,t.subject_id as subjectId,t.name as subjectName, t.week_arrange as weekArrange from( 
 			select t.TEACHER_ID,t.SUBJECT_ID,a.name,t.WEEK_ARRANGE,count(1) as count from t_teacher_subject t
 			left join  t_subject a on t.subject_id = a.subject_id
-			where 1=1			
+			where 1=1	and  t.WEEK_ARRANGE != null		
 			<if test=" yearId != null and yearId != 0">
 		 	and  t.year_Id=#{yearId}
 			 </if>
 		 	<if test=" termId != null and termId != 0">
 		 	and  t.term_Id=#{termId}
 		 	</if>
+		 	<if test="schoolClasses != null">
+		 	and  t.CLASS_ID in  
+     		<foreach item="item" index="index" collection="schoolClasses" open="(" separator="," close=")">  
+     		 #{item}  
+     		</foreach> 
+		 	</if>
 			group by t.TEACHER_ID,t.SUBJECT_ID,a.name,t.WEEK_ARRANGE) t 
-			where t.count>1
+			where t.count>1 and t.week_arrange is not null
 		 		 
 		 
 	 

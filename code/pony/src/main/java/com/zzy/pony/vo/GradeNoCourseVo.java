@@ -13,6 +13,7 @@ public class GradeNoCourseVo {
 	private int weekdayId;
 	private String weekdayName;
 	private int lessonPeriodId;
+	private int lessonPeriodSeq;
 	private String lessonPeriodName;
 	private int termId;
 	private String termName;
@@ -91,6 +92,13 @@ public class GradeNoCourseVo {
 	public void setGradeClassIds(List<Integer> gradeClassIds) {
 		this.gradeClassIds = gradeClassIds;
 	}
+	public int getLessonPeriodSeq() {
+		return lessonPeriodSeq;
+	}
+	public void setLessonPeriodSeq(int lessonPeriodSeq) {
+		this.lessonPeriodSeq = lessonPeriodSeq;
+	}
+	
 	
 	
 	

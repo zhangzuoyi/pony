@@ -236,7 +236,7 @@ public  class GeneticAlgorithm {
 		int scoreRuleThree = Rule.ruleThree(chromosome, DNA.getInstance().getClassNoCourse());
 		int scoreRuleFour = Rule.ruleFour(chromosome, DNA.getInstance().getTeacherNoCourse());
 		int scoreRuleFive = Rule.ruleFive(chromosome, DNA.getInstance().getSubjectNoCourse());
-		int scoreRuleSix = Rule.ruleSix(chromosome, DNA.getInstance().getGradeNoCourse());
+		//int scoreRuleSix = Rule.ruleSix(chromosome, DNA.getInstance().getGradeNoCourse());
 		int scoreRuleSeven = Rule.ruleSeven(chromosome, DNA.getInstance().getTeacherSubjectClassMap(),DNA.getInstance().getTeacherSubjectIrregularClassMap());
 		
 		//int scoreRuleSeven = 0;
@@ -244,12 +244,12 @@ public  class GeneticAlgorithm {
 		//chromosome.setScore(scoreRuleOne);
 		//System.out.println("---------------scoreRuleOne:"+scoreRuleOne);
 		//System.out.println("--------------scoreRuleSeven:"+scoreRuleSeven);
-		chromosome.setScore(scoreRuleOne+scoreRuleThree+scoreRuleFour+scoreRuleFive+scoreRuleSix+scoreRuleSeven);
+		chromosome.setScore(scoreRuleOne+scoreRuleThree+scoreRuleFour+scoreRuleFive+scoreRuleSeven);
 		chromosome.setScoreOne(scoreRuleOne);
 		chromosome.setScoreThree(scoreRuleThree);
 		chromosome.setScoreFour(scoreRuleFour);
 		chromosome.setScoreFive(scoreRuleFive);
-		chromosome.setScoreSix(scoreRuleSix);
+		//chromosome.setScoreSix(scoreRuleSix);
 		chromosome.setScoreSeven(scoreRuleSeven);
 	}
 	

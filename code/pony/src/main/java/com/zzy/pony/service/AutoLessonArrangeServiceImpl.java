@@ -79,7 +79,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 	
 	
 	@Override
-	public void autoLessonArrange() {
+	public void autoLessonArrange(int gradeId) {
 		// TODO Auto-generated method stub
 		SchoolYear schoolYear = schoolYearService.getCurrent();
 		Term term = termService.getCurrent();
@@ -137,14 +137,14 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		
 		
 		
-		String[] classIdCandidate =   GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllClassId(), 3,false);    
+		String[] classIdCandidate =   GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllClassId(gradeId), 3,false);    
 		//String[] subjectIdCandidate =GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllSubjectId(), 2,true);
 		String[] subjectIdCandidate =GAUtil.getCandidateStrings(subjectIntegers, 2,true);
 		String[] teacherIdCandidate =GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllTeacherId(), 4,true); 
 		String[] weekdayIdCandidate =GAUtil.getCandidateStrings(weekdays, 1, false);
 		String[] seqIdCandidate=GAUtil.getCandidateStrings(seqs, 1, false);;
-		List<TeacherSubjectVo> vos = teacherSubjectService.findCurrentAll();
-		List<TeacherSubjectVo> voGroups = teacherSubjectService.findCurrentByGroup(); 
+		List<TeacherSubjectVo> vos = teacherSubjectService.findCurrentAll(gradeId);
+		List<TeacherSubjectVo> voGroups = teacherSubjectService.findCurrentByGroup(gradeId); 
 		List<ClassNoCourseVo> classNoCourseVos = classNoCourseService.findCurrentAllVo();
 		List<TeacherNoCourseVo> teacherNoCourseVos = teacherNoCourseService.findCurrentAllVo();
 		List<SubjectNoCourseVo> subjectNoCourseVos = subjectNoCourseService.findCurrentAllVo();

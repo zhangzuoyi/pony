@@ -117,15 +117,48 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 	
 
 	@Override
+	public List<TeacherSubjectVo> findCurrentAll(int gradeId) {
+		// TODO Auto-generated method stub
+		List<TeacherSubjectVo> result = new ArrayList<TeacherSubjectVo>();
+		SchoolYear year=yearService.getCurrent();
+		Term term=termService.getCurrent();
+		List<SchoolClass> schoolClasses = schoolClassService.findByGrade(gradeId);
+		List<TeacherSubject> list = new ArrayList<TeacherSubject>();
+		for (SchoolClass schoolClass : schoolClasses) {
+			List<TeacherSubject> teacherSubjects = dao.findBySchoolClassAndYearAndTerm(schoolClass, year, term);
+			list.addAll(teacherSubjects);
+		}
+		
+		for (TeacherSubject teacherSubject : list) {
+			
+			if (teacherSubject.getWeekArrange() != null) {
+				TeacherSubjectVo vo  = TeacherSubjectVo.fromModel(teacherSubject);
+				result.add(vo);
+			}
+			
+			
+		}
+		
+		return result;
+	}
+	
+	
+
+	@Override
 	public List<TeacherSubjectVo> findCurrentAll() {
 		// TODO Auto-generated method stub
 		List<TeacherSubjectVo> result = new ArrayList<TeacherSubjectVo>();
 		SchoolYear year=yearService.getCurrent();
 		Term term=termService.getCurrent();
-		List<TeacherSubject> list = dao.findByYearAndTerm(year, term);
+		List<TeacherSubject> list = dao.findByYearAndTerm(year, term);		
 		for (TeacherSubject teacherSubject : list) {
-			TeacherSubjectVo vo  = TeacherSubjectVo.fromModel(teacherSubject);
-			result.add(vo);
+			
+			if (teacherSubject.getWeekArrange() != null) {
+				TeacherSubjectVo vo  = TeacherSubjectVo.fromModel(teacherSubject);
+				result.add(vo);
+			}
+			
+			
 		}
 		
 		return result;
@@ -150,17 +183,26 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 	}
 
 	@Override
-	public List<Integer> findCurrentAllClassId() {
+	public List<Integer> findCurrentAllClassId(int gradeId) {
 		// TODO Auto-generated method stub
 		List<Integer> result =  new ArrayList<Integer>();
 		SchoolYear year=yearService.getCurrent();
 		Term term=termService.getCurrent();
-		List<TeacherSubject> list = dao.findByYearAndTerm(year, term);
+		List<SchoolClass> schoolClasses = schoolClassService.findByGrade(gradeId);
+		List<TeacherSubject> list = new ArrayList<TeacherSubject>();
+		for (SchoolClass schoolClass : schoolClasses) {
+			List<TeacherSubject> teacherSubjects = dao.findBySchoolClassAndYearAndTerm(schoolClass, year, term);
+			list.addAll(teacherSubjects);
+		}
 		for (TeacherSubject teacherSubject : list) {
-			Integer classId = teacherSubject.getSchoolClass().getClassId();
-			if (!result.contains(classId)) {
-				result.add(classId);
+			if (teacherSubject.getWeekArrange()!= null) {
+				Integer classId = teacherSubject.getSchoolClass().getClassId();
+				if (!result.contains(classId)) {
+					result.add(classId);
+				}
 			}
+			
+			
 		}
 		
 		
@@ -259,9 +301,14 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 	}
 
 	@Override
-	public List<TeacherSubjectVo> findCurrentByGroup() {
+	public List<TeacherSubjectVo> findCurrentByGroup(int gradeId) {
 		// TODO Auto-generated method stub
 		ConditionVo cv = new ConditionVo();
+		List<SchoolClass> schoolClasses = schoolClassService.findByGrade(gradeId);
+		String[] classes = new String[schoolClasses.size()];
+		for (int i = 0; i < schoolClasses.size(); i++) {
+			classes[i] = schoolClasses.get(i).getClassId().toString();
+		}
 		SchoolYear schoolYear = yearService.getCurrent();
 		Term term= termService.getCurrent();
 		cv.setYearId(schoolYear.getYearId());

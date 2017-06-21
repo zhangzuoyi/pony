@@ -14,10 +14,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.zzy.pony.config.Constants;
+import com.zzy.pony.model.Grade;
 import com.zzy.pony.model.LessonArrange;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.service.AutoLessonArrangeService;
+import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.LessonArrangeService;
 import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.TermService;
@@ -43,6 +45,8 @@ public class TestService {
 	private TermService termService;
 	@Autowired
 	private LessonArrangeService lessonArrangeService;
+	@Autowired
+	private GradeService gradeService;
 	
 	 
 	
@@ -54,9 +58,11 @@ public class TestService {
 		List<LessonArrange> autoList = lessonArrangeService.findBySchooleYearAndTermAndSourceType(year, term, Constants.SOURCE_TYPE_AUTO);
 		List<LessonArrange> changeList = lessonArrangeService.findBySchooleYearAndTermAndSourceType(year, term, Constants.SOURCE_TYPE_CHANGE);
 		autoList.addAll(changeList);
-		lessonArrangeService.deleteList(autoList);	
+		lessonArrangeService.deleteList(autoList);
+		Grade grade = gradeService.findBySeq(1);
 		
-		autoLessonArrangeService.autoLessonArrange();
+		
+		autoLessonArrangeService.autoLessonArrange(grade.getGradeId());
 		
 	}
 	

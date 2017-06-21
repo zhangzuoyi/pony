@@ -13,6 +13,8 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
+import javax.persistence.Cache;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jdt.internal.compiler.ast.ThisReference;
 
@@ -273,7 +275,7 @@ public class GAUtil {
 			return true;
 		}*/
 		int week = getWeek(classNumber, seqLength); 
-		if (!key.startsWith("C")&&!key.startsWith("R")&&Constants.SUBJECT_SIGNIFICANT==subjectImportanceMap.get(key.substring(4))) {
+		if (!key.startsWith("C")&&!key.startsWith("R")&& subjectImportanceMap.get(key.substring(4)) != null && Constants.SUBJECT_SIGNIFICANT==subjectImportanceMap.get(key.substring(4))) {
 			
 			boolean flag = false ;
 			boolean flag2 = false;
@@ -317,7 +319,7 @@ public class GAUtil {
 				return true;
 			}									
 		}
-		if (!key.startsWith("C")&&!key.startsWith("R")&&Constants.SUBJECT_IMPORTANT==subjectImportanceMap.get(key.substring(4))) {
+		if (!key.startsWith("C")&&!key.startsWith("R")&& subjectImportanceMap.get(key.substring(4)) != null &&Constants.SUBJECT_IMPORTANT==subjectImportanceMap.get(key.substring(4))) {
 			boolean flag = false ;
 			boolean flag2 = false ;
 			int count = 0;
@@ -345,7 +347,7 @@ public class GAUtil {
 				return true;
 			}									
 		}
-		if (!key.startsWith("C")&&!key.startsWith("R")&&Constants.SUBJECT_COMMON==subjectImportanceMap.get(key.substring(4))) {
+		if (!key.startsWith("C")&&!key.startsWith("R")&& subjectImportanceMap.get(key.substring(4))!= null&&Constants.SUBJECT_COMMON==subjectImportanceMap.get(key.substring(4))) {
 			boolean flag = false ;
 			for (Integer seqInt : commonSeq) {
 				if (alreadyClassNumber.isEmpty() &&  classNumber ==(5-week)*seqLength+(seqLength-seqInt+1))  {
@@ -577,7 +579,7 @@ public class GAUtil {
 			String subjectId =String.format("%02d", vo.getSubjectId())  ;
 			List<Integer> gradeClassIds = vo.getGradeClassIds();			
 			for (Integer gradeClassId : gradeClassIds) {
-				String classId= String.format("%3d", gradeClassId);
+				String classId= String.format("%03d", gradeClassId);
 				result.put(classId+subjectId, seqId+periodId);
 			}
 		}		
@@ -588,11 +590,15 @@ public class GAUtil {
 		Map<String, String> result =  new HashMap<String, String>();
 		for (GradeNoCourseVo vo : list) {			
 			String seqId = String.format("%01d", vo.getWeekdayId())  ;
-			String periodId =String.format("%01d", vo.getLessonPeriodId())  ;
+			String periodSeq =String.format("%01d", vo.getLessonPeriodSeq())  ;
 			List<Integer> gradeClassIds = vo.getGradeClassIds();			
 			for (Integer gradeClassId : gradeClassIds) {
-				String classId= String.format("%3d", gradeClassId);
-				result.put(classId, seqId+periodId);
+				String classId= String.format("%03d", gradeClassId);
+				if (result.containsKey(classId)) {
+					result.put(classId, result.get(classId)+";"+seqId+periodSeq);
+				}else {
+					result.put(classId, seqId+periodSeq);
+				}
 			}			
 		}		
 		return result;
@@ -723,6 +729,51 @@ public class GAUtil {
 		return false;
 		
 	}
+	
+	public static boolean isClassInOrder(Set<Integer> alreadyClassNumber,int classNumber,int seqLength){
+		int[] week = new int[5];		
+		Iterator<Integer> iterator = alreadyClassNumber.iterator();
+		while (iterator.hasNext()) {
+			Integer integer = (Integer) iterator.next();
+			int i = getWeek(integer,seqLength);
+			switch (i) {
+			case 1:
+				week[0]++;
+				break;
+			case 2:
+				week[1]++;
+				break;
+			case 3:
+				week[2]++;
+				break;
+			case 4:
+				week[3]++;
+				break;
+			case 5:
+				week[4]++;
+				break;	
+			default:
+				break;
+			}
+		}
+		int x = getWeek(classNumber,seqLength);
+		week[x-1]++;
+		int max = week[0];
+		int min = week[0];
+		for (int i = 0; i < week.length; i++) {
+			if (week[i] > max) {
+				max = week[i];
+			}
+			if (week[i] < min) {
+				min = week[i];
+			}
+		}
+		if (max-min>2) {
+			return false;
+		}
+		return true;
+	}
+	
 	
 	
 	public static void print(String a){

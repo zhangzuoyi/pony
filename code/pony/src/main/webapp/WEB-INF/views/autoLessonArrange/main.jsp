@@ -32,10 +32,25 @@
               <b>自动排课</b>
               </el-col>
               </el-row>
-              <el-row>                        
+              <el-row> 
+              <el-col :span="1">
+              <b>年级:</b>
+              </el-col>                       
               <el-col :span="4" >
-               <el-button type="success" @click="autoLessonArrange()" >自动排课</el-button>             
-              </el-col>            
+              	<div class="grid-content bg-purple">
+					<el-select v-model="gradeId" clearable  filterable placeholder="请选择排课年级.." >
+               		 <el-option
+                        v-for="grade in grades" 
+                        :label="grade.name"                      
+                        :value="grade.gradeId">
+                        <span style="float: left">{{grade.name}}</span>
+               		 </el-option>
+           			 </el-select>          			 				
+                    </div>
+              </el-col> 
+              <el-col :span ="4" :offset="2">
+                   <el-button type="success" @click="autoLessonArrange()" >自动排课</el-button>                          
+              </el-col>           
               </el-row> 
               <el-row>
               <el-col :span="1" >
@@ -165,6 +180,7 @@
 var app = new Vue({ 
 	el : '#app' ,
 	data : {
+	    gradeId : null,
 		conditionVo:{gradeId:null,classId:null},		
 		grades : [],		
 		classes:[],		
@@ -229,14 +245,20 @@ var app = new Vue({
 				); 	
 				},
 		autoLessonArrange : function(){ 
-		
+					if(this.gradeId == null || this.gradeId == ""){
+						this.$alert("请选择需要排课的年级","提示",{
+					 		confirmButtonText : '确认',
+						 });
+						 return ;
+					}
+					
 		            this.$confirm('自动排课将会删除之前的自动排课结果，是否继续操作？','提示',{
 		            confirmButtonText : '确认',
 		            cancleButtonText : '取消',
 		            type : 'warning',		            
 		            }).then(function(){  app.dialogFormVisible=true;   app.loading = true;
 		           // console.log(app);
-		            app.$http.get(app.autoLessonArrangeUrl).then(
+		            app.$http.get(app.autoLessonArrangeUrl,{params:{gradeId :app.gradeId}}).then(
 					function(response){app.dialogFormVisible=false;   app.loading = false;},
 					function(response){}  	 			
 					);           

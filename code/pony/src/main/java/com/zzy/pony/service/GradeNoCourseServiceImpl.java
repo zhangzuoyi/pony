@@ -100,7 +100,8 @@ public class GradeNoCourseServiceImpl implements GradeNoCourseService {
 		tncv.setWeekdayId(tnc.getWeekday().getSeq());
 		tncv.setWeekdayName(tnc.getWeekday().getName());
 		tncv.setYearId(tnc.getSchoolYear().getYearId());
-		tncv.setYearName(tnc.getSchoolYear().getName());		
+		tncv.setYearName(tnc.getSchoolYear().getName());
+		tncv.setLessonPeriodSeq(tnc.getLessonPeriod().getSeq());
 		return tncv;	
 	}
 

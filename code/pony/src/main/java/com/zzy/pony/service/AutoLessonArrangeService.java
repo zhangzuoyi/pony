@@ -11,6 +11,6 @@ import com.zzy.pony.vo.ArrangeVo;
 
 
 public interface AutoLessonArrangeService {
-	void autoLessonArrange();
+	void autoLessonArrange(int gradeId);
 	void save(List<ArrangeVo> list);
 }

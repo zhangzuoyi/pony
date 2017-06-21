@@ -255,7 +255,7 @@ public class TeacherLessonController {
 			}
             
             
-            List<TeacherSubjectVo> teacherSubjects = teacherSubjectService.findCurrentAll();
+           // List<TeacherSubjectVo> teacherSubjects = teacherSubjectService.findCurrentAll();
 
             
             

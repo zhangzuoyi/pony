@@ -14,7 +14,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 
 
 
@@ -82,15 +84,15 @@ public class AutoLessonArrangeController {
 	
 	@RequestMapping(value="autoLessonArrange",method = RequestMethod.GET)
 	@ResponseBody
-	public void autoLessonArrange(){
+	public void autoLessonArrange(@RequestParam(value="gradeId") int gradeId ){
 		//删除当前学年，当前学期所有自动排课和调课类型的数据
 		SchoolYear year = schoolYearService.getCurrent();
 		Term term = termService.getCurrent();
-		List<LessonArrange> autoList = lessonArrangeService.findBySchooleYearAndTermAndSourceType(year, term, Constants.SOURCE_TYPE_AUTO);
-		List<LessonArrange> changeList = lessonArrangeService.findBySchooleYearAndTermAndSourceType(year, term, Constants.SOURCE_TYPE_CHANGE);
+		List<LessonArrange> autoList = lessonArrangeService.findBySchooleYearAndTermAndGradeIdAndSourceType(year, term,gradeId, Constants.SOURCE_TYPE_AUTO);
+		List<LessonArrange> changeList = lessonArrangeService.findBySchooleYearAndTermAndGradeIdAndSourceType(year, term,gradeId, Constants.SOURCE_TYPE_CHANGE);
 		autoList.addAll(changeList);
 		lessonArrangeService.deleteList(autoList);	
-		autoLessonArrangeService.autoLessonArrange();		
+		autoLessonArrangeService.autoLessonArrange(gradeId);		
 	}
 	
 	@RequestMapping(value="listTableData",method = RequestMethod.POST)
