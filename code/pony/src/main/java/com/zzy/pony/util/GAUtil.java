@@ -15,8 +15,10 @@ import java.util.Set;
 
 import javax.persistence.Cache;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jdt.internal.compiler.ast.ThisReference;
+import org.hibernate.id.IntegralDataTypeHolder;
 
 import com.zzy.pony.AutoClassArrange.DNA;
 import com.zzy.pony.config.Constants;
@@ -80,6 +82,31 @@ public class GAUtil {
 		}		
 		return result;
 		
+	}
+	
+	/*** 
+	* <p>Description:获取老师任课班级Map </p>
+	* @author  WANGCHAO262
+	* @date  2017年6月22日 下午12:07:16
+	*/
+	public static Map<String, List<String>> getTeacherClassMap(List<TeacherSubjectVo> list){
+		Map<String, List<String>> result = new HashMap<String, List<String>>();
+		
+		for (TeacherSubjectVo teacherSubjectVo : list) {			
+			String teacherId = String.format("%04d", teacherSubjectVo.getTeacherId())  ;
+			String classId=String.format("%03d", teacherSubjectVo.getClassId()) ;
+			if (teacherSubjectVo.getWeekArrange() != null) {			
+				if (result.containsKey(teacherId)) {
+					result.get(teacherId).add(classId);				
+				}else {
+					List<String> classIds = new ArrayList<String>();
+					classIds.add(classId);
+					result.put(teacherId, classIds);
+				}							
+			}
+		}
+		
+		return result;		
 	}
 	
 	/**
@@ -730,6 +757,11 @@ public class GAUtil {
 		
 	}
 	
+	/*** 
+	* <p>Description: 解决排课不均匀的问题</p>
+	* @author  WANGCHAO262
+	* @date  2017年6月22日 上午11:28:42
+	*/
 	public static boolean isClassInOrder(Set<Integer> alreadyClassNumber,int classNumber,int seqLength){
 		int[] week = new int[5];		
 		Iterator<Integer> iterator = alreadyClassNumber.iterator();
@@ -773,6 +805,130 @@ public class GAUtil {
 		}
 		return true;
 	}
+	
+	/*** 
+	 * 每一次选择后不能让剩余的课程约束与当前的排课时段产生全集，否则会存在死循环
+	* <p>Description: </p>
+	* @author  WANGCHAO262
+	* @date  2017年6月22日 下午2:07:08
+	*/
+	public static boolean isAlreadyComplete(int classNum,Set<Integer> alreadyClassNum,int maxClassNum,Map<String, List<Integer>> alreadyTeacherSeqMap,Set<String> remainClassSet,Map<String, Integer> remainClassMap,int seqLength,int teacherIdLength){
+		
+		
+		Map<String, Set<Integer>> teacherRemainClassMap = new HashMap<String, Set<Integer>>();
+		int  count = 0;
+		boolean isFirst = false;//是否第一次进入
+		Set<Integer> remainClassNumFinal = new HashSet<Integer>();
+
+		Set<Integer> sameSet = new HashSet<Integer>();
+		for (int i = 1; i <= maxClassNum; i++) {
+			remainClassNumFinal.add(i);
+		}	
+		sameSet.addAll(remainClassNumFinal);
+		sameSet.removeAll(alreadyClassNum);
+		sameSet.remove(classNum);
+		if (!alreadyTeacherSeqMap.isEmpty() &&  alreadyClassNum.size() !=(maxClassNum-1) && !remainClassSet.isEmpty() ) {
+				for (String teacherId : remainClassSet) {
+					if(alreadyTeacherSeqMap.get(teacherId) != null){
+						count ++;
+						isFirst = true;
+						Set<Integer> remainClassNum = new HashSet<Integer>();
+						remainClassNum.addAll(remainClassNumFinal);
+						Set<Integer> set = new HashSet<Integer>();
+						set.addAll(alreadyClassNum);
+						set.add(classNum);
+						set.addAll(alreadyTeacherSeqMap.get(teacherId));
+						if (set.size() == maxClassNum) {
+							return true;
+						}																		
+						for (Integer integer : set) {
+							remainClassNum.remove(integer);
+						}
+						//后续几个班级开始增加规则，即未排课程不能同时出现在剩余的不能排限制中
+						if (alreadyClassNum.size() >= maxClassNum/2 ) {
+							sameSet.retainAll(alreadyTeacherSeqMap.get(teacherId));							
+						}
+						teacherRemainClassMap.put(teacherId, remainClassNum);
+						
+						if (isRemainComplete(remainClassNum, teacherId, remainClassMap, seqLength, teacherIdLength,teacherRemainClassMap)) {
+							return true;
+						}																														
+					}														
+				}	
+				//当剩余课程相同的限制大未排课的数量
+				if (alreadyClassNum.size() > maxClassNum/2 && isFirst && sameSet.size() > (remainClassSet.size()-count) ) {
+					return true;
+				}
+		}				
+		return false;
+	}
+	
+	public static boolean isRemainComplete(Set<Integer> remainClassNum,String teacherId ,Map<String, Integer> remainClassMap,int seqLength,int teacherIdLength,Map<String, Set<Integer>> teacherRemainClassMap ){
+		
+		int countTwo = 0;//2的个数
+		int countOne = 0;//1的个数 
+		
+		for (String string : remainClassMap.keySet()) {
+			if (remainClassMap.get(string) == 2) {
+				countTwo ++;
+			}
+			if (remainClassMap.get(string) == 1) {
+				countOne ++;
+			}
+		}
+		
+		Set<Integer> weekSet = new HashSet<Integer>();
+		for (Integer integer : remainClassNum) {
+			 int i =  getWeek(integer,seqLength);
+			 weekSet.add(i);			 
+		}
+		for (String string : remainClassMap.keySet()) {
+			/*if (string.substring(0, teacherIdLength).equalsIgnoreCase(teacherId) && (weekSet.size() < remainClassMap.get(string) || (remainClassMap.get(string) != 1 && (countOne+countTwo) == remainClassMap.size()&& countTwo >1 && remainClassNum.size() < 2*remainClassMap.get(string)))) {
+				return true;
+			}*/
+			if (string.substring(0, teacherIdLength).equalsIgnoreCase(teacherId) && weekSet.size() < remainClassMap.get(string) ) {
+			return true;
+			}
+			for (String key : teacherRemainClassMap.keySet()) {
+				if (key != teacherId &&  CollectionUtils.isEqualCollection(teacherRemainClassMap.get(key),remainClassNum) && remainClassMap.get(string) != 1 && (countOne+countTwo) == remainClassMap.size()&& countTwo >1 && remainClassNum.size()<(remainClassMap.get(string)*2) ) {
+					System.out.println(teacherId+"-------------"+key);
+					return true;
+				}
+			}
+			
+			
+			
+		}				
+		return false;
+	}
+	
+	/*public static boolean isRemian(Map<String, List<Integer>> alreadyTeacherSeqMap,Set<String> remainClassSet,Set<Integer> sameSet,Map<String, Integer> remainClassMap){
+		
+		for (String string : remainClassSet) {
+			
+		}
+		
+		
+		return false;
+	}*/
+	
+	
+	public static boolean  isTeacherInAlreadySeqMap(Map<String, List<Integer>> alreadyTeacherSeqMap ,int classNumber,String key){
+		
+		if (alreadyTeacherSeqMap.containsKey(key)&&alreadyTeacherSeqMap.get(key)!= null ) {
+			for (Integer classNum : alreadyTeacherSeqMap.get(key)) {
+				if (classNum == classNumber) {
+					return true;
+				}
+			}
+		}
+						
+		return false;
+	}
+	
+	
+	
+	
 	
 	
 	

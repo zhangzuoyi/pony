@@ -1,5 +1,6 @@
 package com.zzy.pony.AutoClassArrange;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -51,7 +52,9 @@ public class DNA {
 	private Map<String, Integer> subjectImportanceMap;
 	private Map<String, Integer> arrangeRotationMap;
 	private Map<String, Integer> arrangeCombineMap;
-	private Map<String, Set<Integer>> combineMap;//合班资源池
+	private Map<String, Set<Integer>> combineMap;//合班资源池  新的个体需要初始化
+	private Map<String, List<Integer>> alreadyTeacherSeqMap;//老师已上课列表，解决同一时间老师不能上两节课的问题(即ruleOne)    新的个体需要初始化
+	private Map<String, List<String>> teacherClassMap;//老师与任教班级关系
 
 
  
@@ -107,8 +110,16 @@ public class DNA {
 	* 合班: 配置表中的课程一起上(主要不同班级)
 	* 走班: 配置表中的课程一起上(主要同一班级，在某一时间点可以同时上两门课,保证两节课上的课时数是一致的)
 	* 
+	* @add isMutation 是否突变，判断初始化操作 
 	*/
-	public String getDnaStringRuleTwo(int classIndex,Map<String, Map<String, String>> map){
+	public String getDnaStringRuleTwo(int classIndex,Map<String, Map<String, String>> map,boolean isMutation ){
+		
+		//classIndex为说明是新的个体
+		if (classIndex == 0 && !isMutation) {
+			combineMap = new HashMap<String, Set<Integer>>();
+			alreadyTeacherSeqMap = new HashMap<String, List<Integer>>();
+		}
+		
 		StringBuilder sb = new StringBuilder();
 		Random random  = new Random();
 		int k = this.weekdayIdCandidate.length * this.seqIdCandidate.length;//总时间段数 5*7
@@ -118,6 +129,24 @@ public class DNA {
 		Map<String, String> classMap =   GAUtil.sortMapByValue(classtmpMap);		
 		Map<Integer, String> randomMap = new HashMap<Integer, String>();
 		
+		
+		//剩余未安排教师列表
+		Set<String> remainClassSet = new HashSet<String>();
+		for (String string : classMap.keySet()) {
+			remainClassSet.add(string.substring(0, this.teacherIdBit));
+		} 
+		//剩余为安排教师与课程数Map
+		Map<String, Integer> remainClassMap = new HashMap<String, Integer>();
+		for (String string : classMap.keySet()) {
+			if (classMap.get(string).indexOf("+")<0) {
+				remainClassMap.put(string, Integer.valueOf(classMap.get(string)));
+			}else {
+				String[] a = classMap.get(string).split("\\+");
+				remainClassMap.put(string, Integer.valueOf(a[0])+Integer.valueOf(a[1]));
+			}
+		}		
+		
+
 		//年级不排课设置 
 		if (this.gradeNoCourse.get(this.classIdCandidate[classIndex]) != null) {
 			String[] weekSeqs = this.gradeNoCourse.get(this.classIdCandidate[classIndex]).split(";");
@@ -129,7 +158,11 @@ public class DNA {
 		}
 		
 		
+		
 		for (String key : classMap.keySet()) {
+			
+			remainClassSet.remove(key.substring(0, this.teacherIdBit));
+			remainClassMap.remove(key);
 			
 			//分两种情况，第一种是weekArrange不含+,第二种是含+
 			//第一种									
@@ -143,7 +176,7 @@ public class DNA {
 						while (iterator.hasNext()) {
 							Integer integer = (Integer) iterator.next();
 							if (!randomMap.containsKey(integer)) {
-								randomMap.put(integer, key);
+								randomMap.put(integer, key);																								
 								break;
 							}							
 						}
@@ -151,9 +184,10 @@ public class DNA {
 					}else {	
 						classNumber = random.nextInt(k)+1;
 						//@todo  增加规则在combineMap已经排过的不能够在下面排
-					while(randomMap.containsKey(classNumber) ||GAUtil.isExistClass(randomMap, classNumber,key,this.seqIdCandidate.length)
+					while(randomMap.containsKey(classNumber) ||GAUtil.isExistClass(randomMap, classNumber,key,this.seqIdCandidate.length)||GAUtil.isTeacherInAlreadySeqMap(alreadyTeacherSeqMap, classNumber, key.substring(0, this.teacherIdBit))
 							/*||( !key.startsWith("C")&&!key.startsWith("R")&&  this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber,this.seqIdCandidate.length,this.seqMornigLength))
 							||(!key.startsWith("C")&&!key.startsWith("R")&&this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber,this.seqIdCandidate.length,this.seqAfternoonLength))*/
+							||GAUtil.isAlreadyComplete(classNumber, randomMap.keySet(), k, alreadyTeacherSeqMap,remainClassSet,remainClassMap,this.seqIdCandidate.length,this.teacherIdBit)
 							||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key),this.seqIdCandidate.length)
 							||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key,randomMap.keySet(),this.significantSeq,this.importantSeq,this.commonSeq,this.subjectImportanceMap)
 							|| GAUtil.isInCombineMap(combineMap, classNumber)|| !GAUtil.isClassInOrder(randomMap.keySet(), classNumber, this.seqIdCandidate.length)	)
@@ -162,7 +196,20 @@ public class DNA {
 						}
 					
 					randomMap.put(classNumber, key);
-
+					
+					if (alreadyTeacherSeqMap.containsKey(key.substring(0, this.teacherIdBit))) {
+						if (teacherClassMap.containsKey(key.substring(0, this.teacherIdBit))&&teacherClassMap.get(key.substring(0, this.teacherIdBit)).contains(this.classIdCandidate[classIndex])) {
+							alreadyTeacherSeqMap.get(key.substring(0, this.teacherIdBit)).add(classNumber);						
+						}
+					}else {
+						List<Integer> seqList = new ArrayList<Integer>();
+						if (teacherClassMap.containsKey(key.substring(0, this.teacherIdBit))&&teacherClassMap.get(key.substring(0, this.teacherIdBit)).contains(this.classIdCandidate[classIndex])) {
+							seqList.add(classNumber);
+							alreadyTeacherSeqMap.put(key.substring(0, this.teacherIdBit), seqList);	
+						}
+						
+					}
+										
 					}
 					
 					
@@ -182,15 +229,29 @@ public class DNA {
 				   String[] a = classMap.get(key).split("\\+");
 				   for (int i = 0; i <  Integer.valueOf(a[0]) ; i++) {
 						int classNumber = random.nextInt(k)+1;
-						while(randomMap.containsKey(classNumber) ||GAUtil.isExistClass(randomMap, classNumber,key,this.seqIdCandidate.length)
+						while(randomMap.containsKey(classNumber) ||GAUtil.isExistClass(randomMap, classNumber,key,this.seqIdCandidate.length)||GAUtil.isTeacherInAlreadySeqMap(alreadyTeacherSeqMap, classNumber, key.substring(0, this.teacherIdBit))
 								/*||(!key.startsWith("C")&&!key.startsWith("R")&&this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber,this.seqIdCandidate.length,this.seqMornigLength))
 								||(!key.startsWith("C")&&!key.startsWith("R")&&this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber,this.seqIdCandidate.length,this.seqAfternoonLength))*/
+								||GAUtil.isAlreadyComplete(classNumber, randomMap.keySet(), k, alreadyTeacherSeqMap,remainClassSet,remainClassMap,this.seqIdCandidate.length,this.teacherIdBit)
 								||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key),this.seqIdCandidate.length))
 								||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key,randomMap.keySet(),this.significantSeq,this.importantSeq,this.commonSeq,this.subjectImportanceMap)
 								|| GAUtil.isInCombineMap(combineMap, classNumber)||!GAUtil.isClassInOrder(randomMap.keySet(), classNumber, this.seqIdCandidate.length)){
 							classNumber = random.nextInt(k)+1;
 						}
-						randomMap.put(classNumber, key);	
+						randomMap.put(classNumber, key);
+						
+						if (alreadyTeacherSeqMap.containsKey(key.substring(0, this.teacherIdBit))) {
+							if (teacherClassMap.containsKey(key.substring(0, this.teacherIdBit))&&teacherClassMap.get(key.substring(0, this.teacherIdBit)).contains(this.classIdCandidate[classIndex])) {
+								alreadyTeacherSeqMap.get(key.substring(0, this.teacherIdBit)).add(classNumber);						
+							}
+						}else {
+							List<Integer> seqList = new ArrayList<Integer>();
+							if (teacherClassMap.containsKey(key.substring(0, this.teacherIdBit))&&teacherClassMap.get(key.substring(0, this.teacherIdBit)).contains(this.classIdCandidate[classIndex])) {
+								seqList.add(classNumber);
+								alreadyTeacherSeqMap.put(key.substring(0, this.teacherIdBit), seqList);	
+							}
+							
+						}
 						
 						/*if (key.startsWith("C")) {
 							if (combineMap.containsKey(key)) {
@@ -208,18 +269,22 @@ public class DNA {
 						//头一天的最后一节不能与第二天的第一节形成联排课  classNumber%this.seqIdCandidate.length == 1
 						//早上的第一节课不能与下午的第一节课形成里联排课 classNumber%this.seqIdCandidate.length == 4
 						//classNumber+1>k 不能超出范围
-						/*35 28 21 14 7
-						  34 27 20 13 6
-						  33 26 19 12 5
-						  32 25 18 11 4
+						/*40 32 24 16 8
+						  39 31 23 15 7
+						  38 30 22 14 6
+						  37 29 21 13 5
+						  36 28 20 12 4
 
-						  31 24 17 10 3
-						  30 23 16  9 2
-						  29 22 15  8 1*/
+						  35 27 19 11 3
+						  34 26 18 10 2
+						  33 25 17  9 1*/
 				       //当天已经上过该课就不能再上
 						while(randomMap.containsKey(classNumber)||randomMap.containsKey(classNumber-1)||classNumber%this.seqIdCandidate.length == 1|| classNumber%this.seqIdCandidate.length == 4 ||GAUtil.isExistClass(randomMap, classNumber,key,this.seqIdCandidate.length)
 								/*||(!key.startsWith("C")&&!key.startsWith("R")&&this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber,this.seqIdCandidate.length,this.seqMornigLength))
-								||(!key.startsWith("C")&&!key.startsWith("R")&&this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber,this.seqIdCandidate.length,this.seqAfternoonLength))*/
+								||(!key.startsWith("C")&&!key.startsWith("R")&&this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber,this.seqIdCandidate.length,this.seqAfternoonLength))*/						
+								||GAUtil.isAlreadyComplete(classNumber, randomMap.keySet(), k, alreadyTeacherSeqMap,remainClassSet,remainClassMap,this.seqIdCandidate.length,this.teacherIdBit)
+								||GAUtil.isAlreadyComplete(classNumber-1, randomMap.keySet(), k, alreadyTeacherSeqMap,remainClassSet,remainClassMap,this.seqIdCandidate.length,this.teacherIdBit)
+								||GAUtil.isTeacherInAlreadySeqMap(alreadyTeacherSeqMap, classNumber, key.substring(0, this.teacherIdBit))||GAUtil.isTeacherInAlreadySeqMap(alreadyTeacherSeqMap, classNumber-1, key.substring(0, this.teacherIdBit))
 								||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key),this.seqIdCandidate.length))
 								||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key,randomMap.keySet(),this.significantSeq,this.importantSeq,this.commonSeq,this.subjectImportanceMap)
 								|| GAUtil.isInCombineMap(combineMap, classNumber)|| GAUtil.isInCombineMap(combineMap, classNumber-1)||!GAUtil.isClassInOrder(randomMap.keySet(), classNumber, this.seqIdCandidate.length)){
@@ -227,6 +292,26 @@ public class DNA {
 						}
 						randomMap.put(classNumber, key);
 						randomMap.put(classNumber-1, key);
+						
+						
+						
+						if (alreadyTeacherSeqMap.containsKey(key.substring(0, this.teacherIdBit))) {
+							if (teacherClassMap.containsKey(key.substring(0, this.teacherIdBit))&&teacherClassMap.get(key.substring(0, this.teacherIdBit)).contains(this.classIdCandidate[classIndex])) {
+								alreadyTeacherSeqMap.get(key.substring(0, this.teacherIdBit)).add(classNumber);	
+								alreadyTeacherSeqMap.get(key.substring(0, this.teacherIdBit)).add(classNumber-1);
+
+							}
+						}else {
+							List<Integer> seqList = new ArrayList<Integer>();
+							if (teacherClassMap.containsKey(key.substring(0, this.teacherIdBit))&&teacherClassMap.get(key.substring(0, this.teacherIdBit)).contains(this.classIdCandidate[classIndex])) {
+								seqList.add(classNumber);
+								seqList.add(classNumber-1);
+								alreadyTeacherSeqMap.put(key.substring(0, this.teacherIdBit), seqList);	
+							}
+							
+						}
+						
+						
 						
 						/*if (key.startsWith("C")) {
 							if (combineMap.containsKey(key)) {
@@ -444,6 +529,21 @@ public class DNA {
 	public void setCombineMap(Map<String, Set<Integer>> combineMap) {
 		this.combineMap = combineMap;
 	}
+	public Map<String, List<Integer>> getAlreadyTeacherSeqMap() {
+		return alreadyTeacherSeqMap;
+	}
+	public void setAlreadyTeacherSeqMap(
+			Map<String, List<Integer>> alreadyTeacherSeqMap) {
+		this.alreadyTeacherSeqMap = alreadyTeacherSeqMap;
+	}
+	public Map<String, List<String>> getTeacherClassMap() {
+		return teacherClassMap;
+	}
+	public void setTeacherClassMap(Map<String, List<String>> teacherClassMap) {
+		this.teacherClassMap = teacherClassMap;
+	}
+	
+	
 	
 	
 	

@@ -152,6 +152,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		List<CombineAndRotationVo> combineAndRotationVos = arrangeRotationService.findAllVo();
 		List<CombineAndRotationVo> combineAndRotationVos2 = arrangeCombineService.findAllVo();
 		Map<String, Set<Integer>> combineMap = new HashMap<String, Set<Integer>>();
+		Map<String, List<Integer>> alreadyTeacherSeqMap = new HashMap<String, List<Integer>>();
 		DNA.getInstance().setClassIdCandidate(classIdCandidate);
 		DNA.getInstance().setSeqIdCandidate(seqIdCandidate);
 		DNA.getInstance().setSubjectIdCandidate(subjectIdCandidate);
@@ -175,6 +176,8 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		DNA.getInstance().setArrangeRotationMap(GAUtil.getArrangeRotation(combineAndRotationVos));
 		DNA.getInstance().setArrangeCombineMap(GAUtil.getArrangeCombine(combineAndRotationVos2));
 		DNA.getInstance().setCombineMap(combineMap);
+		DNA.getInstance().setAlreadyTeacherSeqMap(alreadyTeacherSeqMap);
+		DNA.getInstance().setTeacherClassMap(GAUtil.getTeacherClassMap(vos));
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		String bestChromosome =  geneticAlgorithm.caculte();	
 		List<ArrangeVo> list =   GAUtil.getLessonArranges(bestChromosome);

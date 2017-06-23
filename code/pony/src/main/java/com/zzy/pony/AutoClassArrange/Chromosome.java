@@ -129,7 +129,7 @@ public class Chromosome {
 	   StringBuilder sb = new StringBuilder();
 	   Map<String, Map<String, String>> classMap = GAUtil.getClassTeacherSubjectweekArrange(map,DNA.getInstance().getArrangeRotationMap(),DNA.getInstance().getArrangeCombineMap());
 	   for (int i = 0; i < classIdCandidate.length; i++) {
-		  sb.append(DNA.getInstance().getDnaStringRuleTwo(i,classMap));
+		  sb.append(DNA.getInstance().getDnaStringRuleTwo(i,classMap,false));
 	  }	   
 	   gene = sb.toString().toCharArray();	
 			
@@ -230,7 +230,7 @@ public class Chromosome {
 		//允许变异
 		//int classCount = DNA.getInstance().getClassIdCandidate().length;
 		int classDNALength = DNA.getInstance().getDnaBit()*DNA.getInstance().getWeekdayIdCandidate().length*DNA.getInstance().getSeqIdCandidate().length;
-		char[] a =   DNA.getInstance().getDnaStringRuleTwo(classIndex, map).toCharArray();
+		char[] a =   DNA.getInstance().getDnaStringRuleTwo(classIndex, map,true).toCharArray();
 	    for (int i = classIndex*classDNALength; i < classIndex*classDNALength+classDNALength; i++) {
 			gene[i] = a[i-(classIndex*classDNALength)];			
 		}

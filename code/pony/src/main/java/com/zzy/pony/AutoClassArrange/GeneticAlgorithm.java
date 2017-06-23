@@ -125,6 +125,7 @@ public  class GeneticAlgorithm {
 		while (childPopulation.size() < popSize) {
 			Chromosome p1 = getParentChromosome();
 			Chromosome p2 = getParentChromosome();
+			//System.out.println(p1.getGene().toString().equalsIgnoreCase(p2.getGene().toString()));
 			List<Chromosome> children = Chromosome.genetic(p1, p2);
 			if (children != null) {
 				for (Chromosome chro : children) {
@@ -148,7 +149,7 @@ public  class GeneticAlgorithm {
 	 * @Description: 轮盘赌法选择可以遗传下一代的染色体
 	 */
 	private Chromosome getParentChromosome (){
-		/*double slice = Math.random() * totalScore;
+		double slice = Math.random() * totalScore;
 		double sum = 0;
 		for (Chromosome chro : population) {
 			sum += chro.getScore();
@@ -156,8 +157,8 @@ public  class GeneticAlgorithm {
 				return chro;
 			}
 		}
-		return null;*/
-		return bestChromosome;
+		return null;
+	//	return bestChromosome;
 	}
 	
 	/**
@@ -184,7 +185,7 @@ public  class GeneticAlgorithm {
 		totalScore = 0;
 		for (Chromosome chro : population) {
 			setChromosomeScore(chro);
-			if (chro.getScore() > bestScore) { //设置最好基因值
+			if (chro.getScore() >= bestScore) { //设置最好基因值
 				bestScore = chro.getScore();
 				/*if (y < bestScore) {
 					//x = changeX(chro);
@@ -192,7 +193,7 @@ public  class GeneticAlgorithm {
 					geneI = generation;
 				}*/
 			}
-			if (chro.getScore() < worstScore) { //设置最坏基因值
+			if (chro.getScore() <= worstScore) { //设置最坏基因值
 				worstScore = chro.getScore();
 				bestChromosome = chro;
 				geneI = generation;
