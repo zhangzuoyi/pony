@@ -34,6 +34,8 @@ import com.zzy.pony.vo.TeacherSubjectVo;
 
 public class GAUtil {
 
+    private static final int MAX_ATTEMPT = 200;
+
 	
 	
 	/*** 
@@ -288,7 +290,7 @@ public class GAUtil {
 	* @date  2017年6月7日 下午5:26:22
 	*/
 	public static boolean  isSeqSubjectMatch(Map<String, List<String>> seqSubjectMap,int classNumber,int seqLength,String key,Set<Integer> alreadyClassNumber,
-			List<Integer> significantSeq,List<Integer> importantSeq,List<Integer> commonSeq,Map<String, Integer> subjectImportanceMap){
+			List<Integer> significantSeq,List<Integer> importantSeq,List<Integer> commonSeq,Map<String, Integer> subjectImportanceMap,int attempCount){
 		
 		String seq = getSeq(classNumber, seqLength);	
 		/*List<String> subjectList = seqSubjectMap.get(seq);
@@ -301,6 +303,9 @@ public class GAUtil {
 		/*if (alreadyClassNumber == null || alreadyClassNumber.size() == 0) {
 			return true;
 		}*/
+		if (attempCount > MAX_ATTEMPT){
+		    return true;
+        }
 		int week = getWeek(classNumber, seqLength); 
 		if (!key.startsWith("C")&&!key.startsWith("R")&& subjectImportanceMap.get(key.substring(4)) != null && Constants.SUBJECT_SIGNIFICANT==subjectImportanceMap.get(key.substring(4))) {
 			
@@ -570,6 +575,75 @@ public class GAUtil {
 		    }  
 		    return sortedMap;
 		
+	}
+/**
+    @Author : Administrator
+    @Description :
+    @Date : 下午 11:00 2017/6/25
+
+*/
+	public static Map<String,String> sortMapByAlready(Map<String, String> oriMap,Map<String, List<Integer>> alreadyTeacherSeqMap,int teacherIdBit){
+        Map<String, String> sortedMap = new LinkedHashMap<String, String>();
+        if (oriMap != null && !oriMap.isEmpty()) {
+            List<Map.Entry<String, String>> entryList = new ArrayList<Map.Entry<String, String>>(oriMap.entrySet());
+            Collections.sort(entryList,
+                    new Comparator<Map.Entry<String, String>>() {
+                        public int compare(Entry<String, String> entry1,
+                                           Entry<String, String> entry2) {
+                            int value1 = 0, value2 = 0;
+                            try {
+                                if (entry1.getValue().indexOf("+")>0) {
+                                    String[] a = entry1.getValue().split("\\+");
+                                    value1 = Integer.valueOf(a[0])+2*Integer.valueOf(a[1]);
+                                }else {
+                                    value1 = Integer.valueOf(entry1.getValue());
+                                }
+                                if (entry2.getValue().indexOf("+")>0) {
+                                    String[] b = entry2.getValue().split("\\+");
+                                    value2 = Integer.valueOf(b[0])+2*Integer.valueOf(b[1]);
+                                }else {
+                                    value2 = Integer.valueOf(entry2.getValue());
+                                }
+                            } catch (NumberFormatException e) {
+                                value1 = 0;
+                                value2 = 0;
+                            }
+                            return value2 - value1;
+                        }
+                    });
+            Iterator<Map.Entry<String, String>> iter = entryList.iterator();
+            Map.Entry<String, String> tmpEntry = null;
+            while (iter.hasNext()) {
+                tmpEntry = iter.next();
+                sortedMap.put(tmpEntry.getKey(), tmpEntry.getValue());
+            }
+        }
+        for (String key:
+             sortedMap.keySet()) {
+            if (sortedMap.get(key).indexOf("+")>0){
+                String[] a = sortedMap.get(key).split("\\+");
+                sortedMap.put(key,Integer.valueOf(a[0])+2*Integer.valueOf(a[1])+"");
+            }
+        }
+        List<String> list = new ArrayList<String>();
+        Iterator iterator = sortedMap.entrySet().iterator();
+        while(iterator.hasNext()){
+            Map.Entry entry = (Entry) iterator.next();
+            list.add((String)entry.getKey());
+        }
+        for (int i = 0 ;i<list.size()-1;i++){
+            //如果前后的值一样且后面的在alreadyMap中就交换
+            if (sortedMap.get(list.get(i)).equalsIgnoreCase(sortedMap.get(list.get(i+1))) && alreadyTeacherSeqMap.containsKey(list.get(i+1).substring(0,teacherIdBit))){
+               String tmp  =  list.get(i);
+               list.set(i,list.get(i+1));
+               list.set(i+1,tmp);
+            }
+        }
+        Map<String,String> result = new LinkedHashMap<String, String>();
+        for (int i=0;i<list.size();i++){
+            result.put(list.get(i),oriMap.get(list.get(i)));
+        }
+        return result;
 	}
 	
 	
