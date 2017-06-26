@@ -26,6 +26,8 @@ public class SchoolClassServiceImpl implements SchoolClassService {
 	private ExamDao examDao;
 	@Autowired
 	private ExamService examService;
+	@Autowired
+	private GradeService gradeService;
 
 	@Override
 	public void add(SchoolClass sy) {
@@ -111,9 +113,13 @@ public class SchoolClassServiceImpl implements SchoolClassService {
 		return dao.findByYearId(year.getYearId());
 	}
 
-	
-	
-	
-	
-
+	@Override
+	public SchoolClass findByYearAndGradeAndSeq(int yearId, int gradeId, int seq) {
+		Grade grade = gradeService.get(gradeId);
+		List<SchoolClass> schoolClasses = dao.findByYearIdAndGradeAndSeq(yearId,grade,seq);
+		if (schoolClasses!=null&&!schoolClasses.isEmpty()){
+			return schoolClasses.get(0);
+		}
+		return null;
+	}
 }

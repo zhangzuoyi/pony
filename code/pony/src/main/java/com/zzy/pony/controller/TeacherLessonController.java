@@ -11,6 +11,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.zzy.pony.model.*;
+import com.zzy.pony.service.*;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -71,17 +73,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.zzy.pony.dao.SchoolClassDao;
 import com.zzy.pony.dao.TeacherDao;
 import com.zzy.pony.dao.TeacherSubjectDao;
-import com.zzy.pony.model.Grade;
-import com.zzy.pony.model.SchoolClass;
-import com.zzy.pony.model.SchoolYear;
-import com.zzy.pony.model.Teacher;
-import com.zzy.pony.model.TeacherSubject;
-import com.zzy.pony.model.Term;
-import com.zzy.pony.service.GradeService;
-import com.zzy.pony.service.SchoolClassService;
-import com.zzy.pony.service.SchoolYearService;
-import com.zzy.pony.service.TeacherSubjectService;
-import com.zzy.pony.service.TermService;
 import com.zzy.pony.util.DateTimeUtil;
 import com.zzy.pony.vo.TeacherSubjectVo;
 import com.zzy.pony.vo.ConditionVo;
@@ -105,6 +96,8 @@ public class TeacherLessonController {
 	private SchoolClassService schoolClassService;
 	@Autowired
 	private GradeService gradeService;
+	@Autowired
+    private SubjectService subjectService;
 	
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
@@ -181,14 +174,16 @@ public class TeacherLessonController {
         
 		SchoolYear schoolYear = schoolYearService.getCurrent(); 
 		Term term = termService.getCurrent();
-		Grade gardeOne = gradeService.findBySeq(1);
-		Grade gardeTwo = gradeService.findBySeq(2);
-		Grade gardeThree = gradeService.findBySeq(3);
+		Grade gradeOne = gradeService.findBySeq(1);
+		Grade gradeTwo = gradeService.findBySeq(2);
+		Grade gradeThree = gradeService.findBySeq(3);
 
-		List<SchoolClass> schoolClasseOne = schoolClassService.findByYearAndGradeOrderBySeq(schoolYear.getYearId(), gardeOne.getGradeId());
-		List<SchoolClass> schoolClasseTwo = schoolClassService.findByYearAndGradeOrderBySeq(schoolYear.getYearId(), gardeTwo.getGradeId());
-		List<SchoolClass> schoolClasseThree = schoolClassService.findByYearAndGradeOrderBySeq(schoolYear.getYearId(), gardeThree.getGradeId());
-		
+		List<SchoolClass> schoolClasseOne = schoolClassService.findByYearAndGradeOrderBySeq(schoolYear.getYearId(), gradeOne.getGradeId());
+		List<SchoolClass> schoolClasseTwo = schoolClassService.findByYearAndGradeOrderBySeq(schoolYear.getYearId(), gradeTwo.getGradeId());
+		List<SchoolClass> schoolClasseThree = schoolClassService.findByYearAndGradeOrderBySeq(schoolYear.getYearId(), gradeThree.getGradeId());
+		int columnLength = schoolClasseOne.size()+schoolClasseTwo.size()+schoolClasseThree.size()+1;
+
+
 		String title = "平桥中学"+schoolYear.getName()+term.getName()+"教师任课表"; 
 		
 
@@ -238,6 +233,7 @@ public class TeacherLessonController {
             HSSFRow classRow = sheet.createRow(3);
             HSSFCell classFirstCell = classRow.createCell(0);
             classFirstCell.setCellValue(new HSSFRichTextString("班级"));
+            classFirstCell.setCellStyle(columnTopStyle);
             for (int i = 1; i <= schoolClasseOne.size(); i++) {
                 HSSFCell classCell = classRow.createCell(i);
                 classCell.setCellValue(schoolClasseOne.get(i-1).getSeq());
@@ -253,73 +249,83 @@ public class TeacherLessonController {
                 classCell.setCellValue(schoolClasseOne.get(i-schoolClasseOne.size()-schoolClasseTwo.size()-1).getSeq());
                 classCell.setCellStyle(style);
 			}
-            
-            
-           // List<TeacherSubjectVo> teacherSubjects = teacherSubjectService.findCurrentAll();
 
-            
-            
-            
-            
-        /*    // 定义所需列数  
-            int columnNum1 = rowName1.length;  
-            HSSFRow rowRowName1 = sheet1.createRow(2);                // 在索引2的位置创建行(最顶端的行开始的第二行)  
-            
-       
-            
-              
-            // 将列头设置到sheet的单元格中  
-            for(int n=0;n<columnNum1;n++){  
-                HSSFCell  cellRowName = rowRowName1.createCell(n);               //创建列头对应个数的单元格  
-                cellRowName.setCellType(HSSFCell.CELL_TYPE_STRING);             //设置列头单元格的数据类型  
-                HSSFRichTextString text = new HSSFRichTextString(rowName1[n]);  
-                cellRowName.setCellValue(text);                                 //设置列头单元格的值  
-                cellRowName.setCellStyle(columnTopStyle1);                       //设置列头单元格样式  
-            }  
-            
-          
-            
-            
-              
-            //将查询出的数据设置到sheet对应的单元格中  
-            for(int i=0;i<dataList1.size();i++){  
-                  
-                Object[] obj = dataList1.get(i);//遍历每个对象  
-                HSSFRow row = sheet1.createRow(i+3);//创建所需的行数  
-                  
-                for(int j=0; j<obj.length; j++){  
-                    HSSFCell  cell = null;   //设置单元格的数据类型  
-                    if(j == 0){  
-                        cell = row.createCell(j,HSSFCell.CELL_TYPE_NUMERIC);  
-                        cell.setCellValue(i+1);   
-                    }else{  
-                        cell = row.createCell(j,HSSFCell.CELL_TYPE_STRING);  
-                        if(!"".equals(obj[j]) && obj[j] != null){  
-                            cell.setCellValue(obj[j].toString());                       //设置单元格的值  
-                        }  
-                    }  
-                    cell = row.createCell(j,HSSFCell.CELL_TYPE_STRING);  
-                    if(!"".equals(obj[j]) && obj[j] != null){  
-                        cell.setCellValue(obj[j].toString());                       //设置单元格的值  
-                    } 
+			List<Object[]> dataList  = new ArrayList<Object[]>();
+            //add 班主任
+            Object[] tutorTeachers = new Object[columnLength];
+            tutorTeachers[0] = "班主任";
+            for (int i=1;i<=schoolClasseOne.size();i++){
+                SchoolClass schoolClass = schoolClassService.findByYearAndGradeAndSeq(schoolYear.getYearId(),gradeOne.getGradeId(),i);
+                tutorTeachers[i] = schoolClass.getTeacher().getName();
+            }
+            for (int i=1;i<=schoolClasseTwo.size();i++){
+                SchoolClass schoolClass = schoolClassService.findByYearAndGradeAndSeq(schoolYear.getYearId(),gradeTwo.getGradeId(),i);
+                tutorTeachers[i+schoolClasseOne.size()] = schoolClass.getTeacher().getName();
+            }
+            for (int i=1;i<=schoolClasseThree.size();i++){
+                SchoolClass schoolClass = schoolClassService.findByYearAndGradeAndSeq(schoolYear.getYearId(),gradeThree.getGradeId(),i);
+                tutorTeachers[i+schoolClasseOne.size()+schoolClasseTwo.size()] = schoolClass.getTeacher().getName();
+            }
+            dataList.add(tutorTeachers);
+            List<Subject> subjects = subjectService.findAll();
+            for (Subject subject:
+                 subjects) {
+                Object[] subjectObjects = new Object[columnLength];
+                subjectObjects[0] = subject.getName();
+                for (int i=1;i<=schoolClasseOne.size();i++){
+                    SchoolClass schoolClass = schoolClassService.findByYearAndGradeAndSeq(schoolYear.getYearId(),gradeOne.getGradeId(),i);
+                    TeacherSubject   teacherSubject = teacherSubjectService.findCurrentByClassAndSubject(schoolClass,subject);
+                    if (teacherSubject!= null &&  teacherSubject.getTeacher()!= null){
+                        subjectObjects[i] = teacherSubject.getTeacher().getName();
+                    }
+                }
+                for (int i=1;i<=schoolClasseTwo.size();i++){
+                    SchoolClass schoolClass = schoolClassService.findByYearAndGradeAndSeq(schoolYear.getYearId(),gradeTwo.getGradeId(),i);
+                    TeacherSubject   teacherSubject = teacherSubjectService.findCurrentByClassAndSubject(schoolClass,subject);
+                    if (teacherSubject!= null &&  teacherSubject.getTeacher()!= null) {
+                        subjectObjects[i + schoolClasseOne.size()] = teacherSubject.getTeacher().getName();
+                    }
+                }
+                for (int i=1;i<=schoolClasseThree.size();i++){
+                    SchoolClass schoolClass = schoolClassService.findByYearAndGradeAndSeq(schoolYear.getYearId(),gradeThree.getGradeId(),i);
+                    TeacherSubject   teacherSubject = teacherSubjectService.findCurrentByClassAndSubject(schoolClass,subject);
+                    if (teacherSubject!= null &&  teacherSubject.getTeacher()!= null) {
+                        subjectObjects[i + schoolClasseOne.size() + schoolClasseTwo.size()] = teacherSubject.getTeacher().getName();
+                    }
+                }
+                dataList.add(subjectObjects);
+            }
+
+            //将查询出的数据设置到sheet对应的单元格中
+            for(int i=0;i<dataList.size();i++){
+
+                Object[] obj = dataList.get(i);//遍历每个对象
+                HSSFRow dataRow = sheet.createRow(i+4);//创建所需的行数
+
+                for(int j=0; j<obj.length; j++){
+                    HSSFCell  dataCell = null;   //设置单元格的数据类型
+                    dataCell = dataRow.createCell(j,HSSFCell.CELL_TYPE_STRING);
+                    if(!"".equals(obj[j]) && obj[j] != null){
+                            dataCell.setCellValue(obj[j].toString());                       //设置单元格的值
+                    }
                     else {
-						cell.setCellValue("");
-					}
-                    cell.setCellStyle(style1);                                   //设置单元格样式  
-                }  
-            }  
-            
-         
+                        cell.setCellValue("");
+                    }
+                    cell.setCellStyle(style);                                   //设置单元格样式
+                }
+            }
+
+
             //让列宽随着导出的列长自动适应  
-            for (int colNum = 0; colNum < columnNum1; colNum++) {  
-                int columnWidth = sheet1.getColumnWidth(colNum) / 256;  
-                for (int rowNum = 0; rowNum < sheet1.getLastRowNum(); rowNum++) {  
+            /*for (int colNum = 0; colNum < columnLength; colNum++) {
+                int columnWidth = sheet.getColumnWidth(colNum) / 256;
+                for (int rowNum = 4; rowNum < sheet.getLastRowNum(); rowNum++) {
                     HSSFRow currentRow;  
                     //当前行未被使用过  
-                    if (sheet1.getRow(rowNum) == null) {  
-                        currentRow = sheet1.createRow(rowNum);  
+                    if (sheet.getRow(rowNum) == null) {
+                        currentRow = sheet.createRow(rowNum);
                     } else {  
-                        currentRow = sheet1.getRow(rowNum);  
+                        currentRow = sheet.getRow(rowNum);
                     }  
                     if (currentRow.getCell(colNum) != null&&!"".equals(currentRow.getCell(colNum))) {  
                         HSSFCell currentCell = currentRow.getCell(colNum);  
@@ -332,19 +338,17 @@ public class TeacherLessonController {
                     }  
                 }  
                 if(colNum == 0){  
-                    sheet1.setColumnWidth(colNum, (columnWidth-2) * 256);  
+                    sheet.setColumnWidth(colNum, (columnWidth-2) * 256);
                 }else{  
-                    sheet1.setColumnWidth(colNum, (columnWidth+4) * 256);  
+                    sheet.setColumnWidth(colNum, (columnWidth+4) * 256);
                 }  
-            }  
-            */
+            }  */
+
           
               
             if(workbook !=null){  
                 try  
-                {  
-                	
-                	
+                {
                 	String fileName = new String(title.getBytes("utf-8"), "ISO8859-1")+DateTimeUtil.dateToStr(new Date()) + ".xls" ;
                   //  String fileName = "Excel-" + String.valueOf(System.currentTimeMillis()).substring(4, 13) + ".xls";  
                     String headStr = "attachment; filename=\"" + fileName + "\"";  

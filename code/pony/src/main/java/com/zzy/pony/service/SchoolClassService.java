@@ -30,4 +30,5 @@ public interface SchoolClassService {
 	List<SchoolClass> findByYearAndGradeOrderBySeq(int yearId, int gradeId);
 
 	List<SchoolClass> findCurrent();
+	SchoolClass findByYearAndGradeAndSeq(int yearId,int gradeId,int seq);
 }
