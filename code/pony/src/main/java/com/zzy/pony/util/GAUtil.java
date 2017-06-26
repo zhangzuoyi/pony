@@ -34,7 +34,7 @@ import com.zzy.pony.vo.TeacherSubjectVo;
 
 public class GAUtil {
 
-    private static final int MAX_ATTEMPT = 200;
+    private static final int MAX_ATTEMPT = 800;
 
 	
 	
@@ -639,6 +639,23 @@ public class GAUtil {
                list.set(i+1,tmp);
             }
         }
+        
+        //在alreadyTeacherSeqMap中更多限制的先排
+        for (int j = 0; j < list.size()-1; j++) {
+        	for (int i = 0; i < list.size()-1; i++) {
+        		if (alreadyTeacherSeqMap.containsKey(list.get(i).substring(0,teacherIdBit)) &&
+    					alreadyTeacherSeqMap.containsKey(list.get(i+1).substring(0,teacherIdBit)) &&
+    					  sortedMap.get(list.get(i)).equalsIgnoreCase(sortedMap.get(list.get(i+1))) && 
+    						alreadyTeacherSeqMap.get(list.get(i+1).substring(0,teacherIdBit)).size() > alreadyTeacherSeqMap.get(list.get(i).substring(0,teacherIdBit)).size()
+    							) {
+    				   String tmp  =  list.get(i);
+    	               list.set(i,list.get(i+1));
+    	               list.set(i+1,tmp);    				   				
+    			}
+			}
+			
+		}
+        
         Map<String,String> result = new LinkedHashMap<String, String>();
         for (int i=0;i<list.size();i++){
             result.put(list.get(i),oriMap.get(list.get(i)));
@@ -836,7 +853,12 @@ public class GAUtil {
 	* @author  WANGCHAO262
 	* @date  2017年6月22日 上午11:28:42
 	*/
-	public static boolean isClassInOrder(Set<Integer> alreadyClassNumber,int classNumber,int seqLength){
+	public static boolean isClassInOrder(Set<Integer> alreadyClassNumber,int classNumber,int seqLength,int attempCount){
+		
+		if (attempCount > MAX_ATTEMPT) {
+			return true;
+		}
+		
 		int[] week = new int[5];		
 		Iterator<Integer> iterator = alreadyClassNumber.iterator();
 		while (iterator.hasNext()) {
