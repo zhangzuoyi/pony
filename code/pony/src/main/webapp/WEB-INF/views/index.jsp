@@ -73,6 +73,16 @@
             </div>
             </shiro:hasRole>
             <shiro:hasRole name="admin">
+        	<div title="考试管理" data-options="iconCls:'icon-application-cascade'" style="padding:5px;">  	
+    			<ul class="easyui-tree my-side-tree">
+    				<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examAdmin/examArrange/main/' />" iframe="1">考试安排</a></li>
+    				<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examAdmin/examRoom/main/' />" iframe="1">考场设置</a></li>
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examAdmin/examinee/main/' />" iframe="1">考生设置</a></li>
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examAdmin/examineeRoomArrange/main/' />" iframe="1">考生考场安排</a></li>
+                </ul>
+            </div>
+            </shiro:hasRole>
+            <shiro:hasRole name="admin">
             <div title="排课管理" data-options="iconCls:'icon-application-form-edit'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/lessonPeriod/main/' />" iframe="1">上课时段管理</a></li>
