@@ -3,6 +3,7 @@ package com.zzy.pony.exam.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.zzy.pony.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -28,6 +29,9 @@ public class ExamArrangeController {
 	
 	@Autowired
 	private ExamArrangeService examArrangeService;
+	@Autowired
+	private SubjectService subjectService;
+
 	
 	@RequestMapping(value="main",method=RequestMethod.GET)
 	public String main(Model model){
@@ -82,6 +86,11 @@ public class ExamArrangeController {
 		result = new PageImpl<ExamArrangeVo>(content, pageable, examArrangePage.getTotalElements());							
 		return result;
 		
+	}
+
+	@RequestMapping(value="add",method=RequestMethod.GET)
+	public void add(@RequestParam(value="subjects[]") int[] subjects){
+			examArrangeService.add(subjects);
 	}
 	
 	

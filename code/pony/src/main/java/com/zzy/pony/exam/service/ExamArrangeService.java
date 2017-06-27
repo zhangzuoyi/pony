@@ -8,4 +8,5 @@ import com.zzy.pony.exam.model.ExamArrange;
 
 public interface ExamArrangeService {
 	Page<ExamArrange> findByExamAndGrade(Pageable pageable,int examId,int gradeId);
+	void add(int[] subjects);
 }

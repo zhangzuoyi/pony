@@ -1,6 +1,7 @@
 package com.zzy.pony.exam.service;
 
 
+import com.zzy.pony.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,8 @@ public class ExamArrangeServiceImpl implements ExamArrangeService {
 	private ExamService examService;
 	@Autowired
 	private GradeService gradeService;
+	@Autowired
+	private SubjectService subjectService;
 	
 	
 	
@@ -36,4 +39,16 @@ public class ExamArrangeServiceImpl implements ExamArrangeService {
 		return examArrangeDao.findByExamAndGrade(pageable,exam,grade);
 	}
 
+	@Override
+	public void add(int[] subjects) {
+		if (subjects.length>0){
+			for (int subjectId:
+					subjects) {
+				ExamArrange examArrange = new ExamArrange();
+				examArrange.setSubject(subjectService.get(subjectId));
+				examArrangeDao.save(examArrange);
+			}
+
+		}
+	}
 }

@@ -227,6 +227,8 @@ var app = new Vue({
 		examUrl:"<s:url value='/exam/list'/>",
 		gradesUrl :"<s:url value='/grade/list'/>",
 		subjectUrl:"<s:url value='/subject/list'/>",
+        listPageUrl:"<s:url value="/examAdmin/examArrange/listPage"/>",
+        addUrl:"<s:url value="/examAdmin/examArrange/add"/>",
 		schoolYear :null,
 		term : null,
 		examId: null,
@@ -266,6 +268,7 @@ var app = new Vue({
 				this.getExams();
 				this.getGrades();
 				this.getSubjects();
+				this.getExamArranges();
 				
 		
 			
@@ -310,13 +313,17 @@ var app = new Vue({
                 console.log(val);
             },
 			handleCheckAllChange:function(event){
-				this.checkedSubjects = event.target.checked?this.subjects:[];
+			    var allSubjects = [];
+			    for(var index in this.subjects){
+                    allSubjects.push(this.subjects[index].subjectId);
+                }
+				this.checkedSubjects = event.target.checked?allSubjects:[];
 				this.isIndeterminate=false;
 			},
 			handleCheckedSubjectChange:function(value){
 				var checkedCount = value.length;
 				this.checkAll = checkedCount === this.subjects.length;
-				this.isIndeterminate = checkedCount > 0 && checkCount <this.subjects.length;
+				this.isIndeterminate = checkedCount > 0 && checkedCount <this.subjects.length;
 			},
 			pickerOptions: function(time){
                         return time.getTime() < Date.now() - 8.64e7;
@@ -351,7 +358,25 @@ var app = new Vue({
 			},
 			handleDelete: function(){
 			
-			}
+			},
+            getExamArranges:function(){
+                this.$http.get(this.listPageUrl,{params:{currentPage:this.currentPage-1,pageSize:this.pageSize,examId:this.examId,gradeId:this.gradeId}}).then(
+                    function(response){
+                        this.tableData=response.data; },
+                    function(response){}
+                );
+            },
+            onSubmitSubject:function () {
+                this.$http.get(this.addUrl,{params:{subjects:this.checkedSubjects}}).then(
+                    function(response){
+                          this.$message({type:"info",message:"新增成功"});
+                          this.checkedSubjects = [];
+                          this.getExamArranges();
+
+                    },
+                    function(response){}
+                );
+            }
 			   	
 	  
         }	        
