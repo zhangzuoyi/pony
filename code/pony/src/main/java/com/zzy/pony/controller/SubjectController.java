@@ -24,7 +24,6 @@ import com.zzy.pony.config.Constants;
 import com.zzy.pony.model.CommonDict;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.service.DictService;
-import com.zzy.pony.service.DictServiceImpl;
 import com.zzy.pony.service.SubjectService;
 import com.zzy.pony.vo.SubjectVo;
 

@@ -226,6 +226,7 @@ var app = new Vue({
 		termUrl:"<s:url value='/term/getCurrent'/>",
 		examUrl:"<s:url value='/exam/list'/>",
 		gradesUrl :"<s:url value='/grade/list'/>",
+		subjectUrl:"<s:url value='/subject/list'/>",
 		schoolYear :null,
 		term : null,
 		examId: null,
@@ -264,6 +265,7 @@ var app = new Vue({
 				this.getCurrentTerm();
 				this.getExams();
 				this.getGrades();
+				this.getSubjects();
 				
 		
 			
@@ -297,11 +299,18 @@ var app = new Vue({
 			function(response){}  	 			
 			);
 			},
+			getSubjects	:function(){ 			
+			this.$http.get(this.subjectUrl).then(
+			function(response){
+			this.subjects=response.data; },
+			function(response){}  	 			
+			);
+			},
 			handleSelectionChange: function(val) {
                 console.log(val);
             },
 			handleCheckAllChange:function(event){
-				this.checkedSubjects = event.target.checkd?subjects:[];
+				this.checkedSubjects = event.target.checked?this.subjects:[];
 				this.isIndeterminate=false;
 			},
 			handleCheckedSubjectChange:function(value){
@@ -326,7 +335,7 @@ var app = new Vue({
 				//console.log('当前页 : ${val}');
 			},
 			selectSubject: function(){
-			
+				this.subjectDialogFormVisible = true;
 			},
 			selectExamDate: function(){
 			
