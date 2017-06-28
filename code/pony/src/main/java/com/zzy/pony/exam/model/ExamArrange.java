@@ -4,20 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.Grade;
@@ -72,11 +59,11 @@ public class ExamArrange implements Serializable {
 	private Subject subject;
 
 	//bi-directional many-to-one association to ExamRoomAllocate
-	@OneToMany(mappedBy="examArrange")
+	@OneToMany(mappedBy="examArrange",fetch = FetchType.EAGER)
 	private List<ExamRoomAllocate> examRoomAllocates;
 
 	//bi-directional many-to-many association to Examinee
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(
 		name="t_examinee_arrange"
 		, joinColumns={

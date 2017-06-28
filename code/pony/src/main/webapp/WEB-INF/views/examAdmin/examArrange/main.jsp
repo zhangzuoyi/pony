@@ -83,7 +83,7 @@ width:200px;
             	</el-col>
             	
             	<el-col :span="2" >
-               		<el-button type="primary" @click="getListTableData()" >查询</el-button>
+               		<el-button type="primary" @click="getExamArranges()" >查询</el-button>
               	</el-col>                           
               </el-row>
               <el-row>                            
@@ -141,7 +141,7 @@ width:200px;
                         >
                 </el-table-column>
                 <el-table-column
-                		prop="examRoom"
+                		prop="examRoomNames"
                         label="考场"
                         >                       
                 </el-table-column>                                                                                          
@@ -362,7 +362,7 @@ var app = new Vue({
             getExamArranges:function(){
                 this.$http.get(this.listPageUrl,{params:{currentPage:this.currentPage-1,pageSize:this.pageSize,examId:this.examId,gradeId:this.gradeId}}).then(
                     function(response){
-                        this.tableData=response.data; },
+                        this.tableData=response.data.content; },
                     function(response){}
                 );
             },
@@ -372,6 +372,9 @@ var app = new Vue({
                           this.$message({type:"info",message:"新增成功"});
                           this.checkedSubjects = [];
                           this.getExamArranges();
+                          this.subjectDialogFormVisible = false;
+                          this.isIndeterminate =true;
+
 
                     },
                     function(response){}

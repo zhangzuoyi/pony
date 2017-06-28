@@ -40,6 +40,23 @@ public class ExamArrangeServiceImpl implements ExamArrangeService {
 	}
 
 	@Override
+	public Page<ExamArrange> findByExam(Pageable pageable, int examId) {
+		Exam exam = examService.get(examId);
+		return examArrangeDao.findByExam(pageable,exam);
+	}
+
+	@Override
+	public Page<ExamArrange> findByGrade(Pageable pageable, int gradeId) {
+		Grade grade = gradeService.get(gradeId);
+		return examArrangeDao.findByGrade(pageable,grade);
+	}
+
+	@Override
+	public Page<ExamArrange> findAll(Pageable pageable) {
+		return examArrangeDao.findAll(pageable);
+	}
+
+	@Override
 	public void add(int[] subjects) {
 		if (subjects.length>0){
 			for (int subjectId:

@@ -21,6 +21,7 @@ import com.zzy.pony.exam.model.ExamRoomAllocate;
 import com.zzy.pony.exam.model.Examinee;
 import com.zzy.pony.exam.service.ExamArrangeService;
 import com.zzy.pony.exam.vo.ExamArrangeVo;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 
 @Controller
@@ -38,14 +39,24 @@ public class ExamArrangeController {
 		return "examAdmin/examArrange/main";
 	}
 	@RequestMapping(value="listPage",method=RequestMethod.GET)
+    @ResponseBody
 	public Page<ExamArrangeVo> listPage(@RequestParam(value="currentPage",defaultValue="0") int currentPage,
 			@RequestParam(value="pageSize",defaultValue="20") int pageSize,
-			@RequestParam(value="examId") int examId,
-			@RequestParam(value="gradeId") int gradeId
+			@RequestParam(value="examId") String examId,
+			@RequestParam(value="gradeId") String gradeId
 			){
 		Pageable pageable=new PageRequest(currentPage, pageSize,Direction.ASC,"arrangeId");
 		Page<ExamArrangeVo> result = null;
-		Page<ExamArrange> examArrangePage = examArrangeService.findByExamAndGrade(pageable,examId,gradeId);
+        Page<ExamArrange> examArrangePage = null;
+		if (!("".equalsIgnoreCase(examId)||"".equalsIgnoreCase(gradeId))){
+            examArrangePage  = examArrangeService.findByExamAndGrade(pageable,Integer.valueOf(examId),Integer.valueOf(gradeId));
+        }else if (!"".equalsIgnoreCase(examId)&&"".equalsIgnoreCase(gradeId)){
+            examArrangePage  = examArrangeService.findByExam(pageable,Integer.valueOf(examId));
+        }else if ("".equalsIgnoreCase(examId)&&!"".equalsIgnoreCase(gradeId)){
+            examArrangePage  = examArrangeService.findByGrade(pageable,Integer.valueOf(gradeId));
+        }else{
+            examArrangePage  = examArrangeService.findAll(pageable);
+        }
 		List<ExamArrangeVo> content = new ArrayList<ExamArrangeVo>();
 		for (ExamArrange ea : examArrangePage) {
 			ExamArrangeVo vo = new ExamArrangeVo();
@@ -53,8 +64,10 @@ public class ExamArrangeController {
 			vo.setEndTime(ea.getEndTime());
 			vo.setExamDate(ea.getExamDate());
 			vo.setStartTime(ea.getStartTime());
-			vo.setExamId(ea.getExam().getExamId());
-			vo.setExamName(ea.getExam().getName());
+			if (ea.getExam()!= null){
+                vo.setExamId(ea.getExam().getExamId());
+                vo.setExamName(ea.getExam().getName());
+            }
 			if (ea.getExaminees()!= null && !ea.getExaminees().isEmpty()) {
 				List<Integer> examineeIds = new ArrayList<Integer>();
 				List<String> examineeNames = new ArrayList<String>();
@@ -75,11 +88,17 @@ public class ExamArrangeController {
 				vo.setExamRoomIds(examRoomIds);
 				vo.setExamRoomNames(examRoomNames);
 			}
-			vo.setGradeId(ea.getGrade().getGradeId());
-			vo.setGradeName(ea.getGrade().getName());
-			vo.setGroupName(ea.getGroup().getName());
-			vo.setSubjectId(ea.getSubject().getSubjectId());
-			vo.setSubjectName(ea.getSubject().getName());
+			if (ea.getGrade()!= null){
+                vo.setGradeId(ea.getGrade().getGradeId());
+                vo.setGradeName(ea.getGrade().getName());
+            }
+            if (ea.getGroup()!=null){
+                vo.setGroupName(ea.getGroup().getName());
+            }
+            if (ea.getSubject()!=null){
+                vo.setSubjectId(ea.getSubject().getSubjectId());
+                vo.setSubjectName(ea.getSubject().getName());
+            }
 			content.add(vo);
 			
 		}
@@ -89,6 +108,7 @@ public class ExamArrangeController {
 	}
 
 	@RequestMapping(value="add",method=RequestMethod.GET)
+	@ResponseBody
 	public void add(@RequestParam(value="subjects[]") int[] subjects){
 			examArrangeService.add(subjects);
 	}

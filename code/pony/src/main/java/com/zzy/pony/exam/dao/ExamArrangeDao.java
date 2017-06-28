@@ -10,4 +10,8 @@ import com.zzy.pony.model.Grade;
 
 public interface ExamArrangeDao extends JpaRepository<ExamArrange, Integer> {
 	Page<ExamArrange> findByExamAndGrade(Pageable pageable,Exam exam,Grade grade);
+	Page<ExamArrange> findByExam(Pageable pageable,Exam exam);
+	Page<ExamArrange> findByGrade(Pageable pageable,Grade grade);
+
+
 }
