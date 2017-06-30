@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -17,6 +19,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.crypto.hash.Sha1Hash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,7 +84,7 @@ public class ShiroDbRealm extends AuthorizingRealm {
 					shUser.classIds=classIds;
 				}
 			}
-			return new SimpleAuthenticationInfo(shUser, vo.getPsw(), getName());
+			return new SimpleAuthenticationInfo(shUser, vo.getPsw(), ByteSource.Util.bytes(vo.getLoginName()), getName());
 		}else{
 			return null;
 		}
@@ -91,17 +94,20 @@ public class ShiroDbRealm extends AuthorizingRealm {
 	* 设定Password校验的Hash算法与迭代次数. 
 	* 
 	*/ 
-	//@PostConstruct 
-	public void initCredentialsMatcher(Boolean isAutoLogin) {
-		if (isAutoLogin == true) {// 普通校验
-			setCredentialsMatcher(new SimpleCredentialsMatcher());
-		} else {// sha1对密码加密后校验
-			// HashedCredentialsMatcher matcher = new
-			// HashedCredentialsMatcher(Md5Hash.ALGORITHM_NAME);
-			HashedCredentialsMatcher matcher = new HashedCredentialsMatcher(Sha1Hash.ALGORITHM_NAME);
+	@PostConstruct 
+	public void initCredentialsMatcher() {
+//		if (isAutoLogin == true) {// 普通校验
+//			setCredentialsMatcher(new SimpleCredentialsMatcher());
+//		} else {// sha1对密码加密后校验
+//			// HashedCredentialsMatcher matcher = new
+//			// HashedCredentialsMatcher(Md5Hash.ALGORITHM_NAME);
+//			HashedCredentialsMatcher matcher = new HashedCredentialsMatcher(Sha1Hash.ALGORITHM_NAME);
+//
+//			setCredentialsMatcher(matcher);
+//		}
+		HashedCredentialsMatcher matcher = new HashedCredentialsMatcher(Sha1Hash.ALGORITHM_NAME);
 
-			setCredentialsMatcher(matcher);
-		}
+		setCredentialsMatcher(matcher);
 	}
 
 	/**
@@ -128,6 +134,7 @@ public class ShiroDbRealm extends AuthorizingRealm {
 		for(Role role: roles){
 			info.addRole(role.getRoleCode());
 		}
+		info.addStringPermissions(userService.findResourceNames(su.getId()));
 		if(Constants.USER_TYPE_STUDENT.equals(su.getUserType())){
 			info.addRole("student");//学生
 		}else if(Constants.USER_TYPE_TEACHER.equals(su.getUserType())){

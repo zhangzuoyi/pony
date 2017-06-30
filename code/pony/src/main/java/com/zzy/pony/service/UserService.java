@@ -2,6 +2,7 @@ package com.zzy.pony.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,5 +30,11 @@ public interface UserService {
 	void delete(int	userId);
 	Boolean isExist(int userId);
 	Page<User> findAll(Pageable pageable);
+	/**
+	 * 获取用户授权的资源Key
+	 * @param userId
+	 * @return
+	 */
+	Set<String> findResourceNames(Integer userId);
 
 }

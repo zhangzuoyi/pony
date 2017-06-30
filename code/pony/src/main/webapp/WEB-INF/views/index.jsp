@@ -29,29 +29,45 @@
     <!-- begin of sidebar -->
 	<div class="my-sidebar" data-options="region:'west',split:true,border:true,title:'导航菜单'"> 
     	<div class="easyui-accordion" data-options="border:false,fit:true"> 
-        	<shiro:hasRole name="admin">
+        	<shiro:hasPermission name="sys_admin">
         	<div title="系统管理" data-options="iconCls:'icon-application-cascade'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">
+    				<shiro:hasPermission name="schoolyear_admin">
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/schoolYear/main/' />" iframe="1">学年管理</a></li>
+                    </shiro:hasPermission>
+                    <shiro:hasPermission name="grade_admin">
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/grade/main/' />" iframe="1">年级管理</a></li>
+                    </shiro:hasPermission>
+                    <shiro:hasPermission name="class_admin">
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/schoolClass/main/' />" iframe="1">班级管理</a></li>
+                    </shiro:hasPermission>
+                    <shiro:hasPermission name="subject_admin">
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/subject/main/' />" iframe="1">科目管理</a></li>
+                    </shiro:hasPermission>
+                    <shiro:hasPermission name="teacher_admin">
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/teacherAdmin/main/' />" iframe="1">教师管理</a></li>
+                    </shiro:hasPermission>
+                    <shiro:hasPermission name="dict_admin">
                     <%-- <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/teacherSubject/main/' />" iframe="1">教师任课管理</a></li> --%>
-                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/exam/main/' />" iframe="1">考试管理</a></li>
-                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examResult/main/' />" iframe="1">成绩管理</a></li>
-                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examResultRank/main/' />" iframe="1">成绩排名管理</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/commonDict/main/' />" iframe="1">通用字典管理</a></li>
+                    </shiro:hasPermission>
+                    <shiro:hasPermission name="resource_admin">
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/resourceAdmin/main/' />" iframe="1">资源管理</a></li>
+                    </shiro:hasPermission>
+                    <shiro:hasPermission name="role_admin">
                  	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/roleAdmin/main/' />" iframe="1">角色管理</a></li>
+                 	</shiro:hasPermission>
+                    <shiro:hasPermission name="user_admin">
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/user/main/' />" iframe="1">用户管理</a></li>
+                    </shiro:hasPermission>
                     
                 </ul>
             </div>
-            </shiro:hasRole>
-            <shiro:hasRole name="admin">
+            </shiro:hasPermission>
+            <shiro:hasPermission name="score_analysis">
         	<div title="成绩分析" data-options="iconCls:'icon-application-cascade'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">
+    				<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examResultRank/main/' />" iframe="1">成绩排名管理</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/studentComprehensiveTrack/main/' />" iframe="1">学生综合成绩追踪</a></li> 
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/studentSingleTrack/main/' />" iframe="1">学生单科成绩追踪</a></li>                          
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/classComprehensiveCompare/main/' />" iframe="1">班级综合成绩对比</a></li>  
@@ -59,8 +75,8 @@
                                              
                 </ul>
             </div>
-            </shiro:hasRole>
-            <shiro:hasRole name="admin">
+            </shiro:hasPermission>
+            <shiro:hasPermission name="student_status">
         	<div title="学籍管理" data-options="iconCls:'icon-application-cascade'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">
     				<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/studentAdmin/entrance/' />" iframe="1">入学管理</a></li>
@@ -71,57 +87,86 @@
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/studentCard/main/' />" iframe="1">学籍卡</a></li>
                 </ul>
             </div>
-            </shiro:hasRole>
-            <shiro:hasRole name="admin">
+            </shiro:hasPermission>
+            <shiro:hasPermission name="exam_admin">
         	<div title="考试管理" data-options="iconCls:'icon-application-cascade'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">
+    				<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/exam/main/' />" iframe="1">考试管理</a></li>
     				<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examAdmin/examArrange/main/' />" iframe="1">考试安排</a></li>
     				<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examAdmin/examRoom/main/' />" iframe="1">考场设置</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examAdmin/examinee/main/' />" iframe="1">考生设置</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examAdmin/examineeRoomArrange/main/' />" iframe="1">考生考场安排</a></li>
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examResult/main/' />" iframe="1">成绩管理</a></li>
                 </ul>
             </div>
-            </shiro:hasRole>
-            <shiro:hasRole name="admin">
+            </shiro:hasPermission>
+            <shiro:hasPermission name="lesson_arrange">
             <div title="排课管理" data-options="iconCls:'icon-application-form-edit'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">
+                    <shiro:hasPermission name="lesson_period">
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/lessonPeriod/main/' />" iframe="1">上课时段管理</a></li>
+                	</shiro:hasPermission>
+                    <shiro:hasPermission name="teacher_lesson_arrange">
                     <%-- <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/lessonArrange/main/' />" iframe="1">课程安排</a></li> --%>
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/teacherLessonArrange/main/' />" iframe="1">老师任课安排</a></li>
+                	</shiro:hasPermission>
+                    <shiro:hasPermission name="teacher_lesson_list">
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/teacherLesson/main/' />" iframe="1">老师任课列表</a></li>
+                	</shiro:hasPermission>
+                    <shiro:hasPermission name="week_lesson_admin">
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/weekLessonAdmin/main/' />" iframe="1">星期上课设置</a></li>
-                	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/gradeNoCourse/main/' />" iframe="1">年级不排课设置</a></li>               	
+                	</shiro:hasPermission>
+                    <shiro:hasPermission name="grade_no_course">
+                	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/gradeNoCourse/main/' />" iframe="1">年级不排课设置</a></li>  
+                	</shiro:hasPermission>
+                    <shiro:hasPermission name="class_no_course">             	
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/classNoCourse/main/' />" iframe="1">班级不排课设置</a></li>
+                	</shiro:hasPermission>
+                    <shiro:hasPermission name="teacher_no_course">
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/teacherNoCourse/main/' />" iframe="1">老师不排课设置</a></li>
+                	</shiro:hasPermission>
+                    <shiro:hasPermission name="subject_no_course">
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/subjectNoCourse/main/' />" iframe="1">科目不排课设置</a></li>
+                	</shiro:hasPermission>
+                    <shiro:hasPermission name="arrange_combine">
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/arrangeCombine/main/' />" iframe="1">合班设置</a></li>
-                	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/arrangeRotation/main/' />" iframe="1">走班设置</a></li>              	
+                	</shiro:hasPermission>
+                    <shiro:hasPermission name="arrange_rotation">
+                	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/arrangeRotation/main/' />" iframe="1">走班设置</a></li>        
+                	</shiro:hasPermission>
+                    <shiro:hasPermission name="prelesson_arrange">      	
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/preLessonArrange/main/' />" iframe="1">预排</a></li>
+                	</shiro:hasPermission>
+                    <shiro:hasPermission name="auto_lesson_arrange">
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/autoLessonArrange/main/' />" iframe="1">自动排课</a></li>
+                	</shiro:hasPermission>
+                    <shiro:hasPermission name="relesson_arrange">
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/reLessonArrange/main/' />" iframe="1">调课</a></li>
+                	</shiro:hasPermission>
+                    <shiro:hasPermission name="teacher_course">
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/teacherCourse/main/' />" iframe="1">教师课表</a></li>
-                	
+                	</shiro:hasPermission>
                 	
                 </ul>
             </div>
-            </shiro:hasRole>
-            <shiro:hasRole name="admin">
+            </shiro:hasPermission>
+            <shiro:hasPermission name="lesson_select">
             <div title="选课管理" data-options="iconCls:'icon-application-form-edit'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/lessonSelectArrange/main/' />" iframe="1">可选课程设置</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/lessonSelect/main/' />" iframe="1">学生选课</a></li>
                 </ul>
             </div>
-            </shiro:hasRole>
-            <shiro:hasRole name="admin">
+            </shiro:hasPermission>
+            <shiro:hasPermission name="attendance">
             <div title="考勤管理" data-options="iconCls:'icon-application-form-edit'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/attendance/attendance/main/' />" iframe="1">考勤打卡</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/attendance/attendance/my/' />" iframe="1">考勤记录</a></li>
                 </ul>
             </div>
-            </shiro:hasRole>
-            <shiro:hasRole name="admin">
+            </shiro:hasPermission>
+            <shiro:hasPermission name="message">
             <div title="消息管理" data-options="iconCls:'icon-application-form-edit'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/userGroup/main/' />" iframe="1">用户组</a></li>
@@ -131,8 +176,8 @@
                 
                 </ul>
             </div>
-            </shiro:hasRole>
-            <shiro:hasRole name="admin">
+            </shiro:hasPermission>
+            <shiro:hasPermission name="property">
             <div title="资产管理" data-options="iconCls:'icon-application-form-edit'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/property/propertyType/main' />" iframe="1">资产分类</a></li>                   
@@ -145,9 +190,9 @@
                 
                 </ul>
             </div>
-            </shiro:hasRole>
+            </shiro:hasPermission>
             
-            <shiro:hasRole name="teacher">
+            <shiro:hasPermission name="teacher_page">
             <div title="任课管理" data-options="iconCls:'icon-application-form-edit'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/teacher/courses/' />" iframe="1">我的任课</a></li>
@@ -155,15 +200,15 @@
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/teacher/examresult/' />" iframe="1">成绩管理</a></li>              
                 </ul>
             </div>
-            </shiro:hasRole>
-            <shiro:hasRole name="student">
+            </shiro:hasPermission>
+            <shiro:hasPermission name="student_page">
             <div title="学生菜单" data-options="iconCls:'icon-application-form-edit'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">
                 	<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/student/chooseCourseMain/' />" iframe="1">选课</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/student/myresultsMain/' />" iframe="1">我的成绩</a></li>
                 </ul>
             </div>
-            </shiro:hasRole>
+            </shiro:hasPermission>
         </div>
     </div>	
     <!-- end of sidebar -->    

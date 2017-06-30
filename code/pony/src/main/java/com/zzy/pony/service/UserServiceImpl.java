@@ -3,10 +3,10 @@ package com.zzy.pony.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
-
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.dao.UserDao;
 import com.zzy.pony.mapper.UserMapper;
+import com.zzy.pony.model.Resource;
 import com.zzy.pony.model.Role;
 import com.zzy.pony.model.Student;
 import com.zzy.pony.model.Teacher;
@@ -210,6 +211,18 @@ public class UserServiceImpl implements UserService {
 	public Page<User> findAll(Pageable pageable) {
 		// TODO Auto-generated method stub
 		return dao.findAll(pageable);
+	}
+
+	@Override
+	public Set<String> findResourceNames(Integer userId) {
+		List<Role> roles=dao.findRoles(userId);
+		Set<String> result=new HashSet<String>();
+		for(Role role:roles){
+			for(Resource res: role.getResources()){
+				result.add(res.getResKey());
+			}
+		}
+		return result;
 	}
 	
 	
