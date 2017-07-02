@@ -1,17 +1,7 @@
 package com.zzy.pony.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
 
 import javax.persistence.Cache;
 
@@ -229,6 +219,7 @@ public class GAUtil {
 	* @date  2017年5月3日 下午2:14:46
 	* @add 增加支持走课   其中走课key  R+%05d 其中为rotationId
 	* @add 增加支持合课   其中合课key  C+%05d 其中为combineId
+     * @add 增加走课与合课是相同的逻辑
 	*/
 	public static Map<String, Map<String, String>> getClassTeacherSubjectweekArrange(Map<String,String> map,Map<String, Integer> rotationMap,Map<String, Integer> combineMap){
 		Map<String, Map<String, String>> result = new HashMap<String, Map<String,String>>();
@@ -248,7 +239,8 @@ public class GAUtil {
 				}													
 			}else{
 				Map<String, String> innerMap = new HashMap<String, String>();
-				
+
+
 				if (rotationMap.get(key)!=null) {
 					innerMap.put("R"+String.format("%05d",rotationMap.get(key) ), map.get(key));
 				}else if (combineMap.get(key)!= null) {
@@ -351,10 +343,30 @@ public class GAUtil {
 				return true;
 			}									
 		}
+		//@add 新增重要的优先排非常重要未排完的，然后排重要的
 		if (!key.startsWith("C")&&!key.startsWith("R")&& subjectImportanceMap.get(key.substring(4)) != null &&Constants.SUBJECT_IMPORTANT==subjectImportanceMap.get(key.substring(4))) {
 			boolean flag = false ;
 			boolean flag2 = false ;
+			boolean flag3 = false;
 			int count = 0;
+			int countSig = 0;
+
+			for (Integer seqInt : significantSeq) {
+				if (alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt+1))) {
+					countSig ++;
+				}
+				if (classNumber == ((5-week)*seqLength+(seqLength-seqInt+1))) {
+					flag3 = true;
+				}
+			}
+			if (countSig!=significantSeq.size()){
+				if (flag3){
+					return true;
+				}else{
+					return false;
+				}
+			}
+
 			for (Integer seqInt : importantSeq) {
 				if (alreadyClassNumber.isEmpty() &&  classNumber ==(5-week)*seqLength+(seqLength-seqInt+1))  {
 					flag = true;
@@ -414,7 +426,19 @@ public class GAUtil {
 	public static boolean isExistClass(Map<Integer, String> randomMap,int classNumber,String key,int seqLength ){
 		int ceil = 0;
 		int floor = 0;
-		
+		//@add 增加如果排6节课，那么第六节课则不启用该约束条件
+          Collection<String> collection =  randomMap.values();
+          Iterator<String> iterator =  collection.iterator();
+          int count = 0 ;
+          while (iterator.hasNext()){
+            if (iterator.next().equalsIgnoreCase(key)){
+                count++;
+            }
+          }
+          if (count > 5 ){
+              return false;
+          }
+
 		if (classNumber%seqLength ==0 ) {
 			ceil = classNumber;
 			floor = classNumber-seqLength;
@@ -823,12 +847,21 @@ public class GAUtil {
 			
 			result.put(teacherId+classId+subjectId, vo.getCombineId());								
 		}
-		
-		
-		
 		return result;
-		
-		
+	}
+
+	public static Map<String,Integer> getArrangeSpecial(Map<String,Integer> arrangeCombineMap,Map<String,Integer> arrangeRotationMap){
+		Map<String,Integer> result= new HashMap<String, Integer>();
+        for (String key:
+             arrangeRotationMap.keySet()) {
+            if (arrangeCombineMap.containsKey(key)){
+                result.put(key,arrangeRotationMap.get(key));
+            }
+        }
+
+
+		return result;
+
 	}
 	
 	public static boolean isInCombineMap(Map<String, Set<Integer>> combineMap,int classNumber){

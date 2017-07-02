@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import com.zzy.pony.dao.ArrangeCombineDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,11 @@ public class ArrangeRotationServiceImpl implements ArrangeRotationService {
 
 	@Autowired
 	private ArrangeRotationDao arrangeRotationDao;
+	@Autowired
+	private ArrangeCombineDao arrangeCombineDao;
+
+
+
 	
 	@Override
 	public List<CombineAndRotationVo> findAllVo() {
@@ -47,6 +53,8 @@ public class ArrangeRotationServiceImpl implements ArrangeRotationService {
 		
 		return result;
 	}
+
+
 
 	@Override
 	public ArrangeRotation get(int id) {
