@@ -850,6 +850,43 @@ public class GAUtil {
 		return result;
 	}
 
+	
+	
+	/*** 
+	* <p>Description: </p>
+	* @author  WANGCHAO262
+	* @date  2017年7月3日 下午5:57:17
+	* 
+	* 走班
+44  17/18    R00001
+45  17/5     R00003
+46  17/6
+
+合班 
+44--45  17
+
+走班资源池  rotationId
+合班资源池  combineId
+走班的合班池 rotationId<-->rotationId<-->rotationId
+
+第一种:走班按照走班表的设置R资源池
+第二种:
+合班的
+情况1:如果均未出现在走班中的，那么使用C资源池
+情况2:如果出现部分出现在走班中的，例如44的17和另一个不在走班中的17(teacherId+subjetcId)合
+使用走班的合班资源池，形式为rotationId<-->teacherId+subjectId
+情况3:如果出现全部在走班中的，使用走班的合班资源池rotationId<-->rotationId
+
+如果合班出现3个以上的情况
+情况1 一样
+情况2 形式为rotationId<-->rotaionId<-->teacherId+subjectId
+情况3 形式为rotationId<-->rotationId<-->rotationId
+
+走班的合班资源池格式为:  key: rotationId(teacherId+subjectId)  value:combineId
+在排课时记录combineId的排课记录
+	* 
+	* 
+	*/
 	public static Map<String,Integer> getArrangeSpecial(Map<String,Integer> arrangeCombineMap,Map<String,Integer> arrangeRotationMap){
 		Map<String,Integer> result= new HashMap<String, Integer>();
         for (String key:
