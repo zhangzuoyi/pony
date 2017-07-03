@@ -309,7 +309,7 @@ public class TeacherLessonController {
                             dataCell.setCellValue(obj[j].toString());                       //设置单元格的值
                     }
                     else {
-                        cell.setCellValue("");
+                    	dataCell.setCellValue("");
                     }
                     cell.setCellStyle(style);                                   //设置单元格样式
                 }

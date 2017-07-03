@@ -108,6 +108,7 @@ width:200px;
               </el-row>
             </div>
             <el-table
+            		ref="multipleTable"
                     :data="tableData"
                     border
                     style="width: 100%"
@@ -369,9 +370,9 @@ var app = new Vue({
             onSubmitSubject:function () {
                 this.$http.get(this.addUrl,{params:{subjects:this.checkedSubjects}}).then(
                     function(response){
-                          this.$message({type:"info",message:"新增成功"});
+                          this.$message({type:"info",message:"新增成功"});                        
+                          this.getExamArranges();                       
                           this.checkedSubjects = [];
-                          this.getExamArranges();
                           this.subjectDialogFormVisible = false;
                           this.isIndeterminate =true;
 
