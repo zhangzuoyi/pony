@@ -149,8 +149,8 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		List<TeacherNoCourseVo> teacherNoCourseVos = teacherNoCourseService.findCurrentAllVo();
 		List<SubjectNoCourseVo> subjectNoCourseVos = subjectNoCourseService.findCurrentAllVo();
 		List<GradeNoCourseVo> gradeNoCourseVos = gradeNoCourseService.findCurrentAllVo();
-		List<CombineAndRotationVo> combineAndRotationVos = arrangeRotationService.findAllVo();
-		List<CombineAndRotationVo> combineAndRotationVos2 = arrangeCombineService.findAllVo();
+		List<CombineAndRotationVo> combineAndRotationVos = arrangeRotationService.findCurrentAllVo();
+		List<CombineAndRotationVo> combineAndRotationVos2 = arrangeCombineService.findCurrentAllVo();
 		Map<String, Set<Integer>> combineMap = new HashMap<String, Set<Integer>>();
 		Map<String, List<Integer>> alreadyTeacherSeqMap = new HashMap<String, List<Integer>>();
 		DNA.getInstance().setClassIdCandidate(classIdCandidate);
@@ -174,7 +174,9 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		DNA.getInstance().setCommonSeq(commonSeq);
 		DNA.getInstance().setSubjectImportanceMap(subjectImportanceMap);
 		DNA.getInstance().setArrangeRotationMap(GAUtil.getArrangeRotation(combineAndRotationVos));
-		DNA.getInstance().setArrangeCombineMap(GAUtil.getArrangeCombine(combineAndRotationVos2));
+		//DNA.getInstance().setArrangeCombineMap(GAUtil.getArrangeCombine(combineAndRotationVos2));
+		DNA.getInstance().setArrangeCombineMap(arrangeCombineService.getCombineMap());
+		DNA.getInstance().setSpecialMap(arrangeCombineService.getSpecialMap());
 		DNA.getInstance().setCombineMap(combineMap);
 		DNA.getInstance().setAlreadyTeacherSeqMap(alreadyTeacherSeqMap);
 		DNA.getInstance().setTeacherClassMap(GAUtil.getTeacherClassMap(vos));

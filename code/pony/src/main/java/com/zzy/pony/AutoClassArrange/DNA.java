@@ -53,6 +53,7 @@ public class DNA {
 	private Map<String, Integer> subjectImportanceMap;
 	private Map<String, Integer> arrangeRotationMap;
 	private Map<String, Integer> arrangeCombineMap;
+	private Map<String,Integer> specialMap;
 	private Map<String, Set<Integer>> combineMap;//合班资源池  新的个体需要初始化
 	private Map<String, List<Integer>> alreadyTeacherSeqMap;//老师已上课列表，解决同一时间老师不能上两节课的问题(即ruleOne)    新的个体需要初始化
 	private Map<String, List<String>> teacherClassMap;//老师与任教班级关系
@@ -587,23 +588,12 @@ public class DNA {
 	public void setTeacherClassMap(Map<String, List<String>> teacherClassMap) {
 		this.teacherClassMap = teacherClassMap;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
-	
+	public Map<String, Integer> getSpecialMap() {
+		return specialMap;
+	}
+
+	public void setSpecialMap(Map<String, Integer> specialMap) {
+		this.specialMap = specialMap;
+	}
 }

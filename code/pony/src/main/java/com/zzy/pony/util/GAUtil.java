@@ -219,7 +219,7 @@ public class GAUtil {
 	* @date  2017年5月3日 下午2:14:46
 	* @add 增加支持走课   其中走课key  R+%05d 其中为rotationId
 	* @add 增加支持合课   其中合课key  C+%05d 其中为combineId
-     * @add 增加走课与合课是相同的逻辑
+     * @add 增加走课与合课是相同的逻辑  将所有R的先排，C的只排完全不出现在R中的
 	*/
 	public static Map<String, Map<String, String>> getClassTeacherSubjectweekArrange(Map<String,String> map,Map<String, Integer> rotationMap,Map<String, Integer> combineMap){
 		Map<String, Map<String, String>> result = new HashMap<String, Map<String,String>>();
@@ -239,8 +239,6 @@ public class GAUtil {
 				}													
 			}else{
 				Map<String, String> innerMap = new HashMap<String, String>();
-
-
 				if (rotationMap.get(key)!=null) {
 					innerMap.put("R"+String.format("%05d",rotationMap.get(key) ), map.get(key));
 				}else if (combineMap.get(key)!= null) {

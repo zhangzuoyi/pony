@@ -9,6 +9,8 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import com.zzy.pony.dao.ArrangeCombineDao;
+import com.zzy.pony.model.SchoolYear;
+import com.zzy.pony.model.Term;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,15 +30,21 @@ public class ArrangeRotationServiceImpl implements ArrangeRotationService {
 	private ArrangeRotationDao arrangeRotationDao;
 	@Autowired
 	private ArrangeCombineDao arrangeCombineDao;
+	@Autowired
+	private SchoolYearService schoolYearService;
+	@Autowired
+	private TermService termService;
 
 
 
 	
 	@Override
-	public List<CombineAndRotationVo> findAllVo() {
+	public List<CombineAndRotationVo> findCurrentAllVo() {
 		// TODO Auto-generated method stub
 		List<CombineAndRotationVo> result = new ArrayList<CombineAndRotationVo>();
-		List<ArrangeRotation> arrangeRotations = arrangeRotationDao.findAll();
+		SchoolYear schoolYear = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();
+		List<ArrangeRotation> arrangeRotations = arrangeRotationDao.findBySchoolYearAndTerm(schoolYear,term);
 		for (ArrangeRotation arrangeRotation : arrangeRotations) {
 			for (TeacherSubject teacherSubject : arrangeRotation.getTeacherSubjects()) {
 				CombineAndRotationVo vo =new CombineAndRotationVo();
