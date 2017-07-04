@@ -885,6 +885,7 @@ public class GAUtil {
 	* 
 	* 
 	*/
+	//弃用
 	public static Map<String,Integer> getArrangeSpecial(Map<String,Integer> arrangeCombineMap,Map<String,Integer> arrangeRotationMap){
 		Map<String,Integer> result= new HashMap<String, Integer>();
         for (String key:
@@ -893,7 +894,6 @@ public class GAUtil {
                 result.put(key,arrangeRotationMap.get(key));
             }
         }
-
 
 		return result;
 
@@ -976,23 +976,37 @@ public class GAUtil {
 	* @author  WANGCHAO262
 	* @date  2017年6月22日 下午2:07:08
 	*/
-	public static boolean isAlreadyComplete(int classNum,Set<Integer> alreadyClassNum,int maxClassNum,Map<String, List<Integer>> alreadyTeacherSeqMap,Set<String> remainClassSet,Map<String, Integer> remainClassMap,int seqLength,int teacherIdLength){
+	public static boolean isAlreadyComplete(int classNum,Set<Integer> alreadyClassNum,int maxClassNum,String teacherKey,Map<String, List<Integer>> alreadyTeacherSeqMap,Set<String> remainClassSet,Map<String, Integer> remainClassMap,int seqLength,int teacherIdLength){
 		
 		
 		Map<String, Set<Integer>> teacherRemainClassMap = new HashMap<String, Set<Integer>>();
 		int  count = 0;
+		int  remainClassCount = 0;
 		boolean isFirst = false;//是否第一次进入
 		Set<Integer> remainClassNumFinal = new HashSet<Integer>();
 
 		Set<Integer> sameSet = new HashSet<Integer>();
+		Set<Integer> sameSetInit = new HashSet<Integer>();
+
 		for (int i = 1; i <= maxClassNum; i++) {
 			remainClassNumFinal.add(i);
 		}	
 		sameSet.addAll(remainClassNumFinal);
 		sameSet.removeAll(alreadyClassNum);
 		sameSet.remove(classNum);
+		sameSetInit.addAll(remainClassNumFinal);
+		sameSetInit.removeAll(alreadyClassNum);
+		sameSetInit.remove(classNum);
+		
 		if (!alreadyTeacherSeqMap.isEmpty() &&  alreadyClassNum.size() !=(maxClassNum-1) && !remainClassSet.isEmpty() ) {
 				for (String teacherId : remainClassSet) {
+					//记录剩余的应排课程的总数
+					for (String key : remainClassMap.keySet()) {
+						if (key.startsWith(teacherId)) {
+							remainClassCount += remainClassMap.get(key);
+						}
+					}
+					 					
 					if(alreadyTeacherSeqMap.get(teacherId) != null){
 						count ++;
 						isFirst = true;
@@ -1019,8 +1033,16 @@ public class GAUtil {
 						}																														
 					}														
 				}	
-				//当剩余课程相同的限制大未排课的数量
-				if (alreadyClassNum.size() > maxClassNum/2 && isFirst && sameSet.size() > (remainClassSet.size()-count) ) {
+				int i=0;
+				for (Integer integer : sameSet) {
+					if (alreadyTeacherSeqMap.get(teacherKey.substring(0, teacherIdLength))!= null && !alreadyTeacherSeqMap.get(teacherKey.substring(0, teacherIdLength)).contains(integer)) {
+						i++;
+					}
+				}
+				
+				
+				//当剩余课程相同的限制大未排课的数量(针对原本未达到满课的增加剩余课程数小于剩余需要排课两倍的逻辑)
+				if (alreadyClassNum.size() > maxClassNum/2 && isFirst && sameSetInit.size()<2*remainClassCount && (sameSet.size()-i) > (remainClassSet.size()-count)&& !sameSet.contains(classNum) ) {
 					return true;
 				}
 		}				
@@ -1050,7 +1072,8 @@ public class GAUtil {
 			/*if (string.substring(0, teacherIdLength).equalsIgnoreCase(teacherId) && (weekSet.size() < remainClassMap.get(string) || (remainClassMap.get(string) != 1 && (countOne+countTwo) == remainClassMap.size()&& countTwo >1 && remainClassNum.size() < 2*remainClassMap.get(string)))) {
 				return true;
 			}*/
-			if (string.substring(0, teacherIdLength).equalsIgnoreCase(teacherId) && weekSet.size() < remainClassMap.get(string) ) {
+			//增加<=5
+			if (remainClassMap.get(string) <= 5 &&string.substring(0, teacherIdLength).equalsIgnoreCase(teacherId) && weekSet.size() < remainClassMap.get(string) ) {
 			return true;
 			}
 			for (String key : teacherRemainClassMap.keySet()) {
@@ -1058,11 +1081,60 @@ public class GAUtil {
 					System.out.println(teacherId+"-------------"+key);
 					return true;
 				}
-			}
-			
-			
-			
-		}				
+			}								
+		}
+		int countRemainTwo = 0;
+		Set<Integer> remainTwoSet = new HashSet<Integer>();
+		if (teacherRemainClassMap.size()>1) {
+			for (String first : teacherRemainClassMap.keySet()) {														
+				//记录剩余的应排课程的总数
+				int countRemainFirst = 0;
+				for (String key : remainClassMap.keySet()) {
+					if (key.startsWith(first)) {
+						countRemainFirst += remainClassMap.get(key);
+					}
+					
+					if(key.startsWith(first)&&remainClassMap.get(key)==2 ){
+						countRemainTwo++;
+						remainTwoSet.addAll(teacherRemainClassMap.get(first));
+					}
+					
+				}				
+				for (String second : teacherRemainClassMap.keySet()) {					
+					if (!second.equalsIgnoreCase(first)) {
+						int countRemainSecond = 0;
+						for (String key : remainClassMap.keySet()) {
+							if (key.startsWith(second)) {
+								countRemainSecond += remainClassMap.get(key);
+							}								
+						}																			
+						Set<Integer> weekSetCombine = new HashSet<Integer>();
+						Set<Integer> weekSetAll = new HashSet<Integer>();						
+						weekSetAll.addAll(teacherRemainClassMap.get(first));
+						weekSetAll.addAll(teacherRemainClassMap.get(second));
+						for (Integer integer : weekSetAll) {
+							 int i =  getWeek(integer,seqLength);
+							 weekSetCombine.add(i);			 
+						}
+						int x = Math.abs(teacherRemainClassMap.get(first).size()-teacherRemainClassMap.get(second).size());
+						int y = Math.max(countRemainFirst, countRemainSecond);	
+						
+						
+						
+						if(countRemainFirst+countRemainSecond<=5&&(countRemainFirst+countRemainSecond>2)&&weekSetCombine.size()<countRemainFirst+countRemainSecond&& weekSetAll.size()<countRemainFirst+countRemainSecond&& x<y){
+							return true;
+						}
+					}									
+				}
+				
+			if (remainTwoSet.size()<2*countRemainTwo) {
+				return true;
+			}					
+			}		
+		}
+		
+		
+		
 		return false;
 	}
 	

@@ -128,7 +128,7 @@ public class ArrangeCombineServiceImpl implements ArrangeCombineService {
 						 ac.getTeacherSubjects()) {
 						List<TeacherSubject> list =  new ArrayList<TeacherSubject>();
 						list.add(teacherSubject);
-						List<ArrangeRotation> arrangeRotationList = arrangeRotationDao.findByteacherSubjects(teacherSubjects);
+						List<ArrangeRotation> arrangeRotationList = arrangeRotationDao.findByteacherSubjects(list);
 						if (arrangeRotationList!= null && !arrangeRotationList.isEmpty()){
 							String rotationId = "R"+String.format("%05d",arrangeRotationList.get(0).getRotationId());
 							result.put(rotationId,ac.getCombineId());
