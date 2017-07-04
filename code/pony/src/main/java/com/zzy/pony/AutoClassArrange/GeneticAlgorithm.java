@@ -221,7 +221,7 @@ public  class GeneticAlgorithm {
 	}
 	
 	/**
-	 * @param chro
+	 * @param
 	 * @Description: 设置染色体得分
 	 * 去掉规则2(老师上课课时数)，该规则在编码中已经实现
 	 */
@@ -245,8 +245,8 @@ public  class GeneticAlgorithm {
 		//chromosome.setScore(scoreRuleOne);
 		//System.out.println("---------------scoreRuleOne:"+scoreRuleOne);
 		//System.out.println("--------------scoreRuleSeven:"+scoreRuleSeven);
-		chromosome.setScore(scoreRuleOne+scoreRuleThree+scoreRuleFour+scoreRuleFive+scoreRuleSeven);
-		chromosome.setScoreOne(scoreRuleOne);
+		chromosome.setScore(scoreRuleThree+scoreRuleFour+scoreRuleFive+scoreRuleSeven);
+		//chromosome.setScoreOne(scoreRuleOne);
 		chromosome.setScoreThree(scoreRuleThree);
 		chromosome.setScoreFour(scoreRuleFour);
 		chromosome.setScoreFive(scoreRuleFive);
@@ -263,7 +263,7 @@ public  class GeneticAlgorithm {
 	
 	
 	/**
-	 * @param x
+	 * @param
 	 * @return
 	 * @Description: 根据X计算Y值 Y=F(X)
 	 */

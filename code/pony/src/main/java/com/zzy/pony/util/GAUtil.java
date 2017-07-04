@@ -421,7 +421,13 @@ public class GAUtil {
 						  29 22 15  8 1
 	 * @return
 	 */
-	public static boolean isExistClass(Map<Integer, String> randomMap,int classNumber,String key,int seqLength ){
+	public static boolean isExistClass(Map<Integer, String> randomMap,int classNumber,String key,int seqLength,int attempCount ){
+
+		if (attempCount > MAX_ATTEMPT+100) {
+			return false;
+		}
+
+
 		int ceil = 0;
 		int floor = 0;
 		//@add 增加如果排6节课，那么第六节课则不启用该约束条件
@@ -976,8 +982,11 @@ public class GAUtil {
 	* @author  WANGCHAO262
 	* @date  2017年6月22日 下午2:07:08
 	*/
-	public static boolean isAlreadyComplete(int classNum,Set<Integer> alreadyClassNum,int maxClassNum,String teacherKey,Map<String, List<Integer>> alreadyTeacherSeqMap,Set<String> remainClassSet,Map<String, Integer> remainClassMap,int seqLength,int teacherIdLength){
-		
+	public static boolean isAlreadyComplete(int classNum,Set<Integer> alreadyClassNum,int maxClassNum,String teacherKey,Map<String, List<Integer>> alreadyTeacherSeqMap,Set<String> remainClassSet,Map<String, Integer> remainClassMap,int seqLength,int teacherIdLength,int attempCount){
+
+		if (attempCount>MAX_ATTEMPT){
+			return false;
+		}
 		
 		Map<String, Set<Integer>> teacherRemainClassMap = new HashMap<String, Set<Integer>>();
 		int  count = 0;
@@ -1149,8 +1158,11 @@ public class GAUtil {
 	}*/
 	
 	
-	public static boolean  isTeacherInAlreadySeqMap(Map<String, List<Integer>> alreadyTeacherSeqMap ,int classNumber,String key){
+	public static boolean  isTeacherInAlreadySeqMap(Map<String, List<Integer>> alreadyTeacherSeqMap ,int classNumber,String key,int attempCount){
 		
+		if (attempCount>MAX_ATTEMPT){
+			return false;
+		}
 		if (alreadyTeacherSeqMap.containsKey(key)&&alreadyTeacherSeqMap.get(key)!= null ) {
 			for (Integer classNum : alreadyTeacherSeqMap.get(key)) {
 				if (classNum == classNumber) {
