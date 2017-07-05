@@ -53,7 +53,7 @@ public class TestService {
 	@Test
 	public void testAutoLessonArrange(){
 
-		Grade grade = gradeService.findBySeq(1);
+		Grade grade = gradeService.findBySeq(2);
 		SchoolYear year = schoolYearService.getCurrent();
 		Term term = termService.getCurrent();
 		List<LessonArrange> autoList = lessonArrangeService.findBySchooleYearAndTermAndGradeIdAndSourceType(year, term,grade.getGradeId(), Constants.SOURCE_TYPE_AUTO);

@@ -111,8 +111,8 @@ public class ArrangeCombineServiceImpl implements ArrangeCombineService {
 	}
 
 	@Override
-	public Map<String, Integer> getSpecialMap() {
-		Map<String,Integer> result = new HashMap<String, Integer>();
+	public Map<String, String> getSpecialMap() {
+		Map<String,String> result = new HashMap<String, String>();
 		SchoolYear schoolYear = schoolYearService.getCurrent();
 		Term term = termService.getCurrent();
 		List<ArrangeCombine> arrangeCombines = arrangeCombineDao.findBySchoolYearAndTerm(schoolYear,term);
@@ -131,12 +131,12 @@ public class ArrangeCombineServiceImpl implements ArrangeCombineService {
 						List<ArrangeRotation> arrangeRotationList = arrangeRotationDao.findByteacherSubjects(list);
 						if (arrangeRotationList!= null && !arrangeRotationList.isEmpty()){
 							String rotationId = "R"+String.format("%05d",arrangeRotationList.get(0).getRotationId());
-							result.put(rotationId,ac.getCombineId());
+							result.put(rotationId,String.format("C"+"%05d", ac.getCombineId()));
 						}else{
 							String teacherId = String.format("%04d", teacherSubject.getTeacher().getTeacherId())  ;
 							String classId = String.format("%03d", teacherSubject.getSchoolClass().getClassId())  ;
 							String subjectId = String.format("%02d", teacherSubject.getSubject().getSubjectId())  ;
-							result.put(teacherId+classId+subjectId,ac.getCombineId());
+							result.put(teacherId+classId+subjectId,String.format("C"+"%05d", ac.getCombineId()));
 						}
 					}
 					break;

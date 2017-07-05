@@ -53,7 +53,7 @@ public class DNA {
 	private Map<String, Integer> subjectImportanceMap;
 	private Map<String, Integer> arrangeRotationMap;
 	private Map<String, Integer> arrangeCombineMap;
-	private Map<String,Integer> specialMap;
+	private Map<String,String> specialMap;
 	private Map<String, Set<Integer>> combineMap;//合班资源池  新的个体需要初始化
 	private Map<String, List<Integer>> alreadyTeacherSeqMap;//老师已上课列表，解决同一时间老师不能上两节课的问题(即ruleOne)    新的个体需要初始化
 	private Map<String, List<String>> teacherClassMap;//老师与任教班级关系
@@ -176,16 +176,29 @@ public class DNA {
 			outer1:	for (int i = 0; i <  Integer.valueOf(classMap.get(key)) ; i++) {
 				     int classNumber=0 ;
 					
-					if (combineMap != null && !combineMap.isEmpty()&& combineMap.containsKey(key)&& combineMap.get(key).size()==Integer.valueOf(classMap.get(key))) {
+					if (combineMap != null && !combineMap.isEmpty()) {
 						//@todo  随机从set中取值赋给当前classNumber且不能够重复
-						Iterator<Integer> iterator =   combineMap.get(key).iterator();
-						while (iterator.hasNext()) {
-							Integer integer = (Integer) iterator.next();
-							if (!randomMap.containsKey(integer)) {
-								randomMap.put(integer, key);																								
-								break;
-							}							
+						
+						if (combineMap.containsKey(key)&& combineMap.get(key).size()==Integer.valueOf(classMap.get(key))) {
+							Iterator<Integer> iterator =   combineMap.get(key).iterator();
+							while (iterator.hasNext()) {
+								Integer integer = (Integer) iterator.next();
+								if (!randomMap.containsKey(integer)) {
+									randomMap.put(integer, key);																								
+									break;
+								}							
+							}
+						}else if(combineMap.containsKey(specialMap.get(key))&& combineMap.get(specialMap.get(key)).size()==Integer.valueOf(classMap.get(key))){
+							Iterator<Integer> iterator =   combineMap.get(specialMap.get(key)).iterator();
+							while (iterator.hasNext()) {
+								Integer integer = (Integer) iterator.next();
+								if (!randomMap.containsKey(integer)) {
+									randomMap.put(integer, key);																								
+									break;
+								}							
+							}
 						}
+						
 												
 					}else {	
 						classNumber = random.nextInt(k)+1;
@@ -237,6 +250,15 @@ public class DNA {
 							Set<Integer> set = new HashSet<Integer>();
 							set.add(classNumber);
 							combineMap.put(key, set);
+						}
+					}
+					if (specialMap.get(key)!= null) {
+						if (combineMap.containsKey(specialMap.get(key))) {
+							combineMap.get(specialMap.get(key)).add(classNumber);
+						}else {
+							Set<Integer> set = new HashSet<Integer>();
+							set.add(classNumber);
+							combineMap.put(specialMap.get(key), set);
 						}
 					}
 					
@@ -589,11 +611,11 @@ public class DNA {
 		this.teacherClassMap = teacherClassMap;
 	}
 
-	public Map<String, Integer> getSpecialMap() {
+	public Map<String, String> getSpecialMap() {
 		return specialMap;
 	}
 
-	public void setSpecialMap(Map<String, Integer> specialMap) {
+	public void setSpecialMap(Map<String, String> specialMap) {
 		this.specialMap = specialMap;
 	}
 }

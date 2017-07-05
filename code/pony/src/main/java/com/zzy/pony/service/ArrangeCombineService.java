@@ -33,5 +33,5 @@ public interface ArrangeCombineService {
 	  现在，C资源池不仅维护第一种情况，而且也维护第二种情况的课程安排情况
 	 */
 	Map<String,Integer> getCombineMap();
-	Map<String,Integer> getSpecialMap();
+	Map<String,String> getSpecialMap();
 }
