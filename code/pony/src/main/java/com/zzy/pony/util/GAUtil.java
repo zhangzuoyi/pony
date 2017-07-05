@@ -905,8 +905,23 @@ public class GAUtil {
 
 	}
 	
-	public static boolean isInCombineMap(Map<String, Set<Integer>> combineMap,int classNumber){
-		if (combineMap!= null) {			
+	public static boolean isInCombineMap(Map<String, Set<Integer>> combineMap,int classNumber,Set<String> keySet,Map<String,String> specialMap){
+		int count1 = 0;
+		int count2 = 0;
+		for (String key:
+			 keySet) {
+			if (!combineMap.containsKey(key)){
+				count1++;
+			}
+			if (!specialMap.containsKey(key)){
+				count2++;
+			}
+		}
+		if (count1 == keySet.size() && count2 == keySet.size()){
+			return false;
+		}
+
+		if (combineMap!= null) {
 			for (String	 key : combineMap.keySet()) {
 				Iterator<Integer> iterator = combineMap.get(key).iterator();
 				while (iterator.hasNext()) {

@@ -176,31 +176,29 @@ public class DNA {
 			outer1:	for (int i = 0; i <  Integer.valueOf(classMap.get(key)) ; i++) {
 				     int classNumber=0 ;
 					
-					if (combineMap != null && !combineMap.isEmpty()) {
+
 						//@todo  随机从set中取值赋给当前classNumber且不能够重复
 						
-						if (combineMap.containsKey(key)&& combineMap.get(key).size()==Integer.valueOf(classMap.get(key))) {
+						if (combineMap != null && !combineMap.isEmpty()&&combineMap.containsKey(key)&& combineMap.get(key).size()==Integer.valueOf(classMap.get(key))) {
 							Iterator<Integer> iterator =   combineMap.get(key).iterator();
 							while (iterator.hasNext()) {
 								Integer integer = (Integer) iterator.next();
 								if (!randomMap.containsKey(integer)) {
 									randomMap.put(integer, key);																								
-									break;
-								}							
+								}
 							}
-						}else if(combineMap.containsKey(specialMap.get(key))&& combineMap.get(specialMap.get(key)).size()==Integer.valueOf(classMap.get(key))){
+						}else if(combineMap != null && !combineMap.isEmpty()&&combineMap.containsKey(specialMap.get(key))&& combineMap.get(specialMap.get(key)).size()==Integer.valueOf(classMap.get(key))){
 							Iterator<Integer> iterator =   combineMap.get(specialMap.get(key)).iterator();
 							while (iterator.hasNext()) {
 								Integer integer = (Integer) iterator.next();
 								if (!randomMap.containsKey(integer)) {
 									randomMap.put(integer, key);																								
-									break;
-								}							
+								}
 							}
 						}
 						
 												
-					}else {	
+					else {
 						classNumber = random.nextInt(k)+1;
 						//@todo  增加规则在combineMap已经排过的不能够在下面排
 												
@@ -210,7 +208,7 @@ public class DNA {
 							||GAUtil.isAlreadyComplete(classNumber, randomMap.keySet(), k, key,alreadyTeacherSeqMap,remainClassSet,remainClassMap,this.seqIdCandidate.length,this.teacherIdBit,attempCount)
 							||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key),this.seqIdCandidate.length)
 							||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key,randomMap.keySet(),this.significantSeq,this.importantSeq,this.commonSeq,this.subjectImportanceMap,attempCount)
-							|| GAUtil.isInCombineMap(combineMap, classNumber)|| !GAUtil.isClassInOrder(randomMap.keySet(), classNumber, this.seqIdCandidate.length,attempCount)	)
+							|| GAUtil.isInCombineMap(combineMap, classNumber,classMap.keySet(),specialMap)|| !GAUtil.isClassInOrder(randomMap.keySet(), classNumber, this.seqIdCandidate.length,attempCount)	)
 							){
 						classNumber = random.nextInt(k)+1;
 						attempCount ++;
@@ -252,7 +250,7 @@ public class DNA {
 							combineMap.put(key, set);
 						}
 					}
-					if (specialMap.get(key)!= null) {
+					if (specialMap.get(key)!= null&& classNumber != 0) {
 						if (combineMap.containsKey(specialMap.get(key))) {
 							combineMap.get(specialMap.get(key)).add(classNumber);
 						}else {
@@ -275,7 +273,7 @@ public class DNA {
 								||GAUtil.isAlreadyComplete(classNumber, randomMap.keySet(), k,key, alreadyTeacherSeqMap,remainClassSet,remainClassMap,this.seqIdCandidate.length,this.teacherIdBit,attempCount)
 								||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key),this.seqIdCandidate.length))
 								||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key,randomMap.keySet(),this.significantSeq,this.importantSeq,this.commonSeq,this.subjectImportanceMap,attempCount)
-								|| GAUtil.isInCombineMap(combineMap, classNumber)||!GAUtil.isClassInOrder(randomMap.keySet(), classNumber, this.seqIdCandidate.length,attempCount)){
+								|| GAUtil.isInCombineMap(combineMap, classNumber,classMap.keySet(),specialMap)||!GAUtil.isClassInOrder(randomMap.keySet(), classNumber, this.seqIdCandidate.length,attempCount)){
 							classNumber = random.nextInt(k)+1;
                             attempCount ++;
                             
@@ -344,7 +342,7 @@ public class DNA {
 								||GAUtil.isTeacherInAlreadySeqMap(alreadyTeacherSeqMap, classNumber, key.substring(0, this.teacherIdBit),attempCount)||GAUtil.isTeacherInAlreadySeqMap(alreadyTeacherSeqMap, classNumber-1, key.substring(0, this.teacherIdBit),attempCount)
 								||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key),this.seqIdCandidate.length))
 								||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key,randomMap.keySet(),this.significantSeq,this.importantSeq,this.commonSeq,this.subjectImportanceMap,attempCount)
-								|| GAUtil.isInCombineMap(combineMap, classNumber)|| GAUtil.isInCombineMap(combineMap, classNumber-1)||!GAUtil.isClassInOrder(randomMap.keySet(), classNumber, this.seqIdCandidate.length,attempCount)){
+								|| GAUtil.isInCombineMap(combineMap, classNumber,classMap.keySet(),specialMap)|| GAUtil.isInCombineMap(combineMap, classNumber-1,classMap.keySet(),specialMap)||!GAUtil.isClassInOrder(randomMap.keySet(), classNumber, this.seqIdCandidate.length,attempCount)){
 							classNumber = random.nextInt(k)+1;
 							attempCount++;
 							if (attempCount > reselctCount) {
