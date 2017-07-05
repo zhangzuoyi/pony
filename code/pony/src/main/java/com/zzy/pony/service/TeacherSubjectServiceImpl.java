@@ -315,20 +315,13 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 		cv.setTermId(term.getTermId());
 		return teacherSubjectMapper.findCurrentByGroup(cv);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
-	
-	
-	
+	@Override
+	public List<TeacherSubject> findCurrent() {
+		SchoolYear schoolYear = yearService.getCurrent();
+		Term term= termService.getCurrent();
+		
+		return dao.findByYearAndTerm(schoolYear, term);
+	}
 
 }

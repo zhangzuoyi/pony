@@ -255,40 +255,41 @@ public class TeacherLessonController {
             Object[] tutorTeachers = new Object[columnLength];
             tutorTeachers[0] = "班主任";
             for (int i=1;i<=schoolClasseOne.size();i++){
-                SchoolClass schoolClass = schoolClassService.findByYearAndGradeAndSeq(schoolYear.getYearId(),gradeOne.getGradeId(),i);
+                SchoolClass schoolClass = schoolClasseOne.get(i-1);//schoolClassService.findByYearAndGradeAndSeq(schoolYear.getYearId(),gradeOne.getGradeId(),i);
                 tutorTeachers[i] = schoolClass.getTeacher().getName();
             }
             for (int i=1;i<=schoolClasseTwo.size();i++){
-                SchoolClass schoolClass = schoolClassService.findByYearAndGradeAndSeq(schoolYear.getYearId(),gradeTwo.getGradeId(),i);
+                SchoolClass schoolClass = schoolClasseTwo.get(i-1);//schoolClassService.findByYearAndGradeAndSeq(schoolYear.getYearId(),gradeTwo.getGradeId(),i);
                 tutorTeachers[i+schoolClasseOne.size()] = schoolClass.getTeacher().getName();
             }
             for (int i=1;i<=schoolClasseThree.size();i++){
-                SchoolClass schoolClass = schoolClassService.findByYearAndGradeAndSeq(schoolYear.getYearId(),gradeThree.getGradeId(),i);
+                SchoolClass schoolClass = schoolClasseThree.get(i-1);//schoolClassService.findByYearAndGradeAndSeq(schoolYear.getYearId(),gradeThree.getGradeId(),i);
                 tutorTeachers[i+schoolClasseOne.size()+schoolClasseTwo.size()] = schoolClass.getTeacher().getName();
             }
             dataList.add(tutorTeachers);
             List<Subject> subjects = subjectService.findAll();
+            List<TeacherSubject> tsList=teacherSubjectService.findCurrent();
             for (Subject subject:
                  subjects) {
                 Object[] subjectObjects = new Object[columnLength];
                 subjectObjects[0] = subject.getName();
                 for (int i=1;i<=schoolClasseOne.size();i++){
-                    SchoolClass schoolClass = schoolClassService.findByYearAndGradeAndSeq(schoolYear.getYearId(),gradeOne.getGradeId(),i);
-                    TeacherSubject   teacherSubject = teacherSubjectService.findCurrentByClassAndSubject(schoolClass,subject);
+                    SchoolClass schoolClass = schoolClasseOne.get(i-1);//schoolClassService.findByYearAndGradeAndSeq(schoolYear.getYearId(),gradeOne.getGradeId(),i);
+                    TeacherSubject   teacherSubject = getTeacherSubject(tsList,schoolClass,subject);//teacherSubjectService.findCurrentByClassAndSubject(schoolClass,subject);
                     if (teacherSubject!= null &&  teacherSubject.getTeacher()!= null){
                         subjectObjects[i] = teacherSubject.getTeacher().getName();
                     }
                 }
                 for (int i=1;i<=schoolClasseTwo.size();i++){
-                    SchoolClass schoolClass = schoolClassService.findByYearAndGradeAndSeq(schoolYear.getYearId(),gradeTwo.getGradeId(),i);
-                    TeacherSubject   teacherSubject = teacherSubjectService.findCurrentByClassAndSubject(schoolClass,subject);
+                    SchoolClass schoolClass = schoolClasseTwo.get(i-1);//schoolClassService.findByYearAndGradeAndSeq(schoolYear.getYearId(),gradeTwo.getGradeId(),i);
+                    TeacherSubject   teacherSubject = getTeacherSubject(tsList,schoolClass,subject);//teacherSubjectService.findCurrentByClassAndSubject(schoolClass,subject);
                     if (teacherSubject!= null &&  teacherSubject.getTeacher()!= null) {
                         subjectObjects[i + schoolClasseOne.size()] = teacherSubject.getTeacher().getName();
                     }
                 }
                 for (int i=1;i<=schoolClasseThree.size();i++){
-                    SchoolClass schoolClass = schoolClassService.findByYearAndGradeAndSeq(schoolYear.getYearId(),gradeThree.getGradeId(),i);
-                    TeacherSubject   teacherSubject = teacherSubjectService.findCurrentByClassAndSubject(schoolClass,subject);
+                    SchoolClass schoolClass = schoolClasseThree.get(i-1);//schoolClassService.findByYearAndGradeAndSeq(schoolYear.getYearId(),gradeThree.getGradeId(),i);
+                    TeacherSubject   teacherSubject = getTeacherSubject(tsList,schoolClass,subject);//teacherSubjectService.findCurrentByClassAndSubject(schoolClass,subject);
                     if (teacherSubject!= null &&  teacherSubject.getTeacher()!= null) {
                         subjectObjects[i + schoolClasseOne.size() + schoolClasseTwo.size()] = teacherSubject.getTeacher().getName();
                     }
@@ -369,7 +370,14 @@ public class TeacherLessonController {
         }  
           
     } 
-	
+	private TeacherSubject getTeacherSubject(List<TeacherSubject> tsList,SchoolClass schoolClass,Subject subject){
+		for(TeacherSubject ts: tsList){
+			if(ts.getSchoolClass().getClassId().equals(schoolClass.getClassId()) && ts.getSubject().getSubjectId().equals(subject.getSubjectId())){
+				return ts;
+			}
+		}
+		return null;
+	}
 	
 	   /*  
      * 列头单元格样式 
