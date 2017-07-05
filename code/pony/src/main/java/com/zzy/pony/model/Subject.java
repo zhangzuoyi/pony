@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.BatchSize;
+
 
 /**
  * The persistent class for the t_subject database table.
@@ -11,6 +13,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name="t_subject")
+@BatchSize(size=20)
 @NamedQuery(name="Subject.findAll", query="SELECT s FROM Subject s")
 public class Subject implements Serializable {
 	private static final long serialVersionUID = 1L;

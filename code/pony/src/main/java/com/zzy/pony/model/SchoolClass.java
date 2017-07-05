@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -26,6 +27,7 @@ import org.hibernate.annotations.FetchMode;
  */
 @Entity
 @Table(name="t_school_class")
+@BatchSize(size=20)
 @NamedQuery(name="SchoolClass.findAll", query="SELECT s FROM SchoolClass s")
 public class SchoolClass implements Serializable {
 	private static final long serialVersionUID = 1L;
