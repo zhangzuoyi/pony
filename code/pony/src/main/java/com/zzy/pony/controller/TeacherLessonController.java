@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.zzy.pony.model.*;
 import com.zzy.pony.service.*;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -32,44 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import com.zzy.pony.config.Constants;
 import com.zzy.pony.dao.SchoolClassDao;
 import com.zzy.pony.dao.TeacherDao;
 import com.zzy.pony.dao.TeacherSubjectDao;
@@ -182,15 +146,8 @@ public class TeacherLessonController {
 		List<SchoolClass> schoolClasseTwo = schoolClassService.findByYearAndGradeOrderBySeq(schoolYear.getYearId(), gradeTwo.getGradeId());
 		List<SchoolClass> schoolClasseThree = schoolClassService.findByYearAndGradeOrderBySeq(schoolYear.getYearId(), gradeThree.getGradeId());
 		int columnLength = schoolClasseOne.size()+schoolClasseTwo.size()+schoolClasseThree.size()+1;
-
 		System.out.println("111111111111111111");
-		String title = "平桥中学"+schoolYear.getName()+term.getName()+"教师任课表"; 
-		
-
-	
-	
-
-				
+		String title =Constants.SCHOOL_NAME +schoolYear.getName()+term.getName()+"教师任课表"; 
 		
 		try{  
             HSSFWorkbook workbook = new HSSFWorkbook();                     // 创建工作簿对象  

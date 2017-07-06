@@ -88,7 +88,9 @@
              
               <el-col :span="4" :offset="8">
               <!--  <el-button type="primary" @click="getListTableData()" >查询</el-button> -->
-               <el-button type="primary" @click="getListTableData()" >查询</el-button>             
+               <el-button type="primary" @click="getListTableData()" >查询</el-button> 
+               <el-button type="primary" v-on:click="exportData">导出</el-button> 
+                           
               </el-col>
               
               
@@ -280,8 +282,13 @@ var app = new Vue({
 							function(response){}  			
 							);   	
 							},
+			exportData : function(){
+			var url = "../exportData";
+			window.open(url);
+		}	
 	  
-        }	        
+        },
+                
 	 
 	
 });  

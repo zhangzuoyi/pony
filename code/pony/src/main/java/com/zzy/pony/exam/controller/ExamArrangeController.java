@@ -1,9 +1,15 @@
 package com.zzy.pony.exam.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import com.zzy.pony.model.Exam;
+import com.zzy.pony.model.Grade;
+import com.zzy.pony.service.ExamService;
+import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.SubjectService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,6 +27,7 @@ import com.zzy.pony.exam.model.ExamRoomAllocate;
 import com.zzy.pony.exam.model.Examinee;
 import com.zzy.pony.exam.service.ExamArrangeService;
 import com.zzy.pony.exam.vo.ExamArrangeVo;
+
 import org.springframework.web.bind.annotation.ResponseBody;
 
 
@@ -32,6 +39,10 @@ public class ExamArrangeController {
 	private ExamArrangeService examArrangeService;
 	@Autowired
 	private SubjectService subjectService;
+	@Autowired
+	private ExamService examService;
+	@Autowired
+	private GradeService gradeService;
 
 	
 	@RequestMapping(value="main",method=RequestMethod.GET)
@@ -111,6 +122,36 @@ public class ExamArrangeController {
 	@ResponseBody
 	public void add(@RequestParam(value="subjects[]") int[] subjects){
 			examArrangeService.add(subjects);
+	}
+	@RequestMapping(value="addExamDate",method=RequestMethod.GET)
+	@ResponseBody
+	public void addExamDate(@RequestParam(value="examArranges[]") int[] examArranges,@RequestParam(value="examDate") Date examDate ){
+		    examArrangeService.addExamDate(examArranges, examDate);
+	}
+	@RequestMapping(value="addExamDate",method=RequestMethod.GET)
+	@ResponseBody
+	public void addExamTime(@RequestParam(value="examArranges[]") int[] examArranges,
+			@RequestParam(value="startTime") Date startTime,
+			@RequestParam(value="endTime") Date endTime){
+		    examArrangeService.addExamTime(examArranges, startTime,endTime);
+	}
+	@RequestMapping(value="addGroup",method=RequestMethod.GET)
+	@ResponseBody
+	public void addGroup(@RequestParam(value="examArranges[]") int[] examArranges,
+			@RequestParam(value="groupName") String groupName,
+			@RequestParam(value="examId") int examId,
+			@RequestParam(value="gradeId") int gradeId){
+		Exam exam = examService.get(examId);
+		Grade grade = gradeService.get(gradeId);
+		examArrangeService.addGroup(examArranges, groupName, grade, exam);				
+	}
+	@RequestMapping(value="delete",method=RequestMethod.GET)
+	@ResponseBody
+	public void delete(@RequestParam(value="examArranges[]") int[] examArranges
+			){
+		for (int arrangeId : examArranges) {
+			examArrangeService.delete(arrangeId);
+		}				
 	}
 	
 	

@@ -11,6 +11,7 @@ import com.zzy.pony.model.Weekday;
 
 public interface WeekdayDao extends JpaRepository<Weekday,Integer>{
 	List<Weekday> findByhaveClass(Integer haveClass);
+	List<Weekday> findByhaveClassOrderBySeq(Integer haveClass);
 	List<Weekday> findByName(String name);
 
 }
