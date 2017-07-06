@@ -324,4 +324,11 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 		return dao.findByYearAndTerm(schoolYear, term);
 	}
 
+	@Override
+	public List<TeacherSubject> findCurrentByClass(SchoolClass schoolClass) {
+		SchoolYear schoolYear = yearService.getCurrent();
+		Term term= termService.getCurrent();
+		return dao.findBySchoolClassAndYearAndTerm(schoolClass, schoolYear, term);
+	}
+
 }

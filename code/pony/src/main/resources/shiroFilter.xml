@@ -16,6 +16,10 @@
 	<bean id="shiroEhcacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
 		<property name="cacheManagerConfigFile" value="classpath:ehcache/ehcache-shiro.xml"/>
 	</bean>
+	<!-- 和Spring共用EhCache -->
+	<!-- <bean id="shiroEhcacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">  
+	    <property name="cacheManager" ref="springEhcacheManager"/>  
+	</bean> -->
 
 	<!-- 項目自定义的Realm, 所有userService依赖的dao都需要用depends-on声明 -->
 	<bean id="shiroDbRealm" class="com.zzy.pony.security.ShiroDbRealm">

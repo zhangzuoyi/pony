@@ -183,7 +183,7 @@ public class TeacherLessonController {
 		List<SchoolClass> schoolClasseThree = schoolClassService.findByYearAndGradeOrderBySeq(schoolYear.getYearId(), gradeThree.getGradeId());
 		int columnLength = schoolClasseOne.size()+schoolClasseTwo.size()+schoolClasseThree.size()+1;
 
-
+		System.out.println("111111111111111111");
 		String title = "平桥中学"+schoolYear.getName()+term.getName()+"教师任课表"; 
 		
 
@@ -268,7 +268,9 @@ public class TeacherLessonController {
             }
             dataList.add(tutorTeachers);
             List<Subject> subjects = subjectService.findAll();
+            System.out.println("222222222222");
             List<TeacherSubject> tsList=teacherSubjectService.findCurrent();
+            System.out.println("33333333333333333");
             for (Subject subject:
                  subjects) {
                 Object[] subjectObjects = new Object[columnLength];

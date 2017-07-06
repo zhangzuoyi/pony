@@ -86,12 +86,31 @@
         <property name="SqlSessionFactoryBeanName" value="sqlSessionFactoryBean" /> 
     </bean>
     
-	<!-- <cache:annotation-driven />
-	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
-        <property name="cacheManager" ref="ehcacheManager"/>
-    </bean>
-    ehcache
-    <bean id="ehcacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-        <property name="configLocation" value="classpath:ehcache/ehcache-spring.xml"/>
+	<cache:annotation-driven cache-manager="dummyCacheManager" />
+	<!-- <bean id="springCacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+        <property name="caches">
+            <set>
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean">
+                    <property name="name" value="default"/>
+                </bean>
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean">
+                    <property name="name" value="accountCache"/>
+                </bean>
+            </set>
+        </property>
     </bean> -->
+    <bean id="dummyCacheManager" class="org.springframework.cache.support.CompositeCacheManager">
+     <property name="cacheManagers"> 
+       <list> 
+         <ref bean="springCacheManager" /> 
+       </list> 
+     </property> 
+     <property name="fallbackToNoOpCache" value="true" /> 
+   </bean> 
+	<bean id="springCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+        <property name="cacheManager" ref="springEhcacheManager"/>
+    </bean>
+    <bean id="springEhcacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="configLocation" value="classpath:ehcache/ehcache-spring.xml"/>
+    </bean>
 </beans>
