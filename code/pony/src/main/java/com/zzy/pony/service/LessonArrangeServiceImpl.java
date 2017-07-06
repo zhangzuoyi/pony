@@ -166,6 +166,16 @@ public class LessonArrangeServiceImpl implements LessonArrangeService {
 		// TODO Auto-generated method stub
 		dao.delete(list);
 	}
+	
+	
+	
+
+	@Override
+	public List<LessonArrange> findBySchoolYearAndTerm(SchoolYear year,
+			Term term) {
+		// TODO Auto-generated method stub
+		return dao.findBySchoolYearAndTerm(year, term);
+	}
 
 	@Override
 	public LessonArrange findByClassIdAndSubjectAndSchoolYearAndTermAndWeekDayAndLessonPeriod(

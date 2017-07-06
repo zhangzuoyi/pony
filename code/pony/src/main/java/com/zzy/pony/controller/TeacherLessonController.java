@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.zzy.pony.model.*;
 import com.zzy.pony.service.*;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -70,6 +71,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
+
+
+import com.zzy.pony.config.Constants;
 import com.zzy.pony.dao.SchoolClassDao;
 import com.zzy.pony.dao.TeacherDao;
 import com.zzy.pony.dao.TeacherSubjectDao;
@@ -184,7 +188,7 @@ public class TeacherLessonController {
 		int columnLength = schoolClasseOne.size()+schoolClasseTwo.size()+schoolClasseThree.size()+1;
 
 
-		String title = "平桥中学"+schoolYear.getName()+term.getName()+"教师任课表"; 
+		String title =Constants.SCHOOL_NAME +schoolYear.getName()+term.getName()+"教师任课表"; 
 		
 
 	

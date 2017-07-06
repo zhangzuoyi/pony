@@ -5,6 +5,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Constants {
+	
+	public static final String SCHOOL_NAME = "平桥中学";
+	
 	public static final String CURRENT_FLAG_TRUE="0";//当前标志，是
 	public static final String CURRENT_FLAG_FALSE="1";//当前标志，否
 	public static final String USER_TYPE_TEACHER="t";

@@ -24,6 +24,14 @@ public class WeekdayServiceImpl implements WeekdayService {
 			// TODO Auto-generated method stub
 			return weekdayDao.findByhaveClass(haveClass);
 		}
+		
+
+		@Override
+		public List<Weekday> findByhaveClassOrderBySeq(Integer haveClass) {
+			// TODO Auto-generated method stub
+			return weekdayDao.findByhaveClassOrderBySeq(haveClass);
+		}
+
 
 		@Override
 		public Weekday findByName(String name) {
