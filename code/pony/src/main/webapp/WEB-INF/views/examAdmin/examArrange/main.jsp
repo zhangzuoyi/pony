@@ -55,7 +55,7 @@ width:200px;
             	</el-col> 
            		 <el-col :span="4" >
             		<div class="grid-content bg-purple">                                     
-					<el-select v-model="examId"    filterable clearable placeholder="请选择..">
+					<el-select v-model="examId" @change="getExamSubjects()"    filterable clearable placeholder="请选择..">
                		 <el-option
                         v-for="exam in exams" 
                         :label="exam.name"                      
@@ -97,7 +97,7 @@ width:200px;
                <el-button type="primary" @click="selectTime">设置时间</el-button>
                </el-col>
                <el-col  :span="3">
-               <el-button type="primary" @click="selectExamRoom">设置科目</el-button>
+               <el-button type="primary" @click="selectExamRoom">设置考场</el-button>
                </el-col>
                <el-col  :span="3">
                <el-button type="primary" @click="joinGroup">加入组合</el-button>
@@ -174,12 +174,16 @@ width:200px;
 			</el-dialog>
 			
 			<el-dialog title="设置日期"  v-model="examDateDialogFormVisible" >		
+			<el-row>
+			<el-col :span="12" :offset="6">
 			<el-date-picker
                     v-model="examDate"
                     type="date"
                     placeholder="选择日期"
                     :picker-options="pickerOptions">
             </el-date-picker>
+            </el-col>
+            </el-row>
 			<div slot="footer" class="dialog-footer">
 				<el-button type="primary" @click="onSubmitExamDate()"  >确定</el-button>
 				<el-button @click="examDateDialogFormVisible = false">取 消</el-button>				
@@ -187,11 +191,34 @@ width:200px;
 			</el-dialog>
 			
 			<el-dialog title="设置时间"  v-model="examTimeDialogFormVisible" >		
+			<el-row>
+			<el-col :span="12" :offset="6">
 			<el-time-picker
                     is-range
                     v-model="examTime"
                     placeholder="选择时间范围">
             </el-time-picker>
+            </el-col>
+            </el-row>
+			<div slot="footer" class="dialog-footer">
+				<el-button type="primary" @click="onSubmitExamTime()"  >确定</el-button>
+				<el-button @click="examTimeDialogFormVisible = false">取 消</el-button>				
+			</div>
+			</el-dialog>
+			
+			<el-dialog title="设置考场"  v-model="examRoomDialogFormVisible" >		
+			<el-row>
+			<el-col :span="12" :offset="6">
+			<el-select v-model="roomId"    filterable clearable placeholder="请选择..">
+               		 <el-option
+                        v-for="room in rooms" 
+                        :label="room.name"                      
+                        :value="room.id">
+                        <span style="float: left">{{room.name}}</span>
+               		 </el-option>
+           	</el-select>
+            </el-col>
+            </el-row>
 			<div slot="footer" class="dialog-footer">
 				<el-button type="primary" @click="onSubmitExamTime()"  >确定</el-button>
 				<el-button @click="examTimeDialogFormVisible = false">取 消</el-button>				
@@ -227,15 +254,21 @@ var app = new Vue({
 		termUrl:"<s:url value='/term/getCurrent'/>",
 		examUrl:"<s:url value='/exam/list'/>",
 		gradesUrl :"<s:url value='/grade/list'/>",
-		subjectUrl:"<s:url value='/subject/list'/>",
-        listPageUrl:"<s:url value="/examAdmin/examArrange/listPage"/>",
-        addUrl:"<s:url value="/examAdmin/examArrange/add"/>",
+		examSubjectUrl:"<s:url value='/subject/findByExam'/>",
+		examRoomUrl: "<s:url value='/examAdmin/examRoom/list'/>",   
+        listPageUrl:"<s:url value='/examAdmin/examArrange/listPage'/>",
+        addUrl:"<s:url value='/examAdmin/examArrange/add'/>",
+        addExamDateUrl:"<s:url value='/examAdmin/examArrange/addExamDate'/>",
+        addGroupUrl:"<s:url value='/examAdmin/examArrange/addGroup'/>",
+        deleteUrl:"<s:url value='/examAdmin/examArrange/delete'/>",
 		schoolYear :null,
 		term : null,
 		examId: null,
 		exams:[],
 		grades : [],	
-		gradeId:null,	
+		gradeId:null,
+		rooms : [],
+		roomId : null,	
 		tableData:[],						
 		currentPage : 1,
 		pageSizes :[20,50,100],
@@ -249,9 +282,11 @@ var app = new Vue({
 		subjectDialogFormVisible:false,
 		examDateDialogFormVisible:false,
 		examTimeDialogFormVisible:false,
+		examRoomDialogFormVisible:false,
 		examGroupDialogFormVisible:false,
 		examDate :null,
-		groupName:null
+		groupName:null,
+		multipleSelection:[]
 		
 	
 		
@@ -268,7 +303,7 @@ var app = new Vue({
 				this.getCurrentTerm();
 				this.getExams();
 				this.getGrades();
-				this.getSubjects();
+				this.getExamRooms();
 				this.getExamArranges();
 				
 		
@@ -303,15 +338,21 @@ var app = new Vue({
 			function(response){}  	 			
 			);
 			},
-			getSubjects	:function(){ 			
-			this.$http.get(this.subjectUrl).then(
+			getExamRooms : function(){
+			this.$http.get(this.examRoomUrl).then(
+			function(response){this.examRooms=response.data; },
+			function(response){}  	 			
+			);
+			},
+			getExamSubjects	:function(){ 			
+			this.$http.get(this.examSubjectUrl,{params:{examId:this.examId}}).then(
 			function(response){
 			this.subjects=response.data; },
 			function(response){}  	 			
 			);
 			},
 			handleSelectionChange: function(val) {
-                console.log(val);
+                this.multipleSelection = val;
             },
 			handleCheckAllChange:function(event){
 			    var allSubjects = [];
@@ -346,7 +387,14 @@ var app = new Vue({
 				this.subjectDialogFormVisible = true;
 			},
 			selectExamDate: function(){
-			
+			    if(this.multipleSelection==null||this.multipleSelection.length == 0){
+			     this.$alert("请选择科目","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+			    }		    	    
+				this.examDateDialogFormVisible = true;
 			},
 			selectTime: function(){
 			
@@ -370,7 +418,16 @@ var app = new Vue({
             onSubmitSubject:function () {
                 this.$http.get(this.addUrl,{params:{subjects:this.checkedSubjects}}).then(
                     function(response){
-                          this.$message({type:"info",message:"新增成功"});                        
+                          this.$message({type:"info",message:"新增成功"});
+                          //已选择的科目从备选项中移除掉
+                          for(var index in this.subjects){
+                          	for(var idx in this.checkedSubjects){
+                          		if(this.subjects[index].subjetcId == this.checkedSubjects){
+                          			this.subjects.splice(index,1);
+                          		}                         		
+                          	}
+                          }
+                                                  
                           this.getExamArranges();                       
                           this.checkedSubjects = [];
                           this.subjectDialogFormVisible = false;
@@ -380,9 +437,83 @@ var app = new Vue({
                     },
                     function(response){}
                 );
+            },
+            onSubmitExamDate : function(){
+              if(this.examDate == null || this.examDate==''){
+              	this.$alert("请选择时间","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }           
+              var examArranges = [];
+              for(var index in this.multiplSelection){
+               	examArranges.push(this.multipleSelection[index].arrangeId);
+              }
+              this.$http.get(this.addExamDateUrl,{params:{examArranges:examArranges,examDate:this.examDate}}).then(
+                    function(response){
+                          this.$message({type:"info",message:"更新成功"});                        
+                          this.getExamArranges(); 
+                          this.multiplSelection = []; 
+                          this.$refs.multipleTable.clearSelection();                     
+                          this.examDateDialogFormVisible = false;
+                          this.examDate = null;
+                    },
+                    function(response){}
+                );                          
+            }	,
+            onSubmitExamGroup : function(){
+            	if(this.multipleSelection==null||this.multipleSelection.length == 0){
+			     this.$alert("请选择科目","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+			    }
+			    if(this.groupName == null|| this.groupName ==""){
+			     this.$alert("请填写组名","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+			    }
+			    var examArranges = [];
+              for(var index in this.multiplSelection){
+               	examArranges.push(this.multipleSelection[index].arrangeId);
+              }
+			    this.$http.get(this.addGroupUrl,{params:{examArranges:examArranges,groupName:this.groupName,examId:this.examId,gradeId:this.gradeId}}).then(
+                    function(response){
+                          this.$message({type:"info",message:"加入组合成功"});                        
+                          this.getExamArranges();
+                          this.multiplSelection = []; 
+                          this.$refs.multipleTable.clearSelection();                                                                                             
+                          this.groupName =null;                       
+                    },
+                    function(response){}
+                );			               
+            },
+            handleDelete: function(){
+            if(this.multipleSelection==null||this.multipleSelection.length == 0){
+			     this.$alert("请选择科目","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+			    }
+			   this.$http.get(this.deleteUrl,{params:{examArranges:examArranges}}).then(
+                    function(response){
+                          this.$message({type:"info",message:"删除成功"});                        
+                          this.getExamArranges();
+                          this.multiplSelection = []; 
+                          this.$refs.multipleTable.clearSelection();                                                                                             
+                    },
+                    function(response){}
+                ); 
+			    
+			    
             }
-			   	
-	  
+            
+            		   		  
         }	        
 	 
 	
