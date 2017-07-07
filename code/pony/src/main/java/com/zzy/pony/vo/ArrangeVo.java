@@ -5,6 +5,7 @@ package com.zzy.pony.vo;
 public class ArrangeVo {
 	private Integer arrangeId;	
 	private Integer classId;
+	private String className;
 	private String otherLesson;
 	private String weekDay;
 	private String sourceType;//来源类型 0 预排，1 自动，3 调课
@@ -16,6 +17,8 @@ public class ArrangeVo {
 	private Integer termId;
 	private Integer subjectId;
 	private String subjectName;
+	private String gradeName;
+	private String classSeq;
 	
 	private Integer teacherId;
 	private Integer weekdayId;
@@ -136,6 +139,26 @@ public class ArrangeVo {
 	public void setCombineId(Integer combineId) {
 		this.combineId = combineId;
 	}
+	public String getClassName() {
+		return className;
+	}
+	public void setClassName(String className) {
+		this.className = className;
+	}
+	public String getGradeName() {
+		return gradeName;
+	}
+	public void setGradeName(String gradeName) {
+		this.gradeName = gradeName;
+	}
+	public String getClassSeq() {
+		return classSeq;
+	}
+	public void setClassSeq(String classSeq) {
+		this.classSeq = classSeq;
+	}
+	
+	
 	
 	
 	

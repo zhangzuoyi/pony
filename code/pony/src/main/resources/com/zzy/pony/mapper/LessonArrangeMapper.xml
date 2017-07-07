@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.mapper.LessonArrangeMapper">
+	<sql id="base_select">
+		select t.ARRANGE_ID as arrangeId ,t.CLASS_ID as classId,g.NAME  as gradeName,a.SEQ as classSeq,  t.YEAR_ID as yearId,t.TERM_ID as termId,t.PERIOD_ID as periodId,t.WEEK_DAY as weekdayId,t.SUBJECT_ID as subjectId ,f.`NAME` as subjectName, t.OTHER_LESSON as otherLesson,t.SOURCE_TYPE as sourceType       from t_lesson_arrange t left join t_school_class a on t.CLASS_ID = a.CLASS_ID
+left join  t_school_year b on t.year_id = b.year_id left join t_term c on  t.term_id = c.TERM_ID
+left join t_lesson_period d on t.PERIOD_ID=d.PERIOD_ID left join t_weekday e on t.WEEK_DAY=e.SEQ
+left join t_subject f on t.SUBJECT_ID = f.SUBJECT_ID left join t_grade g on a.GRADE_ID=g.GRADE_ID
+	</sql>
+	<select id="findByCondition" resultType="com.zzy.pony.vo.ArrangeVo">
+		<include refid="base_select"></include>
+		 where 1=1
+		 <if test=" yearId != null and yearId != 0">
+		 	and  t.YEAR_ID=#{yearId}
+		 </if>
+		 <if test=" termId != null and termId != 0">
+		 	and t.TERM_ID=#{termId}
+		 </if>		 			 
+		 <if test=" subjectId != null and subjectId != 0">
+		 	and t.SUBJECT_ID =#{subjectId}
+		 </if>		 		    
+		 <if test="schoolClasses != null">
+		 	and  t.CLASS_ID in  
+     		<foreach item="item" index="index" collection="schoolClasses" open="(" separator="," close=")">  
+     		 #{item}  
+     		</foreach> 
+		 </if>		 
+	</select>
+	
+</mapper>

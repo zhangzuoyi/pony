@@ -37,10 +37,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
+
+
+
+
+
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
-import com.zzy.pony.model.LessonArrange;
+import com.zzy.pony.mapper.LessonArrangeMapper;
 import com.zzy.pony.model.LessonPeriod;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Teacher;
@@ -55,7 +61,8 @@ import com.zzy.pony.service.TeacherService;
 import com.zzy.pony.service.TeacherSubjectService;
 import com.zzy.pony.service.TermService;
 import com.zzy.pony.service.WeekdayService;
-import com.zzy.pony.vo.CombineAndRotationVo;
+import com.zzy.pony.vo.ArrangeVo;
+import com.zzy.pony.vo.ConditionVo;
 
 
 
@@ -80,6 +87,8 @@ public class TeacherCourseController {
 	private LessonArrangeService lessonArrangeService ;
 	@Autowired
 	private ArrangeCombineService arrangeCombineService;
+	@Autowired
+	private LessonArrangeMapper lessonArrangeMapper;
 	
 
 	@RequestMapping(value="main",method = RequestMethod.GET)
@@ -99,28 +108,34 @@ public class TeacherCourseController {
 			List<LessonPeriod> lessonPeriods= lessonPeriodService.findBySchoolYearAndTerm(year, term);
 			Teacher teacher = teacherService.get(teacherId);
 			List<TeacherSubject> teacherSubjects =  teacherSubjectService.findCurrentByTeacher(teacher);//该老师在本学期的任课列表
-			List<CombineAndRotationVo> combineList = arrangeCombineService.findCurrentAllVo();//针对老师，若是合班则需要考虑同一时间段上两节课
+			ConditionVo cv = new ConditionVo();
+			cv.setYearId(year.getYearId());
+			cv.setTermId(term.getTermId());
+			cv.setSubjectId(teacher.getSubject().getSubjectId());
+			List<String> tsList = new ArrayList<String>();
+			for (TeacherSubject ts : teacherSubjects) {
+				tsList.add(ts.getSchoolClass().getClassId().toString());
+			}
+			cv.setSchoolClasses(tsList.toArray(new String[tsList.size()]));
+			List<ArrangeVo> arrangeVos = lessonArrangeMapper.findByCondition(cv);
 			
 			List<Map<String, Object>> dataList =  new ArrayList<Map<String,Object>>();
 			for (LessonPeriod lessonPeriod : lessonPeriods) {
 				Map<String, Object> map = new HashMap<String, Object>();
 				//map.put("period",lessonPeriod.getStartTime()+"--"+lessonPeriod.getEndTime());
 				map.put("period", lessonPeriod.getSeq()+"");
-				for (Weekday weekday : weekdays) {
-					for (TeacherSubject teacherSubject : teacherSubjects) {
-						Boolean flag = isExistCombine(combineList,teacherSubject);
-						LessonArrange lessonArrange =  lessonArrangeService.findByClassIdAndSubjectAndSchoolYearAndTermAndWeekDayAndLessonPeriod(teacherSubject.getSchoolClass().getClassId(), teacherSubject.getSubject(), year, term, weekday.getSeq()+"", lessonPeriod);
-						if (lessonArrange != null ) {
-							if(flag&&map.get(Constants.WEEKDAYMAP.get(weekday.getSeq()+""))!= null ){
-								map.put(Constants.WEEKDAYMAP.get(weekday.getSeq()+""),map.get(Constants.WEEKDAYMAP.get(weekday.getSeq()+""))+";"+ teacherSubject.getSchoolClass().getName()+"("+teacherSubject.getSubject().getName()+")");
-							}else {
-								map.put(Constants.WEEKDAYMAP.get(weekday.getSeq()+""), teacherSubject.getSchoolClass().getName()+"("+teacherSubject.getSubject().getName()+")");
-							}
-							
+				
+				for (ArrangeVo vo : arrangeVos) {
+					if (lessonPeriod.getPeriodId() == vo.getPeriodId()) {
+						if (map.get(Constants.WEEKDAYMAP.get(vo.getWeekdayId()+""))!= null ) {
+							map.put(Constants.WEEKDAYMAP.get(vo.getWeekdayId()+""),map.get(Constants.WEEKDAYMAP.get(vo.getWeekdayId()+""+""))+";"+ vo.getGradeName()+vo.getClassSeq()+"班"+"("+vo.getSubjectName()+")");
+						}else {
+							map.put(Constants.WEEKDAYMAP.get(vo.getWeekdayId()+""), vo.getGradeName()+vo.getClassSeq()+"班"+"("+vo.getSubjectName()+")");
 						}
 						
 					}
-		      }
+				}
+				
 				dataList.add(map);
 			}
 			StringBuilder result = new StringBuilder();	
@@ -140,16 +155,7 @@ public class TeacherCourseController {
 
 	}
 	
-	private boolean isExistCombine(List<CombineAndRotationVo> combineList,TeacherSubject ts){
-		
-		for (CombineAndRotationVo vo : combineList) {
-			if (vo.getTsIds().contains(ts.getTsId())) {
-				return true;
-			}
-		}			
-		return false;
-		
-	}
+	
 	
 	
 	
