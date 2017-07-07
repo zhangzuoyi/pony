@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
@@ -54,6 +55,7 @@ import com.zzy.pony.service.TeacherService;
 import com.zzy.pony.service.TeacherSubjectService;
 import com.zzy.pony.service.TermService;
 import com.zzy.pony.service.WeekdayService;
+import com.zzy.pony.vo.CombineAndRotationVo;
 
 
 
@@ -97,6 +99,7 @@ public class TeacherCourseController {
 			List<LessonPeriod> lessonPeriods= lessonPeriodService.findBySchoolYearAndTerm(year, term);
 			Teacher teacher = teacherService.get(teacherId);
 			List<TeacherSubject> teacherSubjects =  teacherSubjectService.findCurrentByTeacher(teacher);//该老师在本学期的任课列表
+			List<CombineAndRotationVo> combineList = arrangeCombineService.findCurrentAllVo();//针对老师，若是合班则需要考虑同一时间段上两节课
 			
 			List<Map<String, Object>> dataList =  new ArrayList<Map<String,Object>>();
 			for (LessonPeriod lessonPeriod : lessonPeriods) {
@@ -105,9 +108,7 @@ public class TeacherCourseController {
 				map.put("period", lessonPeriod.getSeq()+"");
 				for (Weekday weekday : weekdays) {
 					for (TeacherSubject teacherSubject : teacherSubjects) {
-						List<TeacherSubject> list = new ArrayList<TeacherSubject>();
-						list.add(teacherSubject);
-						Boolean flag = arrangeCombineService.isTeacherSubjectExist(list);
+						Boolean flag = isExistCombine(combineList,teacherSubject);
 						LessonArrange lessonArrange =  lessonArrangeService.findByClassIdAndSubjectAndSchoolYearAndTermAndWeekDayAndLessonPeriod(teacherSubject.getSchoolClass().getClassId(), teacherSubject.getSubject(), year, term, weekday.getSeq()+"", lessonPeriod);
 						if (lessonArrange != null ) {
 							if(flag&&map.get(Constants.WEEKDAYMAP.get(weekday.getSeq()+""))!= null ){
@@ -137,6 +138,17 @@ public class TeacherCourseController {
             return result.toString();
 			
 
+	}
+	
+	private boolean isExistCombine(List<CombineAndRotationVo> combineList,TeacherSubject ts){
+		
+		for (CombineAndRotationVo vo : combineList) {
+			if (vo.getTsIds().contains(ts.getTsId())) {
+				return true;
+			}
+		}			
+		return false;
+		
 	}
 	
 	

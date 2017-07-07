@@ -128,14 +128,13 @@ public class ExamArrangeController {
 	public void addExamDate(@RequestParam(value="examArranges[]") int[] examArranges,@RequestParam(value="examDate") Date examDate ){
 		    examArrangeService.addExamDate(examArranges, examDate);
 	}
-	@RequestMapping(value="addExamDate",method=RequestMethod.GET)
+	@RequestMapping(value="addExamTime",method=RequestMethod.GET)
 	@ResponseBody
 	public void addExamTime(@RequestParam(value="examArranges[]") int[] examArranges,
 			@RequestParam(value="startTime") Date startTime,
 			@RequestParam(value="endTime") Date endTime){
 		    examArrangeService.addExamTime(examArranges, startTime,endTime);
 	}
-	@RequestMapping(value="addGroup",method=RequestMethod.GET)
 	@ResponseBody
 	public void addGroup(@RequestParam(value="examArranges[]") int[] examArranges,
 			@RequestParam(value="groupName") String groupName,
