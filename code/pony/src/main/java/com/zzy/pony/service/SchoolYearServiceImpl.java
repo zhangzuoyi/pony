@@ -5,6 +5,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.zzy.pony.config.Constants;
@@ -47,6 +48,7 @@ public class SchoolYearServiceImpl implements SchoolYearService {
 		
 	}
 
+	@Cacheable(value = "currentSchoolYear")
 	@Override
 	public SchoolYear getCurrent() {
 		List<SchoolYear> list=dao.findByIsCurrent(Constants.CURRENT_FLAG_TRUE);

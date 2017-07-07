@@ -33,46 +33,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.dao.SchoolClassDao;
 import com.zzy.pony.dao.TeacherDao;
@@ -186,15 +146,8 @@ public class TeacherLessonController {
 		List<SchoolClass> schoolClasseTwo = schoolClassService.findByYearAndGradeOrderBySeq(schoolYear.getYearId(), gradeTwo.getGradeId());
 		List<SchoolClass> schoolClasseThree = schoolClassService.findByYearAndGradeOrderBySeq(schoolYear.getYearId(), gradeThree.getGradeId());
 		int columnLength = schoolClasseOne.size()+schoolClasseTwo.size()+schoolClasseThree.size()+1;
-
-
+		System.out.println("111111111111111111");
 		String title =Constants.SCHOOL_NAME +schoolYear.getName()+term.getName()+"教师任课表"; 
-		
-
-	
-	
-
-				
 		
 		try{  
             HSSFWorkbook workbook = new HSSFWorkbook();                     // 创建工作簿对象  
@@ -272,7 +225,9 @@ public class TeacherLessonController {
             }
             dataList.add(tutorTeachers);
             List<Subject> subjects = subjectService.findAll();
+            System.out.println("222222222222");
             List<TeacherSubject> tsList=teacherSubjectService.findCurrent();
+            System.out.println("33333333333333333");
             for (Subject subject:
                  subjects) {
                 Object[] subjectObjects = new Object[columnLength];

@@ -32,27 +32,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
@@ -128,22 +107,23 @@ public class AutoLessonArrangeController {
 			Term term = termService.getCurrent();
 			List<Weekday> weekdays = weekdayService.findByhaveClass(Constants.HAVECLASS_FLAG_TRUE);
 			List<LessonPeriod> lessonPeriods= lessonPeriodService.findBySchoolYearAndTerm(year, term);
+			SchoolClass schoolClass = schoolClassService.get(cv.getClassId());
+			List<LessonArrange> allLessonArranges=lessonArrangeService.findByClassIdAndSchoolYearAndTerm(cv.getClassId(), year, term);
+			List<TeacherSubject> tsList=teacherSubjectService.findCurrentByClass(schoolClass);
 			List<Map<String, Object>> dataList =  new ArrayList<Map<String,Object>>();
 			for (LessonPeriod lessonPeriod : lessonPeriods) {
 				Map<String, Object> map = new HashMap<String, Object>();
 				//map.put("period",lessonPeriod.getStartTime()+"--"+lessonPeriod.getEndTime());
 				map.put("period", lessonPeriod.getSeq()+"");
 				for (Weekday weekday : weekdays) {
-					List<LessonArrange> lessonArranges =  lessonArrangeService.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(cv.getClassId(), year, term, weekday.getSeq()+"", lessonPeriod);
+					List<LessonArrange> lessonArranges =  getLessonArranges(allLessonArranges,weekday.getSeq()+"", lessonPeriod);//lessonArrangeService.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(cv.getClassId(), year, term, weekday.getSeq()+"", lessonPeriod);
 					//新增老师名字
-					SchoolClass schoolClass = schoolClassService.get(cv.getClassId());
-					
 					
 					if (lessonArranges != null && lessonArranges.size()>0 ) {					
 						StringBuilder sb  = new StringBuilder();
 						for (LessonArrange la : lessonArranges) {
 							if (la.getSubject() !=null ) {
-								TeacherSubject  teacherSubject = teacherSubjectService.findCurrentByClassAndSubject(schoolClass,la.getSubject());						
+								TeacherSubject  teacherSubject = getTeacherSubject(tsList,la.getSubject());//teacherSubjectService.findCurrentByClassAndSubject(schoolClass,la.getSubject());						
 								sb.append(la.getSubject().getName()+"("+teacherSubject.getTeacher().getName()+");");														
 							}
 						}																		
@@ -169,6 +149,16 @@ public class AutoLessonArrangeController {
 
 	}
 	
+	private List<LessonArrange> getLessonArranges(List<LessonArrange> allLessonArranges,String weekday,LessonPeriod lessonPeriod){
+		List<LessonArrange> list=new ArrayList<LessonArrange>();
+		for(LessonArrange la: allLessonArranges){
+			if(la.getWeekDay().equals(weekday) && la.getLessonPeriod().getPeriodId().equals(lessonPeriod.getPeriodId())){
+				list.add(la);
+			}
+		}
+		return list;
+	}
+
 	/* 
      * 导出数据 
      * 
@@ -465,12 +455,12 @@ public class AutoLessonArrangeController {
       
     }
 	
-	
-	
-	
-	
-	
-	
-	
-	
+	private TeacherSubject getTeacherSubject(List<TeacherSubject> tsList, Subject subject ){
+		for(TeacherSubject ts: tsList){
+			if(ts.getSubject().getSubjectId().equals(subject.getSubjectId())){
+				return ts;
+			}
+		}
+		return null;
+	}
 }
