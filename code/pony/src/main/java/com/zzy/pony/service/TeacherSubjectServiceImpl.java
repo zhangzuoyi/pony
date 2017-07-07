@@ -267,22 +267,21 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 		cv.setTermId(term.getTermId());
 		//选择了年级未选择班级
 		if (cv.getGradeId()!=0 && cv.getClassId() ==0) {
-//			List<SchoolClass> classes = schoolClassService.findByYearAndGrade(year.getYearId(),cv.getGradeId());
-//			for (SchoolClass schoolClass : classes) {
-//				cv.setClassId(schoolClass.getClassId());
-//				List<TeacherSubjectVo> list = teacherSubjectMapper.findByCondition(cv);
-//				result.addAll(list);
-//			}
-			result=teacherSubjectMapper.findByCondition(cv);
+			List<SchoolClass> classes = schoolClassService.findByYearAndGrade(year.getYearId(),cv.getGradeId());
+			for (SchoolClass schoolClass : classes) {
+				cv.setClassId(schoolClass.getClassId());
+				List<TeacherSubjectVo> list = teacherSubjectMapper.findByCondition(cv);
+				result.addAll(list);
+			}
 		}else {
 			result = teacherSubjectMapper.findByCondition(cv);
 		}
-//		for (TeacherSubjectVo teacherSubjectVo : result) {
-//			SchoolClass schoolClass = schoolClassService.get(teacherSubjectVo.getClassId());
-//			Teacher teacher = teacherService.get(teacherSubjectVo.getTeacherId());
-//			teacherSubjectVo.setClassName(schoolClass.getName());
-//			teacherSubjectVo.setTeacherNo(teacher.getTeacherNo());
-//		}
+		for (TeacherSubjectVo teacherSubjectVo : result) {
+			SchoolClass schoolClass = schoolClassService.get(teacherSubjectVo.getClassId());
+			Teacher teacher = teacherService.get(teacherSubjectVo.getTeacherId());
+			teacherSubjectVo.setClassName(schoolClass.getName());
+			teacherSubjectVo.setTeacherNo(teacher.getTeacherNo());
+		}
 		
 		
 		return result;
@@ -333,3 +332,4 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 	}
 
 }
+
