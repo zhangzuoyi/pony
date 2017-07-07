@@ -105,9 +105,20 @@ public class ExamArrangeServiceImpl implements ExamArrangeService {
 	}
 
 	@Override
-	public void addGroup(int[] examArranges, String groupName, Grade grade,
-			Exam exam) {
+	public void addGroup(int[] examArranges, String groupName, String gradeId,
+			String examId) {
 		// TODO Auto-generated method stub
+		Exam exam = new Exam();
+		Grade grade = new Grade();
+		if (examId != null && !"".equalsIgnoreCase(examId)) {
+			exam = examService.get(Integer.valueOf(examId));
+		}
+		if (gradeId != null && !"".equalsIgnoreCase(gradeId)) {
+			grade = gradeService.get(Integer.valueOf(gradeId));
+		}
+		
+		
+		
 		ExamArrangeGroup examArrangeGroup = new ExamArrangeGroup();
 		List<ExamArrange> list = new ArrayList<ExamArrange>();
 		for (int arrangeId : examArranges) {

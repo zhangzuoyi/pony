@@ -206,7 +206,7 @@ width:200px;
 			</div>
 			</el-dialog>
 			
-			<el-dialog title="设置考场"  v-model="examRoomDialogFormVisible" >		
+			<%-- <el-dialog title="设置考场"  v-model="examRoomDialogFormVisible" >		
 			<el-row>
 			<el-col :span="12" :offset="6">
 			<el-select v-model="roomId"    filterable clearable placeholder="请选择..">
@@ -223,14 +223,14 @@ width:200px;
 				<el-button type="primary" @click="onSubmitExamTime()"  >确定</el-button>
 				<el-button @click="examTimeDialogFormVisible = false">取 消</el-button>				
 			</div>
-			</el-dialog>
+			</el-dialog> --%>
 			
 			<el-dialog title="加入组合"  v-model="examGroupDialogFormVisible" >		
 			<el-row>
-			<el-col :span="1" >
+			<el-col :span="4" >
                     <b>组合名:</b>                                    
             	</el-col> 
-               <el-col  :span="11">
+               <el-col  :span="8">
                		<el-input v-model="groupName" placeholder="请输入组合名..."></el-input>
                </el-col>
                </el-row>
@@ -255,10 +255,11 @@ var app = new Vue({
 		examUrl:"<s:url value='/exam/list'/>",
 		gradesUrl :"<s:url value='/grade/list'/>",
 		examSubjectUrl:"<s:url value='/subject/findByExam'/>",
-		examRoomUrl: "<s:url value='/examAdmin/examRoom/list'/>",   
+		/* examRoomUrl: "<s:url value='/examAdmin/examRoom/list'/>", */   
         listPageUrl:"<s:url value='/examAdmin/examArrange/listPage'/>",
         addUrl:"<s:url value='/examAdmin/examArrange/add'/>",
         addExamDateUrl:"<s:url value='/examAdmin/examArrange/addExamDate'/>",
+        addExamTimeUrl:"<s:url value='/examAdmin/examArrange/addExamTime'/>",
         addGroupUrl:"<s:url value='/examAdmin/examArrange/addGroup'/>",
         deleteUrl:"<s:url value='/examAdmin/examArrange/delete'/>",
 		schoolYear :null,
@@ -267,8 +268,8 @@ var app = new Vue({
 		exams:[],
 		grades : [],	
 		gradeId:null,
-		rooms : [],
-		roomId : null,	
+		/* rooms : [],
+		roomId : null, */	
 		tableData:[],						
 		currentPage : 1,
 		pageSizes :[20,50,100],
@@ -278,7 +279,7 @@ var app = new Vue({
 		isIndeterminate:true,
 		checkedSubjects:[],
 		subjects:[],
-		examTime:[new Date(2017, 1, 1, 8, 10), new Date(2050, 1, 1, 8, 10)],
+		examTime:[new Date(2017, 1, 1, 8, 00), new Date(2050, 1, 1, 10, 00)],
 		subjectDialogFormVisible:false,
 		examDateDialogFormVisible:false,
 		examTimeDialogFormVisible:false,
@@ -292,9 +293,12 @@ var app = new Vue({
 		
 	}, 
 	filters: {    
-    /* userTypeFilter: function (value) {
-      if(value == 't'){return "老师"; }
-      if(value == 's'){return "学生"; }
+    /* timeFilter : function(input){
+        var date = new date(input);
+        var hour = date.getHours();
+        var minutes = date.getMinutes();
+        var seconds = date.getSeconds();
+        return hour+":"+minutes+":"+seconds;
     } */
   }	,
 	
@@ -303,7 +307,7 @@ var app = new Vue({
 				this.getCurrentTerm();
 				this.getExams();
 				this.getGrades();
-				this.getExamRooms();
+				/* this.getExamRooms(); */
 				this.getExamArranges();
 				
 		
@@ -338,12 +342,12 @@ var app = new Vue({
 			function(response){}  	 			
 			);
 			},
-			getExamRooms : function(){
+			/* getExamRooms : function(){
 			this.$http.get(this.examRoomUrl).then(
 			function(response){this.examRooms=response.data; },
 			function(response){}  	 			
 			);
-			},
+			}, */
 			getExamSubjects	:function(){ 			
 			this.$http.get(this.examSubjectUrl,{params:{examId:this.examId}}).then(
 			function(response){
@@ -397,17 +401,29 @@ var app = new Vue({
 				this.examDateDialogFormVisible = true;
 			},
 			selectTime: function(){
-			
+				if(this.multipleSelection==null||this.multipleSelection.length == 0){
+			     this.$alert("请选择科目","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+			    }		    	    
+				this.examTimeDialogFormVisible = true;
 			},
 			selectExamRoom: function(){
 			
 			},
 			joinGroup: function(){
-			
+				if(this.multipleSelection==null||this.multipleSelection.length == 0){
+			     this.$alert("请选择科目","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+			    }		
+			    this.examGroupDialogFormVisible=true;    	    
 			},
-			handleDelete: function(){
 			
-			},
             getExamArranges:function(){
                 this.$http.get(this.listPageUrl,{params:{currentPage:this.currentPage-1,pageSize:this.pageSize,examId:this.examId,gradeId:this.gradeId}}).then(
                     function(response){
@@ -447,10 +463,15 @@ var app = new Vue({
 				return;
               }           
               var examArranges = [];
-              for(var index in this.multiplSelection){
+              for(var index in this.multipleSelection){
                	examArranges.push(this.multipleSelection[index].arrangeId);
               }
-              this.$http.get(this.addExamDateUrl,{params:{examArranges:examArranges,examDate:this.examDate}}).then(
+              var year = this.examDate.getFullYear();
+              var month = this.examDate.getMonth()+1;
+              var day = this.examDate.getDate();
+              var examDate = year+"-"+month+"-"+day;
+              
+              this.$http.get(this.addExamDateUrl,{params:{examArranges:examArranges,examDate:examDate}}).then(
                     function(response){
                           this.$message({type:"info",message:"更新成功"});                        
                           this.getExamArranges(); 
@@ -461,6 +482,38 @@ var app = new Vue({
                     },
                     function(response){}
                 );                          
+            }	,
+            onSubmitExamTime : function(){
+              if(this.examTime == null || this.examTime==''){
+              	this.$alert("请选择时间","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }           
+              var examArranges = [];
+              for(var index in this.multipleSelection){
+               	examArranges.push(this.multipleSelection[index].arrangeId);
+              }
+              /* var year = this.examDate.getFullYear();
+              var month = this.examDate.getMonth()+1;
+              var day = this.examDate.getDate();
+              var examDate = year+"-"+month+"-"+day; */
+              var startTime = this.examTime[0].getHours()+":"+this.examTime[0].getMinutes()+":"+this.examTime[0].getSeconds();
+              var endTime = this.examTime[1].getHours()+":"+this.examTime[1].getMinutes()+":"+this.examTime[1].getSeconds();
+              
+             
+              this.$http.get(this.addExamTimeUrl,{params:{examArranges:examArranges,startTime:startTime,endTime:endTime}}).then(
+                    function(response){
+                          this.$message({type:"info",message:"更新成功"});                        
+                          this.getExamArranges(); 
+                          this.multiplSelection = []; 
+                          this.$refs.multipleTable.clearSelection();                     
+                          this.examTimeDialogFormVisible = false;
+                          this.examTime = [];
+                    },
+                    function(response){}
+                );                         
             }	,
             onSubmitExamGroup : function(){
             	if(this.multipleSelection==null||this.multipleSelection.length == 0){
@@ -478,7 +531,7 @@ var app = new Vue({
 				return;
 			    }
 			    var examArranges = [];
-              for(var index in this.multiplSelection){
+              for(var index in this.multipleSelection){
                	examArranges.push(this.multipleSelection[index].arrangeId);
               }
 			    this.$http.get(this.addGroupUrl,{params:{examArranges:examArranges,groupName:this.groupName,examId:this.examId,gradeId:this.gradeId}}).then(
@@ -512,6 +565,9 @@ var app = new Vue({
 			    
 			    
             }
+            
+			
+			
             
             		   		  
         }	        

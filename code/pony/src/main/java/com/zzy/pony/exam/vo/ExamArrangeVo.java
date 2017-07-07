@@ -5,9 +5,9 @@ import java.util.List;
 
 public class ExamArrangeVo {
 	private int arrangeId;
-	private Date endTime;
+	private String endTime;
 	private Date examDate;
-	private Date startTime;
+	private String startTime;
 	private String groupName;
 	private int examId;
 	private String examName;
@@ -26,10 +26,10 @@ public class ExamArrangeVo {
 	public void setArrangeId(int arrangeId) {
 		this.arrangeId = arrangeId;
 	}
-	public Date getEndTime() {
+	public String getEndTime() {
 		return endTime;
 	}
-	public void setEndTime(Date endTime) {
+	public void setEndTime(String endTime) {
 		this.endTime = endTime;
 	}
 	public Date getExamDate() {
@@ -38,10 +38,10 @@ public class ExamArrangeVo {
 	public void setExamDate(Date examDate) {
 		this.examDate = examDate;
 	}
-	public Date getStartTime() {
+	public String getStartTime() {
 		return startTime;
 	}
-	public void setStartTime(Date startTime) {
+	public void setStartTime(String startTime) {
 		this.startTime = startTime;
 	}
 	public String getGroupName() {

@@ -9,6 +9,7 @@ import com.zzy.pony.model.Grade;
 import com.zzy.pony.service.ExamService;
 import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.SubjectService;
+import com.zzy.pony.util.DateTimeUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -49,6 +50,7 @@ public class ExamArrangeController {
 	public String main(Model model){
 		return "examAdmin/examArrange/main";
 	}
+	@SuppressWarnings("deprecation")
 	@RequestMapping(value="listPage",method=RequestMethod.GET)
     @ResponseBody
 	public Page<ExamArrangeVo> listPage(@RequestParam(value="currentPage",defaultValue="0") int currentPage,
@@ -72,9 +74,9 @@ public class ExamArrangeController {
 		for (ExamArrange ea : examArrangePage) {
 			ExamArrangeVo vo = new ExamArrangeVo();
 			vo.setArrangeId(ea.getArrangeId());
-			vo.setEndTime(ea.getEndTime());
+			vo.setEndTime(ea.getEndTime().getHours()+":"+String.format("%02d", ea.getEndTime().getMinutes())+":"+String.format("%02d", ea.getEndTime().getSeconds()));
 			vo.setExamDate(ea.getExamDate());
-			vo.setStartTime(ea.getStartTime());
+			vo.setStartTime(ea.getStartTime().getHours()+":"+String.format("%02d", ea.getStartTime().getMinutes())+":"+String.format("%02d", ea.getStartTime().getSeconds()));
 			if (ea.getExam()!= null){
                 vo.setExamId(ea.getExam().getExamId());
                 vo.setExamName(ea.getExam().getName());
@@ -125,25 +127,29 @@ public class ExamArrangeController {
 	}
 	@RequestMapping(value="addExamDate",method=RequestMethod.GET)
 	@ResponseBody
-	public void addExamDate(@RequestParam(value="examArranges[]") int[] examArranges,@RequestParam(value="examDate") Date examDate ){
-		    examArrangeService.addExamDate(examArranges, examDate);
+	public void addExamDate(@RequestParam(value="examArranges[]") int[] examArranges,@RequestParam(value="examDate") String examDate ){
+		Date date = DateTimeUtil.strToDate(examDate, DateTimeUtil.FORMAL_FORMAT);
+   
+		examArrangeService.addExamDate(examArranges, date);
 	}
 
 	@RequestMapping(value="addExamTime",method=RequestMethod.GET)
 	@ResponseBody
 	public void addExamTime(@RequestParam(value="examArranges[]") int[] examArranges,
-			@RequestParam(value="startTime") Date startTime,
-			@RequestParam(value="endTime") Date endTime){
-		    examArrangeService.addExamTime(examArranges, startTime,endTime);
+			@RequestParam(value="startTime") String startTime,
+			@RequestParam(value="endTime") String endTime){
+			Date startTimeDate = DateTimeUtil.strToDate(startTime, DateTimeUtil.TIME_FORMAT);
+			Date endTimeDate = DateTimeUtil.strToDate(endTime, DateTimeUtil.TIME_FORMAT);
+		    examArrangeService.addExamTime(examArranges, startTimeDate,endTimeDate);
 	}
+	@RequestMapping(value="addGroup",method=RequestMethod.GET)
 	@ResponseBody
 	public void addGroup(@RequestParam(value="examArranges[]") int[] examArranges,
 			@RequestParam(value="groupName") String groupName,
-			@RequestParam(value="examId") int examId,
-			@RequestParam(value="gradeId") int gradeId){
-		Exam exam = examService.get(examId);
-		Grade grade = gradeService.get(gradeId);
-		examArrangeService.addGroup(examArranges, groupName, grade, exam);				
+			@RequestParam(value="examId") String examId,
+			@RequestParam(value="gradeId") String gradeId){
+			  
+		examArrangeService.addGroup(examArranges, groupName, gradeId, examId);				
 	}
 	@RequestMapping(value="delete",method=RequestMethod.GET)
 	@ResponseBody
