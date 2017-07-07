@@ -52,3 +52,4 @@ public interface TeacherSubjectService {
 	List<TeacherSubject> findCurrent();
 	List<TeacherSubject> findCurrentByClass(SchoolClass schoolClass);
 }
+
