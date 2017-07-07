@@ -128,7 +128,7 @@ public class ExamArrangeController {
 	public void addExamDate(@RequestParam(value="examArranges[]") int[] examArranges,@RequestParam(value="examDate") Date examDate ){
 		    examArrangeService.addExamDate(examArranges, examDate);
 	}
-	@RequestMapping(value="addExamDate",method=RequestMethod.GET)
+//	@RequestMapping(value="addExamDate",method=RequestMethod.GET)
 	@ResponseBody
 	public void addExamTime(@RequestParam(value="examArranges[]") int[] examArranges,
 			@RequestParam(value="startTime") Date startTime,

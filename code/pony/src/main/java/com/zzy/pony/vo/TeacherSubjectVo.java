@@ -2,6 +2,8 @@ package com.zzy.pony.vo;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.zzy.pony.model.LessonArrange;
 import com.zzy.pony.model.TeacherSubject;
 
@@ -14,8 +16,11 @@ public class TeacherSubjectVo {
 	private Integer teacherId;
 	private String teacherName;
 
+	private String gradeName;
+	
 	private Integer classId;
 	private String className;
+	private Integer classSeq;
 	
 	private Integer yearId;
 	private String yearName;
@@ -97,7 +102,11 @@ public class TeacherSubjectVo {
 		this.classId = classId;
 	}
 	public String getClassName() {
-		return className;
+		if( ! StringUtils.isBlank(className))
+			return className;
+		else{
+			return gradeName+"("+classSeq+")班";
+		}
 	}
 	public void setClassName(String className) {
 		this.className = className;
@@ -143,6 +152,18 @@ public class TeacherSubjectVo {
 	}
 	public void setWeekArrange(String weekArrange) {
 		this.weekArrange = weekArrange;
+	}
+	public String getGradeName() {
+		return gradeName;
+	}
+	public void setGradeName(String gradeName) {
+		this.gradeName = gradeName;
+	}
+	public Integer getClassSeq() {
+		return classSeq;
+	}
+	public void setClassSeq(Integer classSeq) {
+		this.classSeq = classSeq;
 	}
 	
 	
