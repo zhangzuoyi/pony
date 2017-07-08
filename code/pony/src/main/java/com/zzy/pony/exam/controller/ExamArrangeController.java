@@ -74,9 +74,13 @@ public class ExamArrangeController {
 		for (ExamArrange ea : examArrangePage) {
 			ExamArrangeVo vo = new ExamArrangeVo();
 			vo.setArrangeId(ea.getArrangeId());
-			vo.setEndTime(ea.getEndTime().getHours()+":"+String.format("%02d", ea.getEndTime().getMinutes())+":"+String.format("%02d", ea.getEndTime().getSeconds()));
+			if (ea.getEndTime()!= null) {
+				vo.setEndTime(ea.getEndTime().getHours() + ":" + String.format("%02d", ea.getEndTime().getMinutes()) + ":" + String.format("%02d", ea.getEndTime().getSeconds()));
+			}
 			vo.setExamDate(ea.getExamDate());
-			vo.setStartTime(ea.getStartTime().getHours()+":"+String.format("%02d", ea.getStartTime().getMinutes())+":"+String.format("%02d", ea.getStartTime().getSeconds()));
+			if (ea.getStartTime()!=null) {
+				vo.setStartTime(ea.getStartTime().getHours() + ":" + String.format("%02d", ea.getStartTime().getMinutes()) + ":" + String.format("%02d", ea.getStartTime().getSeconds()));
+			}
 			if (ea.getExam()!= null){
                 vo.setExamId(ea.getExam().getExamId());
                 vo.setExamName(ea.getExam().getName());
@@ -122,8 +126,8 @@ public class ExamArrangeController {
 
 	@RequestMapping(value="add",method=RequestMethod.GET)
 	@ResponseBody
-	public void add(@RequestParam(value="subjects[]") int[] subjects){
-			examArrangeService.add(subjects);
+	public void add(@RequestParam(value="subjects[]") int[] subjects,@RequestParam(value="examId") int examId){
+			examArrangeService.add(subjects,examId);
 	}
 	@RequestMapping(value="addExamDate",method=RequestMethod.GET)
 	@ResponseBody

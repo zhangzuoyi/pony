@@ -67,12 +67,14 @@ public class ExamArrangeServiceImpl implements ExamArrangeService {
 	}
 
 	@Override
-	public void add(int[] subjects) {
+	public void add(int[] subjects,int examId) {
+		Exam exam = examService.get(examId);
 		if (subjects.length>0){
 			for (int subjectId:
 					subjects) {
 				ExamArrange examArrange = new ExamArrange();
 				examArrange.setSubject(subjectService.get(subjectId));
+				examArrange.setExam(exam);
 				examArrangeDao.save(examArrange);
 			}
 
@@ -108,29 +110,26 @@ public class ExamArrangeServiceImpl implements ExamArrangeService {
 	public void addGroup(int[] examArranges, String groupName, String gradeId,
 			String examId) {
 		// TODO Auto-generated method stub
-		Exam exam = new Exam();
-		Grade grade = new Grade();
-		if (examId != null && !"".equalsIgnoreCase(examId)) {
-			exam = examService.get(Integer.valueOf(examId));
+        ExamArrangeGroup examArrangeGroup = new ExamArrangeGroup();
+
+        if (examId != null && !"".equalsIgnoreCase(examId)) {
+            examArrangeGroup.setExam(examService.get(Integer.valueOf(examId)));
 		}
 		if (gradeId != null && !"".equalsIgnoreCase(gradeId)) {
-			grade = gradeService.get(Integer.valueOf(gradeId));
+            examArrangeGroup.setGrade(gradeService.get(Integer.valueOf(gradeId)));
 		}
-		
-		
-		
-		ExamArrangeGroup examArrangeGroup = new ExamArrangeGroup();
 		List<ExamArrange> list = new ArrayList<ExamArrange>();
 		for (int arrangeId : examArranges) {
 			ExamArrange examArrange = examArrangeDao.findOne(arrangeId);
 			list.add(examArrange);
 		}
-		examArrangeGroup.setExam(exam);
-		examArrangeGroup.setExamArranges(list);
-		examArrangeGroup.setGrade(grade);
 		examArrangeGroup.setName(groupName);
+		examArrangeGroup.setExamArranges(list);
 		examArrangeGroupDao.save(examArrangeGroup);
-	}
+
+
+
+    }
 
 	@Override
 	public void delete(int arrangeId) {

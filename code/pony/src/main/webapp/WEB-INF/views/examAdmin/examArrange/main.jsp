@@ -432,7 +432,7 @@ var app = new Vue({
                 );
             },
             onSubmitSubject:function () {
-                this.$http.get(this.addUrl,{params:{subjects:this.checkedSubjects}}).then(
+                this.$http.get(this.addUrl,{params:{subjects:this.checkedSubjects,examId:this.examId}}).then(
                     function(response){
                           this.$message({type:"info",message:"新增成功"});
                           //已选择的科目从备选项中移除掉
@@ -540,7 +540,8 @@ var app = new Vue({
                           this.getExamArranges();
                           this.multiplSelection = []; 
                           this.$refs.multipleTable.clearSelection();                                                                                             
-                          this.groupName =null;                       
+                          this.groupName =null;
+                          this.examGroupDialogFormVisible=false;
                     },
                     function(response){}
                 );			               

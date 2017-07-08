@@ -15,7 +15,7 @@ public interface ExamArrangeService {
 	Page<ExamArrange> findByExam(Pageable pageable,int examId);
 	Page<ExamArrange> findByGrade(Pageable pageable,int gradeId);
 	Page<ExamArrange> findAll(Pageable pageable);
-	void add(int[] subjects);
+	void add(int[] subjects,int  examId);
 	void addExamDate(int[] examArranges,Date examDate);
 	void addExamTime(int[] examArranges,Date startTime,Date endTime);
 	void addGroup(int[] examArranges,String groupName,String gradeId,String examId);
