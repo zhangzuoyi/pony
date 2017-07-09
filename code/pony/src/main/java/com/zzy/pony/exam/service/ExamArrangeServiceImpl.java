@@ -67,14 +67,16 @@ public class ExamArrangeServiceImpl implements ExamArrangeService {
 	}
 
 	@Override
-	public void add(int[] subjects,int examId) {
+	public void add(int[] subjects,int examId,int gradeId) {
 		Exam exam = examService.get(examId);
+		Grade grade = gradeService.get(gradeId);
 		if (subjects.length>0){
 			for (int subjectId:
 					subjects) {
 				ExamArrange examArrange = new ExamArrange();
 				examArrange.setSubject(subjectService.get(subjectId));
 				examArrange.setExam(exam);
+				examArrange.setGrade(grade);
 				examArrangeDao.save(examArrange);
 			}
 
@@ -121,6 +123,7 @@ public class ExamArrangeServiceImpl implements ExamArrangeService {
 		List<ExamArrange> list = new ArrayList<ExamArrange>();
 		for (int arrangeId : examArranges) {
 			ExamArrange examArrange = examArrangeDao.findOne(arrangeId);
+			examArrange.setGroup(examArrangeGroup);
 			list.add(examArrange);
 		}
 		examArrangeGroup.setName(groupName);

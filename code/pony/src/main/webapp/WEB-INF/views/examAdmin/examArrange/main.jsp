@@ -388,6 +388,13 @@ var app = new Vue({
 				//console.log('当前页 : ${val}');
 			},
 			selectSubject: function(){
+                if (this.examId == null || this.examId == '' ||this.gradeId == null||this.gradeId==''){
+                    this.$alert("请选择考试和年级","提示",{
+                        type:"warning",
+                        confirmButtonText:'确认'
+                    });
+                    return ;
+                }
 				this.subjectDialogFormVisible = true;
 			},
 			selectExamDate: function(){
@@ -427,23 +434,30 @@ var app = new Vue({
             getExamArranges:function(){
                 this.$http.get(this.listPageUrl,{params:{currentPage:this.currentPage-1,pageSize:this.pageSize,examId:this.examId,gradeId:this.gradeId}}).then(
                     function(response){
-                        this.tableData=response.data.content; },
+                        this.tableData=response.data.content;
+                        //已选择的科目从备选项中移除掉
+                        if(this.subjects.length>0){
+                            for(var index in this.subjects){
+                                for(var idx in this.tableData){
+                                    if(this.subjects[index].subjectId == this.tableData[idx].subjectId){
+                                        this.subjects.splice(index,1);
+                                    }
+                                }
+                            }
+                        }
+
+
+                        },
                     function(response){}
                 );
             },
             onSubmitSubject:function () {
-                this.$http.get(this.addUrl,{params:{subjects:this.checkedSubjects,examId:this.examId}}).then(
+
+
+                this.$http.get(this.addUrl,{params:{subjects:this.checkedSubjects,examId:this.examId,gradeId:this.gradeId}}).then(
                     function(response){
                           this.$message({type:"info",message:"新增成功"});
-                          //已选择的科目从备选项中移除掉
-                          for(var index in this.subjects){
-                          	for(var idx in this.checkedSubjects){
-                          		if(this.subjects[index].subjetcId == this.checkedSubjects){
-                          			this.subjects.splice(index,1);
-                          		}                         		
-                          	}
-                          }
-                                                  
+
                           this.getExamArranges();                       
                           this.checkedSubjects = [];
                           this.subjectDialogFormVisible = false;
@@ -554,6 +568,10 @@ var app = new Vue({
 				});
 				return;
 			    }
+                var examArranges = [];
+                for(var index in this.multipleSelection){
+                    examArranges.push(this.multipleSelection[index].arrangeId);
+                }
 			   this.$http.get(this.deleteUrl,{params:{examArranges:examArranges}}).then(
                     function(response){
                           this.$message({type:"info",message:"删除成功"});                        

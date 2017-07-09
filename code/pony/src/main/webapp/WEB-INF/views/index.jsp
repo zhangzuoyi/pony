@@ -93,8 +93,8 @@
     			<ul class="easyui-tree my-side-tree">
     				<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/exam/main/' />" iframe="1">考试管理</a></li>
     				<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examAdmin/examArrange/main/' />" iframe="1">考试安排</a></li>
-    				<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examAdmin/examRoom/main/' />" iframe="1">考场设置</a></li>
-                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examAdmin/examinee/main/' />" iframe="1">考生设置</a></li>
+    				<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examAdmin/examRoomArrange/main/' />" iframe="1">考场设置</a></li>
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examAdmin/examineeArrange/main/' />" iframe="1">考生设置</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examAdmin/examineeRoomArrange/main/' />" iframe="1">考生考场安排</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examResult/main/' />" iframe="1">成绩管理</a></li>
                 </ul>

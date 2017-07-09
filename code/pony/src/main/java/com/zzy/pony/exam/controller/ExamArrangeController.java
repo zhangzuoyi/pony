@@ -126,8 +126,8 @@ public class ExamArrangeController {
 
 	@RequestMapping(value="add",method=RequestMethod.GET)
 	@ResponseBody
-	public void add(@RequestParam(value="subjects[]") int[] subjects,@RequestParam(value="examId") int examId){
-			examArrangeService.add(subjects,examId);
+	public void add(@RequestParam(value="subjects[]") int[] subjects,@RequestParam(value="examId") int examId,@RequestParam(value="gradeId") int gradeId){
+			examArrangeService.add(subjects,examId,gradeId);
 	}
 	@RequestMapping(value="addExamDate",method=RequestMethod.GET)
 	@ResponseBody
