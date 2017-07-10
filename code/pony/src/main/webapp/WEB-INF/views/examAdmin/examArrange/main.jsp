@@ -41,19 +41,19 @@ width:200px;
                <el-col :span="1" >
                     <b>学年:</b>                                    
             	</el-col> 
-               <el-col  :span="4">
+               <el-col  :span="3">
                		{{schoolYear.startYear}}——{{schoolYear.endYear}}
                </el-col>
                <el-col :span="1" >
                     <b>学期:</b>                                    
             	</el-col> 
-               <el-col  :span="4">
+               <el-col  :span="3">
                		{{term.name}}
                </el-col>
              	<el-col :span="1" >
                     <b>考试:</b>                                    
             	</el-col> 
-           		 <el-col :span="4" >
+           		 <el-col :span="5" >
             		<div class="grid-content bg-purple">                                     
 					<el-select v-model="examId" @change="getExamSubjects()"    filterable clearable placeholder="请选择..">
                		 <el-option
@@ -69,7 +69,7 @@ width:200px;
            		 <el-col :span="1" >
                     <b>年级:</b>                                    
             	</el-col> 
-            	<el-col :span="4" >
+            	<el-col :span="5" >
             	<div class="grid-content bg-purple">                                     
 					<el-select v-model="gradeId"  filterable clearable placeholder="请选择..">
                		 <el-option
@@ -82,7 +82,7 @@ width:200px;
                     </div>        
             	</el-col>
             	
-            	<el-col :span="2" >
+            	<el-col :span="4" >
                		<el-button type="primary" @click="getExamArranges()" >查询</el-button>
               	</el-col>                           
               </el-row>
