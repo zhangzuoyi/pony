@@ -435,6 +435,7 @@ var app = new Vue({
                 this.$http.get(this.listPageUrl,{params:{currentPage:this.currentPage-1,pageSize:this.pageSize,examId:this.examId,gradeId:this.gradeId}}).then(
                     function(response){
                         this.tableData=response.data.content;
+                        this.total = response.data.totalElements;
                         //已选择的科目从备选项中移除掉
                         if(this.subjects.length>0){
                             for(var index in this.subjects){

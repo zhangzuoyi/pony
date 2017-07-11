@@ -7,9 +7,13 @@ import java.util.List;
 
 
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 
 
@@ -31,6 +35,45 @@ public class ExamRoomServiceImpl implements ExamRoomService {
 		// TODO Auto-generated method stub
 		return examRoomDao.findAll();
 	}
+
+	@Override
+	public Page<ExamRoom> findAll(Pageable pageable) {
+		// TODO Auto-generated method stub
+		return examRoomDao.findAll(pageable);
+	}
+
+	@Override
+	public void add(ExamRoom examroom) {
+		// TODO Auto-generated method stub
+		examRoomDao.save(examroom);
+	}
+
+	@Override
+	public void update(ExamRoom examroom) {
+		// TODO Auto-generated method stub
+		ExamRoom old = examRoomDao.findOne(examroom.getId());
+		old.setName(examroom.getName());
+		old.setCapacity(examroom.getCapacity());
+		examRoomDao.save(old);
+	}
+
+	@Override
+	public void delete(int id) {
+		// TODO Auto-generated method stub
+		examRoomDao.delete(id);
+	}
+
+	@Override
+	public Boolean isExist(ExamRoom examroom) {
+		// TODO Auto-generated method stub
+		List<ExamRoom> examRooms = examRoomDao.findByName(examroom.getName());
+		if (examRooms!= null && examRooms.size()>0) {
+			return true;
+		}
+		
+		return false;
+	}
+	
 
 	
 	

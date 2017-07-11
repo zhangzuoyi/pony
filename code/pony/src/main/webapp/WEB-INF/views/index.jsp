@@ -92,6 +92,7 @@
         	<div title="考试管理" data-options="iconCls:'icon-application-cascade'" style="padding:5px;">  	
     			<ul class="easyui-tree my-side-tree">
     				<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/exam/main/' />" iframe="1">考试管理</a></li>
+    				<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examAdmin/examRoom/main/' />" iframe="1">考场管理</a></li>  		
     				<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examAdmin/examArrange/main/' />" iframe="1">考试安排</a></li>
     				<li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examAdmin/examRoomArrange/main/' />" iframe="1">考场设置</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/examAdmin/examineeArrange/main/' />" iframe="1">考生设置</a></li>
