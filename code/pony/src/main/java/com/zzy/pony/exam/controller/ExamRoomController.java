@@ -56,6 +56,14 @@ public class ExamRoomController {
 		return examRoomService.findAll(pageable); 
 	}
 	
+	
+	@RequestMapping(value="getExamRooms",method=RequestMethod.GET)
+	@ResponseBody
+	public List<ExamRoom> getExamRooms(@RequestParam(value="roomIds[]") int[] roomIds){
+		return examRoomService.getExamRooms(roomIds); 
+	}
+	
+	
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody
 	public String add(@RequestBody ExamRoom examroom){		

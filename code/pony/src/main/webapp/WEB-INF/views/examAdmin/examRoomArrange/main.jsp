@@ -100,25 +100,24 @@ width:200px;
                     <b>考场:</b>
                 </el-row>
                 <el-row>
-                    <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+                    <el-checkbox :indeterminate="isIndeterminate2" v-model="checkAll2" @change="handleCheckAllChange2">全选</el-checkbox>
                     <div style="margin:15px 0;"></div>
-                    <el-checkbox-group v-model="checkedSubjects" @change="handleCheckedSubjectChange">
-                        <el-checkbox v-for="subject in subjects" :label="subject.subjectId">{{subject.name}}</el-checkbox>
+                    <el-checkbox-group v-model="checkedRooms" @change="handleCheckedRoomChange">
+                        <el-checkbox v-for="examRoom in examRooms" :label="examRoom.id">{{examRoom.name}}</el-checkbox>
                     </el-checkbox-group>
                 </el-row>
                 <el-row>
-                    <el-button type="primary" >生成设置</el-button>
-                    <el-button type="primary" >保存设置</el-button>
+                    <el-button type="primary" @click="generate" >生成设置</el-button>
+                    <el-button type="primary" @click="save">保存设置</el-button>
                 </el-row>
             </div>
         </el-card>
-            <el-row>
+            <el-row style="margin-top:10px;">
                 <el-col :span="4">
                     <b>已选科目:</b>
                 </el-col>
                 <el-col :span="20">
-
-
+				<span v-for="subject in subjectNames">{{subject.name}}&nbsp;</span>
                 </el-col>
             </el-row>
             <el-row>
@@ -131,7 +130,7 @@ width:200px;
                             border
                             style="width: 100%">
                         <el-table-column
-                                prop="roomName"
+                                prop="name"
                                 label="名称"
                                 >
                         </el-table-column>
@@ -161,6 +160,10 @@ var app = new Vue({
 		examUrl:"<s:url value='/exam/list'/>",
 		gradesUrl :"<s:url value='/grade/list'/>",
 		examSubjectUrl:"<s:url value='/subject/findByExam'/>",
+		examRoomsUrl:"<s:url value='/examAdmin/examRoom/list'/>",	
+		subjectNamesUrl:"<s:url value='/subject/getSubjects'/>",
+		examRoomNamesUrl:"<s:url value='/examAdmin/examRoom/getExamRooms'/>",
+		saveUrl:"<s:url value='/examAdmin/examRoom/save'/>",														
 		schoolYear :null,
 		term : null,
 		examId: null,
@@ -170,8 +173,13 @@ var app = new Vue({
 		tableData:[],						
 		checkAll:true,
 		isIndeterminate:true,
+		checkAll2:true,
+		isIndeterminate2:true,
 		checkedSubjects:[],
-		subjects:[]
+		subjects:[],
+		checkedRooms:[],
+		examRooms:[],
+		subjectNames:[]
 
 		
 	}, 
@@ -190,10 +198,19 @@ var app = new Vue({
 				this.getCurrentTerm();
 				this.getExams();
 				this.getGrades();
+				this.getExamRooms();
 		
 			
 	}, 
 	methods : {
+			getExamRooms:function(){
+			this.$http.get(this.examRoomsUrl).then(
+			function(response){
+			this.examRooms=response.data;
+			 },
+			function(response){}  	 			
+			);
+			},
 			getCurrentSchoolYear	:function(){ 			
 			this.$http.get(this.schoolYearUrl).then(
 			function(response){
@@ -228,10 +245,7 @@ var app = new Vue({
 			this.subjects=response.data; },
 			function(response){}  	 			
 			);
-			},
-			handleSelectionChange: function(val) {
-                this.multipleSelection = val;
-            },
+			},		
 			handleCheckAllChange:function(event){
 			    var allSubjects = [];
 			    for(var index in this.subjects){
@@ -244,7 +258,72 @@ var app = new Vue({
 				var checkedCount = value.length;
 				this.checkAll = checkedCount === this.subjects.length;
 				this.isIndeterminate = checkedCount > 0 && checkedCount <this.subjects.length;
+			},
+			handleCheckAllChange2:function(event){
+			    var allRooms = [];
+			    for(var index in this.examRooms){
+                    allRooms.push(this.examRooms[index].id);
+                }
+				this.checkedRooms = event.target.checked?allRooms:[];
+				this.isIndeterminate2=false;
+			},
+			handleCheckedRoomChange:function(value){
+				var checkedCount = value.length;
+				this.checkAll2 = checkedCount === this.examRooms.length;
+				this.isIndeterminate2 = checkedCount > 0 && checkedCount <this.examRooms.length;
+			},
+			generate:function(){				
+			this.$http.get(this.subjectNamesUrl,{params:{subjectIds:this.checkedSubjects}}).then(
+			function(response){this.subjectNames=response.data; },
+			function(response){}  	 			
+			);
+			this.$http.get(this.examRoomNamesUrl,{params:{roomIds:this.checkedRooms}}).then(
+			function(response){this.tableData=response.data; },
+			function(response){}  	 			
+			);										
+			},
+			save :function(){
+			if(this.examId == null || this.examId==''){
+              	this.$alert("请选择考试","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }
+             if(this.gradeId == null || this.gradeId==''){
+              	this.$alert("请选择年级","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }
+              if(this.checkedSubjects == null||this.checkedSubjects.length ==0){
+              	this.$alert("请选择科目","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;	
+              }
+              if(this.checkedRooms == null||this.checkedRooms.length ==0){
+              	this.$alert("请选择考场","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;	
+              }
+             this.$http.get(this.saveUrl,{params:{subjectIds:this.checkedSubjects}}).then(
+				function(response){this.subjectNames=response.data; },
+				function(response){}  	 			
+			);
+             //save逻辑 
+              
+              
+              
+			
+			
 			}
+			
+			
         }	        
 	 
 	

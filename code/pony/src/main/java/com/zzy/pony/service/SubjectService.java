@@ -33,4 +33,6 @@ public interface SubjectService {
 	List<Integer> findAllSubjectId();
 	
 	Subject findByName(String name);
+	
+	List<Subject> findSubjects(int[] subjectIds);
 }

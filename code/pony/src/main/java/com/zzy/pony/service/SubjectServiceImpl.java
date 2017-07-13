@@ -146,6 +146,19 @@ public class SubjectServiceImpl implements SubjectService {
 		
 		return subjectList;
 	}
+
+	@Override
+	public List<Subject> findSubjects(int[] subjectIds) {
+		// TODO Auto-generated method stub
+		List<Subject> result = new ArrayList<Subject>();
+		for (int subjectId : subjectIds) {
+			Subject subject = dao.findOne(subjectId);
+			result.add(subject);
+		}
+		
+		
+		return result;
+	}
 	
 	
 	

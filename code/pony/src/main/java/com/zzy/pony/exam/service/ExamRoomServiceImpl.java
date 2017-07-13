@@ -1,7 +1,9 @@
 package com.zzy.pony.exam.service;
 
 
+import java.util.ArrayList;
 import java.util.List;
+
 
 
 
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 
 
@@ -73,6 +76,20 @@ public class ExamRoomServiceImpl implements ExamRoomService {
 		
 		return false;
 	}
+
+	@Override
+	public List<ExamRoom> getExamRooms(int[] roomIds) {
+		// TODO Auto-generated method stub
+		List<ExamRoom> result = new ArrayList<ExamRoom>();
+		for (int roomId : roomIds) {
+			ExamRoom examRoom = examRoomDao.findOne(roomId);
+			result.add(examRoom);
+		}
+		
+		return result;
+	}
+	
+	
 	
 
 	

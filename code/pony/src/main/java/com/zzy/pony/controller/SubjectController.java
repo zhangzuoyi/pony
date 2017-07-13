@@ -109,6 +109,14 @@ public class SubjectController {
 		Subject g=service.get(id);
 		return g;
 	}
+	
+	@RequestMapping(value="getSubjects",method = RequestMethod.GET)
+	@ResponseBody
+	public List<Subject> getSubjects(@RequestParam(value="subjectIds[]") int[] subjectIds){		
+		return service.findSubjects(subjectIds);
+	}
+	
+	
 
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) throws ServletException {
