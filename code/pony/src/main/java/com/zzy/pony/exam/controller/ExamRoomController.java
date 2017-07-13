@@ -62,6 +62,16 @@ public class ExamRoomController {
 	public List<ExamRoom> getExamRooms(@RequestParam(value="roomIds[]") int[] roomIds){
 		return examRoomService.getExamRooms(roomIds); 
 	}
+
+	@RequestMapping(value="save",method = RequestMethod.GET)
+	@ResponseBody
+	public void save(@RequestParam(value="subjectIds[]") int[] subjectIds,
+					 @RequestParam(value="roomIds[]") int[] roomIds,
+					 @RequestParam(value="examId") int examId,
+					 @RequestParam(value="gradeId") int gradeId){
+
+		examRoomService.save(subjectIds,roomIds,examId,gradeId);
+	}
 	
 	
 	@RequestMapping(value="add",method = RequestMethod.POST)

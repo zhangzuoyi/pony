@@ -19,4 +19,5 @@ public interface ExamRoomService {
 	void delete(int id);
 	Boolean isExist(ExamRoom examroom);
 	List<ExamRoom> getExamRooms(int[] roomIds);
+	void save(int[] subjectIds,int[] roomIds,int examId,int gradeId);
 }

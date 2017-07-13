@@ -135,7 +135,7 @@ width:200px;
                                 >
                         </el-table-column>
                         <el-table-column
-                                prop="roomSeq"
+                                prop="id"
                                 label="序号"
                                 >
                         </el-table-column>
@@ -311,12 +311,17 @@ var app = new Vue({
 				});
 				return;	
               }
-             this.$http.get(this.saveUrl,{params:{subjectIds:this.checkedSubjects}}).then(
-				function(response){this.subjectNames=response.data; },
+             this.$http.get(this.saveUrl,{params:{subjectIds:this.checkedSubjects,roomIds:this.checkedRooms,examId:this.examId,gradeId:this.gradeId}}).then(
+				function(response){
+				    this.checkedSubjects=[];
+				    this.checkedRooms=[];
+				    this.examId=null;
+				    this.gradeId=null;
+				    this.$message({type:"info",message:"保存成功!"});
+				    },
 				function(response){}  	 			
 			);
-             //save逻辑 
-              
+
               
               
 			

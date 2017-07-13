@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.zzy.pony.model.Subject;
 import com.zzy.pony.service.SubjectService;
 
 import org.apache.commons.collections.iterators.ArrayListIterator;
@@ -139,10 +140,17 @@ public class ExamArrangeServiceImpl implements ExamArrangeService {
 		// TODO Auto-generated method stub
 		examArrangeDao.delete(arrangeId);
 	}
-	
-	
-	
-	
-	
-	
+
+	@Override
+	public ExamArrange findByExamAndGradeAndSubject(int examId, int gradeId, int subjectId) {
+		Exam exam = examService.get(examId);
+		Grade grade = gradeService.get(gradeId);
+		Subject subject = subjectService.get(subjectId);
+		List<ExamArrange> list = examArrangeDao.findByExamAndGradeAndSubject(exam,grade,subject);
+		if (list != null && list.size()>0)
+		{
+			return list.get(0);
+		}
+		return null;
+	}
 }

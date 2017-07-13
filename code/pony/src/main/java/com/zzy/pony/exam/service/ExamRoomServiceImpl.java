@@ -5,11 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
-
-
-
-
+import com.zzy.pony.exam.dao.ExamRoomAllocateDao;
+import com.zzy.pony.exam.model.ExamArrange;
+import com.zzy.pony.exam.model.ExamRoomAllocate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +30,10 @@ public class ExamRoomServiceImpl implements ExamRoomService {
 
 	@Autowired
 	private ExamRoomDao examRoomDao;
+	@Autowired
+	private ExamArrangeService examArrangeService;
+	@Autowired
+	private ExamRoomAllocateDao examRoomAllocateDao;
 	
 	@Override
 	public List<ExamRoom> list() {
@@ -88,12 +90,24 @@ public class ExamRoomServiceImpl implements ExamRoomService {
 		
 		return result;
 	}
-	
-	
-	
 
-	
-	
-	
-	
+	@Override
+	public void save(int[] subjectIds, int[] roomIds, int examId, int gradeId) {
+		for (int subjectId:
+			 subjectIds) {
+			ExamArrange examArrange = examArrangeService.findByExamAndGradeAndSubject(examId,gradeId,subjectId);
+			for (int roomId:
+				 roomIds) {
+			 ExamRoom examRoom = examRoomDao.findOne(roomId);
+			 ExamRoomAllocate examRoomAllocate = new ExamRoomAllocate();
+			 examRoomAllocate.setCapacity(examRoom.getCapacity());
+			 examRoomAllocate.setExamArrange(examArrange);
+			 examRoomAllocate.setRoomSeq(examRoom.getId());
+			 examRoomAllocate.setRoomName(examRoom.getName());
+			 examRoomAllocateDao.save(examRoomAllocate);
+			}
+
+
+		}
+	}
 }

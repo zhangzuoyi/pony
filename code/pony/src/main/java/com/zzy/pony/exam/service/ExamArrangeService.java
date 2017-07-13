@@ -20,5 +20,6 @@ public interface ExamArrangeService {
 	void addExamTime(int[] examArranges,Date startTime,Date endTime);
 	void addGroup(int[] examArranges,String groupName,String gradeId,String examId);
 	void delete(int arrangeId);
+	ExamArrange findByExamAndGradeAndSubject(int examId,int gradeId,int subjectId);
 	
 }
