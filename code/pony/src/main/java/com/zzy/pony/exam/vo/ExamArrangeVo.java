@@ -19,6 +19,7 @@ public class ExamArrangeVo {
 	private List<String> examRoomNames;
 	private List<Integer> examineeIds;
 	private List<String> examineeNames;
+	private int examineeTotal;//考生人数
 	public ExamArrangeVo(){}
 	public int getArrangeId() {
 		return arrangeId;
@@ -109,6 +110,12 @@ public class ExamArrangeVo {
 	}
 	public void setExamineeNames(List<String> examineeNames) {
 		this.examineeNames = examineeNames;
+	}
+	public int getExamineeTotal() {
+		return examineeTotal;
+	}
+	public void setExamineeTotal(int examineeTotal) {
+		this.examineeTotal = examineeTotal;
 	}
 	
 	

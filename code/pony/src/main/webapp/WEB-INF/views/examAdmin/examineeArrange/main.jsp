@@ -71,7 +71,7 @@ width:200px;
             	</el-col> 
             	<el-col :span="5" >
             	<div class="grid-content bg-purple">                                     
-					<el-select v-model="gradeId"  filterable clearable placeholder="请选择..">
+					<el-select v-model="gradeId" @change="getSchoolClasses()"  filterable clearable placeholder="请选择..">
                		 <el-option
                         v-for="grade in grades" 
                         :label="grade.name"                      
@@ -182,7 +182,7 @@ width:200px;
 			<b>年级:{{gradeName}}</b>
 			</el-col>
 			<el-col>
-				<el-select v-model="schoolClass" filterable  clearable placeholder="请选择">
+				<el-select v-model="schoolClass" @change="getExaminee()" filterable  clearable placeholder="请选择">
 					<el-option
 							v-for="item in classes"
 							:label="item.classId"
@@ -280,6 +280,28 @@ width:200px;
               </el-table>
           </el-row>
           </el-dialog>
+          <el-dialog title="设置考生号"  v-model="generateExamineeNoDialogFormVisible" >
+          <el-row>
+          <el-col :span="4">
+          <b>考生号前缀:</b>
+          </el-col>
+          <el-col :span="8">
+          <el-input v-model="prefixNo"></el-input>
+          </el-col>
+          </el-row>
+          <el-row>
+          <el-col :span="4">
+          <b>考生序号位数::</b>
+          </el-col>         
+          <el-col :span="8">  
+          <el-input-number v-model="bitNo"></el-input-number>          
+          </el-col>      
+          </el-row>
+          <div slot="footer" class="dialog-footer">
+				<el-button type="primary" @click="onSubmitGenerateNo()"  >确定</el-button>
+				<el-button @click="generateExamineeNoDialogFormVisible = false">取 消</el-button>				
+			</div>
+          </el-dialog>
 		</div>
 </div>
 <script type="text/javascript">
@@ -294,6 +316,10 @@ var app = new Vue({
 		examUrl:"<s:url value='/exam/list'/>",
 		gradesUrl :"<s:url value='/grade/list'/>",
 		examSubjectUrl:"<s:url value='/subject/findByExam'/>",
+		listByPageUrl:"<s:url value='/examAdmin/examArrange/listPage'/>",
+		schoolClassesUrl:"<s:url value='/schoolClass/findByGrade'/>",
+		gradeUrl:"<s:url value='/grade/get'/>",
+		generateNoUrl:"<s:url value='/grade/get'/>",		
 		schoolYear :null,
 		term : null,
 		examId: null,
@@ -315,7 +341,9 @@ var app = new Vue({
         schoolClass:null,
         schoolClass2:null,
         multipleSelection:[],
-        multipleSelection2:[]
+        multipleSelection2:[],
+        prefixNo:null,
+        bitNo:null
 
 
 
@@ -402,12 +430,69 @@ var app = new Vue({
             deleteExaminee: function(){
 
             },
+            getSchoolClasses:function(){        
+             this.$http.get(this.schoolClassesUrl,{params:{gradeId:this.gradeId}}).then(
+                    function(response){
+                        this.classes=response.data;
+                        });
+             this.$http.get(this.gradeUrl,{params:{id:this.gradeId}}).then(
+                    function(response){
+                        this.gradeName=response.data.gradeName;
+                        });
+            },
             listByPage : function(){
-
+			if(this.examId == null || this.examId==''){
+              	this.$alert("请选择考试","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }
+             if(this.gradeId == null || this.gradeId==''){
+              	this.$alert("请选择年级","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }
+              this.$http.get(this.listByPageUrl,{params:{currentPage:this.currentPage-1,pageSize:this.pageSize,examId:this.examId,gradeId:this.gradeId}}).then(
+                    function(response){
+                        this.tableData=response.data.content;
+                        this.total = response.data.totalElements;
+                        });
+              
+              
+			
+			
+			
+			
             },
             generateExamineeNo :function(){
-
+				this.generateExamineeNoDialogFormVisible = true;
             },
+            onSubmitGenerateNo : function(){
+            if(this.prefixNo == null || this.examId==''){
+              	this.$alert("请选择前缀","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }
+              if(this.bitNo == null || this.examId==''){
+              	this.$alert("请选择位数","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }
+              this.$http.get(this.listByPageUrl,{params:{currentPage:this.currentPage-1,pageSize:this.pageSize,examId:this.examId,gradeId:this.gradeId}}).then(
+                    function(response){
+                        this.tableData=response.data.content;
+                        this.total = response.data.totalElements;
+                        });
+              
+            
+            }
 
 
 

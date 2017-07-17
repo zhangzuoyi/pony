@@ -83,7 +83,7 @@ width:200px;
             	</el-col>
             	
             	<el-col :span="4" >
-               		<el-button type="primary" @click="getExamArranges()" >查询</el-button>
+               		<!-- <el-button type="primary" @click="getExamRoomArranges()" >查询</el-button> -->
               	</el-col>                           
               </el-row>
               <el-row>                            
@@ -320,13 +320,14 @@ var app = new Vue({
 				    this.$message({type:"info",message:"保存成功!"});
 				    },
 				function(response){}  	 			
-			);
-
-              
-              
+			);		
+			},
+			//@todo 查询
+			/* getExamRoomArranges:function(){
 			
 			
-			}
+			} */
+			
 			
 			
         }	        

@@ -116,6 +116,13 @@ public class ExamArrangeController {
                 vo.setSubjectId(ea.getSubject().getSubjectId());
                 vo.setSubjectName(ea.getSubject().getName());
             }
+            if (ea.getExamRoomAllocates()!= null) {
+				int count = 0;
+            	for (ExamRoomAllocate era : ea.getExamRoomAllocates()) {
+            		count += era.getCapacity();
+				}
+            vo.setExamineeTotal(count);
+			}
 			content.add(vo);
 			
 		}

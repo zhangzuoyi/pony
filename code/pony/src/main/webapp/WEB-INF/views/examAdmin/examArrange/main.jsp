@@ -432,6 +432,20 @@ var app = new Vue({
 			},
 			
             getExamArranges:function(){
+              if(this.examId == null || this.examId==''){
+              	this.$alert("请选择考试","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }
+             if(this.gradeId == null || this.gradeId==''){
+              	this.$alert("请选择年级","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }                     
                 this.$http.get(this.listPageUrl,{params:{currentPage:this.currentPage-1,pageSize:this.pageSize,examId:this.examId,gradeId:this.gradeId}}).then(
                     function(response){
                         this.tableData=response.data.content;

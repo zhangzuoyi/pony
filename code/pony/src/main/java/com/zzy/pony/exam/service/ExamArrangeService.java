@@ -7,8 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.zzy.pony.exam.model.ExamArrange;
-import com.zzy.pony.model.Exam;
-import com.zzy.pony.model.Grade;
 
 public interface ExamArrangeService {
 	Page<ExamArrange> findByExamAndGrade(Pageable pageable,int examId,int gradeId);

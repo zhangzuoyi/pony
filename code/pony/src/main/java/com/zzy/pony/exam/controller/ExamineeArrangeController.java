@@ -3,6 +3,7 @@ package com.zzy.pony.exam.controller;
 
 
 
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ public class ExamineeArrangeController {
 	public String main(Model model){
 		return "examAdmin/examineeArrange/main";
 	}
+	
 	
 	
 	
