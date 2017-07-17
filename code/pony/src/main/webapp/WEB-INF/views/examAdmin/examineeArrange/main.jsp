@@ -155,10 +155,14 @@ width:200px;
 			</el-row>			
         </el-card>
 			<el-dialog title="设置考生"  v-model="setExamineeDialogFormVisible" >
-			<el-row>
-			<el-col :span="4">
-			<b>按班级:</b>
-			</el-col>
+                <div>
+                    <el-select v-model="flag">
+                        <el-option :label="按班级" :value="true"></el-option>
+                        <el-option :label="按考生" :value="false"></el-option>
+                    </el-select>
+                </div>
+                <div v-if="flag">
+            <el-row>
 			<el-col>
 			<b>年级:{{gradeName}}</b>
 			</el-col>
@@ -172,12 +176,11 @@ width:200px;
 			</el-checkbox-group>
 			</el-row>
 			<el-row>
-			<el-button size="small" >确认</el-button>
+			<el-button size="small" @click="submitByClass">确认</el-button>
 			</el-row>
+            </div>
+                <div v-if="!flag">
 			<el-row>
-			<el-col :span="4">
-			<b>按考生:</b>
-			</el-col>
 			<el-col :span="4">
 			<b>年级:{{gradeName}}</b>
 			</el-col>
@@ -222,9 +225,9 @@ width:200px;
 				</el-table>
 			</el-row>
 			<el-row>
-			<el-button size="small" >确认</el-button>
+			<el-button size="small" @click="submitByStudent">确认</el-button>
 			</el-row>
-		
+             </div>
 			</el-dialog>
 
       	<el-dialog title="查看考生"  v-model="findExamineeDialogFormVisible" >
@@ -319,8 +322,10 @@ var app = new Vue({
 		listByPageUrl:"<s:url value='/examAdmin/examArrange/listPage'/>",
 		schoolClassesUrl:"<s:url value='/schoolClass/findByGrade'/>",
 		gradeUrl:"<s:url value='/grade/get'/>",
-		generateNoUrl:"<s:url value='/grade/get'/>",		
-		schoolYear :null,
+		generateNoUrl:"<s:url value='/grade/get'/>",
+        submitByClassUrl:"<s:url value='/grade/get'/>",
+        submitByStudentUrl:"<s:url value='/grade/get'/>",
+         schoolYear :null,
 		term : null,
 		examId: null,
 		exams:[],
@@ -343,7 +348,9 @@ var app = new Vue({
         multipleSelection:[],
         multipleSelection2:[],
         prefixNo:null,
-        bitNo:null
+        bitNo:null,
+        flag:true//按照班级或者按照考生
+
 
 
 
@@ -492,7 +499,15 @@ var app = new Vue({
                         });
               
             
+            },
+            submitByClass:function(){
+
+            },
+            submitByStudent:function(){
+
+
             }
+
 
 
 

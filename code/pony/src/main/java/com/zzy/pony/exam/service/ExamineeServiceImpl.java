@@ -49,12 +49,11 @@ public class ExamineeServiceImpl implements ExamineeService {
 			Examinee examinee = new Examinee();
 			examinee.setExam(exam);
 			examinee.setStudent(student);
-			//@todo 考生号==prefixNo+上次考试名次
-			
-			
+			//@todo 考生号==prefixNo+上次考试名次(如何确定?)
+			examinees.add(examinee);
 		}
 	 }
-	 
+	 examineeDao.save(examinees);
 	}
 
 	
