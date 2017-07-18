@@ -132,6 +132,7 @@ public class StudentAdminController {
 		}
 		return list;
 	}
+	
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody
 	public String add(Student sy, Model model){

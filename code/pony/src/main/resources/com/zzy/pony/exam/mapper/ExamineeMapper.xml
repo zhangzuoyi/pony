@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.exam.mapper.ExamineeMapper">
+	<sql id="base_select">
+		select t.EXAMINEE_ID as examineeId,t.EXAM_ID as examId,t.STUDENT_ID as studentId,t.REG_NO as regNo,
+		a.`NAME` as name,a.SEX as sex,a.STUDENT_NO as studentNo from t_examinee t 
+		left join t_student a on t.STUDENT_ID = a.STUDENT_ID
+		left join t_examinee_arrange b on t.examinee_id = b.examinee_id
+	</sql>
+	<select id="findPageByClass" resultType="com.zzy.pony.exam.vo.ExamineeVo">
+		<include refid="base_select"></include>
+		 where a.class_id=#{3} and t.EXAM_ID=#{2} limit (#{0}-1)*#{1},#{1}
+	</select>
+	<select id="findCountByClass" resultType="int">
+		select count(1) from 
+		(<include refid="base_select"></include>
+		 where a.class_id=#{3} and t.EXAM_ID=#{2}) t 
+	</select>
+	
+	<select id="findByExamIdAndClassId" resultType="com.zzy.pony.exam.model.Examinee">
+		<include refid="base_select"></include>
+		 where a.class_id=#{1} and t.EXAM_ID=#{0} 
+	</select>
+	
+	<select id="findPageByClassAndArrange" resultType="com.zzy.pony.exam.vo.ExamineeVo">
+		<include refid="base_select"></include>
+		 where a.class_id=#{3} and t.EXAM_ID=#{2} and b.arrange_id = #{4} limit (#{0}-1)*#{1},#{1}
+	</select>
+	<select id="findCountByClassAndArrange" resultType="int">
+		select count(1) from 
+		(<include refid="base_select"></include>
+		 where a.class_id=#{3} and t.EXAM_ID=#{2} and b.arrange_id = #{4}) t 
+	</select>
+	
+	<select id="findByArrangeId" resultType="com.zzy.pony.exam.model.Examinee">
+		<include refid="base_select"></include>
+		 where  b.arrange_id = #{0} 
+	</select>
+	
+</mapper>

@@ -7,11 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zzy.pony.exam.dao.ExamineeDao;
+import com.zzy.pony.exam.mapper.ExamineeMapper;
 import com.zzy.pony.exam.model.Examinee;
+import com.zzy.pony.exam.vo.ExamineeVo;
 import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.Student;
@@ -34,6 +40,8 @@ public class ExamineeServiceImpl implements ExamineeService {
 	private ExamineeDao examineeDao;
 	@Autowired
 	private ExamService examService;
+	@Autowired
+	private ExamineeMapper examineeMapper;
 	
 	
 	
@@ -55,6 +63,55 @@ public class ExamineeServiceImpl implements ExamineeService {
 	 }
 	 examineeDao.save(examinees);
 	}
+
+
+
+	@Override
+	public Page<ExamineeVo> findPageByClass(int currentPage, int pageSize,
+			int examId, int classId) {
+		// TODO Auto-generated method stub
+		List<ExamineeVo> content = examineeMapper.findPageByClass(currentPage, pageSize, examId, classId);
+		Pageable pageable = new PageRequest(currentPage, pageSize);
+		Integer total = examineeMapper.findCountByClass(examId, classId);
+		Page<ExamineeVo> result = new PageImpl<ExamineeVo>(content, pageable, total);
+		return result;
+	}
+
+	
+
+	@Override
+	public Page<ExamineeVo> findPageByClassAndArrange(int currentPage,
+			int pageSize, int examId, int classId, int arrangeId) {
+		// TODO Auto-generated method stub
+		List<ExamineeVo> content = examineeMapper.findPageByClassAndArrange(currentPage, pageSize, examId, classId, arrangeId);
+		Pageable pageable = new PageRequest(currentPage, pageSize);
+		Integer total = examineeMapper.findCountByClassAndArrange(examId, classId, arrangeId);
+		Page<ExamineeVo> result = new PageImpl<ExamineeVo>(content, pageable, total);
+		return result;
+	}
+
+
+
+	@Override
+	public List<Examinee> findByExamIdAndClassId(int examId, int classId) {
+		// TODO Auto-generated method stub			
+		return examineeMapper.findByExamIdAndClassId(examId, classId);
+	}
+
+
+
+	@Override
+	public List<Examinee> findByArrangeId(int arrangeId) {
+		// TODO Auto-generated method stub
+		return examineeMapper.findByArrangeId(arrangeId);
+	}
+	
+	
+	
+	
+	
+	
+	
 
 	
 	
