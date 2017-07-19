@@ -41,8 +41,7 @@ public class ExamineeArrangeServiceImpl implements ExamineeArrangeService {
 		}
 		List<ExamArrange> examArranges = new ArrayList<ExamArrange>();
 		for (int arrangeId : arrangeIds) {
-			ExamArrange examArrange = new ExamArrange();
-			examArrange.setArrangeId(arrangeId);
+			ExamArrange examArrange = examArrangeDao.findOne(arrangeId);
 			examArrange.setExaminees(examinees);
 			examArranges.add(examArrange);
 		}
@@ -61,8 +60,7 @@ public class ExamineeArrangeServiceImpl implements ExamineeArrangeService {
 		}
 		List<ExamArrange> examArranges = new ArrayList<ExamArrange>();
 		for (int arrangeId : arrangeIds) {
-			ExamArrange examArrange = new ExamArrange();
-			examArrange.setArrangeId(arrangeId);
+			ExamArrange examArrange = examArrangeDao.findOne(arrangeId);
 			examArrange.setExaminees(examinees);
 			examArranges.add(examArrange);
 		}

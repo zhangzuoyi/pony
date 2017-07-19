@@ -29,7 +29,7 @@ public class ExamineeController {
 	@RequestMapping(value="generateNo",method=RequestMethod.GET)
 	@ResponseBody
 	public void generateNo(@RequestParam(value="examId") int examId,@RequestParam(value="gradeId") int gradeId,@RequestParam(value="prefixNo") String prefixNo,@RequestParam(value="bitNo") int bitNo){
-		
+		examineeService.generateNo(examId, gradeId, prefixNo, bitNo);
 	}
 	@RequestMapping(value="listPageByClass",method=RequestMethod.GET)
 	@ResponseBody

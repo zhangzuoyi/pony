@@ -58,6 +58,7 @@ public class ExamineeServiceImpl implements ExamineeService {
 			examinee.setExam(exam);
 			examinee.setStudent(student);
 			//@todo 考生号==prefixNo+上次考试名次(如何确定?)
+			examinee.setRegNo("test");
 			examinees.add(examinee);
 		}
 	 }
@@ -70,7 +71,7 @@ public class ExamineeServiceImpl implements ExamineeService {
 	public Page<ExamineeVo> findPageByClass(int currentPage, int pageSize,
 			int examId, int classId) {
 		// TODO Auto-generated method stub
-		List<ExamineeVo> content = examineeMapper.findPageByClass(currentPage, pageSize, examId, classId);
+		List<ExamineeVo> content = examineeMapper.findPageByClass(currentPage*pageSize, pageSize, examId, classId);
 		Pageable pageable = new PageRequest(currentPage, pageSize);
 		Integer total = examineeMapper.findCountByClass(examId, classId);
 		Page<ExamineeVo> result = new PageImpl<ExamineeVo>(content, pageable, total);
@@ -83,7 +84,7 @@ public class ExamineeServiceImpl implements ExamineeService {
 	public Page<ExamineeVo> findPageByClassAndArrange(int currentPage,
 			int pageSize, int examId, int classId, int arrangeId) {
 		// TODO Auto-generated method stub
-		List<ExamineeVo> content = examineeMapper.findPageByClassAndArrange(currentPage, pageSize, examId, classId, arrangeId);
+		List<ExamineeVo> content = examineeMapper.findPageByClassAndArrange(currentPage*pageSize, pageSize, examId, classId, arrangeId);
 		Pageable pageable = new PageRequest(currentPage, pageSize);
 		Integer total = examineeMapper.findCountByClassAndArrange(examId, classId, arrangeId);
 		Page<ExamineeVo> result = new PageImpl<ExamineeVo>(content, pageable, total);

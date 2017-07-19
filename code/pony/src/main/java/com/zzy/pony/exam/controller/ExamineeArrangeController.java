@@ -33,21 +33,21 @@ public class ExamineeArrangeController {
 	
 	@RequestMapping(value="submitByClass",method=RequestMethod.GET)
 	@ResponseBody
-	public void submitByClass(@RequestParam(value="examId") int examId,@RequestParam(value="classIds[]") int[] classIds,@RequestParam(value="arrangeIds") int[] arrangeIds){
+	public void submitByClass(@RequestParam(value="examId") int examId,@RequestParam(value="classIds[]") int[] classIds,@RequestParam(value="arrangeIds[]") int[] arrangeIds){
 		
 		examineeArrangeService.submitByClass(examId, classIds, arrangeIds);
 	}
 	
 	@RequestMapping(value="submitByStudent",method=RequestMethod.GET)
 	@ResponseBody
-	public void submitByStudent(@RequestParam(value="examineeIds[]") int[] examineeIds,@RequestParam(value="arrangeIds") int[] arrangeIds){
+	public void submitByStudent(@RequestParam(value="examineeIds[]") int[] examineeIds,@RequestParam(value="arrangeIds[]") int[] arrangeIds){
 		examineeArrangeService.submitByStudent(examineeIds, arrangeIds);		
 	}
 	
 	@RequestMapping(value="delete",method=RequestMethod.GET)
 	@ResponseBody
-	public void delete(@RequestParam(value="arrangeIds") int[] arrangeIds){
-
+	public void delete(@RequestParam(value="arrangeIds[]") int[] arrangeIds){
+		examineeArrangeService.delete(arrangeIds);
 	}
 	
 	

@@ -155,12 +155,12 @@ width:200px;
 			</el-row>			
         </el-card>
 			<el-dialog title="设置考生"  v-model="setExamineeDialogFormVisible" >
-                <div>
+                <el-row>
                     <el-select v-model="flag">
-                        <el-option :label="按班级" :value="true"></el-option>
-                        <el-option :label="按考生" :value="false"></el-option>
+                        <el-option :label="'按班级'" :value="true"><span style="float: left">按班级</span></el-option>
+                        <el-option :label="'按考生'" :value="false"><span style="float: left">按考生</span></el-option>
                     </el-select>
-                </div>
+                </el-row>
                 <div v-if="flag">
             <el-row>
 			<el-col>
@@ -172,24 +172,29 @@ width:200px;
 			</el-row>
 			<el-row>
 			<el-checkbox-group v-model="checkedClasses" >
-				<el-checkbox v-for="item in classes" :label="item.classId">{{item.className}}</el-checkbox>
+				<el-checkbox v-for="item in classes" :label="item.classId">{{item.name}}</el-checkbox>
 			</el-checkbox-group>
 			</el-row>
 			<el-row>
-			<el-button size="small" @click="submitByClass">确认</el-button>
-			</el-row>
+			<el-button type="primary" size="small" @click="submitByClass">确认</el-button>
+			</el-row>>
             </div>
                 <div v-if="!flag">
 			<el-row>
-			<el-col :span="4">
+			<el-col>
 			<b>年级:{{gradeName}}</b>
+			</el-col>
+			</el-row>
+			<el-row>
+			<el-col>
+			<b>班级</b>
 			</el-col>
 			<el-col>
 				<el-select v-model="schoolClass" @change="getExaminee()" filterable  clearable placeholder="请选择">
 					<el-option
 							v-for="item in classes"
-							:label="item.classId"
-							:value="item.className">
+							:label="item.name"
+                          	:value="item.classId">
 					</el-option>
 				</el-select>
 			</el-col>
@@ -224,7 +229,7 @@ width:200px;
 					</el-table-column>
 				</el-table>	
 				<el-row>	
-				<el-col :offset="18" :span="6">	
+				<el-col :offset="15" :span="9">	
 				<el-pagination
                 @size-change="handleSizeChange2"
                 @current-change="handleCurrentChange2"
@@ -238,7 +243,7 @@ width:200px;
                 </el-row>
 			</el-row>
 			<el-row>
-			<el-button size="small" @click="submitByStudent">确认</el-button>
+			<el-button type="primary" size="small" @click="submitByStudent">确认</el-button>
 			</el-row>
              </div>
 			</el-dialog>
@@ -255,13 +260,13 @@ width:200px;
               <el-select v-model="schoolClass2" filterable  clearable placeholder="请选择">
                   <el-option
                           v-for="item in classes"
-                          :label="item.classId"
-                          :value="item.className">
+                          :label="item.name"
+                          :value="item.classId">
                   </el-option>
               </el-select>
           </el-col>
           <el-col>
-          <el-button size="small" @click="findExaminee">查询</el-button>
+          <el-button type="primary" size="small" @click="findExaminee">查询</el-button>
           </el-col>
           </el-row>
           <el-row>
@@ -296,7 +301,7 @@ width:200px;
               </el-table>
           </el-row>
           <el-row>
-          <el-col :offset="18" :span="6">
+          <el-col :offset="15" :span="9">
           <el-pagination
                 @size-change="handleSizeChange3"
                 @current-change="handleCurrentChange3"
@@ -377,6 +382,7 @@ var app = new Vue({
 		classes:[],
         setExamineeDialogFormVisible:false,
         findExamineeDialogFormVisible:false,
+        generateExamineeNoDialogFormVisible:false,
         gradeName:null,
         schoolClass:null,
         schoolClass2:null,
@@ -474,15 +480,48 @@ var app = new Vue({
 				this.currentPage2 = val;
 				//console.log('当前页 : ${val}');
 			},
+			handleSizeChange3 :function(val){
+			//console.log('每页  ${val}条');
+			this.currentPage3 = 1;
+			this.pageSize3 = val;
+
+			},
+			handleCurrentChange3: function(val){
+				this.currentPage3 = val;
+				//console.log('当前页 : ${val}');
+			},
             setExaminee: function(){
+            if(this.examId == null || this.examId==''){
+              	this.$alert("请选择考试","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }
+              if(this.gradeId == null || this.gradeId==''){
+              	this.$alert("请选择年级","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }
+              if(this.multipleSelection ==null||this.multipleSelection.length==0 ){
+              this.$alert("请选择考试科目","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }
                 this.setExamineeDialogFormVisible = true;
              },
             handleFind :function(index,row){
+            	this.tableData3=[];
+            	this.schoolClass2 = null;
                 this.findExamineeDialogFormVisible = true;
                 this.arrangeId = row.arrangeId;
              },
             deleteExaminee: function(){
-				if(this.multipleSelection==null||this.multipleSelection.length=0){
+				if(this.multipleSelection==null||this.multipleSelection.length==0){
 				this.$alert("请选择考试科目","提示",{
 					type:"warning",
 					confirmButtonText:'确认'
@@ -508,7 +547,7 @@ var app = new Vue({
                         });
              this.$http.get(this.gradeUrl,{params:{id:this.gradeId}}).then(
                     function(response){
-                        this.gradeName=response.data.gradeName;
+                        this.gradeName=response.data.name;
                         });
             },
             listByPage : function(){
@@ -539,9 +578,24 @@ var app = new Vue({
 			
             },
             generateExamineeNo :function(){
+            if(this.examId == null || this.examId==''){
+              	this.$alert("请选择考试","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }
+             if(this.gradeId == null || this.gradeId==''){
+              	this.$alert("请选择年级","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }
 				this.generateExamineeNoDialogFormVisible = true;
             },
             onSubmitGenerateNo : function(){
+            
             if(this.prefixNo == null || this.examId==''){
               	this.$alert("请选择前缀","提示",{
 					type:"warning",
@@ -556,29 +610,21 @@ var app = new Vue({
 				});
 				return;
               }
-              this.$http.get(this.listByPageUrl,{params:{currentPage:this.currentPage-1,pageSize:this.pageSize,examId:this.examId,gradeId:this.gradeId}}).then(
+              this.$http.get(this.generateNoUrl,{params:{examId:this.examId,gradeId:this.gradeId,prefixNo:this.prefixNo,bitNo:this.bitNo}}).then(
                     function(response){
-                        this.tableData=response.data.content;
-                        this.total = response.data.totalElements;
+                        this.examId = null;
+                        this.gradeId= null;
+                        this.prefixNo= null;
+                        this.bitNo=null;
+                        this.generateExamineeNoDialogFormVisible=false;
+                        this.$message({type:"info",message:"生成成功"});                       
+                        
                         });
               
             
             },
             submitByClass:function(){
-				if(this.examId == null || this.examId==''){
-              	this.$alert("请选择考试","提示",{
-					type:"warning",
-					confirmButtonText:'确认'
-				});
-				return;
-              }
-              if(this.gradeId == null || this.gradeId==''){
-              	this.$alert("请选择年级","提示",{
-					type:"warning",
-					confirmButtonText:'确认'
-				});
-				return;
-              }
+				
               if(this.checkedClasses == null || this.checkedClasses.length ==0){
               this.$alert("请选择班级","提示",{
 					type:"warning",
@@ -586,13 +632,7 @@ var app = new Vue({
 				});
 				return;				
               }
-              if(this.multipleSelection ==null||this.multipleSelection.length==0 ){
-              this.$alert("请选择考试科目","提示",{
-					type:"warning",
-					confirmButtonText:'确认'
-				});
-				return;
-              }
+              
               var arrangeIds = [];
               for(var index in this.multipleSelection){
               	arrangeIds.push(this.multipleSelection[index].arrangeId);
@@ -611,28 +651,7 @@ var app = new Vue({
 
 
             },
-            submitByStudent:function(){
-				if(this.examId == null || this.examId==''){
-              	this.$alert("请选择考试","提示",{
-					type:"warning",
-					confirmButtonText:'确认'
-				});
-				return;
-              }
-              if(this.gradeId == null || this.gradeId==''){
-              	this.$alert("请选择年级","提示",{
-					type:"warning",
-					confirmButtonText:'确认'
-				});
-				return;
-              }
-              if(this.multipleSelection ==null||this.multipleSelection.length==0 ){
-              this.$alert("请选择考试科目","提示",{
-					type:"warning",
-					confirmButtonText:'确认'
-				});
-				return;
-              }
+            submitByStudent:function(){				
               if(this.multipleSelection2 ==null||this.multipleSelection2.length==0 ){
               this.$alert("请选择考生","提示",{
 					type:"warning",
@@ -649,7 +668,7 @@ var app = new Vue({
               	examineeIds.push(this.multipleSelection2[index].examineeId);        
               }
               
-              this.$http.get(this.submitByClassUrl,{params:{examineeIds:examineeIds,arrangeIds:arrangeIds}}).then(
+              this.$http.get(this.submitByStudentUrl,{params:{examineeIds:examineeIds,arrangeIds:arrangeIds}}).then(
                     function(response){
                         this.$message({type:"info",message:"设置成功"});                   
                         this.examId = null;
@@ -672,14 +691,14 @@ var app = new Vue({
 				});
 				return;
               }
-              if(this.classId == null || this.classId==''){
+              if(this.schoolClass == null || this.schoolClass==''){
               	this.$alert("请选择班级","提示",{
 					type:"warning",
 					confirmButtonText:'确认'
 				});
 				return;
               }
-             this.$http.get(this.getExamineeUrl,{params:{currentPage:this.currentPage2-1,pageSize:this.pageSize2,examId:this.examId,classId:this.classId}}).then(
+             this.$http.get(this.getExamineeUrl,{params:{currentPage:this.currentPage2-1,pageSize:this.pageSize2,examId:this.examId,classId:this.schoolClass}}).then(
                     function(response){
                         this.tableData2=response.data.content;
                         this.total2 = response.data.totalElements;                       
@@ -694,7 +713,7 @@ var app = new Vue({
 				});
 				return;
               }
-              if(this.classId == null || this.classId==''){
+              if(this.schoolClass2 == null || this.schoolClass2==''){
               	this.$alert("请选择班级","提示",{
 					type:"warning",
 					confirmButtonText:'确认'
@@ -708,7 +727,7 @@ var app = new Vue({
 				});
 				return;
               }
-             this.$http.get(this.findExamineeUrl,{params:{currentPage:this.currentPage3-1,pageSize:this.pageSize3,examId:this.examId,classId:this.classId,arrangeId:this.arrangeId}}).then(
+             this.$http.get(this.findExamineeUrl,{params:{currentPage:this.currentPage3-1,pageSize:this.pageSize3,examId:this.examId,classId:this.schoolClass2,arrangeId:this.arrangeId}}).then(
                     function(response){
                         this.tableData3=response.data.content;
                         this.total3 = response.data.totalElements;                       
