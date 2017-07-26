@@ -1,13 +1,18 @@
 package com.zzy.pony.vo;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.zzy.pony.model.ExamType;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Term;
 
+@JsonIgnoreProperties(value={"schoolClasses","subjects"})
 public class ExamVo {
 	private Integer examId;
 
@@ -24,6 +29,24 @@ public class ExamVo {
 	private Date examDate;
 
 	private List<ExamSubjectVo> subjects;
+	
+	private Integer[] classIds;
+	private Integer[] subjectIds;
+	
+	public String getSubjectsName(){
+		List<String> names=new ArrayList<String>();
+		for(ExamSubjectVo vo: subjects){
+			names.add(vo.getSubject().getName());
+		}
+		return StringUtils.join(names, ",");
+	}
+	public String getClassesName(){
+		List<String> names=new ArrayList<String>();
+		for(SchoolClass vo: schoolClasses){
+			names.add(vo.getName());
+		}
+		return StringUtils.join(names, ",");
+	}
 
 	public Integer getExamId() {
 		return examId;
@@ -87,6 +110,34 @@ public class ExamVo {
 
 	public void setExamDate(Date examDate) {
 		this.examDate = examDate;
+	}
+	public Integer[] getClassIds() {
+		if(classIds == null && schoolClasses != null && schoolClasses.size()>0){
+			classIds=new Integer[schoolClasses.size()];
+			int i=0;
+			for(SchoolClass sc: schoolClasses){
+				classIds[i]=sc.getClassId();
+				i++;
+			}
+		}
+		return classIds;
+	}
+	public void setClassIds(Integer[] classIds) {
+		this.classIds = classIds;
+	}
+	public Integer[] getSubjectIds() {
+		if(subjectIds == null && subjects != null && subjects.size()>0){
+			subjectIds=new Integer[subjects.size()];
+			int i=0;
+			for(ExamSubjectVo sub: subjects){
+				subjectIds[i]=sub.getSubject().getSubjectId();
+				i++;
+			}
+		}
+		return subjectIds;
+	}
+	public void setSubjectIds(Integer[] subjectIds) {
+		this.subjectIds = subjectIds;
 	}
 
 }

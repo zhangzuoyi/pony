@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +24,7 @@ import com.zzy.pony.dao.ExamTypeDao;
 import com.zzy.pony.dao.SchoolYearDao;
 import com.zzy.pony.dao.TermDao;
 import com.zzy.pony.model.Exam;
+import com.zzy.pony.model.ExamType;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Subject;
@@ -123,6 +125,29 @@ public class ExamController {
 		service.add(sy, subjectIds);
 		return "success";
 	}
+	@RequestMapping(value="add2",method = RequestMethod.POST)
+	@ResponseBody
+	public String add2(@RequestBody ExamVo vo, Model model){
+		Exam sy=new Exam();
+		sy.setName(vo.getName());
+		sy.setExamDate(vo.getExamDate());
+		sy.setSchoolYear(vo.getSchoolYear());
+		sy.setTerm(vo.getTerm());
+		sy.setType(vo.getType());
+		sy.setCreateTime(new Date());
+		sy.setCreateUser(ShiroUtil.getLoginUser().getLoginName());
+		sy.setUpdateTime(new Date());
+		sy.setUpdateUser(ShiroUtil.getLoginUser().getLoginName());
+		List<SchoolClass> classList=new ArrayList<SchoolClass>();
+		for(Integer cid: vo.getClassIds()){
+			SchoolClass sc=new SchoolClass();
+			sc.setClassId(cid);
+			classList.add(sc);
+		}
+		sy.setSchoolClasses(classList);
+		service.add(sy, vo.getSubjectIds());
+		return "success";
+	}
 	@RequestMapping(value="edit",method = RequestMethod.POST)
 	@ResponseBody
 	public String edit(Exam sy, Integer[] classIds,Integer[] subjectIds, Model model){
@@ -136,6 +161,24 @@ public class ExamController {
 		service.update(sy, ids, subjectIds);
 		return "success";
 	}
+	@RequestMapping(value="edit2",method = RequestMethod.POST)
+	@ResponseBody
+	public String edit2(@RequestBody ExamVo vo, Model model){
+		Exam sy=new Exam();
+		sy.setExamId(vo.getExamId());
+		sy.setName(vo.getName());
+		sy.setExamDate(vo.getExamDate());
+		sy.setType(vo.getType());
+		sy.setUpdateTime(new Date());
+		sy.setUpdateUser(ShiroUtil.getLoginUser().getLoginName());
+		List<Integer> ids=new ArrayList<Integer>();
+		for(Integer cid: vo.getClassIds()){
+			if(cid != null)
+				ids.add(cid);
+		}
+		service.update(sy, ids, vo.getSubjectIds());
+		return "success";
+	}
 	@RequestMapping(value="delete",method = RequestMethod.POST)
 	@ResponseBody
 	public String delete(@RequestParam(value="id") int id, Model model){
@@ -146,6 +189,11 @@ public class ExamController {
 	@ResponseBody
 	public ExamVo get(@RequestParam(value="id") int id, Model model){
 		return service.getVo(id);
+	}
+	@RequestMapping(value="examTypes",method = RequestMethod.GET)
+	@ResponseBody
+	public List<ExamType> examTypes(Model model){
+		return etDao.findAll();
 	}
 
 	@InitBinder
