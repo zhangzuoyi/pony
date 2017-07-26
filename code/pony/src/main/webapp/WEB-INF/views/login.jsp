@@ -12,7 +12,7 @@
 	<title>登录</title>
 	<!-- CSS -->
 	<link rel="stylesheet" href="<s:url value='/static/login/css/reset.css '/>" />
-	<link rel="stylesheet" href="<s:url value='/static/login/css/animate.css '/>" />
+	<%-- <link rel="stylesheet" href="<s:url value='/static/login/css/animate.css '/>" /> --%>
 	<link rel="stylesheet" href="<s:url value='/static/login/css/styles.css '/>" />
 </head>
 	<!-- Main HTML -->
