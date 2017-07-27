@@ -12,4 +12,5 @@ import com.zzy.pony.model.Student;
 public interface StudentDao extends JpaRepository<Student,Integer>{
 	List<Student> findBySchoolClass(SchoolClass sc);
 	Student findByStudentNo(String studentNo);
+	
 }

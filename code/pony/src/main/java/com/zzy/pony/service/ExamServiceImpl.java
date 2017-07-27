@@ -6,6 +6,8 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.zzy.pony.dao.ExamDao;
@@ -135,6 +137,23 @@ public class ExamServiceImpl implements ExamService {
 	@Override
 	public List<ExamVo> findByYearAndTerm(SchoolYear year, Term term) {
 		List<Exam> exams = dao.findBySchoolYearAndTerm(year, term);
+		List<ExamSubject> subjects = esDao.findByExamIn(exams);
+		List<ExamVo> result = new ArrayList<ExamVo>();
+		for (Exam exam : exams) {
+			exam.getSchoolClasses().size();
+			ExamVo vo = exam.toVo();
+			vo.setSubjects(getSubjectVos(vo.getExamId(), subjects));
+			result.add(vo);
+		}
+		return result;
+	}		
+
+	@Override
+	public List<ExamVo> findByYearAndTermOrderByExamDate(SchoolYear year,
+			Term term) {
+		// TODO Auto-generated method stub
+		Sort sort = new Sort(Direction.DESC, "examDate");
+		List<Exam> exams = dao.findBySchoolYearAndTermOrderByExamDate(year, term,sort);
 		List<ExamSubject> subjects = esDao.findByExamIn(exams);
 		List<ExamVo> result = new ArrayList<ExamVo>();
 		for (Exam exam : exams) {

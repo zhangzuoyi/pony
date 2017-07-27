@@ -27,4 +27,5 @@ public interface StudentService {
 	List<Student> findBySchoolClass(Integer classId);
 	void upload(List<Student> students, String loginUser);
 	void changeStatus(StudentStatusChange sc);
+	List<Student> findByGradeOrderByStudentId(int gradeId);
 }

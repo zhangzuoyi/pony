@@ -4,13 +4,16 @@ package com.zzy.pony.exam.service;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,11 +22,18 @@ import com.zzy.pony.exam.mapper.ExamineeMapper;
 import com.zzy.pony.exam.model.Examinee;
 import com.zzy.pony.exam.vo.ExamineeVo;
 import com.zzy.pony.model.Exam;
+import com.zzy.pony.model.Grade;
 import com.zzy.pony.model.SchoolClass;
+import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Student;
+import com.zzy.pony.model.Term;
 import com.zzy.pony.service.ExamService;
+import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.SchoolClassService;
+import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.StudentService;
+import com.zzy.pony.service.TermService;
+import com.zzy.pony.vo.ExamVo;
 
 
 
@@ -42,6 +52,10 @@ public class ExamineeServiceImpl implements ExamineeService {
 	private ExamService examService;
 	@Autowired
 	private ExamineeMapper examineeMapper;
+	@Autowired
+	private SchoolYearService schoolYearService;
+	@Autowired
+	private TermService termService;
 	
 	
 	
@@ -105,6 +119,33 @@ public class ExamineeServiceImpl implements ExamineeService {
 	public List<Examinee> findByArrangeId(int arrangeId) {
 		// TODO Auto-generated method stub
 		return examineeMapper.findByArrangeId(arrangeId);
+	}
+	
+	//key:studentId  value:regNo
+	private Map<Integer, String> generateRegNo(int examId, int gradeId,String prefixNo,int bitNo){
+		//若不为空则隐藏此按钮。考生号由前缀加序号生成，前缀和序号位数可灵活配置。序号是考生在上次考试中的排名
+		//1 在没有考试的情况下使用考生班级以及studentId的方式排列   2 在有考试的情况下: 如何区分上次考试
+		Map<Integer, String> result = new HashMap<Integer, String>();
+		SchoolYear year = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();
+		List<ExamVo> examVos = examService.findByYearAndTerm(year, term);
+		if (examVos == null || examVos.size() == 0) {
+			//按规则生成考生号  先按照同一班级，同一班级的按照studentId进行排序
+			List<Student> students = studentService.findByGradeOrderByStudentId(gradeId);
+			for (int i=1;i<=students.size();i++) {
+				result.put(students.get(i).getStudentId(), prefixNo+String.format("%0"+bitNo+"d",i));
+			}
+		}else{
+			//上一次考试利用考试时间确定
+			ExamVo examVo = examVos.get(0);
+			//确定考试名次
+			
+		}
+			
+		
+		
+		
+		return result;
 	}
 	
 	

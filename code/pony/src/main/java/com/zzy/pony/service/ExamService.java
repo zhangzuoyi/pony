@@ -19,5 +19,7 @@ public interface ExamService {
 	List<Exam> findCurrentBySubjectAndClass(Subject subject, SchoolClass schoolClass);
 	List<ExamVo> findByYearAndTerm(SchoolYear year, Term term); 
 	ExamVo getVo(int id);
+	List<ExamVo> findByYearAndTermOrderByExamDate(SchoolYear year, Term term); 
+
 	
 }

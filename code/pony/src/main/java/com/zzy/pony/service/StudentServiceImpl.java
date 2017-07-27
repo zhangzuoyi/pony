@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.zzy.pony.dao.StudentDao;
 import com.zzy.pony.dao.StudentStatusChangeDao;
+import com.zzy.pony.mapper.StudentMapper;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.Student;
 import com.zzy.pony.model.StudentStatusChange;
@@ -24,6 +25,8 @@ public class StudentServiceImpl implements StudentService {
 	private SchoolYearService yearService;
 	@Autowired
 	private TermService termService;
+	@Autowired
+	private StudentMapper studentMapper;
 
 	@Override
 	public void add(Student sy) {
@@ -143,7 +146,19 @@ public class StudentServiceImpl implements StudentService {
 		dao.save(student);
 		changeDao.save(sc);
 	}
+	
+	
+	
 
+	@Override
+	public List<Student> findByGradeOrderByStudentId(int gradeId) {
+		// TODO Auto-generated method stub
+		return studentMapper.findByGradeOrderByStudentId(gradeId);
+	}
+	
+	
+	
+	
 	private String getStatusByChangeType(String changeType){
 		if("开除".equals(changeType)){
 			return STUDENT_STATUS_KC;
