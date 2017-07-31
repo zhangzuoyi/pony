@@ -465,7 +465,7 @@
 				this.$http.get(this.getGradesUrl).then(
 					function(response){
 						this.grades=response.body;
-						this.gradeId=this.grades[0].gradeId;
+						//this.gradeId=this.grades[0].gradeId;
 					}		
 				);
 			},

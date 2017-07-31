@@ -68,6 +68,9 @@ public class SubjectSelectConfig implements Serializable {
 	public SubjectSelectConfig() {
 	}
 
+	public String[] getSubjectArray(){
+		return subjects.split(",");
+	}
 	public int getConfigId() {
 		return this.configId;
 	}

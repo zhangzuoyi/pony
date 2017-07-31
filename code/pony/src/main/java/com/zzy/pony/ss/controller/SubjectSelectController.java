@@ -1,6 +1,8 @@
 package com.zzy.pony.ss.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -12,15 +14,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
 import com.zzy.pony.security.ShiroUtil;
-import com.zzy.pony.ss.model.SubjectSelectConfig;
 import com.zzy.pony.ss.service.StudentSubjectSelectService;
 
 @Controller
@@ -42,8 +42,8 @@ public class SubjectSelectController {
 
 	@RequestMapping(value="save",method = RequestMethod.POST)
 	@ResponseBody
-	public String save(Integer configId,List<String> subjects, Model model){
-		service.save(configId, subjects, ShiroUtil.getLoginUser().getLoginName());
+	public String save(@RequestParam("configId") Integer configId,@RequestParam("subjects") String subjects, Model model){
+		service.save(configId, Arrays.asList(subjects.split(",")), ShiroUtil.getLoginUser().getLoginName());
 		return "success";
 	}
 

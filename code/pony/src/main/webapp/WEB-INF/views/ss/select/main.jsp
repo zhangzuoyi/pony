@@ -32,7 +32,7 @@ width:200px;
 <body>
 <div id="app">
   <div>   	           	
-        <el-card class="box-card content-margin">
+        <el-card class="box-card content-margin" v-if="showEdit">
             <div slot="header" class="clearfix">
               <el-row>
 	              <el-col :span="4">
@@ -40,124 +40,98 @@ width:200px;
 	              </el-col>
               </el-row>  
               <el-row>             
-               <el-col :offset="18" :span="6">
-               <el-button type="primary" @click="addConfig">新增</el-button>       
+               <el-col :span="4">
+               	<span>学年</span>
+               </el-col>
+               <el-col :span="6">
+               	<span>{{config.schoolYear.name}}</span>
                </el-col>
               </el-row>
+              <el-row>             
+               <el-col :span="4">
+               	<span>可选数量</span>
+               </el-col>
+               <el-col :span="6">
+               	<span>{{config.selectNum}}</span>
+               </el-col>
+              </el-row>
+              <el-row>             
+               <el-col :span="4">
+               	<span>科目</span>
+               </el-col>
+               <el-col :span="10">
+               	<el-checkbox-group v-model="selectSubjects" id="subjectsGroup" >
+					<el-checkbox v-for="x in config.subjectArray" :label="x">{{x}}</el-checkbox>
+				</el-checkbox-group>
+               </el-col>
+              </el-row>
+              <el-row>
+              	<el-col :offset="5" :span="10">
+              		<el-button size="small" @click="saveSelect()">保存</el-button>
+              	</el-col>
+              </el-row>
             </div>
-            <el-table
-                    :data="tableData"
-                    border
-                    style="width: 100%"
-                    highlight-current-row>
-                <el-table-column
-                        prop="schoolYear.name"
-                        label="学年"
-                        >
-                </el-table-column>
-                <el-table-column
-                        prop="subjects"
-                        label="学科"
-                        >
-                </el-table-column>
-                <el-table-column
-                		inline-template
-                        label="开始时间"
-                        >
-                        <div>{{row.startTime | date}}</div>
-                </el-table-column>
-                <el-table-column
-                        inline-template
-                        label="结束时间"
-                        >       
-                        <div>{{row.endTime | date}}</div>               
-                </el-table-column>
-                <el-table-column
-                		prop="selectNum"
-                        label="可选数量"
-                        >
-                </el-table-column>
-                <el-table-column
-                        inline-template
-                        label="是否当前"
-                        >        
-                        <div>{{getIsCurrentName(row.isCurrent)}}</div>              
-                </el-table-column>
-                </el-table-column>                              
-                <el-table-column                       
-                        label="操作"
-                        >
-                 <template scope="scope">
-                 <el-button size="small" @click="handleEdit(scope.$index,scope.row)">编辑</el-button>
-                 <el-button size="small" type="danger" @click="handleDelete(scope.$index,scope.row)">删除</el-button>               
-                 </template>                             
-                </el-table-column>
-            </el-table> 
+        </el-card>
+        <el-card class="box-card content-margin" v-if=" ! showEdit">
+            <div slot="header" class="clearfix">
+              <el-row>
+	              <el-col :span="4">
+	              <b>科目选择</b>
+	              </el-col>
+              </el-row>  
+              <el-row>             
+               <el-col :span="4">
+               	<span>学年</span>
+               </el-col>
+               <el-col :span="6">
+               	<span>{{config.schoolYear.name}}</span>
+               </el-col>
+              </el-row>
+              <el-row>             
+               <el-col :span="4">
+               	<span>可选数量</span>
+               </el-col>
+               <el-col :span="6">
+               	<span>{{config.selectNum}}</span>
+               </el-col>
+              </el-row>
+              <el-row>             
+               <el-col :span="4">
+               	<span>已选科目</span>
+               </el-col>
+               <el-col :span="10">
+               	<span v-for="x in subjects">{{x}}</span>
+               </el-col>
+              </el-row>
+              <el-row>
+              	<el-col :offset="5" :span="10">
+              		<el-button size="small" @click="saveSelect()">重新选择</el-button>
+              	</el-col>
+              </el-row>
+            </div>
         </el-card>
         
-		<el-dialog  v-model="dialogFormVisible" >
-			<div slot="title" class="dialog-title">
-                    <b>{{title}}</b>
-                </div>
-			<el-form :model="config" :rules="rules" ref="ruleForm">			
-			 <el-form-item label="学年" :label-width="formLabelWidth" > 
-			 	{{config.schoolYear.name }}
-			 </el-form-item>
-			 <el-form-item label="科目" :label-width="formLabelWidth" > 
-            	<el-input v-model="config.subjects"></el-input>
-			 </el-form-item> 
-             <el-form-item label="可选数量" :label-width="formLabelWidth" > 
-			  	<el-input v-model="config.selectNum"></el-input>
-			 </el-form-item>
-			 <el-form-item label="开始时间" :label-width="formLabelWidth" > 
-			 	<el-date-picker
-                    v-model="config.startTime"
-                    type="date"
-                    placeholder="选择日期">
-            	</el-date-picker>
-			 </el-form-item>
-			 <el-form-item label="结束时间" :label-width="formLabelWidth" > 
-			 	<el-date-picker
-                    v-model="config.endTime"
-                    type="date"
-                    placeholder="选择日期">
-            	</el-date-picker>
-			 </el-form-item>
-			 <el-form-item label="是否当前" :label-width="formLabelWidth" >
-			 	<el-select v-model="config.isCurrent" placeholder="请选择">
-                    <el-option v-for="x in types" :label="x.name" :value="x.id"></el-option>
-                </el-select>
-            </el-form-item>
-		    </el-form>
-			<div slot="footer" class="dialog-footer">
-				<el-button type="primary" @click="onSubmit('ruleForm')"  >确定</el-button>
-				<el-button @click="dialogFormVisible = false">取 消</el-button>
-				
-			</div>
-		</el-dialog>
 
 
-		</div>
- 
-
+  </div>
 </div>
 
 <script type="text/javascript">
 	var app = new Vue({ 
 	el : '#app' ,
 	data : { 		
-		config:{configId:null,subjects:null,selectNum:null,startTime:null,endTime:null,isCurrent:null,schoolYear:{}},
+		config:{},
+		subjects:[],
+		selectSubjects:[],
 		dialogFormVisible:false,
 		formLabelWidth:"120px",
 		tableData:[],
-		schoolYearUrl:"<s:url value='/schoolYear/getCurrent'/>",
-		listUrl:"<s:url value='/ss/config/list'/>",
-		deleteUrl :"<s:url value='/ss/config/delete'/>",
-		addUrl :"<s:url value='/ss/config/add'/>",
-		updateUrl :"<s:url value='/ss/config/edit'/>",
+		currentConfigUrl:"<s:url value='/ss/config/current'/>",
+		selectedUrl:"<s:url value='/ss/select/selected'/>",
+		saveUrl :"<s:url value='/ss/select/save'/>",
 		title:"",
 		types:[{id:"0",name:"否"},{id:"1",name:"是"}],
-		choolYear:null, 
+		showEdit:true,
 		rules :{
 		/* seq: [{required :true,message:"请填写顺序..",trigger:"blur"}]	 */			
 		}
@@ -165,30 +139,38 @@ width:200px;
 	}, 
 	
 	mounted : function() { 
-		this.getConfigList();
-		this.getCurrentSchoolYear();
+		this.getCurrentConfig();
+		this.getSelectedSubjects();
 	}, 
 	methods : { 
-			getConfigList : function(){
-				this.$http.get(this.listUrl).then(
-				function(response){
-					this.tableData=response.data;
-				},
-				function(response){}  			
-				); 
+		getCurrentConfig : function(){
+			this.$http.get(this.currentConfigUrl).then(
+			function(response){
+				this.config=response.data;
 			},
-			getCurrentSchoolYear	:function(){ 			
-				this.$http.get(this.schoolYearUrl).then(
-				function(response){
-				this.schoolYear=response.data;
-				 },
-				function(response){}  	 			
-				);
-			},
-		handleEdit : function(index,row){
-			this.title="修改配置";
-			this.dialogFormVisible = true;
-			this.config = row;
+			function(response){}  			
+			); 
+		},
+		getSelectedSubjects :function(){ 			
+			this.$http.get(this.selectedUrl).then(
+			function(response){
+			this.subjects=response.data;
+			 },
+			function(response){}  	 			
+			);
+		},
+		saveSelect : function(){
+			if(this.config.selectNum != this.selectSubjects.length){
+				alter("请选择"+this.config.selectNum+"门科目");
+			}else{
+				this.$http.post(this.saveUrl,{configId:this.config.configId,subjects:this.selectSubjects.join(",")},{emulateJSON:true}).then(
+						function(response){
+							this.subjects=this.selectSubjects;
+							this.showEdit=false;
+						 },
+						function(response){}  			
+				);  
+			}
 			
 		},
 		handleDelete : function(index,row){
