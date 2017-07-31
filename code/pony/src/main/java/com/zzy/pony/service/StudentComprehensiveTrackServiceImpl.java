@@ -179,8 +179,7 @@ public class StudentComprehensiveTrackServiceImpl implements StudentComprehensiv
 		Exam exam = examDao.findOne(examId);
 		ConditionVo cv  = new ConditionVo();
 		cv.setExamId(examId);
-		//科目为考试下的科目
-		
+		//科目为考试下的科目		
 		List<Subject> subjectList = subjectService.findByExam(examId);		
 		String[] subjects = new String[subjectList.size()] ;
 		for (int i = 0; i < subjectList.size(); i++) {
@@ -195,11 +194,6 @@ public class StudentComprehensiveTrackServiceImpl implements StudentComprehensiv
 		}
 		cv.setSchoolClasses(schoolClasses);
 		
-		//int classId = cv.getClassId();
-		//int studentId = cv.getStudentId();
-		//将classId和studentId置空
-		//cv.setClassId(0);
-		//cv.setStudentId(0);
 		//学年
 			cv.setYearId(exam.getSchoolYear().getYearId());
 		//学期
@@ -259,14 +253,10 @@ public class StudentComprehensiveTrackServiceImpl implements StudentComprehensiv
 								}
 							}	
 							map.put(examResultRankVo.getStudentId(), map2);
-							//lists.add(map);	//需要新增
-							
-						}
-										
-					}									
-							
-				}	
-				
+							//lists.add(map);	//需要新增			
+						}							
+					}															
+				}				
 				sortByGradeRank(map,schoolClasses);	
 				for ( Integer studentId : map.keySet()) {
 					result.put(studentId, String.valueOf(map.get(studentId).get("gradeRank")));

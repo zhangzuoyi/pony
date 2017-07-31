@@ -16,5 +16,6 @@ public interface ExamArrangeDao extends JpaRepository<ExamArrange, Integer> {
 	Page<ExamArrange> findByExam(Pageable pageable,Exam exam);
 	Page<ExamArrange> findByGrade(Pageable pageable,Grade grade);
 	List<ExamArrange> findByExamAndGradeAndSubject(Exam exam, Grade grade, Subject subject);
+	List<ExamArrange> findByExam(Exam exam);
 
 }

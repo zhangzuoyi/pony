@@ -36,6 +36,9 @@ public class Constants {
 	public static final int SUBJECT_SIGNIFICANT=  1;
 	public static final int SUBJECT_IMPORTANT=  2;
 	public static final int SUBJECT_COMMON=  3;
+	public static final int AUTO_MODE_ONE = 1;//自动安排考场--按照考生平均分配
+	public static final int AUTO_MODE_TWO = 2;//自动安排考场--按照考场容量分配
+
 
 
 
