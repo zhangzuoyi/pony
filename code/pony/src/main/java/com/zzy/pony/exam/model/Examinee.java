@@ -26,7 +26,7 @@ import com.zzy.pony.model.Student;
 @Entity
 @Table(name="t_examinee")
 @NamedQuery(name="Examinee.findAll", query="SELECT e FROM Examinee e")
-public class Examinee implements Serializable {
+public class Examinee implements Serializable,Comparable<Examinee> {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -119,5 +119,13 @@ public class Examinee implements Serializable {
 
 		return examineeRoomArrange;
 	}
+
+	@Override
+	public int compareTo(Examinee o) {
+		// TODO Auto-generated method stub			
+		return regNo.compareTo(o.regNo);
+	}
+	
+	
 
 }

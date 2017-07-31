@@ -153,4 +153,23 @@ public class ExamArrangeServiceImpl implements ExamArrangeService {
 		}
 		return null;
 	}
+
+	@Override
+	public List<ExamArrange> findByExam(int examId) {
+		// TODO Auto-generated method stub
+		Exam exam = examService.get(examId);		
+		return examArrangeDao.findByExam(exam);
+	}
+
+	@Override
+	public List<ExamArrangeGroup> findByExamAndGroup(int examId, int gradeId) {
+		// TODO Auto-generated method stub
+		Exam exam = examService.get(examId);
+		Grade grade = gradeService.get(gradeId);
+		return examArrangeGroupDao.findByExamAndGrade(exam, grade);
+	}
+	
+	
+	
+	
 }

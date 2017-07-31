@@ -31,6 +31,7 @@ import com.zzy.pony.service.ExamService;
 import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.SchoolYearService;
+import com.zzy.pony.service.StudentComprehensiveTrackService;
 import com.zzy.pony.service.StudentService;
 import com.zzy.pony.service.TermService;
 import com.zzy.pony.vo.ExamVo;
@@ -56,6 +57,8 @@ public class ExamineeServiceImpl implements ExamineeService {
 	private SchoolYearService schoolYearService;
 	@Autowired
 	private TermService termService;
+	@Autowired
+	private StudentComprehensiveTrackService studentComprehensiveTrackService;
 	
 	
 	
@@ -65,14 +68,16 @@ public class ExamineeServiceImpl implements ExamineeService {
 	 List<Examinee> examinees = new ArrayList<Examinee>();
 	 Exam exam = examService.get(examId);
 	 List<SchoolClass> schoolClasses = schoolClassService.findByGrade(gradeId);
+	 Map<Integer,String> map =  this.generateRegNo(examId, gradeId, prefixNo, bitNo);
 	 for (SchoolClass schoolClass : schoolClasses) {
 		List<Student> students = studentService.findBySchoolClass(schoolClass.getClassId());
 		for (Student student : students) {
 			Examinee examinee = new Examinee();
 			examinee.setExam(exam);
-			examinee.setStudent(student);
-			//@todo 考生号==prefixNo+上次考试名次(如何确定?)
-			examinee.setRegNo("test");
+			examinee.setStudent(student);			
+			if(map.get(student.getStudentId())!= null){
+				examinee.setRegNo(map.get(student.getStudentId()));
+			}			
 			examinees.add(examinee);
 		}
 	 }
@@ -136,15 +141,14 @@ public class ExamineeServiceImpl implements ExamineeService {
 				result.put(students.get(i).getStudentId(), prefixNo+String.format("%0"+bitNo+"d",i));
 			}
 		}else{
-			//上一次考试利用考试时间确定
-			ExamVo examVo = examVos.get(0);
+			//0为当前考试的,1为上一次考试
+			ExamVo examVo = examVos.get(1);
 			//确定考试名次
-			
-		}
-			
-		
-		
-		
+		    Map<Integer, String> map =  studentComprehensiveTrackService.findExamRank(examVo.getExamId());
+		    for (Integer studentId : map.keySet()) {
+				map.put(studentId, prefixNo+String.format("%0"+bitNo+"d",map.get(studentId)));
+			}
+		}	
 		return result;
 	}
 	
