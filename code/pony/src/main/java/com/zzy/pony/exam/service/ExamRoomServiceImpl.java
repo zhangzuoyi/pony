@@ -112,9 +112,9 @@ public class ExamRoomServiceImpl implements ExamRoomService {
 	}
 
 	@Override
-	public List<ExamRoomAllocate> findByExamArrange(ExamArrange examArrange) {
+	public List<ExamRoomAllocate> findByExamArrangeOrderByRoomSeq(ExamArrange examArrange) {
 		// TODO Auto-generated method stub
-		return examRoomAllocateDao.findByExamArrange(examArrange);
+		return examRoomAllocateDao.findByExamArrangeOrderByRoomSeq(examArrange);
 	}
 	
 	

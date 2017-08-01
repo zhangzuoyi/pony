@@ -6,11 +6,11 @@ package com.zzy.pony.exam.service;
 
 
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.zzy.pony.exam.controller.ExamRoomArrangeController;
+import com.zzy.pony.exam.model.*;
+import org.apache.velocity.runtime.directive.Foreach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.exam.dao.ExamineeRoomArrangeDao;
-import com.zzy.pony.exam.model.ExamArrange;
-import com.zzy.pony.exam.model.ExamArrangeGroup;
-import com.zzy.pony.exam.model.ExamRoomAllocate;
-import com.zzy.pony.exam.model.Examinee;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.service.ExamService;
@@ -90,7 +86,8 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		for (ExamArrange examArrange : examArranges) {
 			//根据examArrange分别去找考生以及考场
 			List<Examinee> examinees = examArrange.getExaminees();//所有该门考试的考生
-			List<ExamRoomAllocate> examRoomAllocates = examRoomService.findByExamArrange(examArrange);//所有该门考试的考场
+			List<ExamRoomAllocate> examRoomAllocates = new ArrayList<ExamRoomAllocate>();
+            examRoomAllocates =  examRoomService.findByExamArrangeOrderByRoomSeq(examArrange);//所有该门考试的考场
 			//同班同学不相临			
 			if (autoMode == Constants.AUTO_MODE_ONE && examArrange.getGroup() == null) {
 				//考生平均分配到考场
@@ -100,12 +97,55 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 				int remainExaminee = examineeCount%examineeCount;//剩余的考生
 				//将所有考生排序
 				Collections.sort(examinees);
-				
-				
-				
+				//todo 同班同学不相临
+                int i=0;
+                for (ExamRoomAllocate era:
+                examRoomAllocates) {
+                    List<Examinee> averageExaminees = examinees.subList(i*averageExaminee,(i+1)*averageExaminee);
+                    for (Examinee examinee:
+                    averageExaminees) {
+                        ExamineeRoomArrange examineeRoomArrange = new ExamineeRoomArrange();
+                        examineeRoomArrange.setExaminee(examinee);
+                        examineeRoomArrange.setExamRoomAllocate(era);
+                        examineeRoomArrange.setSeq(i);
+                        examineeRoomArrangeDao.save(examineeRoomArrange);
+                    }
+                    i++;
+                }
+                List<Examinee> remainExaminees = new ArrayList<Examinee>();
+                remainExaminees =     examinees.subList(examinees.size()-remainExaminee,examinees.size());
+                for (int j=0;j<remainExaminee;j++){
+                    ExamineeRoomArrange examineeRoomArrange = new ExamineeRoomArrange();
+                    examineeRoomArrange.setSeq(j);
+                    examineeRoomArrange.setExamRoomAllocate(examRoomAllocates.get(j));
+                    examineeRoomArrange.setExaminee(remainExaminees.get(j));
+                    examineeRoomArrangeDao.save(examineeRoomArrange);
+
+                }
 			}
 			if (autoMode == Constants.AUTO_MODE_TWO && examArrange.getGroup() == null) {
 				//按考场容量分配
+                int examineeCount = examinees.size();
+                //将所有考生排序
+                Collections.sort(examinees);
+                int m=0;
+                int count=0;
+                ExamRoomAllocate era = examRoomAllocates.get(m);
+                for (Examinee examinee:
+                     examinees) {
+                 if(count>era.getCapacity()){
+                     m++;
+                     era=examRoomAllocates.get(m);
+                     count = 0;
+                 }
+                 ExamineeRoomArrange examineeRoomArrange = new ExamineeRoomArrange();
+                 examineeRoomArrange.setExaminee(examinee);
+                 examineeRoomArrange.setSeq(m);
+                 examineeRoomArrange.setExamRoomAllocate(era);
+                 examineeRoomArrangeDao.save(examineeRoomArrange);
+                 count++;
+                }
+
 			}
 			
 			

@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 
 public interface ExamRoomAllocateDao extends JpaRepository<ExamRoomAllocate,Integer> {
-		List<ExamRoomAllocate> findByExamArrange(ExamArrange examArrange);
+		List<ExamRoomAllocate> findByExamArrangeOrderByRoomSeq(ExamArrange examArrange);
 }

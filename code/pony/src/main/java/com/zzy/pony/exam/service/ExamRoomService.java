@@ -24,5 +24,5 @@ public interface ExamRoomService {
 	Boolean isExist(ExamRoom examroom);
 	List<ExamRoom> getExamRooms(int[] roomIds);
 	void save(int[] subjectIds,int[] roomIds,int examId,int gradeId);
-	List<ExamRoomAllocate> findByExamArrange(ExamArrange examArrange);
+	List<ExamRoomAllocate> findByExamArrangeOrderByRoomSeq(ExamArrange examArrange);
 }
