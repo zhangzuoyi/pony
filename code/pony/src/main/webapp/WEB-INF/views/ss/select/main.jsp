@@ -68,6 +68,7 @@ width:200px;
               <el-row>
               	<el-col :offset="5" :span="10">
               		<el-button size="small" @click="saveSelect()">保存</el-button>
+              		<el-button size="small" @click="cancelEdit()" v-if="subjects != null && subjects.length>0">取消</el-button>
               	</el-col>
               </el-row>
             </div>
@@ -100,12 +101,12 @@ width:200px;
                	<span>已选科目</span>
                </el-col>
                <el-col :span="10">
-               	<span v-for="x in subjects">{{x}}</span>
+               	<span v-for="x in subjects" style="margin:5px;">{{x}}</span>
                </el-col>
               </el-row>
               <el-row>
               	<el-col :offset="5" :span="10">
-              		<el-button size="small" @click="saveSelect()">重新选择</el-button>
+              		<el-button size="small" @click="editSelect()">重新选择</el-button>
               	</el-col>
               </el-row>
             </div>
@@ -124,12 +125,9 @@ width:200px;
 		subjects:[],
 		selectSubjects:[],
 		dialogFormVisible:false,
-		formLabelWidth:"120px",
-		tableData:[],
 		currentConfigUrl:"<s:url value='/ss/config/current'/>",
 		selectedUrl:"<s:url value='/ss/select/selected'/>",
 		saveUrl :"<s:url value='/ss/select/save'/>",
-		title:"",
 		types:[{id:"0",name:"否"},{id:"1",name:"是"}],
 		showEdit:true,
 		rules :{
@@ -154,14 +152,17 @@ width:200px;
 		getSelectedSubjects :function(){ 			
 			this.$http.get(this.selectedUrl).then(
 			function(response){
-			this.subjects=response.data;
+				this.subjects=response.data;
+				if(this.subjects != null && this.subjects.length>0){
+					this.showEdit=false;
+				}
 			 },
 			function(response){}  	 			
 			);
 		},
 		saveSelect : function(){
 			if(this.config.selectNum != this.selectSubjects.length){
-				alter("请选择"+this.config.selectNum+"门科目");
+				this.$alert("请选择"+this.config.selectNum+"门科目","提示");
 			}else{
 				this.$http.post(this.saveUrl,{configId:this.config.configId,subjects:this.selectSubjects.join(",")},{emulateJSON:true}).then(
 						function(response){
@@ -173,60 +174,12 @@ width:200px;
 			}
 			
 		},
-		handleDelete : function(index,row){
-			this.$confirm("确认删除吗？","提示",{
-			confirmButtonText:'确认',
-			cancleButtonText:'取消',
-			type:'warning'			
-			}).then(function(){  
-			  app.$http.post(app.deleteUrl+"/"+row.configId).then(
-					function(response){
-						app.getConfigList();
-					 },
-					function(response){}  			
-					);  						
-			})
-			.catch(function(){ app.$message({ type:'info',message:'已取消删除'})});
-			
+		editSelect : function(){
+			this.showEdit=true;
+			this.selectSubjects=this.subjects;
 		},
-		addConfig:function(){
-			this.title="新增配置";
-			this.dialogFormVisible = true;
-			this.config={configId:null,subjects:null,selectNum:null,startTime:null,endTime:null,isCurrent:null,schoolYear:this.schoolYear};
-		},		
-		onSubmit :function(formName){
-			if(this.config.configId == null ){
-				this.add(formName);
-			}else{
-				this.update(formName);
-			}
-			
-		},
-		update : function(formName){
-			app.$http.post(app.updateUrl,app.config).then(
-					function(response){
-						app.dialogFormVisible=false;
-						app.getConfigList();
-					 },
-					function(response){console.log("error submit!");}
-					);
-		},
-		add : function(formName){
-			app.$http.post(app.addUrl,app.config).then(
-					function(response){
-						app.dialogFormVisible=false;
-						app.getConfigList();
-					 },
-					function(response){console.log("error submit!");}
-					);
-		},
-		getIsCurrentName: function(id){
-			for(var i in this.types){
-				if(this.types[i].id == id){
-					return this.types[i].name
-				}
-			}
-			return "";
+		cancelEdit : function(){
+			this.showEdit=false;
 		}
       }
 	 
