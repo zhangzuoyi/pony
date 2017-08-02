@@ -137,7 +137,7 @@ public class ExamArrangeServiceImpl implements ExamArrangeService {
 
 	@Override
 	public void delete(int arrangeId) {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub	
 		examArrangeDao.delete(arrangeId);
 	}
 

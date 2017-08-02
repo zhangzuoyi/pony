@@ -93,21 +93,26 @@ public class ExamRoomServiceImpl implements ExamRoomService {
 
 	@Override
 	public void save(int[] subjectIds, int[] roomIds, int examId, int gradeId) {
+		//增加删除逻辑
+		
+		
 		for (int subjectId:
 			 subjectIds) {
 			ExamArrange examArrange = examArrangeService.findByExamAndGradeAndSubject(examId,gradeId,subjectId);
+			List<ExamRoomAllocate> examRoomAllocates = examRoomAllocateDao.findByExamArrangeOrderByRoomSeq(examArrange);
+			examRoomAllocateDao.delete(examRoomAllocates);
+			int i = 1;
 			for (int roomId:
 				 roomIds) {
 			 ExamRoom examRoom = examRoomDao.findOne(roomId);
 			 ExamRoomAllocate examRoomAllocate = new ExamRoomAllocate();
 			 examRoomAllocate.setCapacity(examRoom.getCapacity());
 			 examRoomAllocate.setExamArrange(examArrange);
-			 examRoomAllocate.setRoomSeq(examRoom.getId());
+			 examRoomAllocate.setRoomSeq(i);
 			 examRoomAllocate.setRoomName(examRoom.getName());
 			 examRoomAllocateDao.save(examRoomAllocate);
+			 i++;
 			}
-
-
 		}
 	}
 
@@ -116,6 +121,9 @@ public class ExamRoomServiceImpl implements ExamRoomService {
 		// TODO Auto-generated method stub
 		return examRoomAllocateDao.findByExamArrangeOrderByRoomSeq(examArrange);
 	}
+
+	
+	
 	
 	
 }

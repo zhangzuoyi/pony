@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.zzy.pony.model.Exam;
-import com.zzy.pony.model.Grade;
+
+import com.zzy.pony.model.Subject;
 import com.zzy.pony.service.ExamService;
 import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.SubjectService;
@@ -169,6 +169,17 @@ public class ExamArrangeController {
 		for (int arrangeId : examArranges) {
 			examArrangeService.delete(arrangeId);
 		}				
+	}
+	
+	@RequestMapping(value="findByExam",method = RequestMethod.GET)
+	@ResponseBody
+	public List<Subject> findByExam(@RequestParam(value="examId") int examId){
+		List<Subject> result = new ArrayList<Subject>();				
+		List<ExamArrange> examArranges = examArrangeService.findByExam(examId);
+		for (ExamArrange examArrange : examArranges) {
+			result.add(examArrange.getSubject());
+		}
+		return result;
 	}
 	
 	

@@ -196,7 +196,8 @@ width:200px;
 			<el-time-picker
                     is-range
                     v-model="examTime"
-                    placeholder="选择时间范围">
+                    placeholder="选择时间范围"
+                    :picker-options="{format:'HH:mm'}">
             </el-time-picker>
             </el-col>
             </el-row>
@@ -279,7 +280,7 @@ var app = new Vue({
 		isIndeterminate:true,
 		checkedSubjects:[],
 		subjects:[],
-		examTime:[new Date(2017, 1, 1, 8, 00), new Date(2050, 1, 1, 10, 00)],
+		examTime:[new Date(2017, 1, 1, 8, 0), new Date(2050, 1, 1, 10, 0)],
 		subjectDialogFormVisible:false,
 		examDateDialogFormVisible:false,
 		examTimeDialogFormVisible:false,
@@ -308,7 +309,7 @@ var app = new Vue({
 				this.getExams();
 				this.getGrades();
 				/* this.getExamRooms(); */
-				this.getExamArranges();
+				//this.getExamArranges();
 				
 		
 			
@@ -528,9 +529,11 @@ var app = new Vue({
               var month = this.examDate.getMonth()+1;
               var day = this.examDate.getDate();
               var examDate = year+"-"+month+"-"+day; */
-              var startTime = this.examTime[0].getHours()+":"+this.examTime[0].getMinutes()+":"+this.examTime[0].getSeconds();
-              var endTime = this.examTime[1].getHours()+":"+this.examTime[1].getMinutes()+":"+this.examTime[1].getSeconds();
-              
+              //var startTime = this.examTime[0].getHours()+":"+this.examTime[0].getMinutes()+":"+this.examTime[0].getSeconds();
+              //var endTime = this.examTime[1].getHours()+":"+this.examTime[1].getMinutes()+":"+this.examTime[1].getSeconds();
+              var startTime = this.examTime[0].getHours()+":"+this.examTime[0].getMinutes();
+              var endTime = this.examTime[1].getHours()+":"+this.examTime[1].getMinutes();
+               
              
               this.$http.get(this.addExamTimeUrl,{params:{examArranges:examArranges,startTime:startTime,endTime:endTime}}).then(
                     function(response){

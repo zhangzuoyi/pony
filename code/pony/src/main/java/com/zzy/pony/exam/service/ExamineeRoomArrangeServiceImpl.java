@@ -8,9 +8,7 @@ package com.zzy.pony.exam.service;
 
 import java.util.*;
 
-import com.zzy.pony.exam.controller.ExamRoomArrangeController;
 import com.zzy.pony.exam.model.*;
-import org.apache.velocity.runtime.directive.Foreach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,8 +78,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 					groupMap.put(examArrangeGroup.getGroupId(), examArrange.getArrangeId()+"");
 				}
 			}
-		}
-		
+		}		
 		//3排考场(排不在组里面的)
 		for (ExamArrange examArrange : examArranges) {
 			//根据examArrange分别去找考生以及考场
@@ -146,11 +143,10 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
                  count++;
                 }
 
-			}
-			
-			
-			
+			}								
 		}
+		//4排考场(在组里面的)
+		
 		
 		
 		

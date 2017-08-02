@@ -59,7 +59,7 @@ public class ExamArrange implements Serializable {
 	private Subject subject;
 
 	//bi-directional many-to-one association to ExamRoomAllocate
-	@OneToMany(mappedBy="examArrange",fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="examArrange",fetch = FetchType.EAGER,cascade=CascadeType.REMOVE)
 	private List<ExamRoomAllocate> examRoomAllocates;
 
 	//bi-directional many-to-many association to Examinee
