@@ -9,6 +9,7 @@ package com.zzy.pony.exam.service;
 import java.util.*;
 
 import com.zzy.pony.exam.model.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import com.zzy.pony.model.Term;
 import com.zzy.pony.service.ExamService;
 import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.TermService;
+import com.zzy.pony.util.CollectionsUtil;
 import com.zzy.pony.vo.ExamVo;
 
 
@@ -140,6 +142,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		//将所有考生排序
 		Collections.sort(examinees);
 		//todo 同班同学不相临
+		swap(examinees);
         int i=0;
         for (ExamRoomAllocate era:
         examRoomAllocates) {
@@ -172,6 +175,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
         //int examineeCount = examinees.size();
         //将所有考生排序
         Collections.sort(examinees);
+        swap(examinees);
         int m=0;
         int count=1;
         ExamRoomAllocate era = examRoomAllocates.get(m);
@@ -190,6 +194,19 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
          count++;
         }	
 		
+	}
+	//同班同学不相邻
+	private void swap(List<Examinee> examinees){
+		
+		for (int i = 0; i < examinees.size()-2; i++) {
+			int j = i;
+			if (examinees.get(i+1).getStudent().getSchoolClass().equals(examinees.get(i).getStudent().getSchoolClass())) {			
+				while(examinees.get(i+1).getStudent().getSchoolClass().equals(examinees.get(j+2).getStudent().getSchoolClass())&&(j+2)<examinees.size()){
+					j++;
+				}
+				CollectionsUtil.swap(examinees, i+1, j+2);				
+			}						
+		}				
 	}
 	
 	
