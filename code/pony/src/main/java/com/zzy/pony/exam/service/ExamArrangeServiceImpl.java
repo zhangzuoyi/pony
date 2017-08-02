@@ -168,6 +168,23 @@ public class ExamArrangeServiceImpl implements ExamArrangeService {
 		Grade grade = gradeService.get(gradeId);
 		return examArrangeGroupDao.findByExamAndGrade(exam, grade);
 	}
+
+	@Override
+	public ExamArrange get(int arrangeId) {
+		// TODO Auto-generated method stub
+		return examArrangeDao.findOne(arrangeId);
+	}
+
+	@Override
+	public List<ExamArrange> findByExamAndGroupIsNull(int examId) {
+		// TODO Auto-generated method stub
+		Exam exam = examService.get(examId);
+		return examArrangeDao.findByExamAndGroupIsNull(exam);
+	}
+	
+	
+	
+	
 	
 	
 	

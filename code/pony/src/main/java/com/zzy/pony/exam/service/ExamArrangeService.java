@@ -22,5 +22,7 @@ public interface ExamArrangeService {
 	void delete(int arrangeId);
 	ExamArrange findByExamAndGradeAndSubject(int examId,int gradeId,int subjectId);
 	List<ExamArrange> findByExam(int examId);
+	List<ExamArrange> findByExamAndGroupIsNull(int examId);
 	List<ExamArrangeGroup> findByExamAndGroup(int examId,int gradeId);
+	ExamArrange get(int arrangeId);
 }

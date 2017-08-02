@@ -66,7 +66,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		//2 确定要排的考场，其中有组ID的一起排，没有组ID的单独排
 		List<ExamVo> examVos = examService.findByYearAndTermOrderByExamDate(year, term); 
 		ExamVo examVo = examVos.get(0);//当前考试
-		List<ExamArrange> examArranges = examArrangeService.findByExam(examVo.getExamId());//所有要安排的考试
+		List<ExamArrange> examArranges = examArrangeService.findByExamAndGroupIsNull(examVo.getExamId());//所有不在组里面的考试
 		List<ExamArrangeGroup> examArrangeGroups = examArrangeService.findByExamAndGroup(examId, gradeId);//所有处于同一组的考试 
 		Map<Integer, String> groupMap = new HashMap<Integer, String>();
 		for (ExamArrangeGroup examArrangeGroup : examArrangeGroups) {
@@ -86,66 +86,37 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 			List<ExamRoomAllocate> examRoomAllocates = new ArrayList<ExamRoomAllocate>();
             examRoomAllocates =  examRoomService.findByExamArrangeOrderByRoomSeq(examArrange);//所有该门考试的考场
 			//同班同学不相临			
-			if (autoMode == Constants.AUTO_MODE_ONE && examArrange.getGroup() == null) {
+			if (autoMode == Constants.AUTO_MODE_ONE) {
 				//考生平均分配到考场
-				int examineeCount = examinees.size();
-				int examRoomCount = examRoomAllocates.size();
-				int averageExaminee = examineeCount/examineeCount;//每个考场分配多少考生
-				int remainExaminee = examineeCount%examineeCount;//剩余的考生
-				//将所有考生排序
-				Collections.sort(examinees);
-				//todo 同班同学不相临
-                int i=0;
-                for (ExamRoomAllocate era:
-                examRoomAllocates) {
-                    List<Examinee> averageExaminees = examinees.subList(i*averageExaminee,(i+1)*averageExaminee);
-                    for (Examinee examinee:
-                    averageExaminees) {
-                        ExamineeRoomArrange examineeRoomArrange = new ExamineeRoomArrange();
-                        examineeRoomArrange.setExaminee(examinee);
-                        examineeRoomArrange.setExamRoomAllocate(era);
-                        examineeRoomArrange.setSeq(i);
-                        examineeRoomArrangeDao.save(examineeRoomArrange);
-                    }
-                    i++;
-                }
-                List<Examinee> remainExaminees = new ArrayList<Examinee>();
-                remainExaminees =     examinees.subList(examinees.size()-remainExaminee,examinees.size());
-                for (int j=0;j<remainExaminee;j++){
-                    ExamineeRoomArrange examineeRoomArrange = new ExamineeRoomArrange();
-                    examineeRoomArrange.setSeq(j);
-                    examineeRoomArrange.setExamRoomAllocate(examRoomAllocates.get(j));
-                    examineeRoomArrange.setExaminee(remainExaminees.get(j));
-                    examineeRoomArrangeDao.save(examineeRoomArrange);
-
-                }
+				autoModeOne(examinees, examRoomAllocates);
 			}
-			if (autoMode == Constants.AUTO_MODE_TWO && examArrange.getGroup() == null) {
+			if (autoMode == Constants.AUTO_MODE_TWO) {
 				//按考场容量分配
-                int examineeCount = examinees.size();
-                //将所有考生排序
-                Collections.sort(examinees);
-                int m=0;
-                int count=0;
-                ExamRoomAllocate era = examRoomAllocates.get(m);
-                for (Examinee examinee:
-                     examinees) {
-                 if(count>era.getCapacity()){
-                     m++;
-                     era=examRoomAllocates.get(m);
-                     count = 0;
-                 }
-                 ExamineeRoomArrange examineeRoomArrange = new ExamineeRoomArrange();
-                 examineeRoomArrange.setExaminee(examinee);
-                 examineeRoomArrange.setSeq(m);
-                 examineeRoomArrange.setExamRoomAllocate(era);
-                 examineeRoomArrangeDao.save(examineeRoomArrange);
-                 count++;
-                }
-
+                autoModeTwo(examinees, examRoomAllocates);
 			}								
 		}
-		//4排考场(在组里面的)
+		//4排考场(在组里面的,默认按照组里面的第一个arrangeId取考生以及考场)
+		for (Integer groupId   : groupMap.keySet()) {
+			String examArrangeIds =  groupMap.get(groupId); 
+			String[] arrangeIds = examArrangeIds.split(";");
+			ExamArrange examArrange = examArrangeService.get(Integer.valueOf(arrangeIds[0]));
+			List<Examinee> examinees = examArrange.getExaminees();//所有该门考试的考生
+			//Collections.sort(examinees);			
+			for (String arrangeId : arrangeIds) {					
+				examArrange = examArrangeService.get(Integer.valueOf(arrangeId));
+				List<ExamRoomAllocate> examRoomAllocates = new ArrayList<ExamRoomAllocate>();
+	            examRoomAllocates =  examRoomService.findByExamArrangeOrderByRoomSeq(examArrange);//所有该门考试的考场
+				
+	            if (autoMode == Constants.AUTO_MODE_ONE) {				
+					autoModeOne(examinees, examRoomAllocates);										
+				}
+				if (autoMode == Constants.AUTO_MODE_TWO) {
+					autoModeTwo(examinees, examRoomAllocates);										
+				}
+				
+			}
+			
+		}
 		
 		
 		
@@ -160,6 +131,66 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		examineeRoomArrangeDao.deleteAll();
 	}
 	
+	//考生平均分配到考场
+	private void autoModeOne(List<Examinee> examinees,List<ExamRoomAllocate> examRoomAllocates){		
+		int examineeCount = examinees.size();
+		//int examRoomCount = examRoomAllocates.size();
+		int averageExaminee = examineeCount/examineeCount;//每个考场分配多少考生
+		int remainExaminee = examineeCount%examineeCount;//剩余的考生
+		//将所有考生排序
+		Collections.sort(examinees);
+		//todo 同班同学不相临
+        int i=0;
+        for (ExamRoomAllocate era:
+        examRoomAllocates) {
+            List<Examinee> averageExaminees = examinees.subList(i*averageExaminee,(i+1)*averageExaminee);
+            int seq=1;
+            for (Examinee examinee:
+            averageExaminees) {
+                ExamineeRoomArrange examineeRoomArrange = new ExamineeRoomArrange();
+                examineeRoomArrange.setExaminee(examinee);
+                examineeRoomArrange.setExamRoomAllocate(era);
+                examineeRoomArrange.setSeq(seq);
+                examineeRoomArrangeDao.save(examineeRoomArrange);
+                seq++;
+            }
+            i++;
+        }
+        List<Examinee> remainExaminees = new ArrayList<Examinee>();
+        remainExaminees =     examinees.subList(examinees.size()-remainExaminee,examinees.size());
+        for (int j=0;j<remainExaminee;j++){
+            ExamineeRoomArrange examineeRoomArrange = new ExamineeRoomArrange();
+            examineeRoomArrange.setSeq(averageExaminee+1);
+            examineeRoomArrange.setExamRoomAllocate(examRoomAllocates.get(j));
+            examineeRoomArrange.setExaminee(remainExaminees.get(j));
+            examineeRoomArrangeDao.save(examineeRoomArrange);
+
+        }	
+	}
+	//按考场容量分配
+	private void autoModeTwo(List<Examinee> examinees,List<ExamRoomAllocate> examRoomAllocates){		
+        //int examineeCount = examinees.size();
+        //将所有考生排序
+        Collections.sort(examinees);
+        int m=0;
+        int count=1;
+        ExamRoomAllocate era = examRoomAllocates.get(m);
+        for (Examinee examinee:
+             examinees) {
+         if(count>era.getCapacity()){
+             m++;
+             era=examRoomAllocates.get(m);
+             count = 1;
+         }
+         ExamineeRoomArrange examineeRoomArrange = new ExamineeRoomArrange();
+         examineeRoomArrange.setExaminee(examinee);
+         examineeRoomArrange.setSeq(count);
+         examineeRoomArrange.setExamRoomAllocate(era);
+         examineeRoomArrangeDao.save(examineeRoomArrange);
+         count++;
+        }	
+		
+	}
 	
 	
 
