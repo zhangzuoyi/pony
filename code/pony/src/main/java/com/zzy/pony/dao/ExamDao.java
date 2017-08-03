@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
-import com.zzy.pony.model.Subject;
 import com.zzy.pony.model.Term;
 
 
@@ -18,6 +17,6 @@ public interface ExamDao extends JpaRepository<Exam,Integer>{
 //	List<Exam> findBySchoolYearAndTermAndSubjectAndSchoolClasses(SchoolYear schoolYear,Term term,Subject subject,SchoolClass schoolClass);
 	List<Exam> findBySchoolYearAndTerm(SchoolYear schoolYear,Term term);
 	List<Exam> findBySchoolClasses(List<SchoolClass> schoolClasses);
-	List<Exam> findBySchoolYearAndTermOrderByExamDate(SchoolYear schoolYear,Term term,Sort sort);
+	List<Exam> findBySchoolYearAndTerm(SchoolYear schoolYear,Term term,Sort sort);
 
 }

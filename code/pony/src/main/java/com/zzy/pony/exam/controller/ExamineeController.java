@@ -48,6 +48,12 @@ public class ExamineeController {
 			@RequestParam(value="arrangeId") int arrangeId){					
 		return examineeService.findPageByClassAndArrange(currentPage, pageSize, examId, classId, arrangeId);		
 	}
+	@RequestMapping(value="isGenerateShow",method=RequestMethod.GET)
+	@ResponseBody
+	public boolean isGenerateShow(@RequestParam(value="examId") int examId,@RequestParam(value="gradeId") int gradeId){
+		
+		return examineeService.isGenerateShow(examId, gradeId);
+	}
 	
 	
 	

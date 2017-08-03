@@ -71,7 +71,7 @@ width:200px;
             	</el-col> 
             	<el-col :span="5" >
             	<div class="grid-content bg-purple">                                     
-					<el-select v-model="gradeId" @change="getSchoolClasses()"  filterable clearable placeholder="请选择..">
+					<el-select v-model="gradeId" @change="getSchoolClasses();isGenerateShow()"  filterable clearable placeholder="请选择..">
                		 <el-option
                         v-for="grade in grades" 
                         :label="grade.name"                      
@@ -84,7 +84,7 @@ width:200px;
             	
             	<el-col :span="4" >
                		<el-button type="primary"  @click="listByPage">查询</el-button>
-               		<el-button type="primary"  @click="generateExamineeNo">生成考生号</el-button>
+               		<el-button type="primary"  @click="generateExamineeNo" v-show="isGenerateShowFlag">生成考生号</el-button>
               	</el-col>                           
               </el-row>
               <el-row>                            
@@ -224,12 +224,12 @@ width:200px;
 							label="学生号">
 					</el-table-column>
 					<el-table-column
-							prop="examineeNo"
+							prop="regNo"
 							label="考生号">
 					</el-table-column>
 				</el-table>	
 				<el-row>	
-				<el-col :offset="15" :span="9">	
+				<el-col :offset="12" :span="12">	
 				<el-pagination
                 @size-change="handleSizeChange2"
                 @current-change="handleCurrentChange2"
@@ -278,6 +278,7 @@ width:200px;
                       >
                   <el-table-column
                           type="index"
+                          width="100px"
                   >
                   </el-table-column>
                   <el-table-column
@@ -295,13 +296,13 @@ width:200px;
                           label="学生号">
                   </el-table-column>
                   <el-table-column
-                          prop="examineeNo"
+                          prop="regNo"
                           label="考生号">
                   </el-table-column>
               </el-table>
           </el-row>
           <el-row>
-          <el-col :offset="15" :span="9">
+          <el-col :offset="12" :span="12">
           <el-pagination
                 @size-change="handleSizeChange3"
                 @current-change="handleCurrentChange3"
@@ -358,7 +359,8 @@ var app = new Vue({
         submitByStudentUrl:"<s:url value='/examAdmin/examineeArrange/submitByStudent'/>",
         getExamineeUrl:"<s:url value='/examAdmin/examinee/listPageByClass'/>",
         findExamineeUrl:"<s:url value='/examAdmin/examinee/listPageByClassAndArrange'/>", 
-        deleteUrl:"<s:url value='/examAdmin/examineeArrange/delete'/>",             
+        deleteUrl:"<s:url value='/examAdmin/examineeArrange/delete'/>",
+        isGenerateShowUrl:"<s:url value='/examAdmin/examinee/isGenerateShow'/>",             
         schoolYear :null,
 		term : null,
 		examId: null,
@@ -391,7 +393,9 @@ var app = new Vue({
         prefixNo:null,
         bitNo:null,
         flag:true,//按照班级或者按照考生
-        arrangeId:null//用来记录查看考生时选择的科目
+        arrangeId:null,//用来记录查看考生时选择的科目
+        isGenerateShowFlag:true
+        
 
 
 
@@ -570,12 +574,7 @@ var app = new Vue({
                         this.tableData=response.data.content;
                         this.total = response.data.totalElements;
                         });
-              
-              
-			
-			
-			
-			
+		
             },
             generateExamineeNo :function(){
             if(this.examId == null || this.examId==''){
@@ -733,6 +732,19 @@ var app = new Vue({
                         this.total3 = response.data.totalElements;                       
                         });
             
+            },
+            isGenerateShow : function(){
+           	 if(this.examId == null || this.examId==''){            	
+				return;
+              }
+             if(this.gradeId == null || this.gradeId==''){            	
+				return;
+              }
+              this.$http.get(this.isGenerateShowUrl,{params:{examId:this.examId,gradeId:this.gradeId}}).then(
+                    function(response){                                            
+                        this.isGenerateShowFlag = response.data;
+                        });
+         
             }
 
 

@@ -138,19 +138,46 @@ public class ExamineeServiceImpl implements ExamineeService {
 			//按规则生成考生号  先按照同一班级，同一班级的按照studentId进行排序
 			List<Student> students = studentService.findByGradeOrderByStudentId(gradeId);
 			for (int i=1;i<=students.size();i++) {
-				result.put(students.get(i).getStudentId(), prefixNo+String.format("%0"+bitNo+"d",i));
+				result.put(students.get(i-1).getStudentId(), prefixNo+String.format("%0"+bitNo+"d",i));
 			}
 		}else{
 			//0为当前考试的,1为上一次考试
 			ExamVo examVo = examVos.get(1);
 			//确定考试名次
 		    Map<Integer, String> map =  studentComprehensiveTrackService.findExamRank(examVo.getExamId());
-		    for (Integer studentId : map.keySet()) {
-				map.put(studentId, prefixNo+String.format("%0"+bitNo+"d",map.get(studentId)));
+		    if (map == null ||map.size()==0) {
+		    	//按规则生成考生号  先按照同一班级，同一班级的按照studentId进行排序
+				List<Student> students = studentService.findByGradeOrderByStudentId(gradeId);
+				for (int i=1;i<=students.size();i++) {
+					result.put(students.get(i-1).getStudentId(), prefixNo+String.format("%0"+bitNo+"d",i));
+				}	    			    	
+			}else{
+				for (Integer studentId : map.keySet()) {
+					map.put(studentId, prefixNo+String.format("%0"+bitNo+"d",map.get(studentId)));
+				}
 			}
+				
+		    
 		}	
 		return result;
 	}
+
+
+
+	@Override
+	public boolean isGenerateShow(int examId, int gradeId) {
+		// TODO Auto-generated method stub				
+		List<SchoolClass> schoolClasses = schoolClassService.findByGrade(gradeId);
+		for (SchoolClass schoolClass : schoolClasses) {
+			List<Examinee> examinees =  examineeMapper.findByExamIdAndClassId(examId, schoolClass.getClassId());
+			if(examinees!=null && examinees.size()>0){
+				return false;
+			}		
+		}	
+		return true;
+	}
+	
+	
 	
 	
 	

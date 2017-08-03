@@ -17,6 +17,7 @@ public interface ExamineeService {
 	Page<ExamineeVo> findPageByClassAndArrange(int currentPage,int pageSize,int examId,int classId,int arrangeId);
 	List<Examinee> findByExamIdAndClassId(int examId,int classId);
 	List<Examinee> findByArrangeId(int arrangeId);
+	boolean isGenerateShow(int examId,int gradeId);//是否显示生成考生号按钮
 
 	
 }

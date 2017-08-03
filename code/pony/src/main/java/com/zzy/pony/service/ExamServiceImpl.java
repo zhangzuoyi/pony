@@ -153,7 +153,7 @@ public class ExamServiceImpl implements ExamService {
 			Term term) {
 		// TODO Auto-generated method stub
 		Sort sort = new Sort(Direction.DESC, "examDate");
-		List<Exam> exams = dao.findBySchoolYearAndTermOrderByExamDate(year, term,sort);
+		List<Exam> exams = dao.findBySchoolYearAndTerm(year, term,sort);
 		List<ExamSubject> subjects = esDao.findByExamIn(exams);
 		List<ExamVo> result = new ArrayList<ExamVo>();
 		for (Exam exam : exams) {
