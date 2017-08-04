@@ -55,7 +55,7 @@ width:200px;
             	</el-col> 
            		 <el-col :span="5" >
             		<div class="grid-content bg-purple">                                     
-					<el-select v-model="examId" @change="getExamSubjects()"    filterable clearable placeholder="请选择..">
+					<el-select v-model="examId"   filterable clearable placeholder="请选择..">
                		 <el-option
                         v-for="exam in exams" 
                         :label="exam.name"                      
@@ -71,7 +71,7 @@ width:200px;
             	</el-col> 
             	<el-col :span="5" >
             	<div class="grid-content bg-purple">                                     
-					<el-select v-model="gradeId" @change="getSchoolClasses()"  filterable clearable placeholder="请选择..">
+					<el-select v-model="gradeId"  filterable clearable placeholder="请选择..">
                		 <el-option
                         v-for="grade in grades" 
                         :label="grade.name"                      
