@@ -8,6 +8,7 @@ package com.zzy.pony.exam.service;
 
 import java.util.*;
 
+import com.zzy.pony.exam.mapper.ExamineeRoomArrangeMapper;
 import com.zzy.pony.exam.model.*;
 
 import org.slf4j.Logger;
@@ -51,6 +52,8 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 	private ExamArrangeService examArrangeService;
 	@Autowired
 	private ExamRoomService examRoomService;
+	@Autowired
+	private ExamineeRoomArrangeMapper examineeRoomArrangeMapper;
 	
 	
 	
@@ -59,12 +62,12 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 	public void autoExamineeRoomArrange(int examId, int gradeId) {
 		// TODO Auto-generated method stub
 		
-		int autoMode = 2;//2 默认按照考场容量排 1 按照考场平均排
+		int autoMode = 1;//2 默认按照考场容量排 1 按照考场平均排
 		
 		SchoolYear year = schoolYearService.getCurrent();
 		Term term = termService.getCurrent();
 		//1 先将之前排的考场删除
-		examineeRoomArrangeDao.deleteAll();
+		examineeRoomArrangeMapper.deleteByExamId(examId);
 		//2 确定要排的考场，其中有组ID的一起排，没有组ID的单独排
 		List<ExamVo> examVos = examService.findByYearAndTermOrderByExamDate(year, term); 
 		ExamVo examVo = examVos.get(0);//当前考试
@@ -136,9 +139,9 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 	//考生平均分配到考场
 	private void autoModeOne(List<Examinee> examinees,List<ExamRoomAllocate> examRoomAllocates){		
 		int examineeCount = examinees.size();
-		//int examRoomCount = examRoomAllocates.size();
-		int averageExaminee = examineeCount/examineeCount;//每个考场分配多少考生
-		int remainExaminee = examineeCount%examineeCount;//剩余的考生
+		int examRoomCount = examRoomAllocates.size();
+		int averageExaminee = examineeCount/examRoomCount;//每个考场分配多少考生
+		int remainExaminee = examineeCount%examRoomCount;//剩余的考生
 		//将所有考生排序
 		Collections.sort(examinees);
 		//todo 同班同学不相临

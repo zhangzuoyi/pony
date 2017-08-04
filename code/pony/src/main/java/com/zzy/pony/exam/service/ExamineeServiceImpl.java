@@ -153,7 +153,7 @@ public class ExamineeServiceImpl implements ExamineeService {
 				}	    			    	
 			}else{
 				for (Integer studentId : map.keySet()) {
-					map.put(studentId, prefixNo+String.format("%0"+bitNo+"d",map.get(studentId)));
+					result.put(studentId, prefixNo+String.format("%0"+bitNo+"d",Integer.valueOf(map.get(studentId))));
 				}
 			}
 				
@@ -176,6 +176,16 @@ public class ExamineeServiceImpl implements ExamineeService {
 		}	
 		return true;
 	}
+
+
+
+	@Override
+	public List<Examinee> findByExamIdAndClassIds(int examId, int[] classIds) {
+		// TODO Auto-generated method stub
+		return examineeMapper.findByExamIdAndClassIds(examId, classIds);
+	}
+	
+	
 	
 	
 	

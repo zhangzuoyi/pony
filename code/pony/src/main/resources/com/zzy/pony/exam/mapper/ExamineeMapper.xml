@@ -36,6 +36,20 @@
 		 where a.class_id=#{1} and t.EXAM_ID=#{0} 
 	</select>
 	
+	<select id="findByExamIdAndClassIds" resultType="com.zzy.pony.exam.model.Examinee">
+		select t.EXAMINEE_ID as examineeId,t.EXAM_ID as examId,t.STUDENT_ID as studentId,t.REG_NO as regNo,
+		a.`NAME` as name,a.SEX as sex,a.STUDENT_NO as studentNo from t_examinee t 
+		left join t_student a on t.STUDENT_ID = a.STUDENT_ID
+		 where   t.EXAM_ID=#{0}   
+		 <if test="classIds != null">
+		 	and  a.CLASS_ID in  
+     		<foreach item="item" index="index" collection="classIds" open="(" separator="," close=")">  
+     		 #{item}  
+     		</foreach> 
+		</if> 
+		 
+	</select>
+	
 	<select id="findByArrangeId" resultType="com.zzy.pony.exam.model.Examinee">
 		<include refid="base_select"></include>
 		 where  b.arrange_id = #{0} 

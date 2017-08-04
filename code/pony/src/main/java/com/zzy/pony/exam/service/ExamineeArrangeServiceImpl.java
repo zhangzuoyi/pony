@@ -36,9 +36,10 @@ public class ExamineeArrangeServiceImpl implements ExamineeArrangeService {
 	public void submitByClass(int examId, int[] classIds, int[] arrangeIds) {
 		// TODO Auto-generated method stub
 		List<Examinee> examinees = new ArrayList<Examinee>();
-		for (int classId : classIds) {
+		/*for (int classId : classIds) {
 			examinees.addAll(examineeService.findByExamIdAndClassId(examId, classId));
-		}
+		}*/
+		examinees = examineeService.findByExamIdAndClassIds(examId, classIds);
 		List<ExamArrange> examArranges = new ArrayList<ExamArrange>();
 		for (int arrangeId : arrangeIds) {
 			ExamArrange examArrange = examArrangeDao.findOne(arrangeId);
