@@ -46,6 +46,7 @@ import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.Student;
+import com.zzy.pony.model.Subject;
 import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.service.ExamResultService;
 import com.zzy.pony.service.ExamService;
@@ -55,6 +56,7 @@ import com.zzy.pony.service.StudentService;
 import com.zzy.pony.service.SubjectService;
 import com.zzy.pony.service.TermService;
 import com.zzy.pony.util.DateTimeUtil;
+import com.zzy.pony.util.ExcelUtil;
 import com.zzy.pony.vo.ExamResultVo;
 import com.zzy.pony.vo.ExamVo;
 
@@ -159,28 +161,73 @@ public class ExamResultController {
 		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 		return new ResponseEntity<byte[]>(excelContent(vos, reportName), headers, HttpStatus.CREATED);
 	}
+	
+	@RequestMapping(value = "exportTemplate", method = RequestMethod.GET)
+	public ResponseEntity<byte[]> exportTemplate(Integer examId, Integer classId,Integer subjectId,Model model) {
+		List<Student> students=studentService.findBySchoolClass(classId);
+		Subject subject=subjectService.get(subjectId);
+		SchoolClass sc=classService.get(classId);
+		String reportName = sc.getName()+"成绩导入模板";
+		HttpHeaders headers = new HttpHeaders();
+		try {
+			headers.setContentDispositionFormData("attachment", new String(reportName.getBytes("utf-8"), "ISO8859-1")
+					+ DateTimeUtil.dateToStr(new Date()) + ".xls");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		return new ResponseEntity<byte[]>(templateExcelContent(students, reportName, subject.getName()), headers, HttpStatus.CREATED);
+	}
+	
+	private byte[] templateExcelContent(List<Student> students, String reportName, String subjectName) {
+		Workbook wb = new HSSFWorkbook();
+		String sheetName = reportName;
+		Sheet sheet = wb.createSheet(sheetName);
+
+		CellStyle style = ExcelUtil.getCommonStyle(wb);
+
+		CellStyle styleTitle = ExcelUtil.getTitleStyle(wb, style);
+
+		// 设置标题
+		Row titleRow = sheet.createRow(0);
+		getCell(titleRow, "学号", styleTitle, 0);
+		getCell(titleRow, "姓名", styleTitle, 1);
+		getCell(titleRow, subjectName+"成绩", styleTitle, 2);
+
+		// 设置内容
+		int voLen = students.size();
+		for (int i = 0; i < voLen; i++) {
+			Student vo = students.get(i);
+			Row row = sheet.createRow(1 + i);
+			int cellIndex = 0;
+			// 学号
+			getCell(row, vo.getStudentNo(), style, cellIndex++);
+
+			// 姓名
+			getCell(row, vo.getName(), style, cellIndex++);
+
+			// 成绩，默认为空
+			Cell cell=getCell(row, style, cellIndex++);
+
+		}
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try {
+			wb.write(out);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return out.toByteArray();
+	}
 
 	private byte[] excelContent(List<ExamResultVo> vos, String reportName) {
 		Workbook wb = new HSSFWorkbook();
 		String sheetName = reportName;
 		Sheet sheet = wb.createSheet(sheetName);
 
-		CellStyle style = wb.createCellStyle();
-		style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-		style.setBorderBottom(CellStyle.BORDER_THIN);
-		style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-		style.setBorderLeft(CellStyle.BORDER_THIN);
-		style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-		style.setBorderRight(CellStyle.BORDER_THIN);
-		style.setRightBorderColor(IndexedColors.BLACK.getIndex());
-		style.setBorderTop(CellStyle.BORDER_THIN);
-		style.setTopBorderColor(IndexedColors.BLACK.getIndex());
+		CellStyle style = ExcelUtil.getCommonStyle(wb);
 
-		CellStyle styleTitle = wb.createCellStyle();
-		styleTitle.cloneStyleFrom(style);
-		styleTitle.setAlignment(CellStyle.ALIGN_CENTER);
-		styleTitle.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
-		styleTitle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		CellStyle styleTitle = ExcelUtil.getTitleStyle(wb, style);
 
 		// 设置标题
 		Row titleRow = sheet.createRow(0);

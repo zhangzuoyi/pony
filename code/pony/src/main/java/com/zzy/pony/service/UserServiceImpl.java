@@ -57,12 +57,12 @@ public class UserServiceImpl implements UserService {
 	public void addFromTeacher(Teacher teacher) {
 		User user=new User();
 		user.setCreateTime(new Date());
-		user.setCreateUser("test");//TODO
+		user.setCreateUser(teacher.getCreateUser());
 		user.setLoginName(Constants.USER_TYPE_TEACHER+teacher.getTeacherNo());
 		user.setPsw(Sha1HashUtil.hashPassword("123456",user.getLoginName()));
 		user.setTeacher(teacher);
 		user.setUpdateTime(new Date());
-		user.setUpdateUser("test");//TODO
+		user.setUpdateUser(teacher.getCreateUser());
 		user.setUserType(Constants.USER_TYPE_TEACHER);
 		
 		dao.save(user);
@@ -72,12 +72,12 @@ public class UserServiceImpl implements UserService {
 	public void addFromStudent(Student student) {
 		User user=new User();
 		user.setCreateTime(new Date());
-		user.setCreateUser("test");//TODO
+		user.setCreateUser(student.getCreateUser());
 		user.setLoginName(Constants.USER_TYPE_STUDENT+student.getStudentNo());
 		user.setPsw(Sha1HashUtil.hashPassword("123456",user.getLoginName()));
 		user.setStudent(student);
 		user.setUpdateTime(new Date());
-		user.setUpdateUser("test");//TODO
+		user.setUpdateUser(student.getCreateUser());
 		user.setUserType(Constants.USER_TYPE_STUDENT);
 		
 		dao.save(user);

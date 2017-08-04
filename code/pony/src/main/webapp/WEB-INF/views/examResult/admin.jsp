@@ -22,6 +22,7 @@
         <div class="my-toolbar-button">
             <a href="#" class="easyui-linkbutton" iconCls="icon-save" onclick="saveResult()" plain="true">保存</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="openUpload()" plain="true">导入</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="exportTemplate()" plain="true">导出模板</a>
         </div>
         <div class="my-toolbar-search">
         	<input type="hidden" id="examId" value="${vo.examId }" />
@@ -89,7 +90,7 @@
 	
 	$(document).ready(function(){
 		$('#my-datagrid-2').datagrid('enableCellEditing');
-		$("#subjectSelect").change(function(){
+		/* $("#subjectSelect").change(function(){
 			var subject=$(this).children('option:selected').val();
 			if(subject == ""){
 				$("select[name='exam']").empty();
@@ -111,8 +112,8 @@
 					}	
 				});
 			}
-		});
-		$("select[name='exam']").change(function(){
+		}); */
+		/* $("select[name='exam']").change(function(){
 			var exam=$(this).children('option:selected').val();
 			if(exam == ""){
 				$("select[name='schoolClass']").empty();
@@ -133,7 +134,7 @@
 					}	
 				});
 			}
-		});
+		}); */
 
         // 指定图表的配置项和数据
         var option = {
@@ -405,6 +406,21 @@
 				}	
 			});
 		}
+	}
+	
+	function exportTemplate(){
+		var examId=$("#examId").val();
+		var subjectId=$("select[name='subject']").children('option:selected').val();
+		var classId=$("select[name='schoolClass']").children('option:selected').val();
+		if( ! subjectId){
+			alert("请选择科目");
+			return;
+		}
+		if( ! classId){
+			alert("请选择班级");
+			return;
+		}
+		window.location.href="<s:url value='/examResult/exportTemplate' />"+"?examId="+examId+"&subjectId="+subjectId+"&classId="+classId;
 	}
 	
 </script>

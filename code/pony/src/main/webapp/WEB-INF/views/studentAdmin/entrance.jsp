@@ -30,6 +30,7 @@
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit" onclick="openEdit()" plain="true">修改</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-remove" onclick="removeItem()" plain="true">删除</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="openUpload()" plain="true">批量导入</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="downloadTemplate()" plain="true">下载模板</a>
         </div>
         <div class="my-toolbar-search">
         	<label>年级：</label> 
@@ -248,6 +249,10 @@
 				}
 			}
 		});
+	}
+	
+	function downloadTemplate(){
+		window.location.href="<s:url value='/studentAdmin/exportTemplate' />";
 	}
 	
 	function removeItem(){

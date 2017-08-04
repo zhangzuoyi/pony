@@ -27,11 +27,14 @@ public class StudentServiceImpl implements StudentService {
 	private TermService termService;
 	@Autowired
 	private StudentMapper studentMapper;
+	@Autowired
+	private UserService userService;
 
 	@Override
 	public void add(Student sy) {
 		dao.save(sy);
 		addStatusChange(sy);
+		userService.addFromStudent(sy);
 	}
 	private void addStatusChange(Student stu){
 		StudentStatusChange change=new StudentStatusChange();
@@ -112,7 +115,7 @@ public class StudentServiceImpl implements StudentService {
 				stu.setUpdateTime(now);
 				stu.setUpdateUser(loginUser);
 				
-				dao.save(stu);
+				add(stu);
 			}else{
 				old.setBirthday(stu.getBirthday());
 				old.setEmail(stu.getEmail());

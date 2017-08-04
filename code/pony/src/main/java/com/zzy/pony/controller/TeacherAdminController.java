@@ -110,9 +110,9 @@ public class TeacherAdminController {
 	@ResponseBody
 	public String add(Teacher sy, Model model){
 		sy.setCreateTime(new Date());
-		sy.setCreateUser("test");
+		sy.setCreateUser(ShiroUtil.getLoginUser().getLoginName());
 		sy.setUpdateTime(new Date());
-		sy.setUpdateUser("test");
+		sy.setUpdateUser(ShiroUtil.getLoginUser().getLoginName());
 		service.add(sy);
 		return "success";
 	}

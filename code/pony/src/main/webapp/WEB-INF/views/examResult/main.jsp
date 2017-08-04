@@ -45,26 +45,8 @@
 				   return rec.type.name;
 				}
 			},
-			{ field:'subjects',title:'科目',width:180,sortable:true,
-				formatter:function(value,rec){
-					var len=rec.subjects.length;
-					var results=[];
-					for(var i=0;i<len;i++){
-						results[i]=rec.subjects[i].subject.name;
-					}
-				   return results.join(",");
-				}
-			},
-			{ field:'schoolClasses',title:'班级',width:180,sortable:true,
-				formatter:function(value,rec){
-					var len=rec.schoolClasses.length;
-					var results=[];
-					for(var i=0;i<len;i++){
-						results[i]=rec.schoolClasses[i].name;
-					}
-				   return results.join(",");
-				}
-			},
+			{ field:'subjectsName',title:'科目',width:180,sortable:true},
+			{ field:'classesName',title:'班级',width:180,sortable:true},
 			{ field:'examDate',title:'考试日期',width:100,sortable:true},
 			{ field:'examId',title:'操作',width:180,
 				formatter:function(value,rec){
