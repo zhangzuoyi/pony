@@ -9,5 +9,45 @@
 		where examinee_id in (select examinee_id from t_examinee where exam_id = #{0}); 		
 	</delete>
 	
+	<select id="findExamineeRoomArrangeByClassId" resultType="com.zzy.pony.vo.ExamineeRoomArrangeVo">
+		select t.id as id ,t.SEQ as seq,b.STUDENT_ID as studentId,
+		b.`NAME` as studentName,a.REG_NO as regNo,
+		c.CLASS_ID as classId,CONCAT(d.name,convert(c.SEQ,char),'班')  as className ,
+		e.ROOM_ID as roomId,e.ROOM_NAME as roomName,
+		e.CAPACITY as capacity,
+		g.name as subjectName 
+		from t_examinee_room_arrange t left join t_examinee a on t.EXAMINEE_ID=a.EXAMINEE_ID 
+		left join t_student b on a.student_id = b.student_id 
+		left join t_school_class c on b.class_id = c.class_id
+		left join t_grade d on c.GRADE_ID=d.GRADE_ID
+		left join t_exam_room_allocate e on t.ROOM_ID = e.ROOM_ID
+		left join t_exam_arrange f on e.arrange_id = f.arrange_id 
+		left join t_subject g on f.subject_id = g.subject_id
+		where c.CLASS_ID = #{0} 
+		and a.EXAM_ID = #{1}
+		order by  e.room_seq,t.seq;	
+	</select>
+	
+	<select id="findExamineeRoomArrangeByRoomId" resultType="com.zzy.pony.vo.ExamineeRoomArrangeVo">
+		select t.id as id ,t.SEQ as seq,b.STUDENT_ID as studentId,
+		b.`NAME` as studentName,a.REG_NO as regNo,
+		c.CLASS_ID as classId,CONCAT(d.name,convert(c.SEQ,char),'班')  as className ,
+		e.ROOM_ID as roomId,e.ROOM_NAME as roomName,
+		e.CAPACITY as capacity,
+		g.name as subjectName 
+		from t_examinee_room_arrange t left join t_examinee a on t.EXAMINEE_ID=a.EXAMINEE_ID 
+		left join t_student b on a.student_id = b.student_id 
+		left join t_school_class c on b.class_id = c.class_id
+		left join t_grade d on c.GRADE_ID=d.GRADE_ID
+		left join t_exam_room_allocate e on t.ROOM_ID = e.ROOM_ID
+		left join t_exam_arrange f on e.arrange_id = f.arrange_id 
+		left join t_subject g on f.subject_id = g.subject_id
+		where e.room_seq = #{0} 
+		and a.EXAM_ID = #{1}
+		order by c.class_id,t.seq;
+	
+	</select>
+	
+	
 	
 </mapper>

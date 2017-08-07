@@ -61,6 +61,21 @@ public class SchoolClassController {
 		}
 		return list;
 	}
+	
+	@RequestMapping(value="listVo",method = RequestMethod.GET)
+	@ResponseBody
+	public List<SchoolClassVo> listVo(Model model){
+		List<SchoolClassVo> result = new ArrayList<SchoolClassVo>();					
+		List<SchoolClass> list=service.findCurrent();
+		for(SchoolClass sc: list){
+			SchoolClassVo vo = new SchoolClassVo();
+			vo.setClassId(sc.getClassId());
+			vo.setName(sc.getName());
+			result.add(vo);		
+		}
+		return result;
+	}
+	
 	//获取年级班级树结构数据
 	@RequestMapping(value="listTree",method = RequestMethod.GET)
 	@ResponseBody

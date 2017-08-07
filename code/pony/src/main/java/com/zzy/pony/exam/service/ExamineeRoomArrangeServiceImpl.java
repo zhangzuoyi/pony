@@ -26,6 +26,7 @@ import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.TermService;
 import com.zzy.pony.util.CollectionsUtil;
 import com.zzy.pony.vo.ExamVo;
+import com.zzy.pony.vo.ExamineeRoomArrangeVo;
 
 
 
@@ -136,6 +137,23 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		examineeRoomArrangeDao.deleteAll();
 	}
 	
+	
+	
+	
+	
+	@Override
+	public List<ExamineeRoomArrangeVo> findExamineeRoomArrangeByClassId(
+			int classId,int examId) {
+		// TODO Auto-generated method stub						
+		return examineeRoomArrangeMapper.findExamineeRoomArrangeByClassId(classId, examId);
+	}
+
+	@Override
+	public List<ExamineeRoomArrangeVo> findExamineeRoomArrangeByRoomId(int roomId,int examId) {
+		// TODO Auto-generated method stub
+		return examineeRoomArrangeMapper.findExamineeRoomArrangeByRoomId(roomId, examId);
+	}
+
 	//考生平均分配到考场
 	private void autoModeOne(List<Examinee> examinees,List<ExamRoomAllocate> examRoomAllocates){		
 		int examineeCount = examinees.size();
