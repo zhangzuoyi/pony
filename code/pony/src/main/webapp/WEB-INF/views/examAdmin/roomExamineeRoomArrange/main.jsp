@@ -89,7 +89,7 @@ width:200px;
             </div>                      			
         </el-card>
         
-        <%-- <el-row style="margin-top:10px;">
+        <el-row style="margin-top:10px;">
         	<el-col :span="1" >
                     <b>考试:</b>                                    
             	</el-col> 
@@ -196,7 +196,7 @@ width:200px;
                         label="序号"
                         >
                 </el-table-column>                                                                                                         
-            </el-table> --%> 
+            </el-table> 
         
         
         
@@ -249,8 +249,8 @@ var app = new Vue({
 				this.getCurrentTerm();
 				this.getExams();
 				this.getGrades();
-				//this.getSchoolClasses();
-				//this.getExamRooms();
+				this.getSchoolClasses();
+				this.getExamRooms();
 
 		
 			

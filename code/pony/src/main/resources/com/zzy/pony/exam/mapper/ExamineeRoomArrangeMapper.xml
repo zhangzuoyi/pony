@@ -15,7 +15,10 @@
 		c.CLASS_ID as classId,CONCAT(d.name,convert(c.SEQ,char),'班')  as className ,
 		e.ROOM_ID as roomId,e.ROOM_NAME as roomName,
 		e.CAPACITY as capacity,
-		g.name as subjectName 
+		g.name as subjectName,
+		f.ARRANGE_ID as arrangeId,
+		f.group_id as groupId,
+		b.STUDENT_NO as studentNo			 
 		from t_examinee_room_arrange t left join t_examinee a on t.EXAMINEE_ID=a.EXAMINEE_ID 
 		left join t_student b on a.student_id = b.student_id 
 		left join t_school_class c on b.class_id = c.class_id
@@ -25,7 +28,7 @@
 		left join t_subject g on f.subject_id = g.subject_id
 		where c.CLASS_ID = #{0} 
 		and a.EXAM_ID = #{1}
-		order by  e.room_seq,t.seq;	
+		order by  b.student_no;	
 	</select>
 	
 	<select id="findExamineeRoomArrangeByRoomId" resultType="com.zzy.pony.vo.ExamineeRoomArrangeVo">
@@ -34,7 +37,10 @@
 		c.CLASS_ID as classId,CONCAT(d.name,convert(c.SEQ,char),'班')  as className ,
 		e.ROOM_ID as roomId,e.ROOM_NAME as roomName,
 		e.CAPACITY as capacity,
-		g.name as subjectName 
+		g.name as subjectName,
+		f.ARRANGE_ID as arrangeId,
+		f.group_id as groupId,
+		b.STUDENT_NO as studentNo			 
 		from t_examinee_room_arrange t left join t_examinee a on t.EXAMINEE_ID=a.EXAMINEE_ID 
 		left join t_student b on a.student_id = b.student_id 
 		left join t_school_class c on b.class_id = c.class_id

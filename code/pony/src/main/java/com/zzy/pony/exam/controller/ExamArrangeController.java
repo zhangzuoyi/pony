@@ -2,8 +2,11 @@ package com.zzy.pony.exam.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
+
+import java.util.Map;
 
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.service.ExamService;
@@ -170,7 +173,7 @@ public class ExamArrangeController {
 			examArrangeService.delete(arrangeId);
 		}				
 	}
-	
+	//所有考试科目，不分组
 	@RequestMapping(value="findByExam",method = RequestMethod.GET)
 	@ResponseBody
 	public List<Subject> findByExam(@RequestParam(value="examId") int examId){
@@ -178,6 +181,25 @@ public class ExamArrangeController {
 		List<ExamArrange> examArranges = examArrangeService.findByExam(examId);
 		for (ExamArrange examArrange : examArranges) {
 			result.add(examArrange.getSubject());
+		}
+		return result;
+	}
+	//所有考试科目，带分组
+	@RequestMapping(value="findGroupByExam",method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, String> findGroupByExam(@RequestParam(value="examId") int examId){
+		Map<String, String> result = new HashMap<String, String>();				
+		List<ExamArrange> examArranges = examArrangeService.findByExam(examId);
+		for (ExamArrange examArrange : examArranges) {
+			if (examArrange.getGroup() ==  null) {
+				result.put(examArrange.getArrangeId()+"A",examArrange.getSubject().getName());
+			}else {
+				if (result.containsKey(examArrange.getGroup().getGroupId()+"G")) {
+					result.put(examArrange.getGroup().getGroupId()+"G",result.get(examArrange.getGroup().getGroupId()+"G")+examArrange.getSubject().getName());
+				}else{				
+					result.put(examArrange.getGroup().getGroupId()+"G", examArrange.getSubject().getName());
+				}					
+			}						
 		}
 		return result;
 	}

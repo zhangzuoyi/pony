@@ -344,16 +344,20 @@ public class StudentComprehensiveTrackServiceImpl implements StudentComprehensiv
 	        for (int j = 0; j < list.size(); j++) {		
 	           // System.out.println("key:"+mapping.getKey() + "  value:" + mapping.getValue());
 	        	
-	        		if (unsortMap.containsKey(list.get(j).getKey()) && j != 0) {
+	        		/*if (unsortMap.containsKey(list.get(j).getKey()) && j != 0) {
 						//新增相同处理逻辑
 						if (Float.valueOf(unsortMap.get(list.get(j).getKey()).get("sum")+"").floatValue() == list.get(j-1).getValue().floatValue() ) {
 							unsortMap.get(list.get(j).getKey()).put("gradeRank", unsortMap.get(list.get(j-1).getKey()).get("gradeRank"));															
 						}else {
 							unsortMap.get(list.get(j).getKey()).put("gradeRank", j+1);												
-						}						
+						}	
+	        				
 					}else {
 						unsortMap.get(list.get(j).getKey()).put("gradeRank", j+1);	
-					}								
+					}*/	
+	        		
+	        		//去除相同处理逻辑，在生成考生号时即使成绩相同考生号仍不相同
+        			unsortMap.get(list.get(j).getKey()).put("gradeRank", j+1);
 	        }	
 			
 		return unsortMap;

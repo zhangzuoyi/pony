@@ -177,7 +177,7 @@ width:200px;
 			</el-row>
 			<el-row>
 			<el-button type="primary" size="small" @click="submitByClass">确认</el-button>
-			</el-row>>
+			</el-row>
             </div>
                 <div v-if="!flag">
 			<el-row>

@@ -15,6 +15,9 @@ public class ExamineeRoomArrangeVo {
 	private String roomName;
 	private int capacity;
 	private String subjectName;
+	private int arrangeId;
+	private int groupId;
+	private String studentNo;
 	
 	public ExamineeRoomArrangeVo(){}
 
@@ -105,6 +108,34 @@ public class ExamineeRoomArrangeVo {
 	public void setSubjectName(String subjectName) {
 		this.subjectName = subjectName;
 	}
+
+	public int getArrangeId() {
+		return arrangeId;
+	}
+
+	public void setArrangeId(int arrangeId) {
+		this.arrangeId = arrangeId;
+	}
+
+	public int getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
+	}
+
+	public String getStudentNo() {
+		return studentNo;
+	}
+
+	public void setStudentNo(String studentNo) {
+		this.studentNo = studentNo;
+	}
+	
+	
+	
+	
 	
 	
 	
