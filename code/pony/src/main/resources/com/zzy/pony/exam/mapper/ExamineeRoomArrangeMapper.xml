@@ -50,7 +50,7 @@
 		left join t_subject g on f.subject_id = g.subject_id
 		where e.room_seq = #{0} 
 		and a.EXAM_ID = #{1}
-		order by c.class_id,t.seq;
+		order by t.seq;
 	
 	</select>
 	

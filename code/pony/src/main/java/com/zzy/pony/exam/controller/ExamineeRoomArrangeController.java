@@ -41,6 +41,14 @@ public class ExamineeRoomArrangeController {
 		return examineeRoomArrangeService.findExamineeRoomArrangeByClassId(classId, examId);
 	}
 	
+	@RequestMapping(value="findExamineeRoomArrangeByRoomId",method=RequestMethod.GET)
+	@ResponseBody
+	public String findExamineeRoomArrangeByRoomId(@RequestParam(value="examId") int examId,			
+			@RequestParam(value="roomId") int roomId
+			){					
+		return examineeRoomArrangeService.findExamineeRoomArrangeByRoomId(roomId, examId);
+	}
+	
 	
 	
 }

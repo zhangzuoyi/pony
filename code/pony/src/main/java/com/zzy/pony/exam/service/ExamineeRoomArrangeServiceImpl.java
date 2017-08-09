@@ -7,6 +7,7 @@ package com.zzy.pony.exam.service;
 
 
 import java.util.*;
+import java.util.concurrent.LinkedBlockingDeque;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -22,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.exam.dao.ExamineeRoomArrangeDao;
 import com.zzy.pony.model.SchoolYear;
-import com.zzy.pony.model.Student;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.service.ExamService;
 import com.zzy.pony.service.SchoolYearService;
@@ -199,7 +199,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		}
 		List<ExamineeRoomArrangeVo> examineeRoomArrangeVos =  examineeRoomArrangeMapper.findExamineeRoomArrangeByClassId(classId, examId);		
 		List<Map<String, Object>> dataList = new ArrayList<Map<String,Object>>();
-		Map<Integer, Map<String, Object>> map = new HashMap<Integer, Map<String,Object>>();//key:studentId
+		Map<Integer, Map<String, Object>> map = new LinkedHashMap<Integer, Map<String,Object>>();//key:studentId
 		for (ExamineeRoomArrangeVo vo : examineeRoomArrangeVos) {
 			if (map.containsKey(vo.getStudentId())) {
 				Map<String, Object> innerMap = map.get(vo.getStudentId());
@@ -302,8 +302,141 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 	@Override
 	public String findExamineeRoomArrangeByRoomId(int roomId,int examId) {
 		// TODO Auto-generated method stub
-		List<ExamineeRoomArrangeVo> examineeRoomArrangeVos =  examineeRoomArrangeMapper.findExamineeRoomArrangeByRoomId(roomId, examId);
-		return null;
+		StringBuilder result = new StringBuilder();
+		String[] arrangeStrings = {"colOne","colTwo","colThree","colFour","colFive","colSix","colSeven","colEight","colNine","colTen","colEleven","colTwelve"};
+		String[] groupStrings = {"columnOne","columnTwo","columnThree","columnFour","columnFive","columnSix","columnSeven","columnEight","columnNine","columnTen","columnEleven","columnTwelve"};
+		String[] arrangeSeqStrings = {"colSeqOne","colSeqTwo","colSeqThree","colSeqFour","colSeqFive","colSeqSix","colSeqSeven","colSeqEight","colSeqNine","colSeqTen","colSeqEleven","colSeqTwelve"};
+		String[] groupSeqStrings = {"columnSeqOne","columnSeqTwo","columnSeqThree","columnSeqFour","columnSeqFive","columnSeqSix","columnSeqSeven","columnSeqEight","columnSeqNine","columnSeqTen","columnSeqEleven","columnSeqTwelve"};
+
+		List<ExamArrange> examArranges = examArrangeService.findByExam(examId);
+		Map<Integer , String> arrangeMap = new HashMap<Integer, String>();//不在组内
+		Map<Integer, String> groupMap = new HashMap<Integer, String>();//在组内
+		Map<Integer, String> arrangeHeadMap = new HashMap<Integer, String>();
+		Map<Integer, String> groupHeadMap = new HashMap<Integer, String>();
+		Map<Integer, String> arrangeSeqHeadMap = new HashMap<Integer, String>();
+		Map<Integer, String> groupSeqHeadMap = new HashMap<Integer, String>();
+		
+		for (ExamArrange examArrange : examArranges) {
+			if (examArrange.getGroup() == null) {
+				arrangeMap.put(examArrange.getArrangeId(), examArrange.getSubject().getName());
+			}else{
+				if (groupMap.get(examArrange.getGroup().getGroupId()) != null) {
+					groupMap.put(examArrange.getGroup().getGroupId(), groupMap.get(examArrange.getGroup().getGroupId())+examArrange.getSubject().getName());
+				}else{
+					groupMap.put(examArrange.getGroup().getGroupId(), examArrange.getSubject().getName());
+				}								
+			}							
+		}
+		int i=0;
+		for (Integer key : arrangeMap.keySet()) {
+			arrangeHeadMap.put(key,arrangeStrings[i]);
+			i++;
+		}
+		int j=0;
+		for (Integer key : groupMap.keySet()) {
+			groupHeadMap.put(key,groupStrings[j]);
+			j++;
+		}
+		int m=0;
+		for (Integer key : arrangeMap.keySet()) {
+			arrangeSeqHeadMap.put(key,arrangeSeqStrings[m]);
+			i++;
+		}
+		int n=0;
+		for (Integer key : groupMap.keySet()) {
+			groupSeqHeadMap.put(key,groupSeqStrings[n]);
+			n++;
+		}
+		List<ExamineeRoomArrangeVo> examineeRoomArrangeVos =  examineeRoomArrangeMapper.findExamineeRoomArrangeByRoomId(roomId, examId);		
+		List<Map<String, Object>> dataList = new ArrayList<Map<String,Object>>();
+		Map<Integer, Map<String, Object>> map = new LinkedHashMap<Integer, Map<String,Object>>();//key:studentId  有序 
+		for (ExamineeRoomArrangeVo vo : examineeRoomArrangeVos) {
+			if (map.containsKey(vo.getStudentId())) {
+				Map<String, Object> innerMap = map.get(vo.getStudentId());
+				if (vo.getGroupId() == 0) {
+					innerMap.put(arrangeHeadMap.get(vo.getArrangeId()), vo.getStudentName());
+					innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo());
+				}else {
+					if (innerMap.containsKey(groupHeadMap.get(vo.getGroupId()))
+							&&(!innerMap.get(groupHeadMap.get(vo.getGroupId())).toString().equalsIgnoreCase(vo.getStudentName()) 
+							||!innerMap.get(groupSeqHeadMap.get(vo.getGroupId())).toString().equalsIgnoreCase(vo.getRegNo()))
+							 ) {
+						innerMap.put(groupHeadMap.get(vo.getGroupId()),innerMap.get(groupHeadMap.get(vo.getGroupId()))+";"+vo.getStudentName() );
+						innerMap.put(groupSeqHeadMap.get(vo.getGroupId()),innerMap.get(groupSeqHeadMap.get(vo.getGroupId()))+";"+vo.getRegNo());
+					}else {
+						innerMap.put(groupHeadMap.get(vo.getGroupId()), vo.getStudentName());
+						innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo());
+					}
+				}														
+			}else{
+				Map<String, Object> innerMap = new HashMap<String, Object>();
+				innerMap.put("roomName", vo.getRoomName());
+				innerMap.put("seq", vo.getSeq());			
+				if(vo.getGroupId() == 0){
+				innerMap.put(arrangeHeadMap.get(vo.getArrangeId()), vo.getStudentName());
+				innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo());
+				}else {
+				innerMap.put(groupHeadMap.get(vo.getGroupId()), vo.getStudentName());
+				innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo());	
+				}
+				map.put(vo.getStudentId(), innerMap);
+			}								
+		}		
+		for (Integer studentId : map.keySet()) {
+			dataList.add(map.get(studentId));
+		}					
+		List<Map<String, Object>> headList = new ArrayList<Map<String,Object>>();
+		Map<String, Object> roomNameMap = new HashMap<String, Object>();
+		roomNameMap.put("prop", "roomName");
+		roomNameMap.put("label", "考场");
+		Map<String, Object> seqMap = new HashMap<String, Object>();
+		seqMap.put("prop", "seq");
+		seqMap.put("label", "座位号");	
+		headList.add(roomNameMap);
+		headList.add(seqMap);		
+		for (Integer arrangeId : arrangeHeadMap.keySet()) {
+			  arrangeHeadMap.get(arrangeId);
+			Map<String, Object> headMap = new HashMap<String, Object>();
+			headMap.put("prop", arrangeHeadMap.get(arrangeId));
+			headMap.put("label", arrangeMap.get(arrangeId));
+			headList.add(headMap);		
+		} 
+		for (Integer arrangeId : arrangeSeqHeadMap.keySet()) {
+			  arrangeHeadMap.get(arrangeId);
+			Map<String, Object> headMap = new HashMap<String, Object>();
+			headMap.put("prop", arrangeSeqHeadMap.get(arrangeId));
+			headMap.put("label", "准考证号");
+			headList.add(headMap);		
+		} 
+		for (Integer arrangeId : groupHeadMap.keySet()) {
+			  arrangeHeadMap.get(arrangeId);
+			Map<String, Object> headMap = new HashMap<String, Object>();
+			headMap.put("prop", groupHeadMap.get(arrangeId));
+			headMap.put("label", groupMap.get(arrangeId));
+			headList.add(headMap);		
+		} 
+		for (Integer arrangeId : groupSeqHeadMap.keySet()) {
+			  arrangeHeadMap.get(arrangeId);
+			Map<String, Object> headMap = new HashMap<String, Object>();
+			headMap.put("prop", groupSeqHeadMap.get(arrangeId));
+			headMap.put("label", "准考证号");
+			headList.add(headMap);		
+		} 
+		
+		GsonBuilder gb = new GsonBuilder();
+		Gson gson = gb.create();
+		String data = gson.toJson(dataList);
+		Gson gson2 = gb.create();
+		String head= gson2.toJson(headList);		
+		result.append("{\"total\"");
+		result.append(":");
+		result.append(dataList.size());
+		result.append(",\"rows\":");
+		result.append(data);
+		result.append(",\"title\":");
+		result.append(head);		
+		result.append("}");		
+		return result.toString();
 	}
 
 	//考生平均分配到考场
