@@ -240,14 +240,42 @@ var app = new Vue({
 			
 			},
 			exportByRoomId : function(){
-			
+			 if(this.examId == null || this.examId == ""){
+              	this.$alert("请选择考试","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }			
+			if(this.gradeId == null || this.gradeId == ""){
+              	this.$alert("请选择年级","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }
+             if(this.roomId == null || this.roomId == ""){
+              	this.$alert("请选择考场","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }
+					var exportParams = {
+										examId : this.examId,
+										roomId  :  this.roomId,																				
+								};
+					var url = "<s:url value='/examAdmin/examineeRoomArrange/exportByRoomId?'/>"+jQuery.param(exportParams);
+					/*  window.location.href = encodeURI(encodeURI(url));*/
+				    window.open(encodeURI(encodeURI(url)));	
+			}
 			
 			}
 			
 			
         
             		   		  
-        }	        
+        	        
 	 
 	
 });  

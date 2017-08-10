@@ -122,6 +122,14 @@ public class ExamRoomServiceImpl implements ExamRoomService {
 		return examRoomAllocateDao.findByExamArrangeOrderByRoomSeq(examArrange);
 	}
 
+	@Override
+	public ExamRoom get(int roomId) {
+		// TODO Auto-generated method stub
+		return examRoomDao.findOne(roomId);
+	}
+	
+	
+
 	
 	
 	

@@ -25,4 +25,5 @@ public interface ExamRoomService {
 	List<ExamRoom> getExamRooms(int[] roomIds);
 	void save(int[] subjectIds,int[] roomIds,int examId,int gradeId);
 	List<ExamRoomAllocate> findByExamArrangeOrderByRoomSeq(ExamArrange examArrange);
+	ExamRoom get(int roomId);
 }

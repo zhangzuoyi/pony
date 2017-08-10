@@ -233,8 +233,34 @@ var app = new Vue({
                         });										
 			},
 			exportByClassId : function(){
-			
-			
+			if(this.examId == null || this.examId == ""){
+              	this.$alert("请选择考试","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }			
+			if(this.gradeId == null || this.gradeId == ""){
+              	this.$alert("请选择年级","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }
+             if(this.classId == null || this.classId == ""){
+              	this.$alert("请选择班级","提示",{
+					type:"warning",
+					confirmButtonText:'确认'
+				});
+				return;
+              }
+					var exportParams = {
+										examId : this.examId,
+										classId  :  this.classId,																				
+								};
+					var url = "<s:url value='/examAdmin/examineeRoomArrange/exportByClassId?'/>"+jQuery.param(exportParams);
+					/*  window.location.href = encodeURI(encodeURI(url));*/
+				    window.open(encodeURI(encodeURI(url)));	
 			}
 			
 			
