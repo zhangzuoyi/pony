@@ -10,6 +10,7 @@ public class ClassNoCourseVo {
 	private int weekdayId;
 	private String lessonPeriodName;
 	private int lessonPeriodId;
+	private int lessonPeriodSeq;
 	private String schoolYearName;
 	private int schoolYearId;
 	
@@ -104,6 +105,16 @@ public class ClassNoCourseVo {
 	public void setSchoolYearId(int schoolYearId) {
 		this.schoolYearId = schoolYearId;
 	}
+
+	public int getLessonPeriodSeq() {
+		return lessonPeriodSeq;
+	}
+
+	public void setLessonPeriodSeq(int lessonPeriodSeq) {
+		this.lessonPeriodSeq = lessonPeriodSeq;
+	}
+	
+	
 	
 	
 	

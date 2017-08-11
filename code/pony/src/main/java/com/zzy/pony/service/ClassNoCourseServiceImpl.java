@@ -89,6 +89,7 @@ public class ClassNoCourseServiceImpl implements ClassNoCourseService {
 			vo.setId(classNoCourse.getId());
 			vo.setLessonPeriodId(classNoCourse.getLessonPeriod().getPeriodId());
 			vo.setLessonPeriodName(classNoCourse.getLessonPeriod().getStartTime()+"--"+classNoCourse.getLessonPeriod().getEndTime());
+			vo.setLessonPeriodSeq(classNoCourse.getLessonPeriod().getSeq());
 			vo.setSchoolYearId(classNoCourse.getSchoolYear().getYearId());
 			vo.setSchoolYearName(classNoCourse.getSchoolYear().getName());
 			vo.setTermId(classNoCourse.getTerm().getTermId());

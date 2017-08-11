@@ -697,7 +697,7 @@ public class GAUtil {
 		for (ClassNoCourseVo vo : list) {			
 			String seqId = String.format("%01d", vo.getWeekdayId())  ;
 			String classId=String.format("%03d", vo.getClassId()) ;
-			String periodId =String.format("%01d", vo.getLessonPeriodId())  ;			
+			String periodId =String.format("%01d", vo.getLessonPeriodSeq())  ;			
 			
 		result.put(classId, seqId+periodId);
 		}		
@@ -709,7 +709,7 @@ public class GAUtil {
 		for (TeacherNoCourseVo vo : list) {			
 			String seqId = String.format("%01d", vo.getWeekdayId())  ;
 			String teacherId=String.format("%04d", vo.getTeacherId()) ;
-			String periodId =String.format("%01d", vo.getLessonPeriodId())  ;			
+			String periodId =String.format("%01d", vo.getLessonPeriodSeq())  ;			
 			
 		result.put(teacherId, seqId+periodId);
 		}		

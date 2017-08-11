@@ -12,6 +12,7 @@ public class TeacherNoCourseVo {
 	private String weekdayName;
 	private int lessonPeriodId;
 	private String lessonPeriodName;
+	private int lessonPeriodSeq;
 	private int termId;
 	private String termName;
 	public TeacherNoCourseVo(){}
@@ -81,6 +82,13 @@ public class TeacherNoCourseVo {
 	public void setTermName(String termName) {
 		this.termName = termName;
 	}
+	public int getLessonPeriodSeq() {
+		return lessonPeriodSeq;
+	}
+	public void setLessonPeriodSeq(int lessonPeriodSeq) {
+		this.lessonPeriodSeq = lessonPeriodSeq;
+	}
+	
 	
 	
 	
