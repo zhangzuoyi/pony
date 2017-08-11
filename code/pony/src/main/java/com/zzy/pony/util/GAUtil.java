@@ -716,6 +716,35 @@ public class GAUtil {
 		return result;
 		
 	}
+	
+	public static boolean  isTeacherNoCourse(Map<String, String> map,String key,int teacherIdLength,int classNumber,int k,int seqIdCandidateLength){
+		String teacherId = key.substring(0, teacherIdLength);
+		if (map.get(teacherId) != null) {
+			String seqPeriod = map.get(teacherId);
+			int  week = Integer.valueOf(seqPeriod.substring(0, 1))  ;
+			int seq = Integer.valueOf(seqPeriod.substring(1, 2))  ;
+			if(  classNumber == (k-((week-1)*seqIdCandidateLength+seq)+1)){
+				return true;
+			}
+		}						
+		return false;
+	}
+	
+	public static boolean  isSubjectNoCourse(Map<String, String> map,String key,int teacherIdLength,int subjectIdLength,String classId, int classNumber,int k,int seqIdCandidateLength){
+		String subjectId = key.substring(teacherIdLength, teacherIdLength+subjectIdLength);		
+		if (map.get(classId+subjectId) != null) {
+			String seqPeriod = map.get(classId+subjectId);
+			int  week = Integer.valueOf(seqPeriod.substring(0, 1))  ;
+			int seq = Integer.valueOf(seqPeriod.substring(1, 2))  ;
+			if(  classNumber == (k-((week-1)*seqIdCandidateLength+seq)+1)){
+				return true;
+			}
+		}						
+		return false;
+	}
+	
+	
+	
 	public static Map<String,String> getSubjectNoCourse(List<SubjectNoCourseVo> list){
 		Map<String, String> result =  new HashMap<String, String>();
 		for (SubjectNoCourseVo vo : list) {			

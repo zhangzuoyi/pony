@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import org.eclipse.jdt.internal.compiler.ast.ThisReference;
+
 import com.zzy.pony.util.GAUtil;
 
 
@@ -127,6 +129,7 @@ public class DNA {
 		Random random  = new Random();
 		int k = this.weekdayIdCandidate.length * this.seqIdCandidate.length;//总时间段数 5*7
 		//key:classId value( key:teacherId+subjectId value:weekArrange)	
+		String classId = this.classIdCandidate[classIndex];
 		Map<String, String> tmpMap = map.get(this.classIdCandidate[classIndex]);	
 		Map<String, String> classtmpMap = GAUtil.sortMapByVPriority(tmpMap, classInMorning, classInAfternoon);
 		Map<String, String> classSortedMap =   GAUtil.sortMapByValue(classtmpMap);
@@ -161,6 +164,15 @@ public class DNA {
 				randomMap.put(k-((week-1)*this.seqIdCandidate.length+seq)+1,"000000");
 			}
 		}
+		//班级不排课设置
+		if (this.classNoCourse.get(this.classIdCandidate[classIndex]) != null) {
+			String seqPeriod = this.classNoCourse.get(this.classIdCandidate[classIndex]);
+			int week = Integer.valueOf(seqPeriod.substring(0, 1))  ;
+			int seq = Integer.valueOf(seqPeriod.substring(1, 2))  ; 
+			randomMap.put(k-((week-1)*this.seqIdCandidate.length+seq)+1,"000000");
+		}		
+		
+		
 		
 		
 		
@@ -202,7 +214,9 @@ public class DNA {
 						classNumber = random.nextInt(k)+1;
 						//@todo  增加规则在combineMap已经排过的不能够在下面排
 												
-					while(randomMap.containsKey(classNumber) ||GAUtil.isExistClass(randomMap, classNumber,key,this.seqIdCandidate.length,attempCount)||GAUtil.isTeacherInAlreadySeqMap(alreadyTeacherSeqMap, classNumber, key.substring(0, this.teacherIdBit),attempCount)
+					while(randomMap.containsKey(classNumber) ||GAUtil.isTeacherNoCourse(this.teacherNoCourse, key, this.teacherIdBit, classNumber, k, this.seqIdCandidate.length)
+							|| GAUtil.isSubjectNoCourse(this.subjectNoCourse, key, this.teacherIdBit, this.subjectIdBit, classId, classNumber, k, this.seqIdCandidate.length)
+							||GAUtil.isExistClass(randomMap, classNumber,key,this.seqIdCandidate.length,attempCount)||GAUtil.isTeacherInAlreadySeqMap(alreadyTeacherSeqMap, classNumber, key.substring(0, this.teacherIdBit),attempCount)
 							/*||( !key.startsWith("C")&&!key.startsWith("R")&&  this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber,this.seqIdCandidate.length,this.seqMornigLength))
 							||(!key.startsWith("C")&&!key.startsWith("R")&&this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber,this.seqIdCandidate.length,this.seqAfternoonLength))*/
 							||GAUtil.isAlreadyComplete(classNumber, randomMap.keySet(), k, key,alreadyTeacherSeqMap,remainClassSet,remainClassMap,this.seqIdCandidate.length,this.teacherIdBit,attempCount)
@@ -267,7 +281,9 @@ public class DNA {
 				   outer2:for (int i = 0; i <  Integer.valueOf(a[0]) ; i++) {
 						int classNumber = random.nextInt(k)+1;
 						
-						while(randomMap.containsKey(classNumber) ||GAUtil.isExistClass(randomMap, classNumber,key,this.seqIdCandidate.length,attempCount)||GAUtil.isTeacherInAlreadySeqMap(alreadyTeacherSeqMap, classNumber, key.substring(0, this.teacherIdBit), attempCount)
+						while(randomMap.containsKey(classNumber) ||GAUtil.isTeacherNoCourse(this.teacherNoCourse, key, this.teacherIdBit, classNumber, k, this.seqIdCandidate.length)
+								|| GAUtil.isSubjectNoCourse(this.subjectNoCourse, key, this.teacherIdBit, this.subjectIdBit, classId, classNumber, k, this.seqIdCandidate.length)
+								||GAUtil.isExistClass(randomMap, classNumber,key,this.seqIdCandidate.length,attempCount)||GAUtil.isTeacherInAlreadySeqMap(alreadyTeacherSeqMap, classNumber, key.substring(0, this.teacherIdBit), attempCount)
 								/*||(!key.startsWith("C")&&!key.startsWith("R")&&this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber,this.seqIdCandidate.length,this.seqMornigLength))
 								||(!key.startsWith("C")&&!key.startsWith("R")&&this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber,this.seqIdCandidate.length,this.seqAfternoonLength))*/
 								||GAUtil.isAlreadyComplete(classNumber, randomMap.keySet(), k,key, alreadyTeacherSeqMap,remainClassSet,remainClassMap,this.seqIdCandidate.length,this.teacherIdBit,attempCount)

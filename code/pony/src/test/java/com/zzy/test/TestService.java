@@ -6,6 +6,13 @@
 package com.zzy.test;
 
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,15 +60,40 @@ public class TestService {
 	@Test
 	public void testAutoLessonArrange(){
 
-		Grade grade = gradeService.findBySeq(1);
-		SchoolYear year = schoolYearService.getCurrent();
-		Term term = termService.getCurrent();
-		List<LessonArrange> autoList = lessonArrangeService.findBySchooleYearAndTermAndGradeIdAndSourceType(year, term,grade.getGradeId(), Constants.SOURCE_TYPE_AUTO);
-		List<LessonArrange> changeList = lessonArrangeService.findBySchooleYearAndTermAndGradeIdAndSourceType(year, term,grade.getGradeId(), Constants.SOURCE_TYPE_CHANGE);
-		autoList.addAll(changeList);
-		lessonArrangeService.deleteList(autoList);
-
-		autoLessonArrangeService.autoLessonArrange(grade.getGradeId());
+		//Grade grade = gradeService.findBySeq(1);
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		FutureTask<Boolean> future = new FutureTask<Boolean>(new Callable<Boolean>() {
+			@Override
+			public Boolean call() throws Exception {
+				// TODO Auto-generated method stub	
+				Grade grade = gradeService.get(2);
+				SchoolYear year = schoolYearService.getCurrent();
+				Term term = termService.getCurrent();	
+				List<LessonArrange> autoList = lessonArrangeService.findBySchooleYearAndTermAndGradeIdAndSourceType(year, term,grade.getGradeId(), Constants.SOURCE_TYPE_AUTO);
+				List<LessonArrange> changeList = lessonArrangeService.findBySchooleYearAndTermAndGradeIdAndSourceType(year, term,grade.getGradeId(), Constants.SOURCE_TYPE_CHANGE);
+				autoList.addAll(changeList);
+				lessonArrangeService.deleteList(autoList);
+				return autoLessonArrangeService.autoLessonArrange(grade.getGradeId());
+			}
+			
+		});
+		executor.execute(future);
+		try {
+				boolean result = future.get(3, TimeUnit.MINUTES);
+				System.out.println(result);
+			}catch (InterruptedException e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TimeoutException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally{
+				future.cancel(true);
+				executor.shutdown();
+			}
 		
 	}
 	

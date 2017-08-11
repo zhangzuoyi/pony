@@ -10,6 +10,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
@@ -90,13 +98,40 @@ public class AutoLessonArrangeController {
 	@ResponseBody
 	public void autoLessonArrange(@RequestParam(value="gradeId") int gradeId ){
 		//删除当前学年，当前学期所有自动排课和调课类型的数据
-		SchoolYear year = schoolYearService.getCurrent();
-		Term term = termService.getCurrent();
-		List<LessonArrange> autoList = lessonArrangeService.findBySchooleYearAndTermAndGradeIdAndSourceType(year, term,gradeId, Constants.SOURCE_TYPE_AUTO);
-		List<LessonArrange> changeList = lessonArrangeService.findBySchooleYearAndTermAndGradeIdAndSourceType(year, term,gradeId, Constants.SOURCE_TYPE_CHANGE);
-		autoList.addAll(changeList);
-		lessonArrangeService.deleteList(autoList);	
-		autoLessonArrangeService.autoLessonArrange(gradeId);		
+		final int grade = gradeId;
+		//增加熔断 5min								
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		FutureTask<Boolean> future = new FutureTask<Boolean>(new Callable<Boolean>() {
+			@Override
+			public Boolean call() throws Exception {
+				// TODO Auto-generated method stub	
+				SchoolYear year = schoolYearService.getCurrent();
+				Term term = termService.getCurrent();
+				List<LessonArrange> autoList = lessonArrangeService.findBySchooleYearAndTermAndGradeIdAndSourceType(year, term,grade, Constants.SOURCE_TYPE_AUTO);
+				List<LessonArrange> changeList = lessonArrangeService.findBySchooleYearAndTermAndGradeIdAndSourceType(year, term,grade, Constants.SOURCE_TYPE_CHANGE);
+				autoList.addAll(changeList);
+				lessonArrangeService.deleteList(autoList);	
+				return autoLessonArrangeService.autoLessonArrange(grade);
+			}
+			
+		});
+		executor.execute(future);
+		try {
+				boolean result = future.get(5, TimeUnit.MINUTES);
+			}catch (InterruptedException e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (TimeoutException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally{
+				future.cancel(true);
+				executor.shutdown();
+			}
+		 								
 	}
 	
 	@RequestMapping(value="listTableData",method = RequestMethod.POST)

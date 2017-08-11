@@ -79,7 +79,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 	
 	
 	@Override
-	public void autoLessonArrange(int gradeId) {
+	public boolean autoLessonArrange(int gradeId) {
 		// TODO Auto-generated method stub
 		SchoolYear schoolYear = schoolYearService.getCurrent();
 		Term term = termService.getCurrent();
@@ -185,6 +185,8 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		List<ArrangeVo> list =   GAUtil.getLessonArranges(bestChromosome);
 		GAUtil.print(bestChromosome);
 		this.save(list);
+		
+		return true;
 	}
 
 
