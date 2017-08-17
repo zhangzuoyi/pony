@@ -37,6 +37,11 @@ public class SubjectNoCourseServiceImpl implements SubjectNoCourseService {
 	private SchoolYearService schoolYearService;
 	@Autowired
 	private TermService termService;
+	@Autowired
+	private GradeService gradeService;
+	@Autowired
+	private SubjectService subjectService;
+	
 	
 	
 	@Override
@@ -72,6 +77,31 @@ public class SubjectNoCourseServiceImpl implements SubjectNoCourseService {
 		SchoolYear schoolYear = schoolYearService.getCurrent();
 		Term term = termService.getCurrent();		
 		List<SubjectNoCourse> list = subjectNoCourseDao.findBySchoolYearAndTerm(schoolYear, term);
+		for (SubjectNoCourse subjectNoCourse : list) {
+			SubjectNoCourseVo tncv = toSubjectNoCourseVo(subjectNoCourse);
+			List<SchoolClass> schoolClasses =   schoolClassService.findByGrade(subjectNoCourse.getGrade().getGradeId());
+			List<Integer> gradeClassIds = new ArrayList<Integer>();
+			for (SchoolClass schoolClass : schoolClasses) {
+				gradeClassIds.add(schoolClass.getClassId());
+			}
+			tncv.setGradeClassIds(gradeClassIds);
+			result.add(tncv);
+		}
+		return result;
+	}
+	
+	
+
+
+	@Override
+	public List<SubjectNoCourseVo> findVoBySubject(int gradeId, int subjectId) {
+		// TODO Auto-generated method stub
+		List<SubjectNoCourseVo> result = new ArrayList<SubjectNoCourseVo>();
+		SchoolYear schoolYear = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();	
+		Grade grade = gradeService.get(gradeId);
+		Subject subject = subjectService.get(subjectId);
+		List<SubjectNoCourse> list = subjectNoCourseDao.findByGradeAndSubjectAndSchoolYearAndTerm(grade, subject, schoolYear, term);
 		for (SubjectNoCourse subjectNoCourse : list) {
 			SubjectNoCourseVo tncv = toSubjectNoCourseVo(subjectNoCourse);
 			List<SchoolClass> schoolClasses =   schoolClassService.findByGrade(subjectNoCourse.getGrade().getGradeId());

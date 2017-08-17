@@ -98,6 +98,8 @@
 		weekdaysUrl :"<s:url value='/weekLessonAdmin/listHaveClass'/>",
 		listTableDataUrl :"<s:url value='/teacherNoCourse/listTableData'/>",
 		saveUrl :"<s:url value='/teacherNoCourse/save'/>",
+		deleteUrl:"<s:url value='/teacherNoCourse/delete'/>",
+		findVoByTeacherUrl:"<s:url value='/teacherNoCourse/findVoByTeacher'/>",
 		weekdays :[],
 		cols:[{prop: 'period',
 			label:'时间--星期'
@@ -147,6 +149,8 @@
        			 }
        			}
        			cell.style.backgroundColor = "";
+       			cell.innerText = "";
+       			
 		       			return;
 		       		}
 		       		//#F00
@@ -169,7 +173,10 @@
 		 getListTableData:function(){
 					this.tableData = [];  //清空表格数据
 				
-					if(this.teacherId==null){					
+					if(this.teacherId==null || this.teacherId ==""){					
+						this.$alert("请选择老师","提示",{				
+		 				confirmButtonText : '确认',		
+						 });
 						return ;
 						}			 			
 					 this.$http.get(this.listTableDataUrl,{params:{teacherId:this.teacherId}}).then(
@@ -177,10 +184,28 @@
 								this.tableData  = response.data.tableData;																 			
 							 },
 							function(response){}  			
-							);  	
+							);  
+					this.$http.get(this.findVoByTeacherUrl,{params:{teacherId:this.teacherId}}).then(
+							function(response){
+									for(var index in response.data){
+										this.selectData.push({period:response.data[index].lessonPeriodSeq,weekday:response.data[index].weekdayName,teacherId:this.teacherId});
+									}																													 			
+							 },
+							function(response){}  			
+							);			
 							},
 		save:function(){ 	
-					  if(this.selectData.length ==0){return;}
+					  if(this.selectData.length ==0){
+					 this.$http.get(this.deleteUrl, {params:{teacherId:this.teacherId}}).then(
+							function(response){
+								this.selectData = [];
+								this.getListTableData();		
+								this.alert();
+							 },
+							function(response){}  			
+							); 
+					 
+					 }else{
 					this.$http.post(this.saveUrl, this.selectData).then(
 							function(response){
 								this.selectData = [];
@@ -190,7 +215,8 @@
 								 });
 							 },
 							function(response){}  			
-							);  		  
+							);  
+							}		  
 		       			 },       	
 		       	
 			

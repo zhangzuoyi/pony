@@ -124,6 +124,23 @@ public class SubjectNoCourseController {
 		return result.toString();
 	}
 	
+	@RequestMapping(value="findVoBySubject",method = RequestMethod.GET)
+	@ResponseBody
+	public List<SubjectNoCourseVo> findVoBySubject(@RequestParam(value="gradeId") int gradeId,@RequestParam(value="subjectId") int subjectId){
+		List<SubjectNoCourseVo> result = subjectNoCourseService.findVoBySubject(gradeId, subjectId);
+		return result;		
+	}
+	
+	@RequestMapping(value="delete",method = RequestMethod.GET)
+	@ResponseBody
+	public void delete(@RequestParam(value="gradeId") int gradeId,@RequestParam(value="subjectId") int subjectId){
+		SchoolYear  schoolYear = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();
+		Grade grade = gradeService.get(gradeId);
+		Subject subject = subjectService.get(subjectId);
+		subjectNoCourseService.deleteByGradeAndSubjectAndYearAndTerm(grade, subject, schoolYear, term);;
+	}
+	
 	@RequestMapping(value="save",method = RequestMethod.POST)
 	@ResponseBody
 	public void save(@RequestBody List<NoCourseVo> subjectNoCourseVos){

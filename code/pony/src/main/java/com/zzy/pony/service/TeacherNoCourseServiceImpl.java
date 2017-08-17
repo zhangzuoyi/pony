@@ -28,6 +28,8 @@ public class TeacherNoCourseServiceImpl implements TeacherNoCourseService {
 	private SchoolYearService schoolYearService;
 	@Autowired
 	private TermService termService;
+	@Autowired
+	private TeacherService teacherService;
 	
 	
 	@Override
@@ -64,6 +66,24 @@ public class TeacherNoCourseServiceImpl implements TeacherNoCourseService {
 		}
 		return result;	
 		
+	}
+	
+	
+
+
+	@Override
+	public List<TeacherNoCourseVo> findVoByTeacher(int teacherId) {
+		// TODO Auto-generated method stub
+		List<TeacherNoCourseVo> result = new ArrayList<TeacherNoCourseVo>();
+		SchoolYear schoolYear = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();
+		Teacher teacher = teacherService.get(teacherId);
+		List<TeacherNoCourse> list = teacherNoCourseDao.findByTeacherAndSchoolYearAndTerm(teacher, schoolYear, term);
+		for (TeacherNoCourse teacherNoCourse : list) {
+			TeacherNoCourseVo tncv = toTeacherNoCourseVo(teacherNoCourse);
+			result.add(tncv);
+		}
+		return result;
 	}
 
 

@@ -118,10 +118,26 @@ public class GradeNoCourseController {
 		
 		return result.toString();
 	}
+	@RequestMapping(value="findVoByGrade",method = RequestMethod.GET)
+	@ResponseBody
+	public List<GradeNoCourseVo> findVoByGrade(@RequestParam(value="gradeId") int gradeId){
+		List<GradeNoCourseVo> result = gradeNoCourseService.findVoByGrade(gradeId);
+		return result;		
+	}
+	
+	@RequestMapping(value="delete",method = RequestMethod.GET)
+	@ResponseBody
+	public void delete(@RequestParam(value="gradeId") int gradeId){
+		SchoolYear  schoolYear = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();
+		Grade grade = gradeService.get(gradeId);
+		gradeNoCourseService.deleteByGradeAndYearAndTerm(grade, schoolYear, term);
+	}
+	
 	
 	@RequestMapping(value="save",method = RequestMethod.POST)
 	@ResponseBody
-	public void save(@RequestBody List<NoCourseVo> gradeNoCourseVos){
+	public void save(@RequestBody List<NoCourseVo> gradeNoCourseVos){				
 		//保存逻辑,现删除原有老师的不排课，再插入
 		SchoolYear  schoolYear = schoolYearService.getCurrent();
 		Term term = termService.getCurrent();		
@@ -144,6 +160,8 @@ public class GradeNoCourseController {
 		}
 		
 	}
+	
+	
 	
 	
 	

@@ -6,8 +6,6 @@ package com.zzy.pony.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +26,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.model.ClassNoCourse;
+import com.zzy.pony.model.Grade;
 import com.zzy.pony.model.LessonPeriod;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
@@ -44,6 +44,7 @@ import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.TermService;
 import com.zzy.pony.service.WeekdayService;
 import com.zzy.pony.vo.ClassNoCourseVo;
+import com.zzy.pony.vo.GradeNoCourseVo;
 import com.zzy.pony.vo.NoCourseVo;
 
 
@@ -129,6 +130,22 @@ public class ClassNoCourseController {
 		result.append("}");
 		
 		return result.toString();
+	}
+	
+	@RequestMapping(value="findVoByClass",method = RequestMethod.GET)
+	@ResponseBody
+	public List<ClassNoCourseVo> findVoByClass(@RequestParam(value="classId") int classId){
+		List<ClassNoCourseVo> result = classNoCourseService.findVoByClass(classId);
+		return result;		
+	}
+	
+	@RequestMapping(value="delete",method = RequestMethod.GET)
+	@ResponseBody
+	public void delete(@RequestParam(value="classId") int classId){
+		SchoolYear  schoolYear = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();
+		SchoolClass schoolClass = schoolClassService.get(classId);
+		classNoCourseService.deleteByClassAndYearAndTerm(schoolClass, schoolYear, term);
 	}
 	
 	@RequestMapping(value="save",method = RequestMethod.POST)

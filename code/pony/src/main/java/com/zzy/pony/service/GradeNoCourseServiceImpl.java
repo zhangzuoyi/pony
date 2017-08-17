@@ -36,6 +36,8 @@ public class GradeNoCourseServiceImpl implements GradeNoCourseService {
 	private SchoolYearService schoolYearService;
 	@Autowired
 	private TermService termService;
+	@Autowired
+	private GradeService gradeService;
 	
 	
 	@Override
@@ -82,6 +84,30 @@ public class GradeNoCourseServiceImpl implements GradeNoCourseService {
 			}
 			gncv.setGradeClassIds(gradeClassIds);
 
+			result.add(gncv);
+		}
+		return result;
+	}
+	
+	
+
+
+	@Override
+	public List<GradeNoCourseVo> findVoByGrade(int gradeId) {
+		// TODO Auto-generated method stub
+		List<GradeNoCourseVo> result = new ArrayList<GradeNoCourseVo>();
+		SchoolYear schoolYear = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();
+		Grade grade = gradeService.get(gradeId);
+		List<GradeNoCourse> list = gradeNoCourseDao.findByGradeAndSchoolYearAndTerm(grade, schoolYear, term);
+		for (GradeNoCourse gradeNoCourse : list) {
+			GradeNoCourseVo gncv = toGradeNoCourseVo(gradeNoCourse);
+			List<SchoolClass> schoolClasses = schoolClassService.findByGrade(gradeNoCourse.getGrade().getGradeId());
+			List<Integer> gradeClassIds=new ArrayList<Integer>();
+			for (SchoolClass schoolClass : schoolClasses) {
+				gradeClassIds.add(schoolClass.getClassId());
+			}
+			gncv.setGradeClassIds(gradeClassIds);
 			result.add(gncv);
 		}
 		return result;

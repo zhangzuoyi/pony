@@ -17,4 +17,6 @@ public interface SubjectNoCourseService {
 	void deleteByGradeAndSubjectAndYearAndTerm(Grade grade,Subject subject,SchoolYear schoolYear,Term term);
 	void save(SubjectNoCourse subjectNoCourse);
 	List<SubjectNoCourseVo> findCurrentAllVo();
+	List<SubjectNoCourseVo> findVoBySubject(int gradeId, int subjectId);
+
 }

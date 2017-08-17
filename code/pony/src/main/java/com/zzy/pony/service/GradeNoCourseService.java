@@ -16,5 +16,6 @@ public interface GradeNoCourseService {
 	void deleteByGradeAndYearAndTerm(Grade grade,SchoolYear schoolYear,Term term);
 	void save(GradeNoCourse gradeNoCourse);
 	List<GradeNoCourseVo> findCurrentAllVo();
+	List<GradeNoCourseVo> findVoByGrade(int gradeId);
 
 }

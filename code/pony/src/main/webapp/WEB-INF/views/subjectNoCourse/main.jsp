@@ -127,6 +127,8 @@ var app = new Vue({
 		weekdaysUrl :"<s:url value='/weekLessonAdmin/listHaveClass'/>",
 		listTableDataUrl :"<s:url value='/subjectNoCourse/listTableData'/>",
 		saveUrl :"<s:url value='/subjectNoCourse/save'/>",
+		deleteUrl:"<s:url value='/subjectNoCourse/delete'/>",
+		findVoBySubjectUrl:"<s:url value='/subjectNoCourse/findVoBySubject'/>",
 		weekdays :[],
 		cols:[{prop: 'period',
 			label:'时间--星期'
@@ -183,6 +185,8 @@ var app = new Vue({
        			 }
        			}
        			cell.style.backgroundColor = "";
+       			       			cell.innerText = "";
+       			
 		       			return;
 		       		}
 		       		//#F00
@@ -206,6 +210,9 @@ var app = new Vue({
 					this.tableData = [];  //清空表格数据
 				
 					if(this.gradeId==null||this.subjectId==null){					
+						this.$alert("请选择年级和科目","提示",{				
+		 				confirmButtonText : '确认',		
+						 });
 						return ;
 						}			 			
 					 this.$http.get(this.listTableDataUrl,{params:{gradeId:this.gradeId,subjectId:this.subjectId}}).then(
@@ -213,10 +220,28 @@ var app = new Vue({
 								this.tableData  = response.data.tableData;																 			
 							 },
 							function(response){}  			
-							);  	
+							);  
+					this.$http.get(this.findVoBySubjectUrl,{params:{gradeId:this.gradeId,subjectId:this.subjectId}}).then(
+							function(response){
+									for(var index in response.data){
+										this.selectData.push({period:response.data[index].lessonPeriodSeq,weekday:response.data[index].weekdayName,gradeId:this.gradeId,subjectId:this.subjectId});
+									}																													 			
+							 },
+							function(response){}  			
+							); 			
 							},
 		save:function(){ 	
-					  if(this.selectData.length ==0){return;}
+					  if(this.selectData.length ==0){
+					 this.$http.get(this.deleteUrl, {params:{gradeId:this.gradeId}}).then(
+							function(response){
+								this.selectData = [];
+								this.getListTableData();		
+								this.alert();
+							 },
+							function(response){}  			
+							); 
+					 
+					 }else{
 					this.$http.post(this.saveUrl, this.selectData).then(
 							function(response){
 								this.selectData = [];
@@ -227,7 +252,8 @@ var app = new Vue({
 								
 							 },
 							function(response){}  			
-							);  		  
+							);
+							}  		  
 		       			 },       	
 		       	
 			

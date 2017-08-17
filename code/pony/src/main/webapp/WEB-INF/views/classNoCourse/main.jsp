@@ -98,7 +98,9 @@
 		lessonPeriodsUrl   :"<s:url value='/lessonPeriod/findBySchoolYearAndTerm'/>",
       	classNoCourseUrl :"<s:url value='/classNoCourse/listVo'/>",
       	listTableDataUrl : "<s:url value='/classNoCourse/listTableData'/>",  
-      	saveUrl : "<s:url value='/classNoCourse/save'/>",       	
+      	saveUrl : "<s:url value='/classNoCourse/save'/>", 
+      	deleteUrl:"<s:url value='/classNoCourse/delete'/>",
+		findVoByClassUrl:"<s:url value='/classNoCourse/findVoByClass'/>",      	
 		treeData: [],    
        	props: {
                     label: 'label',
@@ -182,6 +184,9 @@
 			if(this.$refs.tree.getCheckedKeys().length==1){
 			this.singleClassId=this.$refs.tree.getCheckedKeys()[0];			
 			}else{
+			this.$alert("请选择班级","提示",{				
+		 				confirmButtonText : '确认',		
+						 });
 			return ;
 			}					 			
 			this.$http.get(this.listTableDataUrl,{params:{classId:this.singleClassId}}).then(
@@ -189,10 +194,29 @@
 						this.tableData  = response.data.tableData;																 			
 					 },
 					function(response){}  			
-					); 	
+					); 
+			this.$http.get(this.findVoByClassUrl,{params:{classId:this.singleClassId}}).then(
+							function(response){
+									for(var index in response.data){
+										this.selectData.push({period:response.data[index].lessonPeriodSeq,weekday:response.data[index].weekdayName,classId:this.singleClassId});
+									}																													 			
+							 },
+							function(response){}  			
+							);		
+						
 					},
 		 save:function(){ 	
-			 if(this.selectData.length ==0){return;}
+			if(this.selectData.length ==0){
+					 this.$http.get(this.deleteUrl, {params:{gradeId:this.gradeId}}).then(
+							function(response){
+								this.selectData = [];
+								this.getListTableData();		
+								this.alert();
+							 },
+							function(response){}  			
+							); 
+					 
+					 }else{
 			this.$http.post(this.saveUrl, this.selectData).then(
 					function(response){
 						this.selectData = [];
@@ -200,7 +224,8 @@
 						this.alert();
 					 },
 					function(response){}  			
-					); 		  
+					); 
+					}		  
        			 },
        	alert :function(){
 		 this.$alert("保存成功","提示",{
@@ -232,6 +257,7 @@
        			 }
        			}
        			cell.style.backgroundColor = "";
+       			cell.innerText = "";
        			return;
        			
        		}

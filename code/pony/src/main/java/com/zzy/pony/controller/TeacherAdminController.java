@@ -73,26 +73,28 @@ public class TeacherAdminController {
 	@ResponseBody
 	public List<TeacherVo> listAllVo(Model model){
 		List<TeacherVo> result = new ArrayList<TeacherVo>();
-		List<String> list=service.findAllTeacherNo();
-		for (String teacherNo : list) {
-			TeacherVo vo = new TeacherVo();
-			List<Teacher> teachers=   service.findTeachersByTeacherNo(teacherNo);	
-				for (Teacher teacher2 : teachers) {											
-					if (vo.getSubjectName()==null ||"".equalsIgnoreCase(vo.getSubjectName())) {
-						vo.setTeacherId(teacher2.getTeacherId());
-						vo.setName(teacher2.getName());
-						vo.setTeacherNo(teacher2.getTeacherNo());
-						vo.setSubjectName(teacher2.getSubject().getName());
-					}else {
-						vo.setSubjectName(vo.getSubjectName()+","+teacher2.getSubject().getName());
-					}									
-				}
-			 	
+		List<Teacher> teachers = service.findAll();
+		Map<String, List<Teacher>> map = new HashMap<String, List<Teacher>>();
+		for (Teacher teacher : teachers) {			
+			if (map.containsKey(teacher.getTeacherNo())) {
+				map.get(teacher.getTeacherNo()).add(teacher);								
+			}else{
+				List<Teacher> innerList = new ArrayList<Teacher>();
+				innerList.add(teacher);
+				map.put(teacher.getTeacherNo(), innerList);
+			}							
+		}
+		for (String teacherNo : map.keySet()) {
 			
-			result.add(vo);
+			
 			
 			
 		}
+		
+		
+		
+		
+		
 
 		return result;
 	}

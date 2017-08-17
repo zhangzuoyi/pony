@@ -119,6 +119,22 @@ public class TeacherNoCourseController {
 		return result.toString();
 	}
 	
+	@RequestMapping(value="findVoByTeacher",method = RequestMethod.GET)
+	@ResponseBody
+	public List<TeacherNoCourseVo> findVoByTeacher(@RequestParam(value="teacherId") int teacherId){
+		List<TeacherNoCourseVo> result = teacherNoCourseService.findVoByTeacher(teacherId);
+		return result;		
+	}
+	
+	@RequestMapping(value="delete",method = RequestMethod.GET)
+	@ResponseBody
+	public void delete(@RequestParam(value="teacherId") int teacherId){
+		SchoolYear  schoolYear = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();
+		Teacher teacher = teacherService.get(teacherId);
+		teacherNoCourseService.deleteByTeacherAndYearAndTerm(teacher, schoolYear, term);
+	}
+	
 	@RequestMapping(value="save",method = RequestMethod.POST)
 	@ResponseBody
 	public void save(@RequestBody List<NoCourseVo> teacherNoCourseVos){

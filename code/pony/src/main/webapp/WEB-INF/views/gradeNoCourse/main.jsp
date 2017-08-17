@@ -98,6 +98,8 @@
 		weekdaysUrl :"<s:url value='/weekLessonAdmin/listHaveClass'/>",
 		listTableDataUrl :"<s:url value='/gradeNoCourse/listTableData'/>",
 		saveUrl :"<s:url value='/gradeNoCourse/save'/>",
+		deleteUrl:"<s:url value='/gradeNoCourse/delete'/>",
+		findVoByGradeUrl:"<s:url value='/gradeNoCourse/findVoByGrade'/>",
 		weekdays :[],
 		cols:[{prop: 'period',
 			label:'时间--星期'
@@ -148,6 +150,7 @@
        			 }
        			}
        			cell.style.backgroundColor = "";
+       			cell.innerText = "";
 		       		
 		       			return;
 		       		}
@@ -171,18 +174,44 @@
 		 getListTableData:function(){
 					this.tableData = [];  //清空表格数据
 				
-					if(this.gradeId==null){					
+					if(this.gradeId==null || this.gradeId ==""){					
+						this.$alert("请选择年级","提示",{				
+		 				confirmButtonText : '确认',		
+						 });
 						return ;
 						}			 			
 					 this.$http.get(this.listTableDataUrl,{params:{gradeId:this.gradeId}}).then(
 							function(response){
-								this.tableData  = response.data.tableData;																 			
+								this.tableData  = response.data.tableData;																														 			
+							 },
+							function(response){} 														 			
+							);  
+							
+							
+							this.$http.get(this.findVoByGradeUrl,{params:{gradeId:this.gradeId}}).then(
+							function(response){
+									for(var index in response.data){
+										this.selectData.push({period:response.data[index].lessonPeriodSeq,weekday:response.data[index].weekdayName,gradeId:this.gradeId});
+									}																													 			
 							 },
 							function(response){}  			
-							);  	
+							); 	
 							},
+					 	
+									
 		save:function(){ 	
-					  if(this.selectData.length ==0){return;}
+					 if(this.selectData.length ==0){
+					 this.$http.get(this.deleteUrl, {params:{gradeId:this.gradeId}}).then(
+							function(response){
+								this.selectData = [];
+								this.getListTableData();		
+								this.alert();
+							 },
+							function(response){}  			
+							); 
+					 
+					 }
+					 else{				 
 					this.$http.post(this.saveUrl, this.selectData).then(
 							function(response){
 								this.selectData = [];
@@ -190,7 +219,8 @@
 								this.alert();
 							 },
 							function(response){}  			
-							);  		  
+							); 
+							} 		  
 		       			 }, 
 		   alert :function(){
 		 this.$alert("保存成功","提示",{
