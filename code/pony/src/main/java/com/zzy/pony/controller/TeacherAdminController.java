@@ -2,11 +2,7 @@ package com.zzy.pony.controller;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.ServletException;
 
@@ -74,7 +70,7 @@ public class TeacherAdminController {
 	public List<TeacherVo> listAllVo(Model model){
 		List<TeacherVo> result = new ArrayList<TeacherVo>();
 		List<Teacher> teachers = service.findAll();
-		Map<String, List<Teacher>> map = new HashMap<String, List<Teacher>>();
+		Map<String, List<Teacher>> map = new LinkedHashMap<String, List<Teacher>>();
 		for (Teacher teacher : teachers) {			
 			if (map.containsKey(teacher.getTeacherNo())) {
 				map.get(teacher.getTeacherNo()).add(teacher);								
@@ -85,9 +81,22 @@ public class TeacherAdminController {
 			}							
 		}
 		for (String teacherNo : map.keySet()) {
+			TeacherVo vo = new TeacherVo();
+			List<Teacher> teacherList = map.get(teacherNo);
+			vo.setTeacherId(teacherList.get(0).getTeacherId());
+			vo.setTeacherNo(teacherList.get(0).getTeacherNo());
+			vo.setName(teacherList.get(0).getName());
+			vo.setSubjectName(teacherList.get(0).getSubject().getName());
+			if (teacherList.size()>1){
+				for (Teacher teacher:
+					 teacherList) {
+					if (!teacher.getSubject().getName().equalsIgnoreCase(vo.getSubjectName())){
+						vo.setSubjectName(vo.getSubjectName()+","+teacher.getSubject().getName());
+					}
+				}
+			}
 			
-			
-			
+			result.add(vo);
 			
 		}
 		

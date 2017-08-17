@@ -179,7 +179,8 @@ var app = new Vue({
 					}
 		       		if(cell.style.backgroundColor == "rgb(255, 0, 0)" ){
 		       		//删除操作
-       			for(var i=0;i<this.selectData.length;i++){
+                        var length = this.selectData.length;
+       			for(var i=0;i<length;i++){
        			 if(this.selectData[i].period == row.period && this.selectData[i].weekday == column.label  ){
        			   this.selectData.splice(i,1);     			   
        			 }
@@ -232,11 +233,13 @@ var app = new Vue({
 							},
 		save:function(){ 	
 					  if(this.selectData.length ==0){
-					 this.$http.get(this.deleteUrl, {params:{gradeId:this.gradeId}}).then(
+					 this.$http.get(this.deleteUrl, {params:{gradeId:this.gradeId,subjectId:this.subjectId}}).then(
 							function(response){
 								this.selectData = [];
-								this.getListTableData();		
-								this.alert();
+								this.getListTableData();
+                                this.$alert("保存成功","提示",{
+                                    confirmButtonText : '确认',
+                                });
 							 },
 							function(response){}  			
 							); 

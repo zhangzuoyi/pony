@@ -198,7 +198,7 @@
 			this.$http.get(this.findVoByClassUrl,{params:{classId:this.singleClassId}}).then(
 							function(response){
 									for(var index in response.data){
-										this.selectData.push({period:response.data[index].lessonPeriodSeq,weekday:response.data[index].weekdayName,classId:this.singleClassId});
+										this.selectData.push({period:response.data[index].lessonPeriodSeq,weekday:response.data[index].weekdayName,classIds:[this.singleClassId]});
 									}																													 			
 							 },
 							function(response){}  			
@@ -207,7 +207,7 @@
 					},
 		 save:function(){ 	
 			if(this.selectData.length ==0){
-					 this.$http.get(this.deleteUrl, {params:{gradeId:this.gradeId}}).then(
+					 this.$http.get(this.deleteUrl, {params:{classId:this.singleClassId}}).then(
 							function(response){
 								this.selectData = [];
 								this.getListTableData();		
@@ -251,7 +251,8 @@
 			}
        		if(cell.style.backgroundColor == "rgb(255, 0, 0)" ){
        			//删除操作
-       			for(var i=0;i<this.selectData.length;i++){
+                var length = this.selectData.length;
+       			for(var i=0;i<length;i++){
        			 if(this.selectData[i].period == row.period && this.selectData[i].weekday == column.label  ){
        			   this.selectData.splice(i,1);     			   
        			 }

@@ -27,7 +27,7 @@ public class TeacherServiceImpl implements TeacherService {
 
 	@Override
 	public List<Teacher> findAll() {
-		return dao.findAll();
+		return dao.findAllByOrderByTeacherNo();
 	}
 
 	@Override
