@@ -160,6 +160,9 @@ var app = new Vue({
 		weekdaysUrl :"<s:url value='/weekLessonAdmin/listHaveClass'/>",
 		listTableDataUrl :"<s:url value='/preLessonArrange/listTableData'/>",
 		saveUrl :"<s:url value='/preLessonArrange/save'/>",
+		deleteUrl :"<s:url value='/preLessonArrange/delete'/>",
+		findVoByClassAndSubjectUrl:"<s:url value='/preLessonArrange/findVoByClassAndSubject'/>",
+		
 		weekdays :[],
 		cols:[{prop: 'period',
 			label:'时间--星期'
@@ -224,7 +227,16 @@ var app = new Vue({
 		       		if(this.classId==null || this.subjectId==null){					
 					return ;
 					}
+					//增加删除逻辑
 		       		if(cell.style.backgroundColor == "rgb(0, 255, 0)" ){
+		       			 var length = this.selectData.length;
+       			for(var i=0;i<length;i++){
+       			 if(this.selectData[i].period == row.period && this.selectData[i].weekDay == column.label  ){
+       			   this.selectData.splice(i,1);     			   
+       			 }
+       			}
+       			cell.style.backgroundColor = "";
+       			cell.innerText = "";
 		       			return;
 		       		} 
 		       		//#F00
@@ -253,26 +265,42 @@ var app = new Vue({
 					 this.$http.get(this.listTableDataUrl,{params:{classId:this.classId,subjectId:this.subjectId}}).then(
 							function(response){
 								this.tableData  = response.data.tableData;
-								this.selectData=[];
-									
-									/* for(var index in this.tableData){
+								/* this.selectData=[];								
+									 for(var index in this.tableData){
 										for(var key in this.tableData[index]){
 											if(this.tableData[index][key] != "" && key !="period"){
 												this.selectData.push({period:this.tableData[index][key],weekDay:key,classId:this.classId,subjectId:this.subjectId});
 											}											
 										}										
-									} */
-							       		
-									
-									
-								
-								
+									}  */							       																																			
 							 },
 							function(response){}  			
-							);   	
+							); 
+							
+							this.$http.get(this.findVoByClassAndSubjectUrl,{params:{classId:this.classId,subjectId:this.subjectId}}).then(
+							function(response){							
+								 this.selectData=[];								
+									 for(var index in response.data){
+										this.selectData.push({period:response.data[index].periodSeq,weekDay:response.data[index].weekDayName,classId:this.classId,subjectId:this.subjectId});																	
+									}  							       																																			
+							 },
+							function(response){}  			
+							);  	
 							},
 		save:function(){ 	
-					if(this.selectData.length ==0){return;}
+					if(this.selectData.length ==0){
+					 this.$http.get(this.deleteUrl, {params:{classId:this.classId,subjectId:this.subjectId}}).then(
+							function(response){
+								this.selectData = [];
+								this.getListTableData();		
+								this.$alert("保存成功","提示",{
+		 							confirmButtonText : '确认',		 
+								 });
+							 },
+							function(response){}  			
+							); 
+					 
+					 }else{
 					this.$http.post(this.saveUrl, this.selectData).then(
 							function(response){
 								this.selectData = [];
@@ -282,7 +310,7 @@ var app = new Vue({
 								 });
 							 },
 							function(response){}  			
-							);   		  
+							);}   		  
 		       			 },       	
 		handleCurrentChange:function(currentRow) {
 							if(currentRow!=null){

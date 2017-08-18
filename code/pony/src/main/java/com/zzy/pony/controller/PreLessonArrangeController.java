@@ -95,6 +95,20 @@ public class PreLessonArrangeController {
 		
 		return result.toString();
 	}
+	
+	@RequestMapping(value="findVoByClassAndSubject",method = RequestMethod.GET)
+	@ResponseBody
+	public List<ArrangeVo> findVoByClassAndSubject(@RequestParam(value="classId") int classId,@RequestParam(value="subjectId") int subjectId){		
+		return preLessonArrangeService.findVoByClassIdAndSubject(classId, subjectId);		
+		
+	}
+	@RequestMapping(value="delete",method = RequestMethod.GET)
+	@ResponseBody
+	public void delete(@RequestParam(value="classId") int classId,@RequestParam(value="subjectId") int subjectId){		
+		preLessonArrangeService.deleteByClassIdAndSubject(classId, subjectId);		
+		
+	}
+	
 	@RequestMapping(value="save",method = RequestMethod.POST)
 	@ResponseBody
 	public void save(@RequestBody List<ArrangeVo> arrangeVos){

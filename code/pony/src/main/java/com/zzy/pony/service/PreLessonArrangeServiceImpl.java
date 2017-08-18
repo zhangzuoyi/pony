@@ -132,12 +132,14 @@ public class PreLessonArrangeServiceImpl implements PreLessonArrangeService {
 		vo.setEndTime(lessonArrange.getLessonPeriod().getEndTime());
 		vo.setOtherLesson(lessonArrange.getOtherLesson());
 		vo.setPeriodId(lessonArrange.getLessonPeriod().getPeriodId());
+		vo.setPeriodSeq(lessonArrange.getLessonPeriod().getSeq());
 		vo.setSourceType(lessonArrange.getSourceType());
 		vo.setStartTime(lessonArrange.getLessonPeriod().getStartTime());
 		vo.setSubjectId(lessonArrange.getSubject().getSubjectId());
 		vo.setSubjectName(lessonArrange.getSubject().getName());
 		vo.setTermId(lessonArrange.getTerm().getTermId());
 		vo.setWeekDay(lessonArrange.getWeekDay());
+		vo.setWeekDayName(Constants.WEEKDAYS.get(lessonArrange.getWeekDay()));
 		vo.setYearId(lessonArrange.getSchoolYear().getYearId());
 		return vo;
 	}

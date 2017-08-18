@@ -8,9 +8,11 @@ public class ArrangeVo {
 	private String className;
 	private String otherLesson;
 	private String weekDay;
+	private String weekDayName;
 	private String sourceType;//来源类型 0 预排，1 自动，3 调课
 	private Integer periodId;
 	private String period;
+	private int periodSeq;
 	private String endTime;
 	private String startTime;
 	private Integer yearId;
@@ -157,6 +159,22 @@ public class ArrangeVo {
 	public void setClassSeq(String classSeq) {
 		this.classSeq = classSeq;
 	}
+	public int getPeriodSeq() {
+		return periodSeq;
+	}
+	public void setPeriodSeq(int periodSeq) {
+		this.periodSeq = periodSeq;
+	}
+	public String getWeekDayName() {
+		return weekDayName;
+	}
+	public void setWeekDayName(String weekDayName) {
+		this.weekDayName = weekDayName;
+	}
+	
+	
+	
+	
 	
 	
 	

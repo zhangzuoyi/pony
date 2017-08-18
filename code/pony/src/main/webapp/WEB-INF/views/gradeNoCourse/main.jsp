@@ -191,6 +191,7 @@
 							
 							this.$http.get(this.findVoByGradeUrl,{params:{gradeId:this.gradeId}}).then(
 							function(response){
+									this.selectData=[];															
 									for(var index in response.data){
 										this.selectData.push({period:response.data[index].lessonPeriodSeq,weekday:response.data[index].weekdayName,gradeId:this.gradeId});
 									}																													 			

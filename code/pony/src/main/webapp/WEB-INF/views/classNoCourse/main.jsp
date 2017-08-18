@@ -197,6 +197,7 @@
 					); 
 			this.$http.get(this.findVoByClassUrl,{params:{classId:this.singleClassId}}).then(
 							function(response){
+									this.selectData=[];																						
 									for(var index in response.data){
 										this.selectData.push({period:response.data[index].lessonPeriodSeq,weekday:response.data[index].weekdayName,classIds:[this.singleClassId]});
 									}																													 			
