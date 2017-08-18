@@ -253,6 +253,21 @@ public class GAUtil {
 		}
 		return result;		
 	}
+	
+	public static Map<String, Map<String, Integer>> getPreClassTeacherSubjectweekArrange(List<ArrangeVo> arrangeVos){
+		Map<String, Map<String, Integer>> result = new HashMap<String, Map<String,Integer>>();
+		for (ArrangeVo vo : arrangeVos) {
+			if (result.containsKey(vo.getClassId().toString())) {				
+				result.get(String.format("%03d", vo.getClassId())).put(String.format("%02d", vo.getSubjectId()), vo.getWeekArrange());								
+			}else {
+				Map<String, Integer> innerMap = new HashMap<String, Integer>();
+				innerMap.put(String.format("%02d", vo.getSubjectId()), vo.getWeekArrange());
+				result.put(String.format("%03d", vo.getClassId()) , innerMap);
+			}						
+			
+		}										
+		return result;		
+	}
 	/*** 
 	* <p>Description: 获取seq</p>
 	* @author  WANGCHAO262
@@ -689,6 +704,19 @@ public class GAUtil {
             result.put(list.get(i),oriMap.get(list.get(i)));
         }
         return result;
+	}
+	
+	public static Map<String,String> getPreNoCourse(List<ArrangeVo> list){
+		Map<String, String> result =  new HashMap<String, String>();
+		for (ArrangeVo vo : list) {			
+			String seqId = String.format("%01d", Integer.valueOf(vo.getWeekDay()))  ;
+			String classId=String.format("%03d", vo.getClassId()) ;
+			String periodId =String.format("%01d", vo.getPeriodSeq())  ;			
+			
+		result.put(classId, seqId+periodId);
+		}		
+		return result;
+		
 	}
 	
 	

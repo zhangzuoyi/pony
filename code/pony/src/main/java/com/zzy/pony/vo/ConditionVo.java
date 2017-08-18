@@ -18,6 +18,8 @@ public class ConditionVo {
 	
 	private int messageId;
 	
+	private String sourceType;
+	
 	public ConditionVo(){
 		
 	}
@@ -122,6 +124,16 @@ public class ConditionVo {
 	public void setMessageId(int messageId) {
 		this.messageId = messageId;
 	}
+
+	public String getSourceType() {
+		return sourceType;
+	}
+
+	public void setSourceType(String sourceType) {
+		this.sourceType = sourceType;
+	}
+	
+	
 	
 	
 	

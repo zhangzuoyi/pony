@@ -66,7 +66,7 @@ public class TestService {
 			@Override
 			public Boolean call() throws Exception {
 				// TODO Auto-generated method stub	
-				Grade grade = gradeService.get(2);
+				Grade grade = gradeService.get(1);
 				SchoolYear year = schoolYearService.getCurrent();
 				Term term = termService.getCurrent();	
 				List<LessonArrange> autoList = lessonArrangeService.findBySchooleYearAndTermAndGradeIdAndSourceType(year, term,grade.getGradeId(), Constants.SOURCE_TYPE_AUTO);

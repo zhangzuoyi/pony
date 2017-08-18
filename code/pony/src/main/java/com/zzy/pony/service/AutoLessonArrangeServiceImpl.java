@@ -28,6 +28,7 @@ import com.zzy.pony.model.Teacher;
 import com.zzy.pony.model.TeacherSubject;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.model.Weekday;
+import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.util.GAUtil;
 import com.zzy.pony.vo.ArrangeVo;
 import com.zzy.pony.vo.ClassNoCourseVo;
@@ -74,6 +75,8 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 	private ArrangeCombineService arrangeCombineService;
 	@Autowired
 	private LessonArrangeService lessonArrangeService;
+	@Autowired
+	private PreLessonArrangeService preLessonArrangeService;
 	
 	
 	
@@ -151,6 +154,8 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		List<GradeNoCourseVo> gradeNoCourseVos = gradeNoCourseService.findCurrentAllVo();
 		List<CombineAndRotationVo> combineAndRotationVos = arrangeRotationService.findCurrentAllVo();
 		List<CombineAndRotationVo> combineAndRotationVos2 = arrangeCombineService.findCurrentAllVo();
+		List<ArrangeVo> arrangeVos = preLessonArrangeService.findCurrentVo();
+ 		List<ArrangeVo> arrangeVos2 = preLessonArrangeService.findCurrentWeekArrange();
 		Map<String, Set<Integer>> combineMap = new HashMap<String, Set<Integer>>();
 		Map<String, List<Integer>> alreadyTeacherSeqMap = new HashMap<String, List<Integer>>();
 		DNA.getInstance().setClassIdCandidate(classIdCandidate);
@@ -159,6 +164,8 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		DNA.getInstance().setTeacherIdCandidate(teacherIdCandidate);
 		DNA.getInstance().setWeekdayIdCandidate(weekdayIdCandidate);
 		DNA.getInstance().setTeacherSubjectweekArrange(GAUtil.getTeacherSubjectweekArrange(vos));
+		DNA.getInstance().setPreNoCourse(GAUtil.getPreNoCourse(arrangeVos));
+		DNA.getInstance().setPreWeekArrange(GAUtil.getPreClassTeacherSubjectweekArrange(arrangeVos2));
 		DNA.getInstance().setClassNoCourse(GAUtil.getClassNoCourse(classNoCourseVos));
 		DNA.getInstance().setTeacherNoCourse(GAUtil.getTeacherNoCourse(teacherNoCourseVos));
 		DNA.getInstance().setSubjectNoCourse(GAUtil.getSubjectNoCourse(subjectNoCourseVos));
@@ -183,7 +190,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		String bestChromosome =  geneticAlgorithm.caculte();	
 		List<ArrangeVo> list =   GAUtil.getLessonArranges(bestChromosome);
-		GAUtil.print(bestChromosome);
+		//GAUtil.print(bestChromosome);
 		this.save(list);
 		
 		return true;

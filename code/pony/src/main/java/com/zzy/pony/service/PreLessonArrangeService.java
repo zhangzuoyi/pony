@@ -12,5 +12,7 @@ public interface PreLessonArrangeService {
 	List<ArrangeVo> findVoByClassIdAndSubject(Integer classId,Integer subjectId);
 	void deleteByClassIdAndSubject(Integer classId,Integer subjectId);
 	void save(ArrangeVo arrangeVo);
+	List<ArrangeVo> findCurrentVo();
+	List<ArrangeVo> findCurrentWeekArrange();
 
 }

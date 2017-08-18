@@ -33,8 +33,11 @@ import org.springframework.stereotype.Service;
 
 
 
+
+
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.dao.LessonArrangeDao;
+import com.zzy.pony.mapper.LessonArrangeMapper;
 import com.zzy.pony.model.LessonArrange;
 import com.zzy.pony.model.LessonPeriod;
 import com.zzy.pony.model.SchoolYear;
@@ -44,6 +47,7 @@ import com.zzy.pony.model.Weekday;
 import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.security.ShiroDbRealm.ShiroUser;
 import com.zzy.pony.vo.ArrangeVo;
+import com.zzy.pony.vo.ConditionVo;
 
 @Service
 @Transactional
@@ -60,6 +64,8 @@ public class PreLessonArrangeServiceImpl implements PreLessonArrangeService {
 	private LessonPeriodService lessonPeriodService;
 	@Autowired
 	private WeekdayService weekdayService;
+	@Autowired
+	private LessonArrangeMapper lessonArrangeMapper;
 
 	@Override
 	public List<ArrangeVo> findVoByClassIdAndSubject(Integer classId,
@@ -122,6 +128,39 @@ public class PreLessonArrangeServiceImpl implements PreLessonArrangeService {
 		
 		lessonArrangeDao.save(lessonArrange);
 		
+	}
+	
+	
+	
+
+
+	@Override
+	public List<ArrangeVo> findCurrentVo() {
+		// TODO Auto-generated method stub
+		List<ArrangeVo> result = new ArrayList<ArrangeVo>();
+		SchoolYear year = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();
+		List<LessonArrange> lessonArranges = lessonArrangeDao.findBySchoolYearAndTermAndSourceType(year, term, Constants.SOURCE_TYPE_PRE);
+		for (LessonArrange lessonArrange : lessonArranges) {
+			ArrangeVo arrangeVo = toArrangeVo(lessonArrange);
+			result.add(arrangeVo);
+		}		
+		return result;
+	}
+	
+	
+
+
+	@Override
+	public List<ArrangeVo> findCurrentWeekArrange() {
+		// TODO Auto-generated method stub
+		SchoolYear year = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();
+		ConditionVo cv = new ConditionVo();
+		cv.setYearId(year.getYearId());
+		cv.setTermId(term.getTermId());
+		cv.setSourceType(Constants.SOURCE_TYPE_PRE);
+		return lessonArrangeMapper.findPreLessonArrange(cv);
 	}
 
 

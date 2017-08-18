@@ -28,5 +28,21 @@ left join t_subject f on t.SUBJECT_ID = f.SUBJECT_ID left join t_grade g on a.GR
      		</foreach> 
 		 </if>		 
 	</select>
+	<select id="findPreLessonArrange" resultType="com.zzy.pony.vo.ArrangeVo">
+		select t.CLASS_ID as classId ,t.SUBJECT_ID as subjectId,count(1) as weekArrange 
+		from t_lesson_arrange t 	
+		 where 1=1
+		 <if test=" yearId != null and yearId != 0">
+		 	and  t.YEAR_ID=#{yearId}
+		 </if>
+		 <if test=" termId != null and termId != 0">
+		 	and t.TERM_ID=#{termId}
+		 </if>		 			 
+		 <if test=" sourceType != null">
+		 	and t.source_type =#{sourceType}
+		 </if>		 		    
+		  group by t.class_id,t.subject_id 
+	</select>
+	
 	
 </mapper>

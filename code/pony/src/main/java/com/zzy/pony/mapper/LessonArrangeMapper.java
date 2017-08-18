@@ -7,4 +7,5 @@ import com.zzy.pony.vo.ConditionVo;
 
 public interface LessonArrangeMapper {
 	List<ArrangeVo> findByCondition(ConditionVo cv);
+	List<ArrangeVo> findPreLessonArrange(ConditionVo cv);
 }

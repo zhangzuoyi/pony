@@ -28,6 +28,8 @@ public class ArrangeVo {
 	
 	private Integer rotationId;
 	private Integer combineId;
+	
+	private int weekArrange;
 
 	
 	
@@ -170,6 +172,12 @@ public class ArrangeVo {
 	}
 	public void setWeekDayName(String weekDayName) {
 		this.weekDayName = weekDayName;
+	}
+	public int getWeekArrange() {
+		return weekArrange;
+	}
+	public void setWeekArrange(int weekArrange) {
+		this.weekArrange = weekArrange;
 	}
 	
 	

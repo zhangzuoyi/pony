@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import org.eclipse.jdt.internal.compiler.ast.ThisReference;
 
 import com.zzy.pony.util.GAUtil;
 
@@ -45,6 +44,8 @@ public class DNA {
 	private Map<String, String> teacherNoCourse;
 	private Map<String, String> subjectNoCourse;
 	private Map<String, String> gradeNoCourse;
+	private Map<String, String> preNoCourse;
+	private Map<String, Map<String,Integer>> preWeekArrange;
 	private Map<String, String> classInMorning;
 	private Map<String, String> classInAfternoon;
 	private Map<String, Set<Integer>> teacherSubjectRegularClassMap;
@@ -136,6 +137,7 @@ public class DNA {
 		Map<Integer, String> randomMap = new HashMap<Integer, String>();
         //1每次排优先排已经存在alreadyTeacherSeqMap中的，剩下的等优先排完后再排   2 每次排将已排课限制更多的先牌
         Map<String,String> classMap = GAUtil.sortMapByAlready(classSortedMap,this.alreadyTeacherSeqMap,this.teacherIdBit);
+        Map<String, Integer> preClassMap = this.preWeekArrange.get(classId);
         int lastClassNum = 0;
 		
 		//剩余未安排教师列表
@@ -170,7 +172,15 @@ public class DNA {
 			int week = Integer.valueOf(seqPeriod.substring(0, 1))  ;
 			int seq = Integer.valueOf(seqPeriod.substring(1, 2))  ; 
 			randomMap.put(k-((week-1)*this.seqIdCandidate.length+seq)+1,"000000");
-		}		
+		}
+		
+		//预排课不排课设置
+		if (this.preNoCourse.get(this.classIdCandidate[classIndex]) != null) {
+			String seqPeriod = this.preNoCourse.get(this.classIdCandidate[classIndex]);
+			int week = Integer.valueOf(seqPeriod.substring(0, 1))  ;
+			int seq = Integer.valueOf(seqPeriod.substring(1, 2))  ; 
+			randomMap.put(k-((week-1)*this.seqIdCandidate.length+seq)+1,"000000");
+		}
 		
 		
 		
@@ -185,7 +195,16 @@ public class DNA {
 			//分两种情况，第一种是weekArrange不含+,第二种是含+
 			//第一种									
 			if (classMap.get(key).indexOf("+")<0) {
-			outer1:	for (int i = 0; i <  Integer.valueOf(classMap.get(key)) ; i++) {
+			
+			int keyCount = 0;
+			if (preClassMap !=null && preClassMap.get(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit))!= null) {
+				keyCount = Integer.valueOf(classMap.get(key)) - preClassMap.get(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit));
+			}else{
+				keyCount =  Integer.valueOf(classMap.get(key)) ;
+			}
+				
+				
+			outer1:	for (int i = 0; i <  keyCount ; i++) {
 				     int classNumber=0 ;
 					
 
@@ -278,7 +297,16 @@ public class DNA {
 			}else {
 				//第二种  2+1  暂不支持合班设置
 				   String[] a = classMap.get(key).split("\\+");
-				   outer2:for (int i = 0; i <  Integer.valueOf(a[0]) ; i++) {
+				   
+				   int keyCount = 0;
+					if (preClassMap != null && preClassMap.get(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit))!= null) {
+						keyCount = Integer.valueOf(a[0]) - preClassMap.get(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit));
+					}else{
+						keyCount = Integer.valueOf(a[0]) ;
+					}
+				   
+				   
+				   outer2:for (int i = 0; i <  keyCount ; i++) {
 						int classNumber = random.nextInt(k)+1;
 						
 						while(randomMap.containsKey(classNumber) ||GAUtil.isTeacherNoCourse(this.teacherNoCourse, key, this.teacherIdBit, classNumber, k, this.seqIdCandidate.length)
@@ -632,4 +660,19 @@ public class DNA {
 	public void setSpecialMap(Map<String, String> specialMap) {
 		this.specialMap = specialMap;
 	}
+	public Map<String, String> getPreNoCourse() {
+		return preNoCourse;
+	}
+	public void setPreNoCourse(Map<String, String> preNoCourse) {
+		this.preNoCourse = preNoCourse;
+	}
+	public Map<String, Map<String, Integer>> getPreWeekArrange() {
+		return preWeekArrange;
+	}
+	public void setPreWeekArrange(Map<String, Map<String, Integer>> preWeekArrange) {
+		this.preWeekArrange = preWeekArrange;
+	}
+	
+	
+	
 }
