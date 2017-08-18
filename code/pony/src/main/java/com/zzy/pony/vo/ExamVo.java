@@ -35,16 +35,18 @@ public class ExamVo {
 	
 	public String getSubjectsName(){
 		List<String> names=new ArrayList<String>();
-		for(ExamSubjectVo vo: subjects){
-			names.add(vo.getSubject().getName());
-		}
+		if(subjects != null)
+			for(ExamSubjectVo vo: subjects){
+				names.add(vo.getSubject().getName());
+			}
 		return StringUtils.join(names, ",");
 	}
 	public String getClassesName(){
 		List<String> names=new ArrayList<String>();
-		for(SchoolClass vo: schoolClasses){
-			names.add(vo.getName());
-		}
+		if(schoolClasses != null)
+			for(SchoolClass vo: schoolClasses){
+				names.add(vo.getName());
+			}
 		return StringUtils.join(names, ",");
 	}
 

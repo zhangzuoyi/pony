@@ -7,7 +7,7 @@
 		select 
 		t.RESULT_ID resultId,        
 		c.CLASS_ID classId,
-        concat(g.name,c.seq,'班') className,
+        concat(g.name,convert(c.seq,char),'班') className,
         b.STUDENT_ID  studentId,
         b.STUDENT_NO studentNo,
         b.name	   studentName,
@@ -17,7 +17,7 @@
         a.EXAM_ID   examId,
         a.name       examName,
         e.YEAR_ID   yearId,
-        concat(e.START_YEAR,'-',e.END_YEAR,'学年')      yearName,
+        concat(convert(e.START_YEAR,char),'-',convert(e.END_YEAR,char),'学年')      yearName,
         f.TERM_ID	termId,
         f.name       termName,
         g.GRADE_ID	gradeId,
