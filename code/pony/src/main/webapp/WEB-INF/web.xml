@@ -7,6 +7,7 @@
 		<param-value>
 			classpath:applicationContext.xml
 			classpath:shiroFilter.xml
+			classpath:beans-activiti.xml
 			<!-- classpath:applicationContext-auth.xml
 			classpath:shiroFilter.xml -->
 	    </param-value>

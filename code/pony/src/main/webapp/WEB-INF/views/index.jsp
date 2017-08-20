@@ -5,8 +5,8 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<!-- <title>学校管理系统</title> -->
-<title>系统实施管理工具</title>
+<title>学校管理系统</title>
+<!-- <title>系统实施管理工具</title> -->
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/easyui/themes/default/easyui.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/style.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/icon.css' />" />
@@ -168,6 +168,8 @@
     			<ul class="easyui-tree my-side-tree">
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/attendance/attendance/main/' />" iframe="1">考勤打卡</a></li>
                     <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/attendance/attendance/my/' />" iframe="1">考勤记录</a></li>
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/attendance/leave/applyMain/' />" iframe="1">请假</a></li>
+                    <li iconCls="icon-users"><a href="javascript:void(0)" data-icon="icon-users" data-link="<s:url value='/attendance/leave/tasksMain/' />" iframe="1">请假待办任务</a></li>
                 </ul>
             </div>
             </shiro:hasPermission>

@@ -14,7 +14,11 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
+import org.activiti.engine.task.Task;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.zzy.pony.model.User;
 
 
@@ -25,6 +29,7 @@ import com.zzy.pony.model.User;
 @Entity
 @Table(name="t_leave")
 @NamedQuery(name="Leave.findAll", query="SELECT l FROM Leave l")
+@JsonIgnoreProperties(value={"task"})
 public class Leave implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -77,10 +82,25 @@ public class Leave implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="USER_ID")
 	private User user;
+	
+	@Column(name="PROCESS_INSTANCE_ID")
+	private String processInstanceId;
+	// 流程任务
+	@Transient
+    private Task task;
 
 	public Leave() {
 	}
 
+	public String getTaskName(){
+		return task.getName();
+	}
+	public String getTaskAssignee(){
+		return task.getAssignee();
+	}
+	public String getTaskId(){
+		return task.getId();
+	}
 	public Long getId() {
 		return this.id;
 	}
@@ -199,6 +219,22 @@ public class Leave implements Serializable {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public String getProcessInstanceId() {
+		return processInstanceId;
+	}
+
+	public void setProcessInstanceId(String processInstanceId) {
+		this.processInstanceId = processInstanceId;
+	}
+
+	public Task getTask() {
+		return task;
+	}
+
+	public void setTask(Task task) {
+		this.task = task;
 	}
 
 }

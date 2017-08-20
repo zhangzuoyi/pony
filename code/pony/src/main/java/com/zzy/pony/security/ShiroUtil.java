@@ -14,4 +14,9 @@ public class ShiroUtil {
 		ShiroUser suser = (ShiroUser) SecurityUtils.getSubject().getPrincipal();
 		return suser;
 	}
+	
+	public static String getLoginName(){
+		ShiroUser suser = (ShiroUser) SecurityUtils.getSubject().getPrincipal();
+		return suser.getLoginName();
+	}
 }

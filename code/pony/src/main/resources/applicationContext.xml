@@ -57,7 +57,7 @@
 
 	<context:property-placeholder
 		ignore-unresolvable="true" ignore-resource-not-found="true"
-		location="classpath*:/database.properties" />
+		location="classpath*:/database.properties,classpath*:/application.properties" />
 
 	<!-- DBCP连接池 -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
