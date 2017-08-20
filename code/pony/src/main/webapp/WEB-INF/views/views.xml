@@ -3,7 +3,7 @@
   "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
   
 <tiles-definitions>
-   <definition name="login" template="/WEB-INF/views/login.jsp">
+   <definition name="login" template="/WEB-INF/views/loginLayUI.jsp">
    </definition>
 
 
