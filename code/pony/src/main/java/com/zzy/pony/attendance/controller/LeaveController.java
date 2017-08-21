@@ -26,6 +26,7 @@ import com.zzy.pony.attendance.model.Leave;
 import com.zzy.pony.attendance.service.LeaveService;
 import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.service.UserService;
+import com.zzy.pony.util.activiti.Variable;
 
 @Controller
 @RequestMapping(value = "/attendance/leave")
@@ -79,6 +80,20 @@ public class LeaveController {
         taskService.claim(taskId, userId);
         
         return map;
+    }
+    @RequestMapping(value = "task/complete/{id}", method = RequestMethod.POST)
+    @ResponseBody
+    public String complete(@PathVariable("id") String taskId, @RequestBody Variable[] vars) {
+        try {
+            Map<String, Object> variables = new HashMap<String, Object>();
+            for(Variable var: vars){
+            	var.addVariableMap(variables);
+            }
+            taskService.complete(taskId, variables);
+            return "success";
+        } catch (Exception e) {
+            return "error";
+        }
     }
 
 	@InitBinder

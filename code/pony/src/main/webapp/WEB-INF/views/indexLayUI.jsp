@@ -338,6 +338,14 @@
                             <a href="javascript:;" data-url="<s:url value='/attendance/attendance/my/' />">
                                 <label>考勤记录</label></a>
                         </dd>
+                        <dd>
+                            <a href="javascript:;" data-url="<s:url value='/attendance/leave/applyMain/' />">
+                                <label>请假</label></a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:;" data-url="<s:url value='/attendance/leave/tasksMain/' />">
+                                <label>请假待办任务</label></a>
+                        </dd>
                     </dl>
                 </li>
             </shiro:hasPermission>

@@ -72,12 +72,47 @@
                         >
                  <template scope="scope">
                  <el-button size="small" @click="claim(scope.row.taskId)" v-if="scope.row.taskAssignee == null">签收</el-button>
-                 <el-button size="small" type="danger" @click="handleDelete(scope.$index,scope.row)" v-if="scope.row.taskAssignee != null">办理</el-button>
+                 <el-button size="small" type="danger" @click="showCompleteTask(scope.row)" v-if="scope.row.taskAssignee != null">办理</el-button>
                  </template>                             
                 </el-table-column>
             </el-table>
         </el-card>	
     </div>
+    
+    <el-dialog  v-model="dialogFormVisible" >
+		<div slot="title" class="dialog-title">
+                   <b>{{task.taskName}}</b>
+               </div>
+		<el-form :model="task" ref="ruleForm">			
+		 <el-form-item label="请假人" :label-width="formLabelWidth" > 
+		 	{{task.user.loginName }}
+		 </el-form-item>
+		 <el-form-item label="请假类型" :label-width="formLabelWidth" > 
+		 	{{task.leaveType }}
+		 </el-form-item>
+		 <el-form-item label="开始时间" :label-width="formLabelWidth" > 
+           	{{task.startTime | date}}
+		 </el-form-item> 
+		 <el-form-item label="结束时间" :label-width="formLabelWidth" > 
+		 	{{task.endTime | date}}
+         </el-form-item>
+         <el-form-item label="处理结果" :label-width="formLabelWidth" > 
+		  	<el-select v-model="handleResult" placeholder="请选择">
+                <el-option v-for="x in handleTypes" :lable="x" :value="x"></el-option>
+                <!-- <el-option label="同意" value="同意"></el-option>
+                <el-option label="驳回" value="驳回"></el-option> -->
+            </el-select>
+		 </el-form-item>
+		 <el-form-item label="说明" :label-width="formLabelWidth" v-if="handleResult == '驳回'"> 
+		 	<el-input type="textarea" v-model="task.backReason"></el-input>
+         </el-form-item>
+	    </el-form>
+		<div slot="footer" class="dialog-footer">
+			<el-button type="primary" @click="submitCompleteTask()"  >提交</el-button>
+			<el-button @click="dialogFormVisible = false">取 消</el-button>
+			
+		</div>
+	</el-dialog>
 
 </div>
 <script type="text/javascript">
@@ -86,7 +121,13 @@ var app = new Vue({
 	data : { 		
 		mylistUrl :"<s:url value='/attendance/leave/tasks'/>",
 		claimUrl :"<s:url value='/attendance/leave/task/claim'/>",
-		atts : []
+		completeUrl :"<s:url value='/attendance/leave/task/complete'/>",
+		atts : [],
+		task : {user:{},handleResult:"",taskName:"",leaveType:"",startTime:"",endTime:"",backReason:""},
+		dialogFormVisible : false,
+		formLabelWidth:"120px",
+		handleTypes : ['同意','驳回'],
+		handleResult : ""
 	}, 
 	mounted : function() { 
 		this.mylist();
@@ -108,7 +149,36 @@ var app = new Vue({
 						this.mylist();
 					 },
 					function(response){}  			
-			);  		  
+			);
+       	},
+       	showCompleteTask:function(task){
+       		this.task=task;
+       		this.handleResult="同意";
+       		this.dialogFormVisible=true;
+       	},
+       	submitCompleteTask:function(){
+       		var params=[];
+       		if(this.handleResult == "同意"){
+       			params.push({key: 'deptLeaderPass',value: true,type: 'B'});
+       		}else{
+       			var keyValue="";
+       			if(this.task.taskName == "部门领导审批"){
+       				keyValue="leaderBackReason";
+       			}else if(this.task.taskName == "人事审批"){
+       				keyValue="hrBackReason";
+       			}
+       			params.push({key: 'deptLeaderPass',value: false,type: 'B'});
+       			params.push({key: keyValue,value: this.task.backReason,type: 'S'});
+       		}
+       		this.$http.post(this.completeUrl+"/"+this.task.taskId,params).then(
+					function(response){
+						this.$alert("办理成功");
+						this.dialogFormVisible=false;
+						this.mylist();
+					 },
+					function(response){}  			
+			);
+       		
        	}
     }
         
