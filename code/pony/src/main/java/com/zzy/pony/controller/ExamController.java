@@ -108,6 +108,18 @@ public class ExamController {
 		}
 		return list;
 	}
+	@RequestMapping(value="findCurrentExam",method = RequestMethod.GET)
+	@ResponseBody
+	public List<ExamVo> findCurrentExam(){
+		SchoolYear schoolYear=  yearService.getCurrent();
+		Term term = termService.getCurrent();
+		List<ExamVo> list=service.findByYearAndTerm(schoolYear, term);
+		for (ExamVo examVo : list) {
+			examVo.setSchoolClasses(null);
+			examVo.setSubjects(null);
+		}
+		return list;
+	}
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody
 	public String add(Exam sy, Integer[] classIds, Integer[] subjectIds, Model model){

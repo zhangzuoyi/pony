@@ -33,6 +33,7 @@ import com.zzy.pony.service.SubjectNoCourseService;
 import com.zzy.pony.service.SubjectService;
 import com.zzy.pony.service.TermService;
 import com.zzy.pony.service.WeekdayService;
+import com.zzy.pony.vo.ClassNoCourseVo;
 import com.zzy.pony.vo.NoCourseVo;
 import com.zzy.pony.vo.SubjectNoCourseVo;
 
@@ -113,6 +114,31 @@ public class SubjectNoCourseController {
 			}
 			list.add(map);		
 		}
+		GsonBuilder gb = new GsonBuilder();
+		Gson gson = gb.create();
+		String data = gson.toJson(list);
+		result.append("{\"tableData\"");
+		result.append(":");
+		result.append(data);		
+		result.append("}");
+		
+		return result.toString();
+	}
+	
+	@RequestMapping(value="findAll",method = RequestMethod.GET)
+	@ResponseBody
+	public String findAll(){
+		StringBuilder result= new StringBuilder();
+		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();		
+		List<SubjectNoCourseVo> subjectNoCourseVos = subjectNoCourseService.findAllVo();		
+		for (SubjectNoCourseVo vo : subjectNoCourseVos) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("period",vo.getLessonPeriodSeq());
+			map.put("week", vo.getWeekdayName());
+			map.put("gradeName", vo.getGradeName());
+			map.put("subjectName", vo.getSubjectName());
+			list.add(map);
+		}				
 		GsonBuilder gb = new GsonBuilder();
 		Gson gson = gb.create();
 		String data = gson.toJson(list);

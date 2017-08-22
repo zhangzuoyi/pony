@@ -118,6 +118,7 @@ public class GradeNoCourseServiceImpl implements GradeNoCourseService {
 		GradeNoCourseVo tncv = new GradeNoCourseVo();
 		tncv.setId(tnc.getId());
 		tncv.setLessonPeriodId(tnc.getLessonPeriod().getPeriodId());
+		tncv.setLessonPeriodSeq(tnc.getLessonPeriod().getSeq());
 		tncv.setLessonPeriodName(tnc.getLessonPeriod().getStartTime()+"--"+tnc.getLessonPeriod().getEndTime());
 		tncv.setGradeId(tnc.getGrade().getGradeId());
 		tncv.setGradeName(tnc.getGrade().getName());

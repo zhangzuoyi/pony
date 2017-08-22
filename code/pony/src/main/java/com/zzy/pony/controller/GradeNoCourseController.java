@@ -31,6 +31,7 @@ import com.zzy.pony.service.LessonPeriodService;
 import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.TermService;
 import com.zzy.pony.service.WeekdayService;
+import com.zzy.pony.vo.ClassNoCourseVo;
 import com.zzy.pony.vo.GradeNoCourseVo;
 import com.zzy.pony.vo.NoCourseVo;
 
@@ -118,6 +119,31 @@ public class GradeNoCourseController {
 		
 		return result.toString();
 	}
+	
+	@RequestMapping(value="findAll",method = RequestMethod.GET)
+	@ResponseBody
+	public String findAll(){
+		StringBuilder result= new StringBuilder();
+		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();		
+		List<GradeNoCourseVo> gradeNoCourseVos = gradeNoCourseService.findAllVo();		
+		for (GradeNoCourseVo vo : gradeNoCourseVos) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("period",vo.getLessonPeriodSeq());
+			map.put("week", vo.getWeekdayName());
+			map.put("gradeName", vo.getGradeName());
+			list.add(map);
+		}				
+		GsonBuilder gb = new GsonBuilder();
+		Gson gson = gb.create();
+		String data = gson.toJson(list);
+		result.append("{\"tableData\"");
+		result.append(":");
+		result.append(data);		
+		result.append("}");
+		
+		return result.toString();
+	}
+	
 	@RequestMapping(value="findVoByGrade",method = RequestMethod.GET)
 	@ResponseBody
 	public List<GradeNoCourseVo> findVoByGrade(@RequestParam(value="gradeId") int gradeId){

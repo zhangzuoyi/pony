@@ -34,7 +34,9 @@
               
               <el-col :span="4" :offset="16">
                <el-button type="primary" @click="getListTableData()" >查询</el-button>
-               <el-button type="primary" @click="save()" >保存</el-button>             
+               <el-button type="primary" @click="save()" >保存</el-button> 
+               <el-button type="primary" @click.native="findAll" >查看</el-button>             
+                           
               </el-col>
               
               </el-row>                                          
@@ -80,7 +82,35 @@
             
             </el-col>          
             </el-row>   
-        </el-card>       	
+        </el-card>
+        <el-dialog title="查看"  v-model="dialogFormVisible" >         
+          <el-row>
+              <el-table
+                      :data="tableData2"
+                      highlight-current-row
+                      border
+                      height="250"
+                      >                  
+                  <el-table-column
+                          prop="teacherName"
+                          label="老师"
+                  >
+                  </el-table-column>
+                  <el-table-column
+                          prop="week"
+                          label="星期"
+                          >
+                  </el-table-column>
+                  <el-table-column
+                          prop="period"
+                          label="上课时段">
+                  </el-table-column>                
+              </el-table>
+          </el-row>
+          <div slot="footer" class="dialog-footer">                                     
+                    <el-button @click.native="dialogFormVisible = false">取 消</el-button>
+                </div>         
+          </el-dialog>       	
     </div>
     
     
@@ -100,12 +130,15 @@
 		saveUrl :"<s:url value='/teacherNoCourse/save'/>",
 		deleteUrl:"<s:url value='/teacherNoCourse/delete'/>",
 		findVoByTeacherUrl:"<s:url value='/teacherNoCourse/findVoByTeacher'/>",
+		findAllUrl :  "<s:url value='/teacherNoCourse/findAll'/>",  		
 		weekdays :[],
 		cols:[{prop: 'period',
 			label:'时间--星期'
 		}],
 		tableData: [],
-		selectData:[]
+		selectData:[],
+		dialogFormVisible :false,
+		tableData2 :[]
 	
 		
 	}, 
@@ -171,6 +204,17 @@
 		       		}
 		       		cell.style.backgroundColor="";
 		       	},
+		 findAll : function(){
+		this.tableData2 = [];
+		this.$http.get(this.findAllUrl).then(
+					function(response){
+						this.tableData2  = response.data.tableData;																 			
+					 },
+					function(response){}  			
+					); 
+		 this.dialogFormVisible = true;
+		}, 
+		       	
 		 getListTableData:function(){
 					this.tableData = [];  //清空表格数据
 				

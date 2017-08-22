@@ -31,7 +31,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.model.ClassNoCourse;
-import com.zzy.pony.model.Grade;
 import com.zzy.pony.model.LessonPeriod;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
@@ -44,7 +43,6 @@ import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.TermService;
 import com.zzy.pony.service.WeekdayService;
 import com.zzy.pony.vo.ClassNoCourseVo;
-import com.zzy.pony.vo.GradeNoCourseVo;
 import com.zzy.pony.vo.NoCourseVo;
 
 
@@ -131,6 +129,32 @@ public class ClassNoCourseController {
 		
 		return result.toString();
 	}
+	
+	@RequestMapping(value="findAll",method = RequestMethod.GET)
+	@ResponseBody
+	public String findAll(){
+		StringBuilder result= new StringBuilder();
+		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();		
+		List<ClassNoCourseVo> classNoCourseVos = classNoCourseService.findAllVo();		
+		for (ClassNoCourseVo vo : classNoCourseVos) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("period",vo.getLessonPeriodSeq());
+			map.put("week", vo.getWeekdayName());
+			map.put("className", vo.getClassName());
+			list.add(map);
+		}				
+		GsonBuilder gb = new GsonBuilder();
+		Gson gson = gb.create();
+		String data = gson.toJson(list);
+		result.append("{\"tableData\"");
+		result.append(":");
+		result.append(data);		
+		result.append("}");
+		
+		return result.toString();
+	}
+	
+	
 	
 	@RequestMapping(value="findVoByClass",method = RequestMethod.GET)
 	@ResponseBody

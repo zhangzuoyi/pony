@@ -34,7 +34,8 @@
               
               <el-col :span="4" :offset="16">
                <el-button type="primary" @click="getListTableData()" >查询</el-button>
-               <el-button type="primary" @click="save()" >保存</el-button>             
+               <el-button type="primary" @click="save()" >保存</el-button> 
+               <el-button type="primary" @click.native="findAll" >查看</el-button>             
               </el-col>
               
               </el-row>
@@ -50,8 +51,7 @@
                     ref="tree"
                     :props="props"
                     node-key="id"
-                    show-checkbox
-                    
+                    show-checkbox                  
                    >
             </el-tree>
             
@@ -81,6 +81,35 @@
         </el-card>       	
     </div>
     
+    <el-dialog title="查看"  v-model="dialogFormVisible" >         
+          <el-row>
+              <el-table
+                      :data="tableData2"
+                      highlight-current-row
+                      border
+                      height="250"
+                      >                  
+                  <el-table-column
+                          prop="className"
+                          label="班级"
+                  >
+                  </el-table-column>
+                  <el-table-column
+                          prop="week"
+                          label="星期"
+                          >
+                  </el-table-column>
+                  <el-table-column
+                          prop="period"
+                          label="上课时段">
+                  </el-table-column>                
+              </el-table>
+          </el-row>
+          <div slot="footer" class="dialog-footer">                                     
+                    <el-button @click.native="dialogFormVisible = false">取 消</el-button>
+                </div>         
+          </el-dialog>
+    
     
    
 
@@ -100,7 +129,8 @@
       	listTableDataUrl : "<s:url value='/classNoCourse/listTableData'/>",  
       	saveUrl : "<s:url value='/classNoCourse/save'/>", 
       	deleteUrl:"<s:url value='/classNoCourse/delete'/>",
-		findVoByClassUrl:"<s:url value='/classNoCourse/findVoByClass'/>",      	
+		findVoByClassUrl:"<s:url value='/classNoCourse/findVoByClass'/>",  
+		findAllUrl :  "<s:url value='/classNoCourse/findAll'/>",  	
 		treeData: [],    
        	props: {
                     label: 'label',
@@ -112,7 +142,9 @@
         cols:[{prop: 'period',
 			label:'时间--星期'
 		}],
-		selectData:[]
+		selectData:[],
+		dialogFormVisible : false,
+		tableData2 :[]
                 
 	
 		
@@ -120,8 +152,7 @@
 	mounted : function() { 	
 		this.getSchoolClassTree();
 		this.getHaveClass();
-		//this.getClassNoCourse();
-		//this.getLessonPeriods();
+		
 			
 	}, 
 	methods : { 		
@@ -178,6 +209,17 @@
 					function(response){}  			
 					); 	
 					},
+		findAll : function(){
+		this.tableData2 = [];
+		this.$http.get(this.findAllUrl).then(
+					function(response){
+						this.tableData2  = response.data.tableData;																 			
+					 },
+					function(response){}  			
+					); 
+		 this.dialogFormVisible = true;
+		},
+					
 		getListTableData:function(){
 			this.tableData = [];  //清空表格数据
 		

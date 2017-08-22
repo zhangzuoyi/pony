@@ -15,7 +15,6 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.apache.commons.collections.iterators.ArrayListIterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,13 +28,10 @@ import org.springframework.stereotype.Service;
 
 import com.zzy.pony.dao.ClassNoCourseDao;
 import com.zzy.pony.model.ClassNoCourse;
-import com.zzy.pony.model.Grade;
-import com.zzy.pony.model.GradeNoCourse;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.vo.ClassNoCourseVo;
-import com.zzy.pony.vo.GradeNoCourseVo;
 
 @Service
 @Transactional
@@ -68,6 +64,7 @@ public class ClassNoCourseServiceImpl implements ClassNoCourseService {
 		vo.setClassName(classNoCourse.getSchoolClass().getName());
 		vo.setId(classNoCourse.getId());
 		vo.setLessonPeriodId(classNoCourse.getLessonPeriod().getPeriodId());
+		vo.setLessonPeriodSeq(classNoCourse.getLessonPeriod().getSeq());
 		vo.setLessonPeriodName(classNoCourse.getLessonPeriod().getStartTime()+"--"+classNoCourse.getLessonPeriod().getEndTime());
 		vo.setSchoolYearId(classNoCourse.getSchoolYear().getYearId());
 		vo.setSchoolYearName(classNoCourse.getSchoolYear().getName());
