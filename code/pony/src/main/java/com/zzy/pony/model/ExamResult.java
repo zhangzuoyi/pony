@@ -49,6 +49,11 @@ public class ExamResult implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="SUBJECT_ID")
 	private Subject subject;
+	
+	@Column(name="CLASS_RANK")
+	private Integer classRank;
+	@Column(name="GRADE_RANK")
+	private Integer gradeRank;
 
 	public ExamResult() {
 	}
@@ -123,6 +128,22 @@ public class ExamResult implements Serializable {
 
 	public void setSubject(Subject subject) {
 		this.subject = subject;
+	}
+
+	public Integer getClassRank() {
+		return classRank;
+	}
+
+	public void setClassRank(Integer classRank) {
+		this.classRank = classRank;
+	}
+
+	public Integer getGradeRank() {
+		return gradeRank;
+	}
+
+	public void setGradeRank(Integer gradeRank) {
+		this.gradeRank = gradeRank;
 	}
 
 }

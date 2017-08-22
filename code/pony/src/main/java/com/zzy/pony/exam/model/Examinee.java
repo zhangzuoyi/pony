@@ -54,6 +54,13 @@ public class Examinee implements Serializable,Comparable<Examinee> {
 	//bi-directional many-to-one association to ExamineeRoomArrange
 	@OneToMany(mappedBy="examinee")
 	private List<ExamineeRoomArrange> examineeRoomArranges;
+	
+	@Column(name="CLASS_RANK")
+	private Integer classRank;
+	@Column(name="GRADE_RANK")
+	private Integer gradeRank;
+	@Column(name="TOTAL_SCORE")
+	private Float totalScore;
 
 	public Examinee() {
 	}
@@ -88,6 +95,30 @@ public class Examinee implements Serializable,Comparable<Examinee> {
 
 	public void setExam(Exam exam) {
 		this.exam = exam;
+	}
+
+	public Integer getClassRank() {
+		return classRank;
+	}
+
+	public void setClassRank(Integer classRank) {
+		this.classRank = classRank;
+	}
+
+	public Integer getGradeRank() {
+		return gradeRank;
+	}
+
+	public void setGradeRank(Integer gradeRank) {
+		this.gradeRank = gradeRank;
+	}
+
+	public Float getTotalScore() {
+		return totalScore;
+	}
+
+	public void setTotalScore(Float totalScore) {
+		this.totalScore = totalScore;
 	}
 
 	public List<ExamArrange> getExamArranges() {
