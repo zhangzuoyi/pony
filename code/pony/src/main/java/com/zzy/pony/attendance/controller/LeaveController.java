@@ -53,6 +53,11 @@ public class LeaveController {
 		leave.setUpdateTime(now);
 		leave.setUpdateUser(ShiroUtil.getLoginUser().getLoginName());
 		leave.setUser(userService.findById(ShiroUtil.getLoginUser().getId()));
+		//以下信息先不使用，设置默认值
+		leave.setApplyDate(now);
+		leave.setTimeLength(0f);
+		leave.setTimeType(0);
+		
 		service.add(leave);
 		return "success";
 	}
@@ -94,6 +99,12 @@ public class LeaveController {
         } catch (Exception e) {
             return "error";
         }
+    }
+    @RequestMapping(value = "task/vars/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> vars(@PathVariable("id") String taskId) {
+    	Map<String, Object> variables = taskService.getVariables(taskId);
+    	return variables;
     }
 
 	@InitBinder

@@ -36,26 +36,24 @@
                     <el-col :span="3">姓名：{{person.name}}</el-col>
 					<!-- <el-col :span="3">部门：{{person.dpt}}</el-col>
 					<el-col :span="3">岗位：{{person.title}}</el-col> -->
-					<el-col :span="2">申请日期</el-col>
+					<!-- <el-col :span="2">申请日期</el-col>
 					<el-col :span="5">
 						<el-date-picker type="date" placeholder="选择日期" v-model="apply.applyDate"
 											style="width: 100%;"></el-date-picker>
-					</el-col>
+					</el-col> -->
                 </el-form-item>
                 <el-form-item label="请假类型">
                     <el-select v-model="apply.leaveType" placeholder="请选择请假类型">
-                        <el-option label="年假" value="01"></el-option>
-                        <el-option label="事假" value="02"></el-option>
-                        <el-option label="病假" value="03"></el-option>
+                        <el-option v-for="x in leaveTypes" :label="x.name" :value="x.value"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="时间">
-					<el-col :span="5">
+					<!-- <el-col :span="5">
 						<el-select v-model="apply.timeType" placeholder="请选择时间类型">
 							<el-option label="整天" value="0"></el-option>
 							<el-option label="非整天" value="1"></el-option>
 						</el-select>
-					</el-col>
+					</el-col> -->
 					<el-col :span="5">
                         <el-date-picker type="date" placeholder="开始日期" v-model="apply.startTime"
                                         style="width: 100%;"></el-date-picker>
@@ -66,9 +64,9 @@
                                         style="width: 100%;"></el-date-picker>
                     </el-col>
                 </el-form-item>
-				<el-form-item label="请假时长">
+				<!-- <el-form-item label="请假时长">
                     <el-input-number v-model="apply.timeLength" :min="1" :max="10"></el-input-number>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="原因">
                     <el-input type="textarea" v-model="apply.reason"></el-input>
                 </el-form-item>
@@ -104,7 +102,8 @@ var app = new Vue({
 			endTime : "",
 			timeLength : "",
 			reason : ""
-		}
+		},
+		leaveTypes : [{name:'年假',value:'01'},{name:'事假',value:'02'},{name:'病假',value:'03'}]
 	}, 
 	mounted : function() { 
 			

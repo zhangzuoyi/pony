@@ -47,25 +47,27 @@
                         <div>{{row.applyDate | date}}</div>
                 </el-table-column>
 				<el-table-column
-						prop="leaveType"
+						inline-template
                         label="请假类型"
                         width="180">
+                        <span>{{getLeaveType(row.leaveType)}}</span>
                 </el-table-column>
                 <el-table-column
 						inline-template
                         label="开始时间"
                         width="180">
-                        <div>{{row.startTime | time}}</div>
+                        <div>{{row.startTime | date}}</div>
                 </el-table-column>
                 <el-table-column
 						inline-template
                         label="结束时间"
                         width="180">
-                        <div>{{row.endTime | time}}</div>
+                        <div>{{row.endTime | date}}</div>
                 </el-table-column>
                 <el-table-column
-                        prop="taskName"
+                        inline-template
                         label="当前流程">
+                        <a class="trace" href='#' @click="showGraph(row.processInstanceId)" :pid="row.processInstanceId" :pdid="row.processDefinitionId" title="点击查看流程图">{{row.taskName }}</a><!-- onclick="graphTrace(this)" -->
                 </el-table-column>
                 <el-table-column                       
                         label="操作"
@@ -88,7 +90,7 @@
 		 	{{task.user.loginName }}
 		 </el-form-item>
 		 <el-form-item label="请假类型" :label-width="formLabelWidth" > 
-		 	{{task.leaveType }}
+		 	{{getLeaveType(task.leaveType)}}
 		 </el-form-item>
 		 <el-form-item label="开始时间" :label-width="formLabelWidth" > 
            	{{task.startTime | date}}
@@ -113,8 +115,79 @@
 			
 		</div>
 	</el-dialog>
+	
+	<el-dialog  v-model="modifyApplyVisible" >
+		<div slot="title" class="dialog-title">
+            <b>{{task.taskName}}</b>
+        </div>
+		<el-form :model="task" ref="ruleForm">
+		 <el-form-item label="驳回理由" :label-width="formLabelWidth" >
+		 	<span v-html="backReason"></span>
+		 </el-form-item>
+		 <el-form-item label="调整类型" :label-width="formLabelWidth" >
+		 	<el-radio-group v-model="reApply">
+		 		<el-radio v-for="x in modifyTypes" :label="x.value">{{x.name}}</el-radio>
+		 	</el-radio-group>
+		 </el-form-item>
+		 <el-form-item label="请假类型" :label-width="formLabelWidth" v-if="reApply">
+		 	<el-select v-model="task.leaveType" placeholder="请选择请假类型">
+                <el-option v-for="x in leaveTypes" :label="x.name" :value="x.value"></el-option>
+            </el-select>
+		 </el-form-item>
+		 <el-form-item label="开始时间" :label-width="formLabelWidth" v-if="reApply"> 
+           	<el-date-picker type="date" placeholder="开始日期" v-model="task.startTime"
+                                        style="width: 100%;"></el-date-picker>
+		 </el-form-item> 
+		 <el-form-item label="结束时间" :label-width="formLabelWidth" v-if="reApply"> 
+		 	<el-date-picker type="date" placeholder="结束日期" v-model="task.endTime"
+                                        style="width: 100%;"></el-date-picker>
+         </el-form-item>
+         <el-form-item label="原因" :label-width="formLabelWidth" v-if="reApply"> 
+		 	<el-input type="textarea" v-model="task.reason"></el-input>
+         </el-form-item>
+	    </el-form>
+		<div slot="footer" class="dialog-footer">
+			<el-button type="primary" @click="submitModifyTask()"  >提交</el-button>
+			<el-button @click="modifyApplyVisible = false">取 消</el-button>
+			
+		</div>
+	</el-dialog>
+	
+	<el-dialog  v-model="reportBackVisible" >
+		<div slot="title" class="dialog-title">
+            <b>{{task.taskName}}</b>
+        </div>
+		<el-form :model="task" ref="ruleForm">			
+		 <el-form-item label="请假人" :label-width="formLabelWidth" > 
+		 	{{task.user.loginName }}
+		 </el-form-item>
+		 <el-form-item label="请假类型" :label-width="formLabelWidth" > 
+		 	{{getLeaveType(task.leaveType)}}
+		 </el-form-item>
+		 <el-form-item label="开始时间" :label-width="formLabelWidth" > 
+           	{{task.startTime | date}}
+		 </el-form-item> 
+		 <el-form-item label="结束时间" :label-width="formLabelWidth" > 
+		 	{{task.endTime | date}}
+         </el-form-item>
+         <el-form-item label="实际开始日期" :label-width="formLabelWidth" > 
+		  	<el-date-picker type="date" placeholder="开始日期" v-model="actualStartTime"
+                                        style="width: 100%;"></el-date-picker>
+		 </el-form-item>
+		 <el-form-item label="实际结束日期" :label-width="formLabelWidth" > 
+		 	<el-date-picker type="date" placeholder="结束日期" v-model="actualEndTime"
+                                        style="width: 100%;"></el-date-picker>
+         </el-form-item>
+	    </el-form>
+		<div slot="footer" class="dialog-footer">
+			<el-button type="primary" @click="submitReportBack()"  >提交</el-button>
+			<el-button @click="reportBackVisible = false">取 消</el-button>
+			
+		</div>
+	</el-dialog>
 
 </div>
+<script type="text/javascript" src="<s:url value='/static/activiti/workflow.js' />"></script>
 <script type="text/javascript">
 var app = new Vue({ 
 	el : '#app' ,
@@ -122,12 +195,22 @@ var app = new Vue({
 		mylistUrl :"<s:url value='/attendance/leave/tasks'/>",
 		claimUrl :"<s:url value='/attendance/leave/task/claim'/>",
 		completeUrl :"<s:url value='/attendance/leave/task/complete'/>",
+		varsUrl :"<s:url value='/attendance/leave/task/vars'/>",
+		graphUrl :"<s:url value='/activiti/workspace-viewHistory'/>",
 		atts : [],
 		task : {user:{},handleResult:"",taskName:"",leaveType:"",startTime:"",endTime:"",backReason:""},
 		dialogFormVisible : false,
+		modifyApplyVisible : false,
+		reportBackVisible : false,
 		formLabelWidth:"120px",
 		handleTypes : ['同意','驳回'],
-		handleResult : ""
+		modifyTypes : [{name:"调整申请",value:true},{name:"取消申请",value:false}],
+		handleResult : "",
+		backReason : "",
+		reApply : false,
+		actualStartTime : "",
+		actualEndTime : "",
+		leaveTypes : [{name:'年假',value:'01'},{name:'事假',value:'02'},{name:'病假',value:'03'}]
 	}, 
 	mounted : function() { 
 		this.mylist();
@@ -153,22 +236,41 @@ var app = new Vue({
        	},
        	showCompleteTask:function(task){
        		this.task=task;
-       		this.handleResult="同意";
-       		this.dialogFormVisible=true;
+       		if(this.task.taskName == "调整申请"){
+       			this.$http.get(this.varsUrl+"/"+task.taskId).then(
+   					function(response){
+   						var data=response.body;
+   						this.backReason="<b>领导：</b>" + (data.leaderBackReason || "") + "<br/><b>HR：</b>" + (data.hrBackReason || "");
+   						this.reApply=false;
+   						this.modifyApplyVisible=true;
+   					 },
+   					function(response){}
+    			);
+       		}else if(this.task.taskName == "销假"){
+       			this.actualStartTime=null;
+       			this.actualEndTime=null;
+       			this.reportBackVisible=true;
+       		}else{
+       			this.handleResult="同意";
+           		this.dialogFormVisible=true;
+       		}
        	},
        	submitCompleteTask:function(){
        		var params=[];
+       		var passKey="";
+       		var reasonKey="";
+   			if(this.task.taskName == "部门领导审批"){
+   				passKey="deptLeaderPass";
+   				reasonKey="leaderBackReason";
+   			}else if(this.task.taskName == "人事审批"){
+   				passKey="hrPass";
+   				reasonKey="hrBackReason";
+   			}
        		if(this.handleResult == "同意"){
-       			params.push({key: 'deptLeaderPass',value: true,type: 'B'});
+       			params.push({key: passKey,value: true,type: 'B'});
        		}else{
-       			var keyValue="";
-       			if(this.task.taskName == "部门领导审批"){
-       				keyValue="leaderBackReason";
-       			}else if(this.task.taskName == "人事审批"){
-       				keyValue="hrBackReason";
-       			}
-       			params.push({key: 'deptLeaderPass',value: false,type: 'B'});
-       			params.push({key: keyValue,value: this.task.backReason,type: 'S'});
+       			params.push({key: passKey,value: false,type: 'B'});
+       			params.push({key: reasonKey,value: this.task.backReason,type: 'S'});
        		}
        		this.$http.post(this.completeUrl+"/"+this.task.taskId,params).then(
 					function(response){
@@ -178,7 +280,58 @@ var app = new Vue({
 					 },
 					function(response){}  			
 			);
+       	},
+       	submitModifyTask:function(){
+       		var params=[];
+       		params.push({key: "reApply",value: this.reApply,type: 'B'});
+       		if(this.reApply){
+       			var formatString = 'YYYY-MM-DD';
+       		    var startTime=moment(this.task.startTime).format(formatString);
+       		 	var endTime=moment(this.task.endTime).format(formatString);
+       			params.push({key: "leaveType",value: this.task.leaveType,type: 'S'});
+       			params.push({key: "startTime",value: startTime,type: 'D'});
+       			params.push({key: "endTime",value: endTime,type: 'D'});
+       			params.push({key: "reason",value: this.task.reason,type: 'S'});
+       		}
+       		this.$http.post(this.completeUrl+"/"+this.task.taskId,params).then(
+					function(response){
+						this.$alert("办理成功");
+						this.modifyApplyVisible=false;
+						this.mylist();
+					 },
+					function(response){}  			
+			);
        		
+       	},
+       	submitReportBack:function(){
+       		var params=[];
+       		var formatString = 'YYYY-MM-DD';
+   		    var startTime=moment(this.actualStartTime).format(formatString);
+   		 	var endTime=moment(this.actualEndTime).format(formatString);
+   			params.push({key: "actualStartTime",value: startTime,type: 'D'});
+   			params.push({key: "actualEndTime",value: endTime,type: 'D'});
+       		this.$http.post(this.completeUrl+"/"+this.task.taskId,params).then(
+					function(response){
+						this.$alert("办理成功");
+						this.reportBackVisible=false;
+						this.mylist();
+					 },
+					function(response){}  			
+			);
+       		
+       	},
+       	showGraph:function(instanceId){
+       		window.open(this.graphUrl+"?processInstanceId="+instanceId);
+       	},
+       	getLeaveType:function(vl){
+       		var len=this.leaveTypes.length;
+       		for(var i=0;i<len;i++){
+       			var le=this.leaveTypes[i];
+       			if(le.value == vl){
+       				return le.name;
+       			}
+       		}
+       		return "";
        	}
     }
         

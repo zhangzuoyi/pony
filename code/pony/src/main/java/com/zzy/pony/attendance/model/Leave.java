@@ -101,6 +101,12 @@ public class Leave implements Serializable {
 	public String getTaskId(){
 		return task.getId();
 	}
+	public String getInstanceId(){
+		return task.getProcessInstanceId();
+	}
+	public String getProcessDefinitionId(){
+		return task.getProcessDefinitionId();
+	}
 	public Long getId() {
 		return this.id;
 	}
