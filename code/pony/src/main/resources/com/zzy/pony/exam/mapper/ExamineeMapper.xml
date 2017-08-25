@@ -54,5 +54,28 @@
 		<include refid="base_select"></include>
 		 where  b.arrange_id = #{0} 
 	</select>
+
+	<select id="findRankByExam" resultType="com.zzy.pony.vo.RankVo">
+		SELECT
+	t.student_id AS studentId,
+	a.`NAME` AS studentName,
+	b.SEQ AS seq,
+	d. NAME AS subjectName,
+	c.SCORE AS subjectScore,
+	c.CLASS_RANK AS subjectClassRank,
+	c.GRADE_RANK AS subjectGradeRank,
+	t.TOTAL_SCORE AS totalScore,
+	t.CLASS_RANK AS classRank,
+	t.GRADE_RANK AS gradeRank
+FROM
+	t_examinee t
+LEFT JOIN t_student a ON t.STUDENT_ID = a.STUDENT_ID
+LEFT JOIN t_school_class b ON a.CLASS_ID = b.CLASS_ID
+LEFT JOIN t_exam_result c ON t.exam_id = c.exam_id
+AND t.student_id = c.student_id
+LEFT JOIN t_subject d ON c.SUBJECT_ID = d.SUBJECT_ID
+where t.exam_id = #{0}
+order by t.grade_rank
+	</select>
 	
 </mapper>

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
+import antlr.LexerSharedInputState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,8 @@ public class ExamResultServiceImpl implements ExamResultService {
 	private ExamResultDao dao;
 	@Autowired
 	private SubjectDao subjectDao;
+	@Autowired
+	private SubjectService subjectService;
 
 	@Override
 	public List<ExamResultVo> findByClass(Integer examId, Integer classId, Integer subjectId) {
@@ -134,4 +137,17 @@ public class ExamResultServiceImpl implements ExamResultService {
 		return mapper.findByStudent(studentId);
 	}
 
+	@Override
+	public List<Subject> findSubjectByExam(int examId) {
+		List<Subject> result = new ArrayList<Subject>();
+		List<Integer> subjectIds = mapper.findSubjectByExam(examId);
+		for (int subjectId:
+			 subjectIds) {
+			Subject subject = subjectService.get(subjectId);
+			result.add(subject);
+		}
+		return result;
+	}
 }
+
+

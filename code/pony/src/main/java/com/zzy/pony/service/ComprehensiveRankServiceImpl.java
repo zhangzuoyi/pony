@@ -5,15 +5,13 @@ package com.zzy.pony.service;
 
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.transaction.Transactional;
 
+import com.zzy.pony.config.Constants;
+import com.zzy.pony.exam.mapper.ExamineeMapper;
+import com.zzy.pony.vo.RankVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +54,8 @@ public class ComprehensiveRankServiceImpl implements ComprehensiveRankService {
 	private ExamineeService examineeService;
 	@Autowired
 	private ExamineeDao examineeDao;
+	@Autowired
+	private ExamineeMapper examineeMapper;
 	
 	
 	
@@ -181,11 +181,38 @@ public class ComprehensiveRankServiceImpl implements ComprehensiveRankService {
 		}
 		
 		return unsortMap;
-	}	
+	}
 
-	
+	@Override
+	public List<Map<String, Object>> findRankByExam(int examId) {
+		List<Map<String,Object>> result = new ArrayList<Map<String, Object>>();
+		List<RankVo> rankVos = examineeMapper.findRankByExam(examId);
+		Map<Integer,Map<String,Object>> map = new LinkedHashMap<Integer, Map<String, Object>>();
+		for (RankVo vo:
+			 rankVos) {
+			if (map.containsKey(vo.getStudentId())){
+				map.get(vo.getStudentId()).put(Constants.SUBJETCS.get(vo.getSubjectName()),vo.getSubjectName());
+				map.get(vo.getStudentId()).put(Constants.SUBJETCS.get(vo.getSubjectName())+"Rank",vo.getSubjectGradeRank());
+
+			}else{
+				Map<String,Object> innerMap = new HashMap<String, Object>();
+				innerMap.put("studentName",vo.getStudentName());
+				innerMap.put("seq",vo.getSeq());
+				innerMap.put(Constants.SUBJETCS.get(vo.getSubjectName()),vo.getSubjectName());
+				innerMap.put(Constants.SUBJETCS.get(vo.getSubjectName())+"Rank",vo.getSubjectGradeRank());
+				innerMap.put("totalScore",vo.getTotalScore());
+				innerMap.put("classRank",vo.getClassRank());
+				innerMap.put("gradeRank",vo.getGradeRank());
+				map.put(vo.getStudentId(),innerMap);
+			}
+		}
+		for (Integer studentId:
+		map.keySet()) {
+			result.add(map.get(studentId));
+		}
 
 
-	
-	
+
+		return result;
+	}
 }

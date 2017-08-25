@@ -2,6 +2,7 @@ package com.zzy.pony.exam.mapper;
 
 import java.util.List;
 
+import com.zzy.pony.vo.RankVo;
 import org.apache.ibatis.annotations.Param;
 
 import com.zzy.pony.exam.model.Examinee;
@@ -15,5 +16,5 @@ public interface ExamineeMapper {
 	List<Examinee> findByExamIdAndClassId(int examId,int classId);
 	List<Examinee> findByArrangeId(int arrangeId);
 	List<Examinee> findByExamIdAndClassIds(int examId,@Param(value="classIds")int[] classIds);
-
+	List<RankVo> findRankByExam(int examId);
 }

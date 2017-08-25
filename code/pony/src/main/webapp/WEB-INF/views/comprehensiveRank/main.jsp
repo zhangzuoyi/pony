@@ -72,7 +72,7 @@
                                                                       
             </div> 
             <el-row> 
-            <el-col :span="16" :offset="4" >                   
+            <el-col :span="22" :offset="1"  >
             <el-table  
            	 		:data="tableData"                 
                     border
@@ -83,7 +83,6 @@
         			v-for="col in cols"
         			:prop="col.prop" 
         			:label="col.label"
-        			width="150"         			
         			>
      		 </el-table-column> 
      		   
@@ -160,8 +159,18 @@ var app = new Vue({
 		 	this.loading = true;
 		  this.$http.post(this.rankUrl,this.conditionVo).then(
 							function(response){
-                             this.dialogFormVisible=false;   
-                             this.loading = false;           
+							   if(response.data == 0){
+                                   this.dialogFormVisible=false;
+                                   this.loading = false;
+                                   this.$message({type:"info",message:"该排名已经生成!"});
+                               }
+                                if(response.data == 1){
+                                    this.dialogFormVisible=false;
+                                    this.loading = false;
+                                    this.$message({type:"info",message:"生成成功!"});
+                                }
+
+
                     	
 				 },
 							function(response){}  			

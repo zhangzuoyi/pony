@@ -131,7 +131,7 @@ public class ExamineeServiceImpl implements ExamineeService {
 		SchoolYear year = schoolYearService.getCurrent();
 		Term term = termService.getCurrent();
 		List<ExamVo> examVos = examService.findByYearAndTermOrderByExamDate(year, term);
-		if (examVos == null || examVos.size() == 0) {
+		if (examVos == null || examVos.size() == 0 || examVos.size() == 1) {
 			//按规则生成考生号  先按照同一班级，同一班级的按照studentId进行排序
 			List<Student> students = studentService.findByGradeOrderByStudentId(gradeId);
 			for (int i=1;i<=students.size();i++) {
