@@ -3,7 +3,6 @@ package com.zzy.pony.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +15,16 @@ import java.util.Map;
 
 
 
+
+
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -34,17 +43,28 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
+
+
+
+
+
+
+
+
+
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.dao.ExamTypeDao;
 import com.zzy.pony.dao.SchoolClassDao;
-import com.zzy.pony.model.Grade;
+import com.zzy.pony.exam.model.Examinee;
+import com.zzy.pony.exam.service.ExamineeService;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Subject;
-import com.zzy.pony.model.Term;
-import com.zzy.pony.service.ClassSingleCompareService;
+import com.zzy.pony.service.ClassComprehensiveCompareService;
+import com.zzy.pony.service.ComprehensiveRankService;
 import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.SchoolYearService;
@@ -53,54 +73,75 @@ import com.zzy.pony.service.TermService;
 import com.zzy.pony.vo.ConditionVo;
 
 @Controller
-@RequestMapping(value = "/classSingleCompare")
-public class ClassSingleCompareController {
+@RequestMapping(value = "/comprehensiveRank")
+public class ComprehensiveRankController {
+	
 	@Autowired
-	private SchoolYearService schoolYearService;
+	private ExamineeService examineeService;
 	@Autowired
-	private TermService termService;
-	@Autowired
-	private GradeService gradeService;
-	@Autowired
-	private ExamTypeDao examTypeDao;
-	@Autowired
-	private SchoolClassService schoolClassService;
-	@Autowired
-	private SubjectService subjectService;
-	@Autowired
-	private SchoolClassDao schoolClassDao;
-	@Autowired
-	private ClassSingleCompareService classSingleCompareService;
+	private ComprehensiveRankService comprehensiveRankService;
 	
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
-	public String main(Model model){
-
-		List<SchoolYear> schoolYears = schoolYearService.findAll();
-		List<Term> terms = termService.findAll();
-		List<Grade> grades = gradeService.findAll();
-		//List<ExamType> examTypes = examTypeDao.findAll();
-		//List<SchoolClass> schoolClasses = schoolClassService.findAll();
-	
-		model.addAttribute("schoolYears", schoolYears);
-		model.addAttribute("terms", terms);
-		model.addAttribute("grades", grades);
-		//model.addAttribute("examTypes", examTypes);
-		//model.addAttribute("schoolClasses", schoolClasses);
-		
-
-	
-		
-		return "classSingleCompare/main";
+	public String main(Model model){			
+		return "comprehensiveRank/main";
 	}
-	@RequestMapping(value="findByCondition",method = RequestMethod.POST)
+	
+	@RequestMapping(value="rank",method=RequestMethod.POST)
+	@ResponseBody
+	public String rank(@RequestBody final ConditionVo cv){
+		String result = "1";
+		List<Examinee> examineees = examineeService.findByExamAndTotalScoreIsNull(cv.getExamId());
+		if (examineees == null) {
+			result = "0";
+			return result;
+		}else {
+			//增加熔断		
+			ExecutorService executor = Executors.newSingleThreadExecutor();
+			FutureTask<Boolean> future = new FutureTask<Boolean>(new Callable<Boolean>() {
+
+				@Override
+				public Boolean call() throws Exception {
+					// TODO Auto-generated method stub
+					comprehensiveRankService.rankExaminee(cv);
+					comprehensiveRankService.rankExamReult(cv);				
+					return null;
+				}
+				
+			});
+		executor.execute(future);
+		
+		try {
+			future.get(5, TimeUnit.MINUTES);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			future.cancel(true);
+			executor.shutdown();			
+		}						
+		}
+		
+		return result;			
+		
+		
+	}
+	
+	/*@RequestMapping(value="findByCondition",method = RequestMethod.POST)
 	@ResponseBody
 	public String findByCondition(@RequestBody ConditionVo cv) {
 		//新增默认全选功能
+		
+		
 			List<SchoolClass> schoolClasses = new ArrayList<SchoolClass>();
-		SchoolYear year =  schoolYearService.getCurrent();
+			SchoolYear year =  schoolYearService.getCurrent();
 		if (cv.getSchoolClasses()==null || cv.getSchoolClasses().length == 0) {
-			
 			schoolClasses = schoolClassService.findByYearAndGrade(year.getYearId(), cv.getGradeId());
 			String[] schoolClassArray = new String[schoolClasses.size()] ;
 			for (int i = 0; i < schoolClasses.size(); i++) {
@@ -116,23 +157,31 @@ public class ClassSingleCompareController {
 		
 		
 			StringBuilder result = new StringBuilder();
-			List<Map<String, Object>> dataList =  classSingleCompareService.findByCondition(cv);
+			List<Map<String, Object>> dataList =  classComprehensiveCompareService.findByCondition(cv);
 			List<Map<String, Object>> headList = new ArrayList<Map<String,Object>>();
 			
 			Map<String, Object> classNameMap = new HashMap<String, Object>();
 			classNameMap.put("prop", "className");
 			classNameMap.put("label", "班级");
-			Map<String, Object> teacherNameMap = new HashMap<String, Object>();
-			teacherNameMap.put("prop", "teacherName");
-			teacherNameMap.put("label", "任课教师");
+			Map<String, Object> headTeacherNameMap = new HashMap<String, Object>();
+			headTeacherNameMap.put("prop", "headTeacherName");
+			headTeacherNameMap.put("label", "任课教师");
 			Map<String, Object> studentCountMap = new HashMap<String, Object>();
 			studentCountMap.put("prop", "studentCount");
 			studentCountMap.put("label", "考生人数");
-	
-			Map<String, Object> averageMap = new HashMap<String, Object>();
-			Subject subject  = subjectService.get(cv.getSubjectId());
-			averageMap.put("prop", Constants.SUBJETCS.get(subject.getName())+"Average");
-			averageMap.put("label", "平均分");
+			
+			String[] subjects  =   cv.getSubjects();
+			for (String subjectId : subjects) {
+				Map<String, Object> headMap = new HashMap<String, Object>();
+				Subject subject = subjectService.get(Integer.valueOf(subjectId));
+				headMap.put("prop", Constants.SUBJETCS.get(subject.getName())+"Average");
+				headMap.put("label", subject.getName()+"平均分");
+				headList.add(headMap);
+			}
+			
+			Map<String, Object> sumAverageMap = new HashMap<String, Object>();
+			sumAverageMap.put("prop", "sumAverage");
+			sumAverageMap.put("label", "平均分");
 			Map<String, Object> topMap = new HashMap<String, Object>();
 			topMap.put("prop", "top");
 			topMap.put("label", "最高分");
@@ -140,9 +189,9 @@ public class ClassSingleCompareController {
 			bottomMap.put("prop", "bottom");
 			bottomMap.put("label", "最低分");
 			headList.add(classNameMap);
-			headList.add(teacherNameMap);
+			headList.add(headTeacherNameMap);
 			headList.add(studentCountMap);
-			headList.add(averageMap);
+			headList.add(sumAverageMap);
 			headList.add(topMap);
 			headList.add(bottomMap);
 		
@@ -152,24 +201,10 @@ public class ClassSingleCompareController {
 			Gson gson2 = gb.create();
 			String head= gson2.toJson(headList);
 			
-			//新增echarts数据获取xAxis(班级)yAxis(平均分最高分最低分)
 			
 			
-			Map<String, Object> echartsMap = new LinkedHashMap<String, Object>();
-	
-			for (SchoolClass schoolClass : schoolClasses) {			
-				if (dataList!=null&&dataList.size()!=0) {
-					for (Map<String, Object> dataMap : dataList) {
-						if ( schoolClass.getClassId().toString().equalsIgnoreCase(dataMap.get("classId")+"") ) {
-							echartsMap.put(schoolClass.getName(), dataMap.get(Constants.SUBJETCS.get(subject.getName())+"Average")+"#"+dataMap.get("top")+"#"+dataMap.get("bottom"));
-						}											
-					}
-				}else {
-					echartsMap.put(schoolClass.getName(), "0"+"#"+"0"+"#"+"0");
-				}			
-			}
-			Gson gson3 = gb.create();
-			String echarts= gson3.toJson(echartsMap);
+			
+			
 			
 			
 			result.append("{\"total\"");
@@ -178,12 +213,10 @@ public class ClassSingleCompareController {
 			result.append(",\"rows\":");
 			result.append(data);
 			result.append(",\"title\":");
-			result.append(head);
-			result.append(",\"echarts\":");
-			result.append(echarts);	
+			result.append(head);			
 			result.append("}");
-		
-			
+	  
+					
 			
 			
 			
@@ -191,7 +224,7 @@ public class ClassSingleCompareController {
             return result.toString();
 			
 
-	}
+	}*/
 	
 	
 }

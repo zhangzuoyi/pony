@@ -67,15 +67,15 @@ public class ClassComprehensiveCompareServiceImpl implements ClassComprehensiveC
 					map2.put("className", examResultRankVo.getClassName());
 					map2.put("headTeacherName", examResultRankVo.getHeadTeacherName());
 					map2.put("studentCount", list.size());	
-					map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );						
+					map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectName()),examResultRankVo.getScore() );						
 					studentSumMap.put(examResultRankVo.getStudentId(), examResultRankVo.getScore());
 												
 				}else {
 					if (map2.containsKey(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()))) {
-						float sum=  examResultRankVo.getScore() + Float.valueOf(map2.get(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()))+"");
-						map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()), sum);
+						float sum=  examResultRankVo.getScore() + Float.valueOf(map2.get(Constants.SUBJETCS.get(examResultRankVo.getSubjectName()))+"");
+						map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectName()), sum);
 					}else{
-						map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );						
+						map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectName()),examResultRankVo.getScore() );						
 					}
 					if (studentSumMap.containsKey(examResultRankVo.getStudentId())) {
 						float studentSum =  studentSumMap.get(examResultRankVo.getStudentId()) + examResultRankVo.getScore();
@@ -95,13 +95,13 @@ public class ClassComprehensiveCompareServiceImpl implements ClassComprehensiveC
 			float sumCount = 0F;
 			
 			for (Subject subject : subjectList) {
-				if (map2.get(Constants.SUBJETCS.get(subject.getSubjectId()))!= null) {
-					float subjectSum = Float.valueOf(map2.get(Constants.SUBJETCS.get(subject.getSubjectId()))+"");				
+				if (map2.get(Constants.SUBJETCS.get(subject.getName()))!= null) {
+					float subjectSum = Float.valueOf(map2.get(Constants.SUBJETCS.get(subject.getName()))+"");				
 					//科目平均分
 					if (studentCount!=0) {
-						map2.put(Constants.SUBJETCS.get(subject.getSubjectId())+"Average", subjectSum/studentCount);				
+						map2.put(Constants.SUBJETCS.get(subject.getName())+"Average", subjectSum/studentCount);				
 					}else {
-						map2.put(Constants.SUBJETCS.get(subject.getSubjectId())+"Average", 0);				
+						map2.put(Constants.SUBJETCS.get(subject.getName())+"Average", 0);				
 					}
 					sumCount += subjectSum;
 				}

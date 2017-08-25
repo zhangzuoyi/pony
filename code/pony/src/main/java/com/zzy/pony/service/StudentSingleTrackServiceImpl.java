@@ -103,7 +103,7 @@ public class StudentSingleTrackServiceImpl implements StudentSingleTrackService 
 							map2.put("studentName", examResultRankVo.getStudentName());				
 						
 							
-							map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
+							map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectName()),examResultRankVo.getScore() );
 							map2.put("sum", examResultRankVo.getScore());
 
 							map.put(examResultRankVo.getStudentId(), map2);	
@@ -113,7 +113,7 @@ public class StudentSingleTrackServiceImpl implements StudentSingleTrackService 
 								//包含
 								map2 = map.get(examResultRankVo.getStudentId());
 										
-								map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
+								map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectName()),examResultRankVo.getScore() );
 								map2.put("sum", examResultRankVo.getScore()+ Float.valueOf((map2.get("sum").toString())));
 																		
 								map.put(examResultRankVo.getStudentId(), map2);//无需新增到list
@@ -127,7 +127,7 @@ public class StudentSingleTrackServiceImpl implements StudentSingleTrackService 
 								map2.put("studentNo", examResultRankVo.getStudentNo());
 								map2.put("studentName", examResultRankVo.getStudentName());					
 								
-								map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
+								map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectName()),examResultRankVo.getScore() );
 								map2.put("sum", examResultRankVo.getScore());
 										
 								map.put(examResultRankVo.getStudentId(), map2);

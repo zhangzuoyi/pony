@@ -1,7 +1,6 @@
 package com.zzy.pony.service;
 
 
-import java.awt.RenderingHints.Key;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,10 +18,8 @@ import com.zzy.pony.dao.ExamDao;
 import com.zzy.pony.mapper.ExamResultRankMapper;
 import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.SchoolClass;
-import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Student;
 import com.zzy.pony.model.Subject;
-import com.zzy.pony.model.Term;
 import com.zzy.pony.vo.ExamResultRankVo;
 import com.zzy.pony.vo.ConditionVo;
 @Service
@@ -106,7 +103,7 @@ public class StudentComprehensiveTrackServiceImpl implements StudentComprehensiv
 										map2.put("studentName", examResultRankVo.getStudentName());				
 										for (int i = 0; i < subjects.length; i++) {
 											if ((examResultRankVo.getSubjectId()+"").equalsIgnoreCase(subjects[i])) {
-												map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
+												map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectName()),examResultRankVo.getScore() );
 												map2.put("sum", examResultRankVo.getScore());
 												break;
 											}
@@ -119,7 +116,7 @@ public class StudentComprehensiveTrackServiceImpl implements StudentComprehensiv
 											map2 = map.get(examResultRankVo.getStudentId());
 											for (int i = 0; i < subjects.length; i++) {
 												if ((examResultRankVo.getSubjectId()+"").equalsIgnoreCase(subjects[i])) {
-													map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
+													map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectName()),examResultRankVo.getScore() );
 													map2.put("sum", examResultRankVo.getScore()+ Float.valueOf((map2.get("sum").toString())));
 													break;
 												}
@@ -136,7 +133,7 @@ public class StudentComprehensiveTrackServiceImpl implements StudentComprehensiv
 											map2.put("studentName", examResultRankVo.getStudentName());					
 											for (int i = 0; i < subjects.length; i++) {
 												if ((examResultRankVo.getSubjectId()+"").equalsIgnoreCase(subjects[i])) {
-													map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
+													map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectName()),examResultRankVo.getScore() );
 													map2.put("sum", examResultRankVo.getScore());
 													break;
 												}
@@ -217,7 +214,7 @@ public class StudentComprehensiveTrackServiceImpl implements StudentComprehensiv
 						map2.put("studentName", examResultRankVo.getStudentName());				
 						for (int i = 0; i < subjects.length; i++) {
 							if ((examResultRankVo.getSubjectId()+"").equalsIgnoreCase(subjects[i])) {
-								map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
+								map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectName()),examResultRankVo.getScore() );
 								map2.put("sum", examResultRankVo.getScore());
 								break;
 							}
@@ -230,7 +227,7 @@ public class StudentComprehensiveTrackServiceImpl implements StudentComprehensiv
 							map2 = map.get(examResultRankVo.getStudentId());
 							for (int i = 0; i < subjects.length; i++) {
 								if ((examResultRankVo.getSubjectId()+"").equalsIgnoreCase(subjects[i])) {
-									map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
+									map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectName()),examResultRankVo.getScore() );
 									map2.put("sum", examResultRankVo.getScore()+ Float.valueOf((map2.get("sum").toString())));
 									break;
 								}
@@ -247,7 +244,7 @@ public class StudentComprehensiveTrackServiceImpl implements StudentComprehensiv
 							map2.put("studentName", examResultRankVo.getStudentName());					
 							for (int i = 0; i < subjects.length; i++) {
 								if ((examResultRankVo.getSubjectId()+"").equalsIgnoreCase(subjects[i])) {
-									map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
+									map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectName()),examResultRankVo.getScore() );
 									map2.put("sum", examResultRankVo.getScore());
 									break;
 								}

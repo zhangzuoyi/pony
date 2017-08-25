@@ -14,4 +14,6 @@ import com.zzy.pony.model.Student;
 public interface ExamineeDao extends JpaRepository<Examinee, Integer> {
 	
 	List<Examinee> findByExamAndStudent(Exam exam,Student student);
+	List<Examinee> findByExamAndTotalScoreIsNull(Exam exam);
+	List<Examinee> findByExam(Exam exam);
 }

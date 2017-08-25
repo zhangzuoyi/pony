@@ -130,7 +130,7 @@ public class ClassComprehensiveCompareController {
 			for (String subjectId : subjects) {
 				Map<String, Object> headMap = new HashMap<String, Object>();
 				Subject subject = subjectService.get(Integer.valueOf(subjectId));
-				headMap.put("prop", Constants.SUBJETCS.get(subject.getSubjectId())+"Average");
+				headMap.put("prop", Constants.SUBJETCS.get(subject.getName())+"Average");
 				headMap.put("label", subject.getName()+"平均分");
 				headList.add(headMap);
 			}

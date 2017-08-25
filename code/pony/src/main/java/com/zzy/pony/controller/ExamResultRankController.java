@@ -114,7 +114,7 @@ public class ExamResultRankController {
 			for (String subjectId : subjects) {
 				Map<String, Object> headMap = new HashMap<String, Object>();
 				Subject subject = subjectService.get(Integer.valueOf(subjectId));
-				headMap.put("field", Constants.SUBJETCS.get(subject.getSubjectId()));
+				headMap.put("field", Constants.SUBJETCS.get(subject.getName()));
 				headMap.put("title", subject.getName());
 				headList.add(headMap);
 			}

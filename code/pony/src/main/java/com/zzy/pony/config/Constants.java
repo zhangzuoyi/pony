@@ -51,7 +51,7 @@ public class Constants {
 
 	public static final Map<Integer, String> SUBJECT_TYPES;
 	public static final Map<String, String> USER_TYPES;
-	public static final Map<Integer, String> SUBJETCS;
+	public static final Map<String, String> SUBJETCS;
 	public static final Map<Integer, String> PP_TYPES;//奖惩类型 
 	
 	private static Map<String, String> dictTypes;
@@ -119,13 +119,20 @@ public class Constants {
 		USER_TYPES.put(USER_TYPE_TEACHER, "老师");
 		USER_TYPES.put(USER_TYPE_STUDENT, "学生");
 		
-		SUBJETCS=new LinkedHashMap<Integer, String>();
-		SUBJETCS.put(1, "Chinese");
-		SUBJETCS.put(2, "Math");
-		SUBJETCS.put(3, "English");
-		SUBJETCS.put(4, "PE");
-		SUBJETCS.put(5, "Physics");
-		SUBJETCS.put(6, "Chemistry");
+		SUBJETCS=new LinkedHashMap<String, String>();
+		SUBJETCS.put("语文", "Chinese");
+		SUBJETCS.put("数学", "Math");
+		SUBJETCS.put("英语", "English");
+		SUBJETCS.put("体育", "PE");
+		SUBJETCS.put("物理", "Physics");
+		SUBJETCS.put("化学", "Chemistry");
+		SUBJETCS.put("政治", "Politics");
+		SUBJETCS.put("历史", "History");
+		SUBJETCS.put("音乐", "Music");
+		SUBJETCS.put("生物", "Biology");
+		SUBJETCS.put("地理", "Geography");
+		SUBJETCS.put("信息技术", "Info");
+		SUBJETCS.put("通用技术", "Common");
 		
 		PP_TYPES=new LinkedHashMap<Integer, String>(); 
 		PP_TYPES.put(0, "奖"); 

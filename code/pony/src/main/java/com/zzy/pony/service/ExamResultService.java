@@ -11,4 +11,5 @@ public interface ExamResultService {
 	List<ExamResultVo> findByStudent(Integer studentId);
 	void save(List<ExamResultVo> vos);
 	void batchSave(Map<Student, Float> scores, Integer examId, Integer subjectId, String loginName);
+	
 }

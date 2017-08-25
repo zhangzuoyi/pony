@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.mapper.ExamResultRankMapper;
 import com.zzy.pony.model.Student;
+import com.zzy.pony.model.Subject;
 import com.zzy.pony.vo.ExamResultRankVo;
 import com.zzy.pony.vo.ConditionVo;
 @Service
@@ -39,7 +40,7 @@ public class ClassSingleCompareServiceImpl implements ClassSingleCompareService 
 		List<Map<String, Object>> resultList = new ArrayList<Map<String,Object>>();
 		//班级ID为键
 		Map<String,Map<String, Object>> map = new HashMap<String, Map<String,Object>>();
-		
+		Subject subject  = subjectService.get(cv.getSubjectId());
 		
 		for (String classId : cv.getSchoolClasses()) {			
 			//科目为页面勾选的科目
@@ -59,14 +60,14 @@ public class ClassSingleCompareServiceImpl implements ClassSingleCompareService 
 					map2.put("className", examResultRankVo.getClassName());
 					map2.put("teacherName", examResultRankVo.getTeacherName());
 					map2.put("studentCount", list.size());	
-					map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );						
+					map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectName()),examResultRankVo.getScore() );						
 					map2.put("top", examResultRankVo.getScore());//最高分
 					map2.put("bottom", examResultRankVo.getScore());//最低分
 												
 				}else {
 					
-						float sum=  examResultRankVo.getScore() + Float.valueOf(map2.get(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()))+"");
-						map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()), sum);
+						float sum=  examResultRankVo.getScore() + Float.valueOf(map2.get(Constants.SUBJETCS.get(examResultRankVo.getSubjectName()))+"");
+						map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectName()), sum);
 						if (examResultRankVo.getScore() > Float.valueOf(map2.get("top")+"")) {
 							map2.put("top", examResultRankVo.getScore());
 						}
@@ -84,13 +85,13 @@ public class ClassSingleCompareServiceImpl implements ClassSingleCompareService 
 			
 			
 			
-				if (map2.get(Constants.SUBJETCS.get(cv.getSubjectId()))!= null) {
-					float subjectSum = Float.valueOf(map2.get(Constants.SUBJETCS.get(cv.getSubjectId()))+"");				
+				if (map2.get(Constants.SUBJETCS.get(subject.getName()))!= null) {
+					float subjectSum = Float.valueOf(map2.get(Constants.SUBJETCS.get(subject.getName()))+"");				
 					//科目平均分
 					if (studentCount!=0) {
-						map2.put(Constants.SUBJETCS.get(cv.getSubjectId())+"Average", subjectSum/studentCount);				
+						map2.put(Constants.SUBJETCS.get(subject.getName())+"Average", subjectSum/studentCount);				
 					}else {
-						map2.put(Constants.SUBJETCS.get(cv.getSubjectId())+"Average", 0);				
+						map2.put(Constants.SUBJETCS.get(subject.getName())+"Average", 0);				
 					}					
 				}
 				

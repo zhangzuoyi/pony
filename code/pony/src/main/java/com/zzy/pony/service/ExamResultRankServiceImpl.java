@@ -64,7 +64,7 @@ public class ExamResultRankServiceImpl implements ExamResultRankService {
 				map2.put("studentName", examResultRankVo.getStudentName());				
 				for (int i = 0; i < subjects.length; i++) {
 					if ((examResultRankVo.getSubjectId()+"").equalsIgnoreCase(subjects[i])) {
-						map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
+						map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectName()),examResultRankVo.getScore() );
 						map2.put("sum", examResultRankVo.getScore());
 						break;
 					}
@@ -77,7 +77,7 @@ public class ExamResultRankServiceImpl implements ExamResultRankService {
 					map2 = map.get(examResultRankVo.getStudentId());
 					for (int i = 0; i < subjects.length; i++) {
 						if ((examResultRankVo.getSubjectId()+"").equalsIgnoreCase(subjects[i])) {
-							map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
+							map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectName()),examResultRankVo.getScore() );
 							map2.put("sum", examResultRankVo.getScore()+ Float.valueOf((map2.get("sum").toString())));
 							break;
 						}
@@ -91,7 +91,7 @@ public class ExamResultRankServiceImpl implements ExamResultRankService {
 					map2.put("studentName", examResultRankVo.getStudentName());					
 					for (int i = 0; i < subjects.length; i++) {
 						if ((examResultRankVo.getSubjectId()+"").equalsIgnoreCase(subjects[i])) {
-							map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectId()),examResultRankVo.getScore() );
+							map2.put(Constants.SUBJETCS.get(examResultRankVo.getSubjectName()),examResultRankVo.getScore() );
 							map2.put("sum", examResultRankVo.getScore());
 							break;
 						}

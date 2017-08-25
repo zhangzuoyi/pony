@@ -181,6 +181,50 @@ public class ExamineeServiceImpl implements ExamineeService {
 		// TODO Auto-generated method stub
 		return examineeMapper.findByExamIdAndClassIds(examId, classIds);
 	}
+
+
+
+	@Override
+	public List<Examinee> findByExamAndTotalScoreIsNull(int examId) {
+		// TODO Auto-generated method stub
+		Exam exam = examService.get(examId);
+		return examineeDao.findByExamAndTotalScoreIsNull(exam);
+	}
+
+
+
+	@Override
+	public List<Examinee> findByExamId(int examId) {
+		// TODO Auto-generated method stub
+		Exam exam = examService.get(examId);
+		return examineeDao.findByExam(exam);
+	}
+
+
+
+	@Override
+	public Examinee findByExamAndStudent(int examId, int studentId) {
+		// TODO Auto-generated method stub
+		Exam exam  = new Exam();
+		exam.setExamId(examId);
+		Student student = new Student();
+		student.setStudentId(studentId);
+		List<Examinee> examinees = examineeDao.findByExamAndStudent(exam, student);
+		if (examinees != null) {
+			return examinees.get(0);
+		}
+		return null;
+	}
+
+
+
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

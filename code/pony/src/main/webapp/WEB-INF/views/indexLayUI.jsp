@@ -142,6 +142,10 @@
                         <a href="javascript:;" data-url="<s:url value='/classSingleCompare/main/' />">
                             <label>班级单科成绩对比</label></a>
                     </dd>
+                    <dd>
+                        <a href="javascript:;" data-url="<s:url value='/comprehensiveRank/main/' />">
+                            <label>学生整体成绩分析</label></a>
+                    </dd>
                 </dl>
             </li>
             </shiro:hasPermission>

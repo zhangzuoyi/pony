@@ -14,5 +14,6 @@ import com.zzy.pony.model.Subject;
 public interface ExamResultDao extends JpaRepository<ExamResult,Long>{
 	List<ExamResult> findByExamAndStudentIn(Exam exam, List<Student> students);
 	ExamResult findByExamAndSubjectAndStudent(Exam exam, Subject subject, Student student);
+	List<ExamResult> findByExamAndSubject(Exam exam,Subject subject);
 
 }
