@@ -24,6 +24,7 @@
             <a href="#" class="easyui-linkbutton" iconCls="icon-remove" onclick="removeItem()" plain="true">删除</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="openUpload()" plain="true">导入</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-reload" onclick="reload()" plain="true">刷新</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="downloadTemplate()" plain="true">下载模板</a>
         </div>
     </div>
     <!-- End of toolbar -->
@@ -383,6 +384,10 @@
 				}
 			}
 		});
+	}
+	
+	function downloadTemplate(){
+		window.location.href="<s:url value='/teacherAdmin/exportTemplate' />";
 	}
 	
 </script>

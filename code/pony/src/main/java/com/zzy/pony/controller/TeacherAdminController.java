@@ -1,6 +1,7 @@
 package com.zzy.pony.controller;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -16,6 +17,10 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
@@ -36,6 +41,7 @@ import com.zzy.pony.service.DictService;
 import com.zzy.pony.service.SubjectService;
 import com.zzy.pony.service.TeacherService;
 import com.zzy.pony.util.DateTimeUtil;
+import com.zzy.pony.util.TemplateUtil;
 import com.zzy.pony.vo.TeacherVo;
 
 @Controller
@@ -174,17 +180,15 @@ public class TeacherAdminController {
 				if(StringUtils.isBlank(teacherNo)){
 					break;
 				}
-				String name=row.getCell(1).getStringCellValue();
-				row.getCell(2).setCellType(HSSFCell.CELL_TYPE_STRING);
-				String sexValue=row.getCell(2).getStringCellValue();
+				String name=cellValue(row.getCell(1));
+				String sexValue=cellValue(row.getCell(2));
 				Date birthdayDate=row.getCell(3).getDateCellValue();
 				String birthday=null;
 				if(birthdayDate != null){
 					birthday=DateTimeUtil.dateToStr(birthdayDate);
 				}
-				String nativePlace=row.getCell(4).getStringCellValue();
-				String nation=row.getCell(5).getStringCellValue();
-				row.getCell(6).setCellType(HSSFCell.CELL_TYPE_STRING);
+				String nativePlace=cellValue(row.getCell(4));
+				String nation=cellValue(row.getCell(5));
 				String idCard=cellValue(row.getCell(6));
 				String nativeAddr=cellValue(row.getCell(7));
 				String homeAddr=cellValue(row.getCell(8));
@@ -229,6 +233,18 @@ public class TeacherAdminController {
 		}
 		return "success";
 	}
+	@RequestMapping(value="exportTemplate",method = RequestMethod.GET)
+	public ResponseEntity<byte[]> exportTemplate(Model model){
+		String fileName="老师导入模板.xlsx";
+		HttpHeaders headers = new HttpHeaders(); 
+		try {
+			headers.setContentDispositionFormData("attachment", new String(fileName.getBytes("utf-8"), "ISO8859-1"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		return new ResponseEntity<byte[]>(TemplateUtil.getContent(fileName), headers, HttpStatus.CREATED);
+	}
 	private Subject getSubject(String subjectName, List<Subject> subjects){
 		if(StringUtils.isBlank(subjectName)){
 			return null;
@@ -250,6 +266,7 @@ public class TeacherAdminController {
 	}
 	private String cellValue(Cell cell){
 		if(cell != null){
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			return cell.getStringCellValue();
 		}
 		return null;
