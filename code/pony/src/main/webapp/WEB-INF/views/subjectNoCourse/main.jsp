@@ -116,11 +116,22 @@
                       highlight-current-row
                       border
                       height="250"
-                      >                  
+                      >
+                  <el-table-column
+                          prop="yearName"
+                          label="学年"
+                  >
+                  </el-table-column>
+                  <el-table-column
+                          prop="termName"
+                          label="学期"
+                  >
+                  </el-table-column>
                   <el-table-column
                           prop="gradeName"
                           label="年级"
                   >
+                  </el-table-column>
                   <el-table-column
                           prop="subjectName"
                           label="科目"

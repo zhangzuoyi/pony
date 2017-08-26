@@ -706,66 +706,90 @@ public class GAUtil {
         return result;
 	}
 	
-	public static Map<String,String> getPreNoCourse(List<ArrangeVo> list){
-		Map<String, String> result =  new HashMap<String, String>();
+	public static Map<String,List<String>> getPreNoCourse(List<ArrangeVo> list){
+		Map<String, List<String>> result =  new HashMap<String, List<String>>();
 		for (ArrangeVo vo : list) {			
 			String seqId = String.format("%01d", Integer.valueOf(vo.getWeekDay()))  ;
 			String classId=String.format("%03d", vo.getClassId()) ;
-			String periodId =String.format("%01d", vo.getPeriodSeq())  ;			
-			
-		result.put(classId, seqId+periodId);
+			String periodId =String.format("%01d", vo.getPeriodSeq())  ;
+			if (result.containsKey(classId)){
+				result.get(classId).add(seqId+periodId);
+			}else {
+				List<String> innerList = new ArrayList<String>();
+				innerList.add(seqId+periodId);
+				result.put(classId, innerList);
+			}
+
 		}		
 		return result;
 		
 	}
 	
 	
-	public static Map<String,String> getClassNoCourse(List<ClassNoCourseVo> list){
-		Map<String, String> result =  new HashMap<String, String>();
+	public static Map<String,List<String>> getClassNoCourse(List<ClassNoCourseVo> list){
+		Map<String, List<String>> result =  new HashMap<String, List<String>>();
 		for (ClassNoCourseVo vo : list) {			
 			String seqId = String.format("%01d", vo.getWeekdayId())  ;
 			String classId=String.format("%03d", vo.getClassId()) ;
 			String periodId =String.format("%01d", vo.getLessonPeriodSeq())  ;			
-			
-		result.put(classId, seqId+periodId);
+
+			if (result.containsKey(classId)){
+				result.get(classId).add(seqId+periodId);
+			}else {
+				List<String> innerList = new ArrayList<String>();
+				innerList.add(seqId+periodId);
+				result.put(classId, innerList);
+			}
+
 		}		
 		return result;
 		
 	}
-	public static Map<String,String> getTeacherNoCourse(List<TeacherNoCourseVo> list){
-		Map<String, String> result =  new HashMap<String, String>();
+	public static Map<String,List<String>> getTeacherNoCourse(List<TeacherNoCourseVo> list){
+		Map<String, List<String>> result =  new HashMap<String, List<String>>();
 		for (TeacherNoCourseVo vo : list) {			
 			String seqId = String.format("%01d", vo.getWeekdayId())  ;
 			String teacherId=String.format("%04d", vo.getTeacherId()) ;
-			String periodId =String.format("%01d", vo.getLessonPeriodSeq())  ;			
-			
-		result.put(teacherId, seqId+periodId);
-		}		
+			String periodId =String.format("%01d", vo.getLessonPeriodSeq())  ;
+			if (result.containsKey(teacherId)){
+				result.get(teacherId).add(seqId+periodId);
+			}else {
+				List<String> innerList = new ArrayList<String>();
+				innerList.add(seqId+periodId);
+				result.put(teacherId, innerList);
+			}
+		}
 		return result;
 		
 	}
 	
-	public static boolean  isTeacherNoCourse(Map<String, String> map,String key,int teacherIdLength,int classNumber,int k,int seqIdCandidateLength){
+	public static boolean  isTeacherNoCourse(Map<String, List<String>> map,String key,int teacherIdLength,int classNumber,int k,int seqIdCandidateLength){
 		String teacherId = key.substring(0, teacherIdLength);
 		if (map.get(teacherId) != null) {
-			String seqPeriod = map.get(teacherId);
-			int  week = Integer.valueOf(seqPeriod.substring(0, 1))  ;
-			int seq = Integer.valueOf(seqPeriod.substring(1, 2))  ;
-			if(  classNumber == (k-((week-1)*seqIdCandidateLength+seq)+1)){
-				return true;
+			List<String> seqPeriods=map.get(teacherId);
+			for (String seqPeriod:
+			seqPeriods ) {
+				int  week = Integer.valueOf(seqPeriod.substring(0, 1))  ;
+				int seq = Integer.valueOf(seqPeriod.substring(1, 2))  ;
+				if(  classNumber == (k-((week-1)*seqIdCandidateLength+seq)+1)){
+					return true;
+				}
 			}
 		}						
 		return false;
 	}
 	
-	public static boolean  isSubjectNoCourse(Map<String, String> map,String key,int teacherIdLength,int subjectIdLength,String classId, int classNumber,int k,int seqIdCandidateLength){
+	public static boolean  isSubjectNoCourse(Map<String, List<String>> map,String key,int teacherIdLength,int subjectIdLength,String classId, int classNumber,int k,int seqIdCandidateLength){
 		String subjectId = key.substring(teacherIdLength, teacherIdLength+subjectIdLength);		
 		if (map.get(classId+subjectId) != null) {
-			String seqPeriod = map.get(classId+subjectId);
-			int  week = Integer.valueOf(seqPeriod.substring(0, 1))  ;
-			int seq = Integer.valueOf(seqPeriod.substring(1, 2))  ;
-			if(  classNumber == (k-((week-1)*seqIdCandidateLength+seq)+1)){
-				return true;
+			List<String> seqPeriods=map.get(classId+subjectId);
+			for (String seqPeriod:
+			seqPeriods) {
+				int  week = Integer.valueOf(seqPeriod.substring(0, 1))  ;
+				int seq = Integer.valueOf(seqPeriod.substring(1, 2))  ;
+				if(  classNumber == (k-((week-1)*seqIdCandidateLength+seq)+1)){
+					return true;
+				}
 			}
 		}						
 		return false;
@@ -773,8 +797,8 @@ public class GAUtil {
 	
 	
 	
-	public static Map<String,String> getSubjectNoCourse(List<SubjectNoCourseVo> list){
-		Map<String, String> result =  new HashMap<String, String>();
+	public static Map<String,List<String>> getSubjectNoCourse(List<SubjectNoCourseVo> list){
+		Map<String, List<String>> result =  new HashMap<String, List<String>>();
 		for (SubjectNoCourseVo vo : list) {			
 			String seqId = String.format("%01d", vo.getWeekdayId())  ;
 			
@@ -783,7 +807,14 @@ public class GAUtil {
 			List<Integer> gradeClassIds = vo.getGradeClassIds();			
 			for (Integer gradeClassId : gradeClassIds) {
 				String classId= String.format("%03d", gradeClassId);
-				result.put(classId+subjectId, seqId+periodId);
+				if (result.containsKey(classId+subjectId)){
+					result.get(classId+subjectId).add(seqId+periodId);
+				}else {
+					List<String> innerList = new ArrayList<String>();
+					innerList.add(seqId+periodId);
+					result.put(classId+subjectId, innerList);
+				}
+
 			}
 		}		
 		return result;

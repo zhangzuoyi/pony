@@ -138,6 +138,8 @@ public class ClassNoCourseController {
 		List<ClassNoCourseVo> classNoCourseVos = classNoCourseService.findAllVo();		
 		for (ClassNoCourseVo vo : classNoCourseVos) {
 			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("schoolYearName",vo.getSchoolYearName());
+			map.put("termName", vo.getTermName());
 			map.put("period",vo.getLessonPeriodSeq());
 			map.put("week", vo.getWeekdayName());
 			map.put("className", vo.getClassName());

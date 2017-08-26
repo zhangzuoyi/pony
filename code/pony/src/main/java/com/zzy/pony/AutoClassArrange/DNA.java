@@ -40,11 +40,11 @@ public class DNA {
 	private Map<String,String> TeacherSubjectweekArrange;//班级老师与课时的映射关系  key:teacherId+classId+subjectId value:weekArrange
 	private Map<String, Map<String,Integer>> teacherSubjectClassMap;//平课设置  key:teacherId+subjectId value:(key classId value count(初始为0))
 	private Map<String, Map<String,Integer>> teacherSubjectIrregularClassMap;//平课设置 不规则班级 key:teacherId+subjectId value:(key classId value count(初始为0))
-	private Map<String, String> classNoCourse;
-	private Map<String, String> teacherNoCourse;
-	private Map<String, String> subjectNoCourse;
+	private Map<String, List<String>> classNoCourse;
+	private Map<String, List<String>> teacherNoCourse;
+	private Map<String, List<String>> subjectNoCourse;
 	private Map<String, String> gradeNoCourse;
-	private Map<String, String> preNoCourse;
+	private Map<String, List<String>> preNoCourse;
 	private Map<String, Map<String,Integer>> preWeekArrange;
 	private Map<String, String> classInMorning;
 	private Map<String, String> classInAfternoon;
@@ -168,18 +168,25 @@ public class DNA {
 		}
 		//班级不排课设置
 		if (this.classNoCourse.get(this.classIdCandidate[classIndex]) != null) {
-			String seqPeriod = this.classNoCourse.get(this.classIdCandidate[classIndex]);
-			int week = Integer.valueOf(seqPeriod.substring(0, 1))  ;
-			int seq = Integer.valueOf(seqPeriod.substring(1, 2))  ; 
-			randomMap.put(k-((week-1)*this.seqIdCandidate.length+seq)+1,"000000");
+			List<String> seqPeriods = this.classNoCourse.get(this.classIdCandidate[classIndex]);
+			for (String seqPeriod:
+			seqPeriods) {
+				int week = Integer.valueOf(seqPeriod.substring(0, 1))  ;
+				int seq = Integer.valueOf(seqPeriod.substring(1, 2))  ;
+				randomMap.put(k-((week-1)*this.seqIdCandidate.length+seq)+1,"000000");
+			}
+
 		}
 		
 		//预排课不排课设置
 		if (this.preNoCourse.get(this.classIdCandidate[classIndex]) != null) {
-			String seqPeriod = this.preNoCourse.get(this.classIdCandidate[classIndex]);
-			int week = Integer.valueOf(seqPeriod.substring(0, 1))  ;
-			int seq = Integer.valueOf(seqPeriod.substring(1, 2))  ; 
-			randomMap.put(k-((week-1)*this.seqIdCandidate.length+seq)+1,"000000");
+			List<String> seqPeriods = this.classNoCourse.get(this.classIdCandidate[classIndex]);
+			for (String seqPeriod:
+					seqPeriods){
+				int week = Integer.valueOf(seqPeriod.substring(0, 1))  ;
+				int seq = Integer.valueOf(seqPeriod.substring(1, 2))  ;
+				randomMap.put(k-((week-1)*this.seqIdCandidate.length+seq)+1,"000000");
+			}
 		}
 		
 		
@@ -534,30 +541,39 @@ public class DNA {
 	public int getDnaBit() {
 		return dnaBit;
 	}
-	public Map<String, String> getClassNoCourse() {
+
+	public Map<String, List<String>> getClassNoCourse() {
 		return classNoCourse;
 	}
-	public void setClassNoCourse(Map<String, String> classNoCourse) {
+
+	public void setClassNoCourse(Map<String, List<String>> classNoCourse) {
 		this.classNoCourse = classNoCourse;
 	}
-	public Map<String, String> getTeacherNoCourse() {
+
+	public Map<String, List<String>> getTeacherNoCourse() {
 		return teacherNoCourse;
 	}
-	public void setTeacherNoCourse(Map<String, String> teacherNoCourse) {
+
+	public void setTeacherNoCourse(Map<String, List<String>> teacherNoCourse) {
 		this.teacherNoCourse = teacherNoCourse;
 	}
-	public Map<String, String> getSubjectNoCourse() {
+
+	public Map<String, List<String>> getSubjectNoCourse() {
 		return subjectNoCourse;
 	}
-	public void setSubjectNoCourse(Map<String, String> subjectNoCourse) {
+
+	public void setSubjectNoCourse(Map<String, List<String>> subjectNoCourse) {
 		this.subjectNoCourse = subjectNoCourse;
 	}
+
 	public Map<String, String> getGradeNoCourse() {
 		return gradeNoCourse;
 	}
+
 	public void setGradeNoCourse(Map<String, String> gradeNoCourse) {
 		this.gradeNoCourse = gradeNoCourse;
 	}
+
 	public Map<String, Map<String, Integer>> getTeacherSubjectClassMap() {
 		return teacherSubjectClassMap;
 	}
@@ -660,12 +676,15 @@ public class DNA {
 	public void setSpecialMap(Map<String, String> specialMap) {
 		this.specialMap = specialMap;
 	}
-	public Map<String, String> getPreNoCourse() {
+
+	public Map<String, List<String>> getPreNoCourse() {
 		return preNoCourse;
 	}
-	public void setPreNoCourse(Map<String, String> preNoCourse) {
+
+	public void setPreNoCourse(Map<String, List<String>> preNoCourse) {
 		this.preNoCourse = preNoCourse;
 	}
+
 	public Map<String, Map<String, Integer>> getPreWeekArrange() {
 		return preWeekArrange;
 	}

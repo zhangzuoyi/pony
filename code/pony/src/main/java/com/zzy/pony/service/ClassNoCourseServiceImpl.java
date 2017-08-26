@@ -73,6 +73,7 @@ public class ClassNoCourseServiceImpl implements ClassNoCourseService {
 		vo.setWeekdayId(classNoCourse.getWeekday().getSeq());
 		vo.setWeekdayName(classNoCourse.getWeekday().getName());
 
+
 		result.add(vo);
 	}
 	

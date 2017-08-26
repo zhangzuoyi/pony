@@ -279,7 +279,7 @@ public class AutoLessonArrangeController {
 			}
             for (int i = schoolClasseOne.size()+schoolClasseTwo.size()+2; i < schoolClasseOne.size()+schoolClasseTwo.size()+schoolClasseThree.size()+2; i++) {
                 HSSFCell classCell = classRow.createCell(i);
-                classCell.setCellValue(schoolClasseOne.get(i-schoolClasseOne.size()-schoolClasseTwo.size()-2).getSeq());
+                classCell.setCellValue(schoolClasseThree.get(i-schoolClasseOne.size()-schoolClasseTwo.size()-2).getSeq());
                 classCell.setCellStyle(style);
 			}
 
