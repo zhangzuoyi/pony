@@ -32,6 +32,9 @@ public class TeacherSubjectVo {
 	
 	private String teacherNo;
 	private String weekArrange;
+
+	private int count;//教师上课班级数目
+	private int totalWeekArrange;//教师上课总数
 	
 	
 	public static TeacherSubjectVo fromModel(TeacherSubject ts){

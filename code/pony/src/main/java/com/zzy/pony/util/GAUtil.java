@@ -169,6 +169,19 @@ public class GAUtil {
 		
 		return result;
 	}
+
+	public  static List<String> getArrangeSeq(List<TeacherSubjectVo> vos){
+		List<String> result = new ArrayList<String>();
+		for (TeacherSubjectVo vo:
+		vos) {
+			String teacherId = String.format("%04d", vo.getTeacherId())  ;
+			String subjectId =String.format("%02d", vo.getSubjectId())  ;
+			result.add(teacherId+subjectId);
+		}
+		return result;
+
+
+	}
 	
 	
 	/**
@@ -714,6 +727,17 @@ public class GAUtil {
         }
         return result;
 	}
+	public static Map<String,String> sortMapBySeq(Map<String, String> oriMap,List<String> arrangeSeq){
+		Map<String, String> sortedMap = new LinkedHashMap<String, String>();
+		for (String seq:
+		arrangeSeq) {
+			if (oriMap.containsKey(seq)){
+				sortedMap.put(seq,oriMap.get(seq));
+			}
+		}
+		return sortedMap;
+	}
+
 	
 	public static Map<String,List<String>> getPreNoCourse(List<ArrangeVo> list){
 		Map<String, List<String>> result =  new HashMap<String, List<String>>();
@@ -1270,11 +1294,11 @@ public class GAUtil {
 	}*/
 	
 	
-	public static boolean  isTeacherInAlreadySeqMap(Map<String, List<Integer>> alreadyTeacherSeqMap ,int classNumber,String key,int attempCount){
+	public static boolean  isTeacherInAlreadySeqMap(Map<String, List<Integer>> alreadyTeacherSeqMap ,int classNumber,String key/*,int attempCount*/){
 		
-		if (attempCount>MAX_ATTEMPT){
+		/*if (attempCount>MAX_ATTEMPT){
 			return false;
-		}
+		}*/
 		if (alreadyTeacherSeqMap.containsKey(key)&&alreadyTeacherSeqMap.get(key)!= null ) {
 			for (Integer classNum : alreadyTeacherSeqMap.get(key)) {
 				if (classNum == classNumber) {

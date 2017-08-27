@@ -8,5 +8,6 @@ import com.zzy.pony.vo.ConditionVo;
 public interface TeacherSubjectMapper {
 	List<TeacherSubjectVo> findByCondition(ConditionVo cv);
 	List<TeacherSubjectVo> findCurrentByGroup(ConditionVo cv);
+	List<TeacherSubjectVo> findArrangeSeq(ConditionVo cv);
 
 }

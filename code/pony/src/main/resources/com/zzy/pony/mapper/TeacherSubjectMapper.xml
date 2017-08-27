@@ -55,11 +55,36 @@ left join t_teacher c on t.TEACHER_ID=c.TEACHER_ID
      		 #{item}  
      		</foreach> 
 		 	</if>
-			group by t.TEACHER_ID,t.SUBJECT_ID,a.name,t.WEEK_ARRANGE) t 
+			group by t.TEACHER_ID,t.SUBJECT_ID,a.name,t.WEEK_ARRANGE  having count(1) &lt;4) t
 			where t.week_arrange &gt;1 and t.week_arrange &lt;6 and t.week_arrange is not null
 		 		 
 		 
 	 
+	</select>
+	<select id="findArrangeSeq" resultType="com.zzy.pony.vo.TeacherSubjectVo">
+		select t.TEACHER_ID as teacherId,t.SUBJECT_ID as subjectId,t.countNum as count ,t.totalWeekArrange as totalWeekArrange,a.`NAME` as teacherName,b.`NAME` as subjectName from
+(SELECT
+	t.TEACHER_ID,
+	t.SUBJECT_ID,
+  count(1) as countNum,
+	SUM(WEEK_ARRANGE) as totalWeekArrange
+FROM
+	t_teacher_subject t
+WHERE 1=1
+		<if test=" yearId != null and yearId != 0">
+			and  t.year_Id=#{yearId}
+		</if>
+		<if test=" termId != null and termId != 0">
+			and  t.term_Id=#{termId}
+		</if>
+		<if test=" gradeId != null and gradeId != 0">
+		and  t.CLASS_ID in (select class_id from t_school_class where grade_id = #{gradeId})
+		</if>
+		GROUP BY
+	t.TEACHER_ID,
+	t.SUBJECT_ID
+ORDER BY
+	sum(WEEK_ARRANGE) desc ,count(1) desc) t left join t_teacher a on t.TEACHER_ID = a.TEACHER_ID left join t_subject b on t.SUBJECT_ID = b.SUBJECT_ID
 	</select>
 	
 </mapper>

@@ -7,9 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.Condition;
 
 import javax.transaction.Transactional;
 
+import com.zzy.pony.mapper.TeacherSubjectMapper;
+import com.zzy.pony.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,13 +33,6 @@ import com.zzy.pony.model.Term;
 import com.zzy.pony.model.Weekday;
 import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.util.GAUtil;
-import com.zzy.pony.vo.ArrangeVo;
-import com.zzy.pony.vo.ClassNoCourseVo;
-import com.zzy.pony.vo.CombineAndRotationVo;
-import com.zzy.pony.vo.GradeNoCourseVo;
-import com.zzy.pony.vo.SubjectNoCourseVo;
-import com.zzy.pony.vo.TeacherNoCourseVo;
-import com.zzy.pony.vo.TeacherSubjectVo;
 
 
 @Service
@@ -77,6 +73,8 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 	private LessonArrangeService lessonArrangeService;
 	@Autowired
 	private PreLessonArrangeService preLessonArrangeService;
+	@Autowired
+	private TeacherSubjectMapper teacherSubjectMapper;
 	
 	
 	
@@ -137,7 +135,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		
 		
 		
-		
+
 		
 		
 		String[] classIdCandidate =   GAUtil.getCandidateStrings(teacherSubjectService.findCurrentAllClassId(gradeId), 3,false);    
@@ -147,7 +145,12 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		String[] weekdayIdCandidate =GAUtil.getCandidateStrings(weekdays, 1, false);
 		String[] seqIdCandidate=GAUtil.getCandidateStrings(seqs, 1, false);;
 		List<TeacherSubjectVo> vos = teacherSubjectService.findCurrentAll(gradeId);
-		List<TeacherSubjectVo> voGroups = teacherSubjectService.findCurrentByGroup(gradeId); 
+		List<TeacherSubjectVo> voGroups = teacherSubjectService.findCurrentByGroup(gradeId);
+		ConditionVo cv = new ConditionVo();
+		cv.setYearId(schoolYear.getYearId());
+		cv.setTermId(term.getTermId());
+		cv.setGradeId(gradeId);
+		List<TeacherSubjectVo> voSeq = teacherSubjectMapper.findArrangeSeq(cv);
 		List<ClassNoCourseVo> classNoCourseVos = classNoCourseService.findCurrentAllVo();
 		List<TeacherNoCourseVo> teacherNoCourseVos = teacherNoCourseService.findCurrentAllVo();
 		List<SubjectNoCourseVo> subjectNoCourseVos = subjectNoCourseService.findCurrentAllVo();
@@ -187,6 +190,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		DNA.getInstance().setCombineMap(combineMap);
 		DNA.getInstance().setAlreadyTeacherSeqMap(alreadyTeacherSeqMap);
 		DNA.getInstance().setTeacherClassMap(GAUtil.getTeacherClassMap(vos));
+		DNA.getInstance().setArrangeSeq(GAUtil.getArrangeSeq(voSeq));
 		GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
 		String bestChromosome =  geneticAlgorithm.caculte();	
 		List<ArrangeVo> list =   GAUtil.getLessonArranges(bestChromosome);
