@@ -314,6 +314,7 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 		Term term= termService.getCurrent();
 		cv.setYearId(schoolYear.getYearId());
 		cv.setTermId(term.getTermId());
+		cv.setSchoolClasses(classes);
 		return teacherSubjectMapper.findCurrentByGroup(cv);
 	}
 

@@ -21,6 +21,8 @@ import java.util.concurrent.TimeoutException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.zzy.pony.mapper.LessonArrangeMapper;
+import com.zzy.pony.vo.ArrangeVo;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -88,6 +90,9 @@ public class AutoLessonArrangeController {
 	private SchoolClassService schoolClassService;
 	@Autowired
 	private GradeService gradeService;
+	@Autowired
+	private LessonArrangeMapper lessonArrangeMapper;
+
 
 	@RequestMapping(value="main",method = RequestMethod.GET)
 	public String main(Model model){	
@@ -284,7 +289,11 @@ public class AutoLessonArrangeController {
 			}
 
 			List<Object[]> dataList  = new ArrayList<Object[]>();
-            List<LessonArrange> laList=lessonArrangeService.findBySchoolYearAndTerm(schoolYear, term);
+           // List<LessonArrange> laList=lessonArrangeService.findBySchoolYearAndTerm(schoolYear, term);
+			ConditionVo cv = new ConditionVo();
+			cv.setYearId(schoolYear.getYearId());
+			cv.setTermId(term.getTermId());
+			List<ArrangeVo> laList= lessonArrangeMapper.findByCondition(cv);
             for (Weekday weekday:
                  weekdays) {                	
             	for (LessonPeriod lessonPeriod : lessonPeriods) {					
@@ -392,11 +401,11 @@ public class AutoLessonArrangeController {
         }  
           
     } 
-	private String getLessonArrange(List<LessonArrange> laList,SchoolClass schoolClass,Weekday weekday,LessonPeriod lessonPeriod){
+	private String getLessonArrange(List<ArrangeVo> laList,SchoolClass schoolClass,Weekday weekday,LessonPeriod lessonPeriod){
 		StringBuffer stringBuffer = new StringBuffer();
-		for(LessonArrange la: laList){
-			if(la.getClassId()==schoolClass.getClassId()&& la.getWeekDay().equalsIgnoreCase(weekday.getSeq()+"")&&la.getLessonPeriod().getPeriodId().equals(lessonPeriod.getPeriodId())&&la.getSubject()!=null ){
-				stringBuffer.append(la.getSubject().getName()+" ");
+		for(ArrangeVo la: laList){
+			if(la.getClassId().equals(schoolClass.getClassId())&& la.getWeekdayId().equals(weekday.getSeq())&&la.getPeriodId().equals(lessonPeriod.getPeriodId())&&la.getSubjectName()!=null ){
+				stringBuffer.append(la.getSubjectName()+"("+la.getTeacherName()+")"+" ");
 			}
 		}
 			return stringBuffer.toString();

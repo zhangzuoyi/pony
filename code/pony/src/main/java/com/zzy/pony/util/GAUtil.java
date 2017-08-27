@@ -140,6 +140,11 @@ public class GAUtil {
 					||teacherSubjectVo.getSubjectName().equalsIgnoreCase("英语")
 					||teacherSubjectVo.getSubjectName().equalsIgnoreCase("物理")
 					||teacherSubjectVo.getSubjectName().equalsIgnoreCase("化学")
+					||teacherSubjectVo.getSubjectName().equalsIgnoreCase("政治")
+					||teacherSubjectVo.getSubjectName().equalsIgnoreCase("历史")
+					||teacherSubjectVo.getSubjectName().equalsIgnoreCase("体育")
+					||teacherSubjectVo.getSubjectName().equalsIgnoreCase("地理")
+					||teacherSubjectVo.getSubjectName().equalsIgnoreCase("生物")
 					){						
 			String teacherId = String.format("%04d", teacherSubjectVo.getTeacherId())  ;
 			String subjectId =String.format("%02d", teacherSubjectVo.getSubjectId())  ;	
@@ -154,9 +159,11 @@ public class GAUtil {
 			}	
 			Set<Integer> weekSet = new HashSet<Integer>();
 			while(weekSet.size()<weekarranges){
-				weekSet.add(random.nextInt(5)+1);
-			}		
-			result.put(key, weekSet);			
+					weekSet.add(random.nextInt(5)+1);
+				}
+
+
+			result.put(key, weekSet);
 		}
 		}
 		
@@ -490,8 +497,10 @@ public class GAUtil {
 		
 		return false;
 	}
-	public static boolean isInWeekSet(int classNumber,Set<Integer> weekSet,int seqLength){
-		
+	public static boolean isInWeekSet(int classNumber,Set<Integer> weekSet,int seqLength,int attempCount){
+		if (attempCount > MAX_ATTEMPT) {
+			return true;
+		}
 		for (Integer integer : weekSet) {
 			switch (integer) {
 			case 5:

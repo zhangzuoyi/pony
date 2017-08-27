@@ -203,7 +203,7 @@ public class TeacherLessonController {
 			}
             for (int i = schoolClasseOne.size()+schoolClasseTwo.size()+1; i <= schoolClasseOne.size()+schoolClasseTwo.size()+schoolClasseThree.size(); i++) {
                 HSSFCell classCell = classRow.createCell(i);
-                classCell.setCellValue(schoolClasseOne.get(i-schoolClasseOne.size()-schoolClasseTwo.size()-1).getSeq());
+                classCell.setCellValue(schoolClasseThree.get(i-schoolClasseOne.size()-schoolClasseTwo.size()-1).getSeq());
                 classCell.setCellStyle(style);
 			}
 

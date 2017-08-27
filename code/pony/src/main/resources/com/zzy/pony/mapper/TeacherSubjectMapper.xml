@@ -40,9 +40,9 @@ left join t_teacher c on t.TEACHER_ID=c.TEACHER_ID
 	<select id="findCurrentByGroup" resultType="com.zzy.pony.vo.TeacherSubjectVo">
 		
 		select t.teacher_id as teacherId ,t.subject_id as subjectId,t.name as subjectName, t.week_arrange as weekArrange from( 
-			select t.TEACHER_ID,t.SUBJECT_ID,a.name,t.WEEK_ARRANGE,count(1) as count from t_teacher_subject t
+			select t.TEACHER_ID,t.SUBJECT_ID,a.name,t.WEEK_ARRANGE from t_teacher_subject t
 			left join  t_subject a on t.subject_id = a.subject_id
-			where 1=1	and  t.WEEK_ARRANGE != null		
+			where 1=1
 			<if test=" yearId != null and yearId != 0">
 		 	and  t.year_Id=#{yearId}
 			 </if>
@@ -56,7 +56,7 @@ left join t_teacher c on t.TEACHER_ID=c.TEACHER_ID
      		</foreach> 
 		 	</if>
 			group by t.TEACHER_ID,t.SUBJECT_ID,a.name,t.WEEK_ARRANGE) t 
-			where t.count>1 and t.week_arrange is not null
+			where t.week_arrange &gt;1 and t.week_arrange &lt;6 and t.week_arrange is not null
 		 		 
 		 
 	 

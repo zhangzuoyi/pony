@@ -23,6 +23,7 @@ public class ArrangeVo {
 	private String classSeq;
 	
 	private Integer teacherId;
+	private String teacherName;
 	private Integer weekdayId;
 	private Integer seqId; 
 	
@@ -179,16 +180,12 @@ public class ArrangeVo {
 	public void setWeekArrange(int weekArrange) {
 		this.weekArrange = weekArrange;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
-	
+	public String getTeacherName() {
+		return teacherName;
+	}
+
+	public void setTeacherName(String teacherName) {
+		this.teacherName = teacherName;
+	}
 }
