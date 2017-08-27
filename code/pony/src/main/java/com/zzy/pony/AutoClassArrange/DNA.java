@@ -180,7 +180,7 @@ public class DNA {
 		
 		//预排课不排课设置
 		if (this.preNoCourse.get(this.classIdCandidate[classIndex]) != null) {
-			List<String> seqPeriods = this.classNoCourse.get(this.classIdCandidate[classIndex]);
+			List<String> seqPeriods = this.preNoCourse.get(this.classIdCandidate[classIndex]);
 			for (String seqPeriod:
 					seqPeriods){
 				int week = Integer.valueOf(seqPeriod.substring(0, 1))  ;
