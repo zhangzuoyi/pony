@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
@@ -154,12 +155,14 @@ public class ReLessonArrangeController {
 			List<Weekday> weekdays = weekdayService.findByhaveClass(Constants.HAVECLASS_FLAG_TRUE);
 			List<LessonPeriod> lessonPeriods= lessonPeriodService.findBySchoolYearAndTerm(year, term);
 			List<Map<String, Object>> dataList =  new ArrayList<Map<String,Object>>();
+			List<LessonArrange> allLessonArranges =  lessonArrangeService.findByClassIdAndSchoolYearAndTerm(cv.getClassId(), year, term);
 			for (LessonPeriod lessonPeriod : lessonPeriods) {
 				Map<String, Object> map = new HashMap<String, Object>();
 				//map.put("period",lessonPeriod.getStartTime()+"--"+lessonPeriod.getEndTime());
 				map.put("period", lessonPeriod.getSeq()+"");
 				for (Weekday weekday : weekdays) {
-					List<LessonArrange> lessonArranges =  lessonArrangeService.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(cv.getClassId(), year, term, weekday.getSeq()+"", lessonPeriod);
+//					List<LessonArrange> lessonArranges =  lessonArrangeService.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(cv.getClassId(), year, term, weekday.getSeq()+"", lessonPeriod);
+					List<LessonArrange> lessonArranges =  getLessonArranges(allLessonArranges, weekday.getSeq()+"", lessonPeriod);
 					if (!lessonArranges.isEmpty()) {
 						StringBuilder sb = new StringBuilder();
 						for (LessonArrange la : lessonArranges) {
@@ -189,12 +192,13 @@ public class ReLessonArrangeController {
 
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
+	private List<LessonArrange> getLessonArranges(List<LessonArrange> allLessonArranges,String weekDay,LessonPeriod lessonPeriod){
+		List<LessonArrange> list=new ArrayList<LessonArrange>();
+		for(LessonArrange la: allLessonArranges){
+			if(la.getLessonPeriod().getPeriodId().equals(lessonPeriod.getPeriodId()) && la.getWeekDay().equals(weekDay)){
+				list.add(la);
+			}
+		}
+		return list;
+	}
 }
