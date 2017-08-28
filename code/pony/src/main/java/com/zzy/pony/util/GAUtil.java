@@ -315,7 +315,23 @@ public class GAUtil {
 	* @date  2017年6月7日 下午5:26:22
 	*/
 	public static boolean  isSeqSubjectMatch(Map<String, List<String>> seqSubjectMap,int classNumber,int seqLength,String key,Set<Integer> alreadyClassNumber,
-			List<Integer> significantSeq,List<Integer> importantSeq,List<Integer> commonSeq,Map<String, Integer> subjectImportanceMap,int attempCount){
+			List<Integer> significantSeq,List<Integer> importantSeq,List<Integer> commonSeq,Map<String, Integer> subjectImportanceMap,Map<Integer, String> randomMap,Map<String, List<Integer>> alreadyTeacherSeqMap, int attempCount){
+		
+		
+		Set<Integer> notExistWeek = new HashSet<Integer>();
+		notExistWeek.add(1);
+		notExistWeek.add(2);
+		notExistWeek.add(3);
+		notExistWeek.add(4);
+		notExistWeek.add(5);
+		for (Integer integer : randomMap.keySet()) {
+			if (key.equalsIgnoreCase(randomMap.get(integer))) {
+				notExistWeek.remove(getWeek(integer, seqLength));
+			}
+		}
+		notExistWeek.add(getWeek(classNumber, seqLength));
+		
+		
 		
 		String seq = getSeq(classNumber, seqLength);	
 		/*List<String> subjectList = seqSubjectMap.get(seq);
@@ -338,15 +354,31 @@ public class GAUtil {
 			boolean flag2 = false;
 			int count = 0;
 			
+			List<Integer> alreadyTeacher = alreadyTeacherSeqMap.get(key.substring(0,4));
+			int alreadyCount = 0;
+			if (alreadyTeacher!=null && alreadyTeacher.size()>0) {
+
+			for (Integer integer : alreadyTeacher) {
+				 if (significantSeq.contains(Integer.valueOf(getSeq(integer, seqLength)))) {
+					 alreadyCount++;
+				} 
+			}
+			}
+			
+			
+			
 			for (Integer seqInt : significantSeq) {
 				
-				if (alreadyClassNumber.isEmpty() &&  classNumber ==(5-week)*seqLength+(seqLength-seqInt+1))  {
+				if (alreadyClassNumber.isEmpty() &&  classNumber ==(5-week)*seqLength+(seqLength-seqInt.intValue()+1))  {
 					flag = true;
-				}								
-				if (alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt+1))) {
-					count ++;
 				}
-				if (classNumber == ((5-week)*seqLength+(seqLength-seqInt+1))) {
+				for (Integer weekNum : notExistWeek) {
+					if (alreadyClassNumber.contains((5-weekNum)*seqLength+(seqLength-seqInt.intValue()+1))) {
+						count ++;
+					}
+				}
+				
+				if (classNumber == ((5-week)*seqLength+(seqLength-seqInt.intValue()+1))) {
 					flag2 = true;
 				}
 			}
@@ -356,58 +388,53 @@ public class GAUtil {
 			if (flag2) {
 				return true;
 			}
-			if(!flag2 && count!=significantSeq.size()){
+			if(!flag2 && count!=significantSeq.size()*notExistWeek.size()-alreadyCount){
 				return false;
-			}									
-			if(importantSeq.contains(Integer.valueOf(seq))){
-				return true;
-			}			
-			flag = false ;
+			}															
 			count = 0;			
 			for (Integer seqInt : importantSeq) {
-				if (alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt+1))) {
+				if (alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt.intValue()+1))) {
 					count ++;
 				}								
-			}
+			}		
 			if(count!=importantSeq.size()){
-				return false;
+				if (importantSeq.contains(Integer.valueOf(seq))) {
+					return true;
+				}
 			}
-			if(commonSeq.contains(Integer.valueOf(seq))){
+			else{
 				return true;
-			}									
+			}
+												
 		}
 		//@add 新增重要的优先排非常重要未排完的，然后排重要的
 		if (!key.startsWith("C")&&!key.startsWith("R")&& subjectImportanceMap.get(key.substring(4)) != null &&Constants.SUBJECT_IMPORTANT==subjectImportanceMap.get(key.substring(4))) {
 			boolean flag = false ;
 			boolean flag2 = false ;
-			boolean flag3 = false;
 			int count = 0;
-			int countSig = 0;
-
-			for (Integer seqInt : significantSeq) {
-				if (alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt+1))) {
-					countSig ++;
-				}
-				if (classNumber == ((5-week)*seqLength+(seqLength-seqInt+1))) {
-					flag3 = true;
-				}
+			
+			
+			List<Integer> alreadyTeacher = alreadyTeacherSeqMap.get(key.substring(0,4));
+			int alreadyCount = 0;
+			if (alreadyTeacher!=null && alreadyTeacher.size()>0) {
+				for (Integer integer : alreadyTeacher) {
+					 if (importantSeq.contains(Integer.valueOf(getSeq(integer, seqLength)))) {
+						 alreadyCount++;
+					} 
+				}	
 			}
-			if (countSig!=significantSeq.size()){
-				if (flag3){
-					return true;
-				}else{
-					return false;
-				}
-			}
-
+			
+			
 			for (Integer seqInt : importantSeq) {
-				if (alreadyClassNumber.isEmpty() &&  classNumber ==(5-week)*seqLength+(seqLength-seqInt+1))  {
+				if (alreadyClassNumber.isEmpty() &&  classNumber ==(5-week)*seqLength+(seqLength-seqInt.intValue()+1))  {
 					flag = true;
-				}								
-				if (alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt+1))) {
+				}
+				for (Integer weekNum : notExistWeek) {
+				if (alreadyClassNumber.contains((5-weekNum)*seqLength+(seqLength-seqInt.intValue()+1))) {
 					count ++;
 				}
-				if (classNumber == ((5-week)*seqLength+(seqLength-seqInt+1))) {
+				}
+				if (classNumber == ((5-week)*seqLength+(seqLength-seqInt.intValue()+1))) {
 					flag2 = true;
 				}
 			}
@@ -417,28 +444,81 @@ public class GAUtil {
 			if (flag2) {
 				return true;
 			}
-			if(!flag2&&count!=importantSeq.size()){
+			if(!flag2&&count!=importantSeq.size()*notExistWeek.size()-alreadyCount){
 				return false;
+			}			
+			
+			int countCommon = 0;
+			for (Integer seqInt : commonSeq) {
+				if (alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt.intValue()+1))) {
+					countCommon ++;
+				}
+				
 			}
-			if(commonSeq.contains(Integer.valueOf(seq))){
+			if (countCommon!=commonSeq.size()){
+				if (commonSeq.contains(Integer.valueOf(seq))){
+					return true;
+				}
+			}else {
 				return true;
-			}									
+			}
+			
 		}
 		if (!key.startsWith("C")&&!key.startsWith("R")&& subjectImportanceMap.get(key.substring(4))!= null&&Constants.SUBJECT_COMMON==subjectImportanceMap.get(key.substring(4))) {
 			boolean flag = false ;
+			boolean flag2 = false ;
+			
+			
+			List<Integer> alreadyTeacher = alreadyTeacherSeqMap.get(key.substring(0,4));
+			int alreadyCount = 0;
+			if (alreadyTeacher!=null && alreadyTeacher.size()>0) {
+
+			for (Integer integer : alreadyTeacher) {
+				 if (commonSeq.contains(Integer.valueOf(getSeq(integer, seqLength)))) {
+					 alreadyCount++;
+				} 
+			}
+			}
+
+			int countCommon = 0;
 			for (Integer seqInt : commonSeq) {
-				if (alreadyClassNumber.isEmpty() &&  classNumber ==(5-week)*seqLength+(seqLength-seqInt+1))  {
+				if (alreadyClassNumber.isEmpty() &&  classNumber ==(5-week)*seqLength+(seqLength-seqInt.intValue()+1))  {
 					flag = true;
-				}																
+				}
+				for (Integer weekNum : notExistWeek) {
+				if (alreadyClassNumber.contains((5-weekNum)*seqLength+(seqLength-seqInt.intValue()+1))) {
+					countCommon++;
+				}
+				}
+				if (classNumber == ((5-week)*seqLength+(seqLength-seqInt.intValue()+1))) {
+					flag2 = true;
+				}
 			}
 			if(flag){
 				return true;
-			}						
-			if(commonSeq.contains(Integer.valueOf(seq))){
+			}
+			if (flag2) {
 				return true;
-			}									
+			}
+			if (!flag2 && countCommon != commonSeq.size()*notExistWeek.size()-alreadyCount) {
+				return false;
+			}
+			
+			int  count = 0;			
+			for (Integer seqInt : importantSeq) {
+				if (alreadyClassNumber.contains((5-week)*seqLength+(seqLength-seqInt.intValue()+1))) {
+					count ++;
+				}								
+			}
+			if (count != importantSeq.size()) {
+				if(importantSeq.contains(Integer.valueOf(seq))){
+					return true;
+				}
+			}else {
+				return true;
+			}																											
 		}
-		return true;
+		return false;
 	}
 	
 	

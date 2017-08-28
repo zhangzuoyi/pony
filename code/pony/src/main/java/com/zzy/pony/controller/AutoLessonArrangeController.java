@@ -122,7 +122,7 @@ public class AutoLessonArrangeController {
 		});
 		executor.execute(future);
 		try {
-				boolean result = future.get(5, TimeUnit.MINUTES);
+				boolean result = future.get(8, TimeUnit.MINUTES);
 			}catch (InterruptedException e) {
 				// TODO: handle exception
 				e.printStackTrace();

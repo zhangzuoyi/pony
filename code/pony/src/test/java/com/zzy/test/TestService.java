@@ -66,7 +66,7 @@ public class TestService {
 			@Override
 			public Boolean call() throws Exception {
 				// TODO Auto-generated method stub	
-				Grade grade = gradeService.get(1);
+				Grade grade = gradeService.get(2);
 				SchoolYear year = schoolYearService.getCurrent();
 				Term term = termService.getCurrent();	
 				List<LessonArrange> autoList = lessonArrangeService.findBySchooleYearAndTermAndGradeIdAndSourceType(year, term,grade.getGradeId(), Constants.SOURCE_TYPE_AUTO);
@@ -79,7 +79,7 @@ public class TestService {
 		});
 		executor.execute(future);
 		try {
-				boolean result = future.get(3, TimeUnit.MINUTES);
+				boolean result = future.get(30, TimeUnit.MINUTES);
 				System.out.println(result);
 			}catch (InterruptedException e) {
 				// TODO: handle exception
