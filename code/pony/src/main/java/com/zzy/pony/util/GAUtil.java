@@ -815,6 +815,13 @@ public class GAUtil {
 				sortedMap.put(seq,oriMap.get(seq));
 			}
 		}
+		//增加走班
+		for (String key:
+		oriMap.keySet()) {
+			if (!sortedMap.containsKey(key)){
+				sortedMap.put(key,oriMap.get(key));
+			}
+		}
 		return sortedMap;
 	}
 
