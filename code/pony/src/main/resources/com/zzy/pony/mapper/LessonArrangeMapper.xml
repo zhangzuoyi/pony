@@ -4,7 +4,7 @@
 
 <mapper namespace="com.zzy.pony.mapper.LessonArrangeMapper">
 	<sql id="base_select">
-		select t.ARRANGE_ID as arrangeId ,t.CLASS_ID as classId,g.NAME  as gradeName,a.SEQ as classSeq,  t.YEAR_ID as yearId,t.TERM_ID as termId,t.PERIOD_ID as periodId,t.WEEK_DAY as weekdayId,t.SUBJECT_ID as subjectId ,f.`NAME` as subjectName, t.OTHER_LESSON as otherLesson,t.SOURCE_TYPE as sourceType ,i.TEACHER_ID as teacherId,
+		select t.ARRANGE_ID as arrangeId ,t.CLASS_ID as classId,g.NAME  as gradeName,a.SEQ as classSeq,  t.YEAR_ID as yearId,t.TERM_ID as termId,t.PERIOD_ID as periodId,d.SEQ as periodSeq,t.WEEK_DAY as weekdayId,t.SUBJECT_ID as subjectId ,f.`NAME` as subjectName, t.OTHER_LESSON as otherLesson,t.SOURCE_TYPE as sourceType ,i.TEACHER_ID as teacherId,
 	i.name as teacherName      from t_lesson_arrange t left join t_school_class a on t.CLASS_ID = a.CLASS_ID
 left join  t_school_year b on t.year_id = b.year_id left join t_term c on  t.term_id = c.TERM_ID
 left join t_lesson_period d on t.PERIOD_ID=d.PERIOD_ID left join t_weekday e on t.WEEK_DAY=e.SEQ
@@ -46,6 +46,23 @@ left join t_teacher i on h.teacher_id = i.teacher_id
 		 	and t.source_type =#{sourceType}
 		 </if>		 		    
 		  group by t.class_id,t.subject_id 
+	</select>
+	
+	<select id="findPreTeacherAlready" resultType="com.zzy.pony.vo.ArrangeVo">
+		<include refid="base_select"></include>	
+		 where 1=1
+		 <if test=" yearId != null and yearId != 0">
+		 	and  t.YEAR_ID=#{yearId}
+		 </if>
+		 <if test=" termId != null and termId != 0">
+		 	and t.TERM_ID=#{termId}
+		 </if>
+		 <if test=" gradeId != null and gradeId != 0">
+		 	and t.class_id in (select class_id from t_school_class where grade_id = #{gradeId})
+		 </if>		 			 
+		 <if test=" sourceType != null">
+		 	and t.source_type =#{sourceType}
+		 </if>		 		    
 	</select>
 	
 	

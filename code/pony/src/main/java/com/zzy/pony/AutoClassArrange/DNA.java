@@ -2,7 +2,6 @@ package com.zzy.pony.AutoClassArrange;
 
 import java.util.*;
 
-
 import com.zzy.pony.util.GAUtil;
 
 
@@ -38,6 +37,7 @@ public class DNA {
 	private Map<String, List<String>> subjectNoCourse;
 	private Map<String, String> gradeNoCourse;
 	private Map<String, List<String>> preNoCourse;
+	private Map<String, List<String>> preTeacherAlready;
 	private Map<String, Map<String,Integer>> preWeekArrange;
 	private Map<String, String> classInMorning;
 	private Map<String, String> classInAfternoon;
@@ -114,15 +114,29 @@ public class DNA {
 	*/
 	public String getDnaStringRuleTwo(int classIndex,Map<String, Map<String, String>> map,boolean isMutation ){
 		
+		int k = this.weekdayIdCandidate.length * this.seqIdCandidate.length;//总时间段数 5*7
+
 		//classIndex为说明是新的个体
 		if (classIndex == 0 && !isMutation) {
-			combineMap = new HashMap<String, Set<Integer>>();
+			combineMap = new HashMap<String, Set<Integer>>();			
 			alreadyTeacherSeqMap = new HashMap<String, List<Integer>>();
+			//处理预排与自动排的重叠，alreadyTeacherSeqMap初始化
+			
+			for (String teacherId : this.preTeacherAlready.keySet()) {
+				List<Integer> innerList = new ArrayList<Integer>();
+				for (String seqPeriod : this.preTeacherAlready.get(teacherId)) {
+					int week = Integer.valueOf(seqPeriod.substring(0, 1))  ;
+					int seq = Integer.valueOf(seqPeriod.substring(1, 2))  ;
+					 innerList.add(k-((week-1)*this.seqIdCandidate.length+seq)+1);
+				}			
+				alreadyTeacherSeqMap.put(teacherId, innerList);				
+			}
+			
+			
 		}
 		
 		StringBuilder sb = new StringBuilder();
 		Random random  = new Random();
-		int k = this.weekdayIdCandidate.length * this.seqIdCandidate.length;//总时间段数 5*7
 		//key:classId value( key:teacherId+subjectId value:weekArrange)	
 		String classId = this.classIdCandidate[classIndex];
 		Map<String, String> tmpMap = map.get(this.classIdCandidate[classIndex]);	
@@ -184,6 +198,8 @@ public class DNA {
 				randomMap.put(k-((week-1)*this.seqIdCandidate.length+seq)+1,"000000");
 			}
 		}
+		
+		
 		
 		
 		
@@ -695,4 +711,12 @@ public class DNA {
     public void setArrangeSeq(List<String> arrangeSeq) {
         this.arrangeSeq = arrangeSeq;
     }
+	public Map<String, List<String>> getPreTeacherAlready() {
+		return preTeacherAlready;
+	}
+	public void setPreTeacherAlready(Map<String, List<String>> preTeacherAlready) {
+		this.preTeacherAlready = preTeacherAlready;
+	}
+    
+    
 }

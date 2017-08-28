@@ -11,8 +11,10 @@ import java.util.concurrent.locks.Condition;
 
 import javax.transaction.Transactional;
 
+import com.zzy.pony.mapper.LessonArrangeMapper;
 import com.zzy.pony.mapper.TeacherSubjectMapper;
 import com.zzy.pony.vo.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -75,6 +77,8 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 	private PreLessonArrangeService preLessonArrangeService;
 	@Autowired
 	private TeacherSubjectMapper teacherSubjectMapper;
+	@Autowired
+	private LessonArrangeMapper lessonArrangeMapper;
 	
 	
 	
@@ -150,6 +154,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		cv.setYearId(schoolYear.getYearId());
 		cv.setTermId(term.getTermId());
 		cv.setGradeId(gradeId);
+		cv.setSourceType(Constants.SOURCE_TYPE_PRE);
 		List<TeacherSubjectVo> voSeq = teacherSubjectMapper.findArrangeSeq(cv);
 		List<ClassNoCourseVo> classNoCourseVos = classNoCourseService.findCurrentAllVo();
 		List<TeacherNoCourseVo> teacherNoCourseVos = teacherNoCourseService.findCurrentAllVo();
@@ -159,6 +164,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		List<CombineAndRotationVo> combineAndRotationVos2 = arrangeCombineService.findCurrentAllVo();
 		List<ArrangeVo> arrangeVos = preLessonArrangeService.findCurrentVo();
  		List<ArrangeVo> arrangeVos2 = preLessonArrangeService.findCurrentWeekArrange();
+ 		List<ArrangeVo> arrangeVos3 = lessonArrangeMapper.findPreTeacherAlready(cv);
 		Map<String, Set<Integer>> combineMap = new HashMap<String, Set<Integer>>();
 		Map<String, List<Integer>> alreadyTeacherSeqMap = new HashMap<String, List<Integer>>();
 		DNA.getInstance().setClassIdCandidate(classIdCandidate);
@@ -169,6 +175,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		DNA.getInstance().setTeacherSubjectweekArrange(GAUtil.getTeacherSubjectweekArrange(vos));
 		DNA.getInstance().setPreNoCourse(GAUtil.getPreNoCourse(arrangeVos));
 		DNA.getInstance().setPreWeekArrange(GAUtil.getPreClassTeacherSubjectweekArrange(arrangeVos2));
+		DNA.getInstance().setPreTeacherAlready(GAUtil.getPreTeacherAlready(arrangeVos3));
 		DNA.getInstance().setClassNoCourse(GAUtil.getClassNoCourse(classNoCourseVos));
 		DNA.getInstance().setTeacherNoCourse(GAUtil.getTeacherNoCourse(teacherNoCourseVos));
 		DNA.getInstance().setSubjectNoCourse(GAUtil.getSubjectNoCourse(subjectNoCourseVos));

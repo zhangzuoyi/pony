@@ -758,6 +758,25 @@ public class GAUtil {
 		
 	}
 	
+	public static Map<String,List<String>> getPreTeacherAlready(List<ArrangeVo> list){
+		Map<String, List<String>> result =  new HashMap<String, List<String>>();
+		for (ArrangeVo vo : list) {			
+			String seqId = String.format("%01d", vo.getWeekdayId())  ;
+			String teacherId=String.format("%04d", vo.getTeacherId()) ;
+			String periodId =String.format("%01d", vo.getPeriodSeq())  ;
+			if (result.containsKey(teacherId)){
+				result.get(teacherId).add(seqId+periodId);
+			}else {
+				List<String> innerList = new ArrayList<String>();
+				innerList.add(seqId+periodId);
+				result.put(teacherId, innerList);
+			}
+
+		}		
+		return result;
+		
+	}
+	
 	
 	public static Map<String,List<String>> getClassNoCourse(List<ClassNoCourseVo> list){
 		Map<String, List<String>> result =  new HashMap<String, List<String>>();
