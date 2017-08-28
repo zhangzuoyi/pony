@@ -1398,7 +1398,47 @@ public class GAUtil {
 		
 		return false;
 	}*/
-	
+
+
+	public static boolean isNext(Map<String, List<Integer>> map,int classNum,String key,int attempCount){
+		if (attempCount>MAX_ATTEMPT){
+			return false;
+		}
+		for (String teacherId:
+		map.keySet()) {
+			if (teacherId.equalsIgnoreCase(key.substring(4))){
+				for (int interger:
+					 map.get(teacherId)) {
+					int max = 0;
+					int min = 0;
+					if (interger>=1&& interger<=8){
+						max = 8;
+						min = 1;
+					}
+					if (interger>=9&& interger<=16){
+						max = 16;
+						min = 9;
+					}
+					if (interger>=17&& interger<=24){
+						max = 24;
+						min = 17;
+					}
+					if (interger>=25&& interger<=32){
+						max = 32;
+						min = 25;
+					}
+					if (interger>=33&& interger<=40){
+						max = 40;
+						min = 33;
+					}
+					if (Math.abs(interger-classNum)<3&&classNum<max&&classNum>min){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 	
 	public static boolean  isTeacherInAlreadySeqMap(Map<String, List<Integer>> alreadyTeacherSeqMap ,int classNumber,String key/*,int attempCount*/){
 		

@@ -257,6 +257,7 @@ public class DNA {
 							||GAUtil.isExistClass(randomMap, classNumber,key,this.seqIdCandidate.length,attempCount)||GAUtil.isTeacherInAlreadySeqMap(alreadyTeacherSeqMap, classNumber, key.substring(0, this.teacherIdBit)/*,attempCount*/)
 							/*||( !key.startsWith("C")&&!key.startsWith("R")&&  this.classInMorning.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isMorning(classNumber,this.seqIdCandidate.length,this.seqMornigLength))
 							||(!key.startsWith("C")&&!key.startsWith("R")&&this.classInAfternoon.containsKey(key.substring(this.teacherIdBit, this.teacherIdBit+this.subjectIdBit)) && !GAUtil.isAfternoon(classNumber,this.seqIdCandidate.length,this.seqAfternoonLength))*/
+							||GAUtil.isNext(alreadyTeacherSeqMap,classNumber,key,attempCount)
 							||GAUtil.isAlreadyComplete(classNumber, randomMap.keySet(), k, key,alreadyTeacherSeqMap,remainClassSet,remainClassMap,this.seqIdCandidate.length,this.teacherIdBit,attempCount)
 							||(this.teacherSubjectRegularClassMap.containsKey(key)&& !GAUtil.isInWeekSet(classNumber, teacherSubjectRegularClassMap.get(key),this.seqIdCandidate.length,attempCount)
 							||!GAUtil.isSeqSubjectMatch(this.seqSubjectMap, classNumber, this.seqIdCandidate.length, key,randomMap.keySet(),this.significantSeq,this.importantSeq,this.commonSeq,this.subjectImportanceMap,randomMap,alreadyTeacherSeqMap,attempCount)
