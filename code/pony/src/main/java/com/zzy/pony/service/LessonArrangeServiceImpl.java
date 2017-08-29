@@ -13,6 +13,7 @@ import com.zzy.pony.config.Constants;
 import com.zzy.pony.dao.LessonArrangeDao;
 import com.zzy.pony.dao.LessonPeriodDao;
 import com.zzy.pony.dao.SchoolClassDao;
+import com.zzy.pony.mapper.LessonArrangeMapper;
 import com.zzy.pony.model.LessonArrange;
 import com.zzy.pony.model.LessonPeriod;
 import com.zzy.pony.model.SchoolClass;
@@ -39,6 +40,8 @@ public class LessonArrangeServiceImpl implements LessonArrangeService {
 	private SubjectService subjectService;
 	@Autowired
 	private SchoolClassService schoolClassService;
+	@Autowired
+	private LessonArrangeMapper lessonArrangeMapper;
 
 	@Override
 	public void add(LessonArrange sy) {
@@ -189,6 +192,22 @@ public class LessonArrangeServiceImpl implements LessonArrangeService {
 		
 		return null;
 	}
+
+	@Override
+	public boolean isTeacherConflict(int week, int period,
+			int teacherId) {
+		// TODO Auto-generated method stub
+		SchoolYear year = yearService.getCurrent();
+		Term term = termService.getCurrent();
+		List<Integer> teacherIds = lessonArrangeMapper.findByWeekAndPeriodAndTeacherId(year.getYearId(), term.getTermId(), week, period, teacherId);
+		
+		if(teacherIds != null && teacherIds.size() > 0){
+			return true;
+		}		
+		return false;
+	}
+	
+	
 	
 	
 	

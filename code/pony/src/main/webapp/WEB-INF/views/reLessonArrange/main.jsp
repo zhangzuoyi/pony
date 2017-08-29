@@ -244,6 +244,10 @@ var app = new Vue({
 							this.select.push(this.afterSelect);
 							 this.$http.post(this.rearrangeUrl,this.select).then(
 									function(response){
+									
+										if(response.data["key"]!= null &&response.data["key"] != ""){
+											this.$alert(response.data["key"]+"存在重课,请重新调整","提示",{confirmButtonText : '确认'});
+										}																			
 										this.select=[];
 										this.beforeSelect=null;
 										this.afterSelect=null;

@@ -65,5 +65,12 @@ left join t_teacher i on h.teacher_id = i.teacher_id
 		 </if>		 		    
 	</select>
 	
+	<select id="findByWeekAndPeriodAndTeacherId" resultType="int">
+		select a.TEACHER_ID from t_lesson_arrange t 
+		left join t_teacher_subject a on t.CLASS_ID = a.CLASS_ID and t.SUBJECT_ID = a.SUBJECT_ID and t.YEAR_ID = a.YEAR_ID and t.TERM_ID = a.TERM_ID
+		where t.YEAR_ID = #{0} and t.TERM_ID = #{1} 
+		and t.PERIOD_ID = #{3} and t.WEEK_DAY = #{2} and a.TEACHER_ID = #{4};		 		    
+	</select>
+	
 	
 </mapper>

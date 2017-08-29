@@ -23,4 +23,5 @@ public interface LessonArrangeService {
 	List<LessonArrange> findBySchooleYearAndTermAndGradeIdAndSourceType(SchoolYear year ,Term term,int gradeId, String sourceType);
 	List<LessonArrange> findBySchoolYearAndTerm(SchoolYear year ,Term term);
 	void deleteList(List<LessonArrange> list);
+	boolean isTeacherConflict(int week,int period,int teacherId);
 }
