@@ -6,7 +6,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>学校管理系统</title>
+    <title>管理系统</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
@@ -17,7 +17,7 @@
 <div class="layui-layout-admin fly-body">
     <div class="layui-header">
         <div class="admin-title dp-ib">
-            <h1 class="fs-24 dp-ib c-fff mgl-20 mgt-10">学校管理系统</h1></div>
+            <h1 class="fs-24 dp-ib c-fff mgl-20 mgt-10">管理系统</h1></div>
         <%--<div class="layui-top-nav dp-ib ve-t">
             <ul class="layui-nav">
                 <li class="layui-nav-item">
@@ -217,6 +217,10 @@
                             <label>考场考生安排</label></a>
                     </dd>
                     <dd>
+                        <a href="javascript:;" data-url="<s:url value='/examAdmin/monitorArrange/main/' />">
+                            <label>监考设置</label></a>
+                    </dd>
+                    <dd>
                         <a href="javascript:;" data-url="<s:url value='/examResult/main/' />">
                             <label>成绩管理</label></a>
                     </dd>
@@ -275,6 +279,12 @@
                                 <label>科目不排课设置</label></a>
                         </dd>
                     </shiro:hasPermission>
+                    <shiro:hasPermission name="arrange_combine">
+                    	<dd>
+                            <a href="javascript:;" data-url="<s:url value='/arrangeCombine/main/' />">
+                                <label>合班设置</label></a>
+                        </dd>
+                	</shiro:hasPermission>
                     <shiro:hasPermission name="arrange_rotation">
                         <dd>
                             <a href="javascript:;" data-url="<s:url value='/arrangeRotation/main/' />">

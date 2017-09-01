@@ -28,4 +28,10 @@ public interface StudentService {
 	void upload(List<Student> students, String loginUser);
 	void changeStatus(StudentStatusChange sc);
 	List<Student> findByGradeOrderByStudentId(int gradeId);
+	/**
+	 * 设置学生的考试科目
+	 * @param subjects 科目名称
+	 * @param studentIds
+	 */
+	void setStudentSubjects(String[] subjects,Integer[] studentIds);
 }

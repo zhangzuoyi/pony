@@ -127,7 +127,7 @@ width:200px;
                         label="结束时间"
                         >
                 </el-table-column><el-table-column
-                		prop="capacity"
+                		prop="examineeTotal"
                         label="考生人数"
                         >
                 </el-table-column>
@@ -540,7 +540,8 @@ var app = new Vue({
                     function(response){
                         this.$message({type:"info",message:"删除成功"});                   
                         this.multipleSelection=[];
-                        });
+                        this.listByPage();
+                     });
 				
 				
             },
@@ -639,9 +640,9 @@ var app = new Vue({
 			 this.$http.get(this.submitByClassUrl,{params:{examId:this.examId,classIds:this.checkedClasses,arrangeIds:arrangeIds}}).then(
                     function(response){
                     	this.$message({type:"info",message:"设置成功"});
-                        this.examId = null;
-                        this.gradeId = null;
-                        this.gradeName = null;
+                        //this.examId = null;
+                        //this.gradeId = null;
+                        //this.gradeName = null;
                         this.checkedClasses=[];
                         this.multipleSelection=[];
                         this.setExamineeDialogFormVisible=false;
@@ -670,9 +671,9 @@ var app = new Vue({
               this.$http.get(this.submitByStudentUrl,{params:{examineeIds:examineeIds,arrangeIds:arrangeIds}}).then(
                     function(response){
                         this.$message({type:"info",message:"设置成功"});                   
-                        this.examId = null;
-                        this.gradeId = null;
-                        this.gradeName = null;
+                        //this.examId = null;
+                        //this.gradeId = null;
+                        //this.gradeName = null;
                         this.checkedClasses=[];
                         this.multipleSelection=[];
                         this.multipleSelection2=[];

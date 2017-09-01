@@ -506,10 +506,11 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		for (int i = 0; i < examinees.size()-2; i++) {
 			int j = i;
 			if (examinees.get(i+1).getStudent().getSchoolClass().equals(examinees.get(i).getStudent().getSchoolClass())) {			
-				while(examinees.get(i+1).getStudent().getSchoolClass().equals(examinees.get(j+2).getStudent().getSchoolClass())&&(j+2)<examinees.size()){
+				while((j+2)<examinees.size() && examinees.get(i+1).getStudent().getSchoolClass().equals(examinees.get(j+2).getStudent().getSchoolClass())){
 					j++;
 				}
-				CollectionsUtil.swap(examinees, i+1, j+2);				
+				if((j+2)<examinees.size())
+					CollectionsUtil.swap(examinees, i+1, j+2);
 			}						
 		}				
 	}

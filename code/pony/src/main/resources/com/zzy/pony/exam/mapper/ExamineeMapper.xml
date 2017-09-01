@@ -9,13 +9,18 @@
 		left join t_student a on t.STUDENT_ID = a.STUDENT_ID
 		left join t_examinee_arrange b on t.examinee_id = b.examinee_id
 	</sql>
+	<sql id="base_select2">
+		select t.EXAMINEE_ID as examineeId,t.EXAM_ID as examId,t.STUDENT_ID as studentId,t.REG_NO as regNo,
+		a.`NAME` as name,a.SEX as sex,a.STUDENT_NO as studentNo from t_examinee t 
+		left join t_student a on t.STUDENT_ID = a.STUDENT_ID
+	</sql>
 	<select id="findPageByClass" resultType="com.zzy.pony.exam.vo.ExamineeVo">
-		<include refid="base_select"></include>
+		<include refid="base_select2"></include>
 		 where a.class_id=#{3} and t.EXAM_ID=#{2} limit #{0},#{1}
 	</select>
 	<select id="findCountByClass" resultType="int">
 		select count(1) from 
-		(<include refid="base_select"></include>
+		(<include refid="base_select2"></include>
 		 where a.class_id=#{1} and t.EXAM_ID=#{0}) t 
 	</select>		
 	
@@ -77,5 +82,29 @@ LEFT JOIN t_subject d ON c.SUBJECT_ID = d.SUBJECT_ID
 where t.exam_id = #{0}
 order by t.grade_rank
 	</select>
-	
+	<delete id="deleteExamineeArrangeByClass" >
+		delete from t_examinee_arrange where arrange_id=#{1} and examinee_id in
+		(select ee.examinee_id from t_examinee ee left join t_student u on ee.student_id=u.student_id 
+		where u.class_id in 
+		<foreach item="item" index="index" collection="classIds" open="(" separator="," close=")">  
+     		 #{item}  
+     	</foreach>
+		 and ee.exam_id=#{0})
+	</delete>
+	<insert id="insertExamineeArrangeByClass" >
+		insert into t_examinee_arrange (arrange_id,examinee_id) 
+		select #{1},ee.examinee_id from t_examinee ee left join t_student u on ee.student_id=u.student_id 
+		where ee.exam_id=#{0} and u.class_id in 
+		<foreach item="item" index="index" collection="classIds" open="(" separator="," close=")">  
+     		 #{item}  
+     	</foreach>
+	</insert>
+	<insert id="insertExamineeArrangeByExaminee" >
+		insert into t_examinee_arrange (arrange_id,examinee_id) 
+		SELECT #{0}, #{1} FROM dual 
+        WHERE not exists (select 1 from t_examinee_arrange t where t.arrange_id = #{0} and t.examinee_id=#{1})
+	</insert>
+	<delete id="deleteExamineeArrangeByArrangeId" >
+		delete from t_examinee_arrange where arrange_id=#{0}
+	</delete>
 </mapper>

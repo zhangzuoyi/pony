@@ -117,7 +117,9 @@ public class SchoolClassController {
 	@RequestMapping(value="findByGrade",method = RequestMethod.GET)
 	@ResponseBody
 	public List<SchoolClassVo> findByGrade(@RequestParam(value="gradeId") int gradeId,Model model){
-		List<SchoolClass> schoolClasses =service.findByGrade(gradeId);
+//		List<SchoolClass> schoolClasses =service.findByGrade(gradeId);
+		SchoolYear year = yearService.getCurrent();
+		List<SchoolClass> schoolClasses =service.findByYearAndGrade(year.getYearId(), gradeId);
 		return toSimpleVo(schoolClasses);
 	}
 	

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -182,5 +183,15 @@ public class StudentServiceImpl implements StudentService {
 		}
 		
 		return STUDENT_STATUS_ZD;
+	}
+	@Override
+	public void setStudentSubjects(String[] subjects, Integer[] studentIds) {
+		String subjectsName=StringUtils.join(subjects, ",");
+		for(Integer studentId: studentIds){
+			Student student=dao.findOne(studentId);
+			student.setExamSubjects(subjectsName);
+			dao.save(student);
+		}
+		
 	}
 }

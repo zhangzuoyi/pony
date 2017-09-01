@@ -26,7 +26,8 @@
         <div class="my-toolbar-button">
         	<a href="#" class="easyui-menubutton" data-options="menu:'#mm2'">状态变更</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit" onclick="openEdit()" plain="true">修改</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-remove" onclick="removeItem()" plain="true">删除</a>
+            <!-- <a href="#" class="easyui-linkbutton" iconCls="icon-remove" onclick="removeItem()" plain="true">删除</a> -->
+            <a href="#" class="easyui-linkbutton" iconCls="icon-edit" onclick="openSetSubjects()" plain="true">设置考试科目</a>
         </div>
         <div id="mm2" style="width:100px;">
 	        <div onclick="openChangeStatus('开除')">开除</div>
@@ -51,7 +52,7 @@
         </div>
     </div>
     <!-- End of toolbar -->
-    <table id="my-datagrid-2" class="easyui-datagrid" toolbar="#my-toolbar-2" data-options="singleSelect:true,fitColumns:true,fit:true">
+    <table id="my-datagrid-2" class="easyui-datagrid" toolbar="#my-toolbar-2" data-options="fitColumns:true,fit:true">
     	<thead> 
             <tr> 
                 <th data-options="field:'studentNo',width:100">学号</th> 
@@ -61,8 +62,9 @@
                 <th data-options="field:'nativePlace',width:100">籍贯</th> 
                 <th data-options="field:'phone',width:100">联系电话</th> 
                 <th data-options="field:'entranceDate',width:100">入学日期</th> 
-                <th data-options="field:'entranceType',width:100">学生类型</th> 
-                <th data-options="field:'status',width:100">状态</th> 
+                <th data-options="field:'entranceType',width:100,formatter:entranceTypeFormat">学生类型</th> 
+                <th data-options="field:'status',width:100,formatter:statusFormat">状态</th> 
+                <th data-options="field:'examSubjects',width:100">考试科目</th> 
                 <!-- <th data-options="field:'schoolClass',width:100,formatter:classFormatter">班级</th>  -->
             </tr> 
         </thead>
@@ -196,6 +198,24 @@
                 <td colspan="3">
                 	<textarea rows="3" style="width:500px;" name="description"></textarea>
                 </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div id="my-dialog-5" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:800px; padding:10px;">
+	<form id="my-form-5" method="post" >
+        <table>
+            <tr>
+                <td width="60" align="right">科目:</td>
+                <td>
+                	<c:forEach items="${subjects }" var="g">
+                		<input type="checkbox" name="subjects" value="${g.name }" />${g.name }
+                	</c:forEach>
+                </td>
+            </tr>
+            <tr>
+                <td width="60" align="right"></td>
+                <td><input type="hidden" name="studentIds" /></td>
             </tr>
         </table>
     </form>
@@ -358,6 +378,51 @@
         });
 	}
 	
+	function openSetSubjects(){
+		$('#my-form-5').form('clear');
+		var items = $('#my-datagrid-2').datagrid('getSelections');
+		if(items.length == 0){
+			$.messager.alert('信息提示','请选择学生！','info');
+			return;
+		}
+		var studentIds=[];
+		for(var i=0;i<items.length;i++){
+			studentIds.push(items[i].studentId);
+		}
+		$("input[name='studentIds']").val(studentIds.join(","));
+		$('#my-dialog-5').dialog({
+			closed: false,
+			modal:true,
+            title: "设置考试科目",
+            buttons: [{
+                text: '确定',
+                iconCls: 'icon-ok',
+                handler: submitSetSubjects
+            }, {
+                text: '取消',
+                iconCls: 'icon-cancel',
+                handler: function () {
+                    $('#my-dialog-5').dialog('close');                    
+                }
+            }]
+        });
+	}
+	function submitSetSubjects(){
+		$('#my-form-5').form('submit', {
+			url:"<s:url value='/studentAdmin/setSubjects' />",
+			success:function(data){
+				if(data){
+					$.messager.alert('信息提示','提交成功！','info');
+					reload();
+					$('#my-dialog-5').dialog('close');
+				}
+				else
+				{
+					$.messager.alert('信息提示','提交失败！','info');
+				}
+			}
+		});
+	}
 	function openChangeStatus(ct){
 		var item = $('#my-datagrid-2').datagrid('getSelected');
 		$('#my-form-4').form('clear');
@@ -419,6 +484,17 @@
 			return "女";
 		}
 		return "";
+	}
+	var entranceTypes={'0':'统招','1':'转入','2':'借入'};
+	function entranceTypeFormat(value,rec){
+		
+		return entranceTypes[rec.entranceType];
+	}
+
+	var statusList={'0':'在读','1':'毕业','2':'开除','3':'退学','4':'辍学','5':'肄业','6':'转出','7':'借出','8':'休学','9':'死亡'};
+	function statusFormat(value,rec){
+		
+		return statusList[rec.status];
 	}
 	
 	$(document).ready(function(){

@@ -97,6 +97,7 @@ public class ExamArrangeController {
 				}
 				vo.setExamineeIds(examineeIds);
 				vo.setExamineeNames(examineeNames);
+				vo.setExamineeTotal(examineeIds.size());
 			}
 			if (ea.getExamRoomAllocates()!= null && !ea.getExamRoomAllocates().isEmpty()) {
 				List<Integer> examRoomIds = new ArrayList<Integer>();
@@ -119,13 +120,13 @@ public class ExamArrangeController {
                 vo.setSubjectId(ea.getSubject().getSubjectId());
                 vo.setSubjectName(ea.getSubject().getName());
             }
-            if (ea.getExamRoomAllocates()!= null) {
-				int count = 0;
-            	for (ExamRoomAllocate era : ea.getExamRoomAllocates()) {
-            		count += era.getCapacity();
-				}
-            vo.setExamineeTotal(count);
-			}
+//            if (ea.getExamRoomAllocates()!= null) {
+//				int count = 0;
+//            	for (ExamRoomAllocate era : ea.getExamRoomAllocates()) {
+//            		count += era.getCapacity();
+//				}
+//            vo.setExamineeTotal(count);
+//			}
 			content.add(vo);
 			
 		}

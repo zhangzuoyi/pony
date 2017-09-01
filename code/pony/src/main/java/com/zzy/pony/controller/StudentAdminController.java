@@ -40,16 +40,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.model.CommonDict;
-import com.zzy.pony.model.Grade;
 import com.zzy.pony.model.SchoolClass;
-import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Student;
 import com.zzy.pony.model.StudentStatusChange;
 import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.service.DictService;
 import com.zzy.pony.service.SchoolClassService;
-import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.StudentService;
+import com.zzy.pony.service.SubjectService;
 import com.zzy.pony.util.DateTimeUtil;
 import com.zzy.pony.util.TemplateUtil;
 
@@ -62,7 +60,8 @@ public class StudentAdminController {
 	private SchoolClassService classService;
 	@Autowired
 	private DictService dictService;
-
+	@Autowired
+	private SubjectService subjectService;
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
 	public String main(Model model){
@@ -71,6 +70,7 @@ public class StudentAdminController {
 		model.addAttribute("sexes", dictService.findSexes());
 		model.addAttribute("credentials", dictService.findCredentials());
 		model.addAttribute("studentTypes", dictService.findStudentTypes());
+		model.addAttribute("subjects", subjectService.findAll());
 		return "studentAdmin/main";
 	}
 	@RequestMapping(value="entrance",method = RequestMethod.GET)
@@ -275,6 +275,12 @@ public class StudentAdminController {
 		return new ResponseEntity<byte[]>(TemplateUtil.getContent(fileName), headers, HttpStatus.CREATED);
 	}
 
+	@RequestMapping(value="setSubjects",method = RequestMethod.POST)
+	@ResponseBody
+	public String setSubjects(String[] subjects,Integer[] studentIds, Model model){
+		service.setStudentSubjects(subjects, studentIds);
+		return "success";
+	}
 	@InitBinder
 	protected void initBinder(WebDataBinder binder) throws ServletException {
 		binder.registerCustomEditor(byte[].class, new ByteArrayMultipartFileEditor());

@@ -62,7 +62,7 @@ public class StudentRemarkController {
 	public String main(Model model) {
 		model.addAttribute("year", yearService.getCurrent());
 		model.addAttribute("term", termService.getCurrent());
-		model.addAttribute("classes", scService.findAll());
+		model.addAttribute("classes", scService.findCurrent());
 		model.addAttribute("remarkLevels", dictService.findStudentRemarkLevels());
 		return "studentRemark/main";
 	}

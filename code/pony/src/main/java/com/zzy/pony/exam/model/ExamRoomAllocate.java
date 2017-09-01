@@ -32,6 +32,10 @@ public class ExamRoomAllocate implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="ARRANGE_ID")
 	private ExamArrange examArrange;
+	
+	@ManyToOne
+	@JoinColumn(name="TEACHER_ID")
+	private ExamArrange examTeacher;//监考老师
 
 	//bi-directional many-to-one association to ExamineeRoomArrange
 	@OneToMany(mappedBy="examRoomAllocate")
@@ -78,6 +82,14 @@ public class ExamRoomAllocate implements Serializable {
 
 	public void setExamArrange(ExamArrange examArrange) {
 		this.examArrange = examArrange;
+	}
+
+	public ExamArrange getExamTeacher() {
+		return examTeacher;
+	}
+
+	public void setExamTeacher(ExamArrange examTeacher) {
+		this.examTeacher = examTeacher;
 	}
 
 	public List<ExamineeRoomArrange> getExamineeRoomArranges() {

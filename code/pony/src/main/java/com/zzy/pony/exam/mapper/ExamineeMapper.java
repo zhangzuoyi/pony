@@ -17,4 +17,8 @@ public interface ExamineeMapper {
 	List<Examinee> findByArrangeId(int arrangeId);
 	List<Examinee> findByExamIdAndClassIds(int examId,@Param(value="classIds")int[] classIds);
 	List<RankVo> findRankByExam(int examId);
+	void deleteExamineeArrangeByClass(int examId,int arrangeId,@Param(value="classIds")int[] classIds);
+	void insertExamineeArrangeByClass(int examId,int arrangeId,@Param(value="classIds")int[] classIds);
+	void insertExamineeArrangeByExaminee(int arrangeId,int examineeId);
+	void deleteExamineeArrangeByArrangeId(int arrangeId);
 }

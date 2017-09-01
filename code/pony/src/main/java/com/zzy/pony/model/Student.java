@@ -118,6 +118,9 @@ public class Student implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="CLASS_ID")
 	private SchoolClass schoolClass;
+	
+	@Column(name="EXAM_SUBJECTS")
+	private String examSubjects;
 
 	public Student() {
 	}
@@ -323,6 +326,14 @@ public class Student implements Serializable {
 
 	public void setSchoolClass(SchoolClass schoolClass) {
 		this.schoolClass = schoolClass;
+	}
+
+	public String getExamSubjects() {
+		return examSubjects;
+	}
+
+	public void setExamSubjects(String examSubjects) {
+		this.examSubjects = examSubjects;
 	}
 
 }

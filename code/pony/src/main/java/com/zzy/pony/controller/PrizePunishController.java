@@ -45,7 +45,7 @@ public class PrizePunishController {
 	public String main(Model model) {
 		model.addAttribute("year", yearService.getCurrent());
 		model.addAttribute("term", termService.getCurrent());
-		model.addAttribute("classes", scService.findAll());
+		model.addAttribute("classes", scService.findCurrent());
 		model.addAttribute("ppTypes", Constants.PP_TYPES);
 		return "prizePunish/main";
 	}
