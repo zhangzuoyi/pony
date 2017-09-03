@@ -55,7 +55,7 @@ width:200px;
             	</el-col> 
            		 <el-col :span="5" >
             		<div class="grid-content bg-purple">                                     
-					<el-select v-model="examId" @change="getExamSubjects()"    filterable clearable placeholder="请选择..">
+					<el-select v-model="examId" @change="getExamSubjects()" filterable clearable placeholder="请选择..">
                		 <el-option
                         v-for="exam in exams" 
                         :label="exam.name"                      
@@ -71,7 +71,7 @@ width:200px;
             	</el-col> 
             	<el-col :span="5" >
             	<div class="grid-content bg-purple">                                     
-					<el-select v-model="gradeId"  filterable clearable placeholder="请选择..">
+					<el-select v-model="gradeId" @change="getExamSubjects()" filterable clearable placeholder="请选择..">
                		 <el-option
                         v-for="grade in grades" 
                         :label="grade.name"                      
@@ -159,7 +159,7 @@ var app = new Vue({
 		termUrl:"<s:url value='/term/getCurrent'/>",
 		examUrl:"<s:url value='/exam/list'/>",
 		gradesUrl :"<s:url value='/grade/list'/>",
-		examSubjectUrl:"<s:url value='/examAdmin/examArrange/findByExam'/>",
+		examSubjectUrl:"<s:url value='/examAdmin/examArrange/findByExamAndGrade'/>",
 		examRoomsUrl:"<s:url value='/examAdmin/examRoom/list'/>",	
 		subjectNamesUrl:"<s:url value='/subject/getSubjects'/>",
 		examRoomNamesUrl:"<s:url value='/examAdmin/examRoom/getExamRooms'/>",
@@ -239,12 +239,15 @@ var app = new Vue({
 			function(response){}  	 			
 			);
 			},
-			getExamSubjects	:function(){ 			
-			this.$http.get(this.examSubjectUrl,{params:{examId:this.examId}}).then(
-			function(response){
-			this.subjects=response.data; },
-			function(response){}  	 			
-			);
+			getExamSubjects	:function(){
+				if(this.examId && this.gradeId){
+					this.$http.get(this.examSubjectUrl,{params:{examId:this.examId,gradeId:this.gradeId}}).then(
+							function(response){
+							this.subjects=response.data; },
+							function(response){}  	 			
+					);
+				}
+				
 			},		
 			handleCheckAllChange:function(event){
 			    var allSubjects = [];

@@ -185,6 +185,16 @@ public class ExamArrangeController {
 		}
 		return result;
 	}
+	@RequestMapping(value="findByExamAndGrade",method = RequestMethod.GET)
+	@ResponseBody
+	public List<Subject> findByExamAndGrade(@RequestParam(value="examId") int examId,@RequestParam(value="gradeId") int gradeId){
+		List<Subject> result = new ArrayList<Subject>();				
+		List<ExamArrange> examArranges = examArrangeService.findByExamAndGrade(examId,gradeId);
+		for (ExamArrange examArrange : examArranges) {
+			result.add(examArrange.getSubject());
+		}
+		return result;
+	}
 	//所有考试科目，带分组
 	@RequestMapping(value="findGroupByExam",method = RequestMethod.GET)
 	@ResponseBody

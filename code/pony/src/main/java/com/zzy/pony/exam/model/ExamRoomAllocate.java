@@ -1,8 +1,20 @@
 package com.zzy.pony.exam.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import com.zzy.pony.model.Teacher;
 
 
 /**
@@ -35,7 +47,7 @@ public class ExamRoomAllocate implements Serializable {
 	
 	@ManyToOne
 	@JoinColumn(name="TEACHER_ID")
-	private ExamArrange examTeacher;//监考老师
+	private Teacher examTeacher;//监考老师
 
 	//bi-directional many-to-one association to ExamineeRoomArrange
 	@OneToMany(mappedBy="examRoomAllocate")
@@ -84,11 +96,11 @@ public class ExamRoomAllocate implements Serializable {
 		this.examArrange = examArrange;
 	}
 
-	public ExamArrange getExamTeacher() {
+	public Teacher getExamTeacher() {
 		return examTeacher;
 	}
 
-	public void setExamTeacher(ExamArrange examTeacher) {
+	public void setExamTeacher(Teacher examTeacher) {
 		this.examTeacher = examTeacher;
 	}
 

@@ -44,10 +44,14 @@ public class ExamArrangeServiceImpl implements ExamArrangeService {
 	
 	@Override
 	public Page<ExamArrange> findByExamAndGrade(Pageable pageable,int examId,int gradeId) {
-		// TODO Auto-generated method stub
 		Exam exam = examService.get(examId);
 		Grade grade = gradeService.get(gradeId);
 		return examArrangeDao.findByExamAndGrade(pageable,exam,grade);
+	}
+	public List<ExamArrange> findByExamAndGrade(int examId,int gradeId){
+		Exam exam = examService.get(examId);
+		Grade grade = gradeService.get(gradeId);
+		return examArrangeDao.findByExamAndGrade(exam,grade);
 	}
 
 	@Override

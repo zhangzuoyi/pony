@@ -12,6 +12,7 @@ import com.zzy.pony.exam.model.ExamArrangeGroup;
 
 public interface ExamArrangeService {
 	Page<ExamArrange> findByExamAndGrade(Pageable pageable,int examId,int gradeId);
+	List<ExamArrange> findByExamAndGrade(int examId,int gradeId);
 	Page<ExamArrange> findByExam(Pageable pageable,int examId);
 	Page<ExamArrange> findByGrade(Pageable pageable,int gradeId);
 	Page<ExamArrange> findAll(Pageable pageable);
