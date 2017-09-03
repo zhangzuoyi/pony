@@ -140,11 +140,16 @@ public class PreLessonArrangeServiceImpl implements PreLessonArrangeService {
 		List<ArrangeVo> result = new ArrayList<ArrangeVo>();
 		SchoolYear year = schoolYearService.getCurrent();
 		Term term = termService.getCurrent();
-		List<LessonArrange> lessonArranges = lessonArrangeDao.findBySchoolYearAndTermAndSourceType(year, term, Constants.SOURCE_TYPE_PRE);
+		/*List<LessonArrange> lessonArranges = lessonArrangeDao.findBySchoolYearAndTermAndSourceType(year, term, Constants.SOURCE_TYPE_PRE);
 		for (LessonArrange lessonArrange : lessonArranges) {
 			ArrangeVo arrangeVo = toArrangeVo(lessonArrange);
 			result.add(arrangeVo);
-		}		
+		}*/
+		ConditionVo cv = new ConditionVo();
+		cv.setYearId(year.getYearId());
+		cv.setTermId(term.getTermId());
+		cv.setSourceType(Constants.SOURCE_TYPE_PRE);
+		result = lessonArrangeMapper.findByCondition(cv);
 		return result;
 	}
 	
