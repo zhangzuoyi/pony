@@ -51,5 +51,6 @@ public interface TeacherSubjectService {
 	TeacherSubject findCurrentByClassAndSubject(SchoolClass schoolClass,Subject subject);
 	List<TeacherSubject> findCurrent();
 	List<TeacherSubject> findCurrentByClass(SchoolClass schoolClass);
+	List<TeacherSubjectVo> findByGrade(int yearId,int termId,int gradeId);
 }
 

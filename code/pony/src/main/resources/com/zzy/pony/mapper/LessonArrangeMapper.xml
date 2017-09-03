@@ -24,7 +24,10 @@ left join t_teacher i on h.teacher_id = i.teacher_id
 		 </if>		 			 
 		 <if test=" subjectId != null and subjectId != 0">
 		 	and t.SUBJECT_ID =#{subjectId}
-		 </if>		 		    
+		 </if>
+		<if test=" sourceType != null">
+			and t.source_type =#{sourceType}
+		</if>
 		 <if test="schoolClasses != null">
 		 	and  t.CLASS_ID in  
      		<foreach item="item" index="index" collection="schoolClasses" open="(" separator="," close=")">  

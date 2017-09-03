@@ -333,5 +333,9 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 		return dao.findBySchoolClassAndYearAndTerm(schoolClass, schoolYear, term);
 	}
 
+	@Override
+	public List<TeacherSubjectVo> findByGrade(int yearId, int termId, int gradeId) {
+		return teacherSubjectMapper.findByGrade(yearId,termId,gradeId);
+	}
 }
 
