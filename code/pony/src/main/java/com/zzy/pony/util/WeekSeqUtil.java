@@ -1,14 +1,6 @@
 package com.zzy.pony.util;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
-
-
-
+import java.util.*;
 
 
 public class WeekSeqUtil {
@@ -81,11 +73,14 @@ public class WeekSeqUtil {
 		return result ;
 	}
 	
-	/*** 
-	* <p>Description: 随机返回一个week,每天安排的课程不能超过3节</p>
+	/***
+	* <p>Description: 随机返回一个week,
+	 * 1每天安排的课程不能超过3节
+	 * 2根据之前的教师上课情况选，例如A在一班是周1上，那么在二班也要周1上(todo)
+	 * 3若当天已排满课程则不能选</p>
 	* @author  wangchao262
 	*/
-	public static Integer getRandomWeek(Set<Integer> set,List<Integer> alreadyTeacherList){  						
+	public static Integer getRandomWeek(Set<Integer> set,List<Integer> alreadyTeacherList,Set<Integer> classAlreadySet){
 		Random random = new Random();			
 		int rn = random.nextInt(set.size());  
         int i = 0;  
@@ -100,11 +95,29 @@ public class WeekSeqUtil {
 						count++;
 					}  
 				}
-            	if (count >=3) {
-            		 rn = random.nextInt(set.size());  
-                     i = 0;
+				//条件3
+				if (classAlreadySet.containsAll(Arrays.asList(WeekSeq[e]))){
+					rn = random.nextInt(set.size());
+					i = 0;
 					continue outer;
-				}           	
+				}else{
+
+					//条件1
+					if (count >=3) {
+						rn = random.nextInt(set.size());
+						i = 0;
+						continue outer;
+					}
+					//条件2 非强制性 使用maxCount做熔断
+					int maxCount = 0;
+					if (alreadyTeacherList.size()>0&& !getWeek(alreadyTeacherList).contains(e) && maxCount < 20 ){
+						rn = random.nextInt(set.size());
+						i = 0;
+						maxCount ++;
+						continue outer;
+					}
+
+				}
                 return e;  
             }  
             i++;  
@@ -126,22 +139,18 @@ public class WeekSeqUtil {
 		
 		List<Integer> list =  new ArrayList<Integer>();
 		for (int i = 0; i < seqs.length; i++) {
-			list.add(seqs[i]);
-			if (alreadyTeacherList.contains(seqs[i])&&i==0) {
-				result = seqs[1];
+			//条件1
+			if (!classAlreadySet.contains(seqs[i])){
+				list.add(seqs[i]);
 			}
-			else if (alreadyTeacherList.contains(seqs[i])&&i==8) {
-				result = seqs[7];
-			}
-			else if (alreadyTeacherList.contains(seqs[i])) {
-				result = seqs[i-1];
-			}					
 		}
-		if (result == 0) {
-			//说明未排过 
-		}
-		
 		//优先根据老师之前的安排就近选取
+		for (int weekSeq:
+				alreadyTeacherList) {
+			if (getWeek(weekSeq) == week){
+
+			}
+		}
 		
 		
 		

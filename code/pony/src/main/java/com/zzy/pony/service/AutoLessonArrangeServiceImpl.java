@@ -358,8 +358,8 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 				Set<Integer> availWeek = WeekSeqUtil.getAvailWeek(alreadyTeacherList);
 				for (int i = 0; i<autoArrangeCount;i++){
 					
-					//从预排过后的剩下的星期中选择 (每天安排的课程不能超过3节)
-					int week = WeekSeqUtil.getRandomWeek(availWeek,alreadyTeacherList);
+					//从预排过后的剩下的星期中选择 (1每天安排的课程不能超过3节 2若当天已排满课程则不能选 3 根据之前的教师上课情况选，例如A在一班是周1上，那么在二班也要周1上)
+					int week = WeekSeqUtil.getRandomWeek(availWeek,alreadyTeacherList, classAlreadySet);
 					/*weekseq的获取 
 					 * 1 不能在已安排的课程中 classAlreadySet
 					 * 2 满足年级不排课(放在classAlreadySet)
