@@ -1,21 +1,17 @@
 package com.zzy.pony.service;
 
 
-import java.rmi.MarshalledObject;
-import java.util.*;
-import java.util.concurrent.locks.Condition;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import javax.jnlp.IntegrationService;
-import javax.print.attribute.SetOfIntegerSyntax;
 import javax.transaction.Transactional;
 
-import com.mysql.fabric.HashShardMapping;
-import com.zzy.pony.mapper.LessonArrangeMapper;
-import com.zzy.pony.mapper.TeacherSubjectMapper;
-import com.zzy.pony.util.GAUtilTwo;
-import com.zzy.pony.vo.*;
-
-import org.jfree.util.HashNMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +19,8 @@ import com.zzy.pony.AutoClassArrange.DNA;
 import com.zzy.pony.AutoClassArrange.GeneticAlgorithm;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.dao.LessonArrangeDao;
+import com.zzy.pony.mapper.LessonArrangeMapper;
+import com.zzy.pony.mapper.TeacherSubjectMapper;
 import com.zzy.pony.model.ArrangeCombine;
 import com.zzy.pony.model.ArrangeRotation;
 import com.zzy.pony.model.LessonArrange;
@@ -34,8 +32,16 @@ import com.zzy.pony.model.Teacher;
 import com.zzy.pony.model.TeacherSubject;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.model.Weekday;
-import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.util.GAUtil;
+import com.zzy.pony.util.GAUtilTwo;
+import com.zzy.pony.vo.ArrangeVo;
+import com.zzy.pony.vo.ClassNoCourseVo;
+import com.zzy.pony.vo.CombineAndRotationVo;
+import com.zzy.pony.vo.ConditionVo;
+import com.zzy.pony.vo.GradeNoCourseVo;
+import com.zzy.pony.vo.SubjectNoCourseVo;
+import com.zzy.pony.vo.TeacherNoCourseVo;
+import com.zzy.pony.vo.TeacherSubjectVo;
 
 
 @Service
