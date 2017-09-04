@@ -8,6 +8,9 @@ import java.util.Set;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 
 import com.zzy.pony.dao.ExamDao;
@@ -16,10 +19,7 @@ import com.zzy.pony.dao.SubjectDao;
 import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.ExamSubject;
 import com.zzy.pony.model.SchoolClass;
-import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Subject;
-import com.zzy.pony.model.Teacher;
-import com.zzy.pony.model.Term;
 @Service
 @Transactional
 public class SubjectServiceImpl implements SubjectService {
@@ -42,7 +42,12 @@ public class SubjectServiceImpl implements SubjectService {
 
 	@Override
 	public List<Subject> findAll() {
-		return dao.findAll();
+		
+		List<Order> orders = new ArrayList<Order>();
+		orders.add(new Order(Direction.ASC, "importance"));
+		orders.add(new Order(Direction.ASC, "subjectId"));
+		Sort sort = new Sort(orders);
+		return dao.findAll(sort);
 	}
 
 	@Override

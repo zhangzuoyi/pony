@@ -12,5 +12,6 @@ public interface SubjectDao extends JpaRepository<Subject,Integer>{
 	List<Subject> findByTypeIn(List<Integer> types);
 	List<Subject> findByType(Integer type);
 	List<Subject> findByName(String name);
+	List<Subject> findAllByOrderByImportance();
 
 }

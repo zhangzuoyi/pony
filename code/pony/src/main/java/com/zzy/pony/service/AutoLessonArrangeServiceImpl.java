@@ -12,6 +12,8 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +36,7 @@ import com.zzy.pony.model.Term;
 import com.zzy.pony.model.Weekday;
 import com.zzy.pony.util.GAUtil;
 import com.zzy.pony.util.GAUtilTwo;
+import com.zzy.pony.util.WeekSeqUtil;
 import com.zzy.pony.vo.ArrangeVo;
 import com.zzy.pony.vo.ClassNoCourseVo;
 import com.zzy.pony.vo.CombineAndRotationVo;
@@ -47,7 +50,9 @@ import com.zzy.pony.vo.TeacherSubjectVo;
 @Service
 @Transactional
 public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
-
+	
+	private static Logger log=LoggerFactory.getLogger(AutoLessonArrangeServiceImpl.class);
+	
 	@Autowired
 	private TeacherSubjectService teacherSubjectService;
 	@Autowired
@@ -307,53 +312,99 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
         //key teacherId value(key classId value weekArrange)
         Map<Integer,Map<Integer,Integer>> teacherTSMap = new HashMap<Integer, Map<Integer, Integer>>();
         Map<Integer,Set<Integer>> classAlreadyMap = new HashMap<Integer, Set<Integer>>();
-        //key classId value(key:teacherId value: week+period)
+        //key classId value(key:teacherId value: weekSeq)
 		Map<Integer,Map<Integer,List<Integer>>> classMap = new HashMap<Integer, Map<Integer, List<Integer>>>();
-		//key teacherId value(key:classId value: week+period)
+		//key teacherId value(key:classId value: weekSeq)
 		Map<Integer,Map<Integer,List<Integer>>> teacherMap = new LinkedHashMap<Integer, Map<Integer, List<Integer>>>();
 		//key teacherId value subjectId
 		Map<Integer,Integer> teacherSubjectMap = new HashMap<Integer, Integer>();
+		//key classId value(key:subjectId value: teacherId)
+		Map<Integer, Map<Integer, Integer>> subjectTeacherMap = new HashMap<Integer, Map<Integer,Integer>>();
+		
 		//sigList 语数英 impList 物化政史地生 comList 其他
 		List<Integer> sigList = new ArrayList<Integer>();
 		List<Integer> impList = new ArrayList<Integer>();
 		List<Integer> comList = new ArrayList<Integer>();
 		//获取科目重要程度
 		List<Subject> subjects = subjectService.findAll();
-		getSubjectList(subjects,sigList,impList,comList);
+		GAUtilTwo.getSubjectList(subjects,sigList,impList,comList);
 		//1获取总的上课安排
         List<TeacherSubjectVo> teacherSubjectVos = teacherSubjectService.findByGrade(year.getYearId(),term.getTermId(),gradeId);
-        getTeacherSubject(teacherSubjectVos,classTSMap,teacherTSMap,teacherSubjectMap);
+        GAUtilTwo.getTeacherSubject(teacherSubjectVos,classTSMap,teacherTSMap,teacherSubjectMap,subjectTeacherMap);
 		//2获取预排
 		List<ArrangeVo> preArrangeVos = preLessonArrangeService.findCurrentVo();
-        getPre(preArrangeVos,classMap,teacherMap,classAlreadyMap);
+		GAUtilTwo.getPre(preArrangeVos,classMap,teacherMap,classAlreadyMap);
         //3按照班级顺序排课
         List<SchoolClass> schoolClasses = schoolClassService.findByYearAndGradeOrderBySeq(year.getYearId(),gradeId);
         for (SchoolClass sc:
         schoolClasses ) {
 
         	Map<Integer,Integer> classTSInnerMap = classTSMap.get(sc.getClassId());
+        	Map<Integer, Integer> classSubjectTeacherMap = subjectTeacherMap.get(sc.getClassId());
+        	Map<Integer, Integer> sortClassTSInnerMap =  GAUtilTwo.sortBySubject(classTSInnerMap,classSubjectTeacherMap,subjects);
 			Map<Integer,List<Integer>> preClassMap = classMap.get(sc.getClass());
 			Set<Integer> classAlreadySet = classAlreadyMap.get(sc.getClassId());
-			Map<Integer,Integer> innerAutoArrangeMap = new HashMap<Integer, Integer>();
+			Map<Integer,Integer> innerAutoArrangeMap = new HashMap<Integer, Integer>();			
 			//按照老师(即科目)的顺序来排
-			/*for (Integer teacherId:
-			classTSInnerMap.keySet()) {
+			for (Integer teacherId:
+				sortClassTSInnerMap.keySet()) {
 				int preArrangeCount = preClassMap.get(teacherId).size();
 				int autoArrangeCount = classTSInnerMap.get(teacherId) - preArrangeCount;
-				for (int i = 0; i<autoArrangeCount;i++){
+				List<Integer> alreadyTeacherList = teacherMap.get(teacherId).get(sc.getClassId());//已经预排的  
+				//已经预排的和未排的超过5天
+				if (autoArrangeCount+WeekSeqUtil.getWeek(alreadyTeacherList).size()>5) {
+					log.error("----------------"+sc.getName()+":老师("+teacherId+")"+"预排与自动排的超过5天----------------");
 				}
-			}*/
+				Set<Integer> availWeek = WeekSeqUtil.getAvailWeek(alreadyTeacherList);
+				for (int i = 0; i<autoArrangeCount;i++){
+					
+					//从预排过后的剩下的星期中选择 (每天安排的课程不能超过3节)
+					int week = WeekSeqUtil.getRandomWeek(availWeek,alreadyTeacherList);
+					/*weekseq的获取 
+					 * 1 不能在已安排的课程中 classAlreadySet
+					 * 2 满足年级不排课(放在classAlreadySet)
+					 * 3 满足班级不排课(放在classAlreadySet)
+					 * 4 满足老师不排课
+					 * 5 满足科目不排课
+					 * 6 若该老师在其他班级有安排，则需要靠拢
+					 * 7 重要程度的设定，语数外尽量在上午
+					 * 
+					 */
+					int subjectId = teacherSubjectMap.get(teacherId);					
+					if (sigList.contains(subjectId)) {
+						int type = Constants.SUBJECT_SIGNIFICANT;
+					}
+					if (sigList.contains(subjectId)) {
+						int type = Constants.SUBJECT_IMPORTANT;
+					}
+					if (sigList.contains(subjectId)) {
+						int type = Constants.SUBJECT_COMMON;
+					}
+					int weekSeq = 0;
+					
+					
+					
+					
+					
+					alreadyTeacherList.add(weekSeq);
+					classAlreadySet.add(weekSeq);
+					
+					
+					
+					
+				}
+			}
 			//按照时间来排
-			for (int i = 1 ; i<=5 ; i++){
+			/*for (int i = 1 ; i<=5 ; i++){
 				for (int j=1; j<=8;	 j++){
 					int weekSeq = (i-1)*8+j;
 					if (classAlreadySet.contains(weekSeq)){
 						continue;
 					}else{
-						//todo 优先排语数英  且老师上课需要相邻
+						//todo 优先排语数英  且老师上课需要相邻																		
 					}
 				}
-			}
+			}*/
 
 
 			autoArrangeMap.put(sc.getClassId(),innerAutoArrangeMap);
@@ -381,8 +432,8 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 				la.setClassId(classId);
 				Subject subject  = subjectService.get(innerAutoArrangeMap.get(weekSeq));
 				la.setSubject(subject);
-				la.setWeekDay(getWeek(weekSeq)+"");
-				LessonPeriod lp = lessonPeriodService.get(map.get(getSeq(weekSeq)));
+				la.setWeekDay(WeekSeqUtil.getWeek(weekSeq)+"");
+				LessonPeriod lp = lessonPeriodService.get(map.get(WeekSeqUtil.getSeq(weekSeq)));
 				la.setLessonPeriod(lp);
 				la.setCreateTime(new Date());
 				la.setCreateUser("testTwo");
@@ -398,103 +449,8 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 
 	}
 
-	private void getPre(List<ArrangeVo> preArrangeVos, Map<Integer,Map<Integer,List<Integer>>> classMap, Map<Integer,Map<Integer,List<Integer>>> teacherMap, Map<Integer,Set<Integer>> classAlreadyMap){
-        for (ArrangeVo vo:
-                preArrangeVos) {
-            if (classMap.containsKey(vo.getClassId())){
-                Map<Integer,List<Integer>> innerClassMap =  classMap.get(vo.getClassId());
-                if (innerClassMap.containsKey(vo.getTeacherId())){
-                    innerClassMap.get(vo.getTeacherId()).add(GAUtilTwo.getSeq(vo.getWeekdayId(),vo.getPeriodSeq()));
-                }else{
-                    List<Integer> innerClassList = new ArrayList<Integer>();
-                    innerClassList.add(GAUtilTwo.getSeq(vo.getWeekdayId(),vo.getPeriodSeq()));
-                }
-            }else{
-                Map<Integer,List<Integer>> innerClassMap = new HashMap<Integer, List<Integer>>();
-                List<Integer> innerClassList = new ArrayList<Integer>();
-                innerClassList.add(GAUtilTwo.getSeq(vo.getWeekdayId(),vo.getPeriodSeq()));
-                innerClassMap.put(vo.getTeacherId(),innerClassList);
-                classMap.put(vo.getClassId(),innerClassMap);
-            }
-			if (teacherMap.containsKey(vo.getTeacherId())){
-				Map<Integer,List<Integer>> innerTeacherMap =  teacherMap.get(vo.getTeacherId());
-				if (innerTeacherMap.containsKey(vo.getClassId())){
-					innerTeacherMap.get(vo.getClassId()).add(GAUtilTwo.getSeq(vo.getWeekdayId(),vo.getPeriodSeq()));
-				}else{
-					List<Integer> innerTeacherList = new ArrayList<Integer>();
-					innerTeacherList.add(GAUtilTwo.getSeq(vo.getWeekdayId(),vo.getPeriodSeq()));
-				}
-			}else{
-				Map<Integer,List<Integer>> innerTeacherMap = new HashMap<Integer, List<Integer>>();
-				List<Integer> innerTeacherList = new ArrayList<Integer>();
-				innerTeacherList.add(GAUtilTwo.getSeq(vo.getWeekdayId(),vo.getPeriodSeq()));
-				innerTeacherMap.put(vo.getClassId(),innerTeacherList);
-				teacherMap.put(vo.getTeacherId(),innerTeacherMap);
-			}
-        }
-		for (int classId:
-		classMap.keySet()) {
-			Map<Integer,List<Integer>> innerClassMap = new HashMap<Integer, List<Integer>>();
-			Set<Integer> set  = new HashSet<Integer>();
-			for (int teacherId:
-				 innerClassMap.keySet()) {
-				set.addAll(innerClassMap.get(teacherId));
-			}
-			classAlreadyMap.put(classId,set);
-		}
-
-	}
-
-    private void getTeacherSubject(List<TeacherSubjectVo> teacherSubjectVos,Map<Integer,Map<Integer,Integer>> classTSMap,Map<Integer,Map<Integer,Integer>> teacherTSMap,Map<Integer,Integer> teacherSubjectMap){
-        for (TeacherSubjectVo vo:
-        teacherSubjectVos) {
-        	//classTSMap初始化
-            if (classTSMap.containsKey(vo.getClassId())){
-                classTSMap.get(vo.getClassId()).put(vo.getTeacherId(),Integer.valueOf(vo.getWeekArrange()));
-            }else{
-                Map<Integer,Integer> innerClassMap = new HashMap<Integer, Integer>();
-                innerClassMap.put(vo.getTeacherId(),Integer.valueOf(vo.getWeekArrange()));
-                classTSMap.put(vo.getClassId(),innerClassMap);
-            }
-            //teacherTSMap初始化
-            if (teacherTSMap.containsKey(vo.getTeacherId())){
-                teacherTSMap.get(vo.getTeacherId()).put(vo.getClassId(),Integer.valueOf(vo.getWeekArrange()));
-            }else{
-                Map<Integer,Integer> innerTeacherMap = new HashMap<Integer, Integer>();
-                innerTeacherMap.put(vo.getClassId(),Integer.valueOf(vo.getWeekArrange()));
-                teacherTSMap.put(vo.getTeacherId(),innerTeacherMap);
-            }
-			//teacherSubjectMap初始化
-			if (!teacherSubjectMap.containsKey(vo.getTeacherId())){
-            	teacherSubjectMap.put(vo.getTeacherId(),vo.getSubjectId());
-			}
-        }
-
-    }
-    private void getSubjectList(List<Subject> subjects,List<Integer> sigList,List<Integer> impList,List<Integer> comList) {
-		for (Subject subject:
-			 subjects) {
-			if (subject.getImportance()==Constants.SUBJECT_SIGNIFICANT){
-				sigList.add(subject.getSubjectId());
-			}
-			if (subject.getImportance()==Constants.SUBJECT_IMPORTANT){
-				impList.add(subject.getSubjectId());
-			}
-			if (subject.getImportance()==Constants.SUBJECT_COMMON){
-				comList.add(subject.getSubjectId());
-			}
-		}
-	}
-	private int getWeek(int weekSeq){
-		return (weekSeq-1)/8+1;
-	}
-	private int getSeq(int weekSeq){
-		int result = weekSeq%8;
-		if (result == 0){
-			result = 8 ;
-		}
-		return result;
-	}
+	
+	
 
 
 
