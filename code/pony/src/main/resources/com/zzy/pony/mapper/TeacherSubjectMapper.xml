@@ -4,7 +4,7 @@
 
 <mapper namespace="com.zzy.pony.mapper.TeacherSubjectMapper">
 	<sql id="base_select">
-select t.CLASS_ID classId ,a.seq classSeq, t.SUBJECT_ID,b.name subjectName, t.TEACHER_ID teacherId, c.teacher_no teacherNo, c.name teacherName, t.TERM_ID termId,t.TS_ID tsId,t.WEEK_ARRANGE weekArrange,t.YEAR_ID yearId,g.name gradeName from t_teacher_subject t
+select t.CLASS_ID classId ,a.seq classSeq, t.SUBJECT_ID subjectId,b.name subjectName, t.TEACHER_ID teacherId, c.teacher_no teacherNo, c.name teacherName, t.TERM_ID termId,t.TS_ID tsId,t.WEEK_ARRANGE weekArrange,t.YEAR_ID yearId,g.name gradeName from t_teacher_subject t
 left join t_school_class a on t.CLASS_ID = a.CLASS_ID 
 left join t_grade g on a.grade_id=g.grade_id
 left join t_subject b on t.SUBJECT_ID=b.SUBJECT_ID

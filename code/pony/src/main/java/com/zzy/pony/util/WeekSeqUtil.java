@@ -1,6 +1,18 @@
 package com.zzy.pony.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+
+import com.zzy.pony.config.Constants;
+
+
+
+
+
 
 
 public class WeekSeqUtil {
@@ -25,9 +37,12 @@ public class WeekSeqUtil {
 									 {6,14,22,30,38},
 									 {7,15,23,31,39},
 									 {8,16,24,32,40}};
-		
-	
-	/*** 
+
+
+	public static int getWeekPeriod(int week,int periodSeq){
+		return (week-1)*8+periodSeq;
+	}
+	/***
 	* <p>Description: 获取星期</p>
 	* @author  wangchao262
 	*/
@@ -50,6 +65,7 @@ public class WeekSeqUtil {
 	* @author  wangchao262
 	*/
 	public static Set<Integer> getWeek(List<Integer> list){
+
 		Set<Integer> result = new HashSet<Integer>();
 		for (int weekSeq : list) {
 			result.add(getWeek(weekSeq));			
@@ -73,14 +89,15 @@ public class WeekSeqUtil {
 		return result ;
 	}
 	
-	/***
+	/*** 
 	* <p>Description: 随机返回一个week,
-	 * 1每天安排的课程不能超过3节
-	 * 2根据之前的教师上课情况选，例如A在一班是周1上，那么在二班也要周1上(todo)
-	 * 3若当天已排满课程则不能选</p>
+	* 1每天安排的课程不能超过3节
+	* 2已经安排完了的不能选择
+	* 3优先按照之前的教师上课星期选择
+	* </p>
 	* @author  wangchao262
 	*/
-	public static Integer getRandomWeek(Set<Integer> set,List<Integer> alreadyTeacherList,Set<Integer> classAlreadySet){
+	public static Integer getRandomWeek(Set<Integer> set,List<Integer> alreadyTeacherList,Set<Integer> classAlreadySet){  						
 		Random random = new Random();			
 		int rn = random.nextInt(set.size());  
         int i = 0;  
@@ -95,29 +112,28 @@ public class WeekSeqUtil {
 						count++;
 					}  
 				}
-				//条件3
-				if (classAlreadySet.containsAll(Arrays.asList(WeekSeq[e]))){
-					rn = random.nextInt(set.size());
-					i = 0;
+            	//条件2
+            	if (classAlreadySet.containsAll(Arrays.asList( WeekSeq[e]))) {
+            		rn = random.nextInt(set.size());  
+                    i = 0;
 					continue outer;
-				}else{
-
+				}else {
 					//条件1
 					if (count >=3) {
-						rn = random.nextInt(set.size());
-						i = 0;
+	            		 rn = random.nextInt(set.size());  
+	                     i = 0;
 						continue outer;
-					}
-					//条件2 非强制性 使用maxCount做熔断
+					} 
+					//条件3(非硬性)
 					int maxCount = 0;
-					if (alreadyTeacherList.size()>0&& !getWeek(alreadyTeacherList).contains(e) && maxCount < 20 ){
-						rn = random.nextInt(set.size());
-						i = 0;
-						maxCount ++;
+					if (alreadyTeacherList!=null && !getWeek(alreadyTeacherList).contains(e) && maxCount < 20) {
+						rn = random.nextInt(set.size());  
+	                     i = 0;
 						continue outer;
 					}
-
 				}
+            	
+            	         	
                 return e;  
             }  
             i++;  
@@ -139,32 +155,104 @@ public class WeekSeqUtil {
 		
 		List<Integer> list =  new ArrayList<Integer>();
 		for (int i = 0; i < seqs.length; i++) {
-			//条件1
-			if (!classAlreadySet.contains(seqs[i])){
+			if (!classAlreadySet.contains(seqs[i])&& !alreadyTeacherList.contains(seqs[i])) {
 				list.add(seqs[i]);
-			}
-		}
+			}										
+		}				
 		//优先根据老师之前的安排就近选取
-		for (int weekSeq:
-				alreadyTeacherList) {
-			if (getWeek(weekSeq) == week){
-
+		if (alreadyTeacherList != null) {
+			result = getNext(week,list,alreadyTeacherList);
+		}else {
+			if (type == Constants.SUBJECT_SIGNIFICANT) {
+				result = getSigWeekSeq(week, classAlreadySet);
 			}
-		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+			if (type == Constants.SUBJECT_IMPORTANT ) {
+				result = getImpWeekSeq(week, classAlreadySet);
+			}
+			if (type == Constants.SUBJECT_COMMON) {
+				result = getComWeekSeq(week, classAlreadySet);
+			}									
+		}				
 		return result;
 		
 	}
+	
+	public static int getNext(int week, List<Integer> list,List<Integer> alreadyTeacherList) {
+		
+		int result = 0;
+		int min = 0;
+		int max = 0;
+		int i = 0;
+		for (Integer integer : alreadyTeacherList) {						
+			if (getWeek(integer) == week) {
+				if (i == 0) {
+					max = integer;
+					min = integer;
+				}else {
+					if (integer>max) {
+						max = integer;
+					}
+					if (integer<min) {
+						min = integer;
+					}
+				}								
+				i++;
+			}						
+		}
+		for (Integer integer : list) {
+			if (Math.abs(integer-min)<=Math.abs(integer-max)) {
+				result = min; 	
+			}else{
+				result = max;
+			}
+				
+		}		
+		return result;
+		
+		
+	}
+	
+	public static int  getSigWeekSeq(int week,Set<Integer> classAlreadySet ){
+		List<Integer> list = new ArrayList<Integer>();
+		int[] weekSeqs = WeekSeq[week];
+		for (int i = 0; i < weekSeqs.length; i++) {
+			if(i<=5 &&  !classAlreadySet.contains(weekSeqs[i])){
+				list.add(weekSeqs[i]);
+			}
+		}					
+		 Integer[] array =  list.toArray(new Integer[list.size()]);
+		 Random random = new Random();
+		 return   array[random.nextInt(array.length)];
+						
+	}
+	
+	public static int  getImpWeekSeq(int week,Set<Integer> classAlreadySet ){
+		List<Integer> list = new ArrayList<Integer>();
+		int[] weekSeqs = WeekSeq[week];
+		for (int i = 0; i < weekSeqs.length; i++) {
+			if(i>=5 &&  !classAlreadySet.contains(weekSeqs[i])){
+				list.add(weekSeqs[i]);
+			}
+		}					
+		Integer[] array =  list.toArray(new Integer[list.size()]);
+		Random random = new Random();
+		return   array[random.nextInt(array.length)];
+						
+	}
+	public static int  getComWeekSeq(int week,Set<Integer> classAlreadySet ){
+		List<Integer> list = new ArrayList<Integer>();
+		int[] weekSeqs = WeekSeq[week];
+		for (int i = 0; i < weekSeqs.length; i++) {
+			if(i>=7 &&  !classAlreadySet.contains(weekSeqs[i])){
+				list.add(weekSeqs[i]);
+			}
+		}					
+		Integer[] array =  list.toArray(new Integer[list.size()]);
+		Random random = new Random();
+		return   array[random.nextInt(array.length)];
+						
+	}
+	
 	
 	
 	

@@ -11,5 +11,6 @@ public interface LessonArrangeMapper {
 	List<ArrangeVo> findPreTeacherAlready(ConditionVo cv);
 	//查询教师是否安排了课程
 	List<Integer> findByWeekAndPeriodAndTeacherId(int yearId,int termId, int week,int period,int teacherId);
+	void deleteByArrangeVo(List<ArrangeVo> arrangeVos);
 
 }

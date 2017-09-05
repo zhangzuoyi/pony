@@ -152,9 +152,20 @@ public class PreLessonArrangeServiceImpl implements PreLessonArrangeService {
 		result = lessonArrangeMapper.findByCondition(cv);
 		return result;
 	}
-	
-	
 
+	@Override
+	public List<ArrangeVo> findCurrentVoByGrade(int gradeId) {
+		List<ArrangeVo> result = new ArrayList<ArrangeVo>();
+		SchoolYear year = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();
+		ConditionVo cv = new ConditionVo();
+		cv.setYearId(year.getYearId());
+		cv.setTermId(term.getTermId());
+		cv.setGradeId(gradeId);
+		cv.setSourceType(Constants.SOURCE_TYPE_PRE);
+		result = lessonArrangeMapper.findByCondition(cv);
+		return result;
+	}
 
 	@Override
 	public List<ArrangeVo> findCurrentWeekArrange() {
