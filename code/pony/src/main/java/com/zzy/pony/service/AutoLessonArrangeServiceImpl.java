@@ -359,7 +359,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 				for (int i = 0; i<autoArrangeCount;i++){
 					
 					//从预排过后的剩下的星期中选择 (每天安排的课程不能超过3节)
-					int week = WeekSeqUtil.getRandomWeek(availWeek,alreadyTeacherList);
+					int week = WeekSeqUtil.getRandomWeek(availWeek,alreadyTeacherList,classAlreadySet);
 					/*weekseq的获取 
 					 * 1 不能在已安排的课程中 classAlreadySet
 					 * 2 满足年级不排课(放在classAlreadySet)
@@ -370,27 +370,20 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 					 * 7 重要程度的设定，语数外尽量在上午
 					 * 
 					 */
-					int subjectId = teacherSubjectMap.get(teacherId);					
+					int subjectId = teacherSubjectMap.get(teacherId);
+					int type = 0;
 					if (sigList.contains(subjectId)) {
-						int type = Constants.SUBJECT_SIGNIFICANT;
+						 type = Constants.SUBJECT_SIGNIFICANT;
 					}
 					if (sigList.contains(subjectId)) {
-						int type = Constants.SUBJECT_IMPORTANT;
+						 type = Constants.SUBJECT_IMPORTANT;
 					}
 					if (sigList.contains(subjectId)) {
-						int type = Constants.SUBJECT_COMMON;
+						 type = Constants.SUBJECT_COMMON;
 					}
-					int weekSeq = 0;
-					
-					
-					
-					
-					
+					int weekSeq = WeekSeqUtil.getWeekSeq(week, alreadyTeacherList, classAlreadySet, type);																									
 					alreadyTeacherList.add(weekSeq);
-					classAlreadySet.add(weekSeq);
-					
-					
-					
+					classAlreadySet.add(weekSeq);				
 					
 				}
 			}

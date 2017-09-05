@@ -5,6 +5,7 @@
 
 package com.zzy.test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -21,15 +22,20 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.zzy.pony.config.Constants;
+import com.zzy.pony.mapper.LessonArrangeMapper;
 import com.zzy.pony.model.Grade;
 import com.zzy.pony.model.LessonArrange;
+import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.service.AutoLessonArrangeService;
 import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.LessonArrangeService;
+import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.TermService;
+import com.zzy.pony.vo.ArrangeVo;
+import com.zzy.pony.vo.ConditionVo;
 
 
 
@@ -54,6 +60,10 @@ public class TestService {
 	private LessonArrangeService lessonArrangeService;
 	@Autowired
 	private GradeService gradeService;
+	@Autowired
+	private LessonArrangeMapper lessonArrangeMapper;
+	@Autowired
+	private SchoolClassService schoolClassService;
 	
 	 
 	
@@ -94,6 +104,42 @@ public class TestService {
 				future.cancel(true);
 				executor.shutdown();
 			}
+		
+	}
+	
+	@Test
+	public void testAutoLessonArrangeTwo(){
+		Grade grade = gradeService.get(1);
+		SchoolYear year = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();
+		List<SchoolClass> schoolClassList = schoolClassService.findByGrade(grade.getGradeId());
+		String[] schoolClasses = new String[schoolClassList.size()];
+		for (int i = 0; i < schoolClasses.length; i++) {
+			schoolClasses[i] = schoolClassList.get(i).getClassId()+"";
+		}
+		
+		ConditionVo cv= new ConditionVo();
+		cv.setYearId(year.getYearId());
+		cv.setTermId(term.getTermId());
+		cv.setSchoolClasses(schoolClasses);
+		cv.setSourceType(Constants.SOURCE_TYPE_AUTO);
+		List<ArrangeVo> autoVos = lessonArrangeMapper.findByCondition(cv);
+		cv.setSourceType(Constants.SOURCE_TYPE_CHANGE);
+		List<ArrangeVo> changeVos = lessonArrangeMapper.findByCondition(cv);
+		List<ArrangeVo> arrangeVos = new ArrayList<ArrangeVo>();
+		arrangeVos.addAll(autoVos);
+		arrangeVos.addAll(changeVos);
+		if (arrangeVos != null && arrangeVos.size()>0) {
+			lessonArrangeMapper.deleteByArrangeVo(arrangeVos);
+		}
+		
+		
+		
+		/*List<LessonArrange> autoList = lessonArrangeService.findBySchooleYearAndTermAndGradeIdAndSourceType(year, term,grade.getGradeId(), Constants.SOURCE_TYPE_AUTO);
+		List<LessonArrange> changeList = lessonArrangeService.findBySchooleYearAndTermAndGradeIdAndSourceType(year, term,grade.getGradeId(), Constants.SOURCE_TYPE_CHANGE);
+		autoList.addAll(changeList);
+		lessonArrangeService.deleteList(autoList);*/
+		autoLessonArrangeService.autoLessonArrangeTwo(grade.getGradeId());
 		
 	}
 	
