@@ -221,6 +221,10 @@
                             <label>监考设置</label></a>
                     </dd>
                     <dd>
+                        <a href="javascript:;" data-url="<s:url value='/examAdmin/monitorArrange/resultQuery/' />">
+                            <label>监考查询</label></a>
+                    </dd>
+                    <dd>
                         <a href="javascript:;" data-url="<s:url value='/examResult/main/' />">
                             <label>成绩管理</label></a>
                     </dd>
