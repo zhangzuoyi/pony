@@ -3,13 +3,17 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.zzy.pony.exam.mapper.ExamRoomAllocateMapper">
-	<select id="findByExam" resultType="com.zzy.pony.exam.vo.ExamRoomAllocateVo">
+	<sql id="base_select">
 		select t.room_id roomId,t.room_seq roomSeq,t.room_name roomName,a.exam_date examDate,
-		a.start_time startTime,a.end_time endTime,a.grade_id gradeId,a.subject_id,b.name subjectName,
+		a.start_time startTime,a.end_time endTime,a.grade_id gradeId,g.name gradeName,a.subject_id,b.name subjectName,
 		c.teacher_id teacherId,c.name teacherName,c.teacher_no teacherNo from t_exam_room_allocate t 
 		left join t_exam_arrange a on t.arrange_id=a.arrange_id 
 		left join t_subject b on a.subject_id=b.subject_id 
 		left join t_teacher c on t.teacher_id=c.teacher_id 
+		left join t_grade g on a.grade_id=g.grade_id 
+	</sql>
+	<select id="findByExam" resultType="com.zzy.pony.exam.vo.ExamRoomAllocateVo">
+		<include refid="base_select"></include>
 		where a.exam_id=#{0}
 		order by a.exam_date,a.start_time,a.grade_id,t.room_seq
 	</select>
@@ -20,4 +24,13 @@
 	<update id="updateMonitor">
 		update t_exam_room_allocate t set t.teacher_id=#{1} where t.room_id=#{0}
 	</update>
+	<select id="findByExamAndRoom" resultType="com.zzy.pony.exam.vo.ExamRoomAllocateVo">
+		<include refid="base_select"></include>
+		where a.exam_id=#{0} and t.room_name=#{1} 
+		order by a.exam_date,a.start_time,a.grade_id,t.room_seq
+	</select>
+	<select id="roomList" resultType="java.lang.String">
+		select distinct t.room_name from t_exam_room_allocate t where t.arrange_id in 
+		(select a.arrange_id from t_exam_arrange a where a.exam_id=#{0} )
+	</select>
 </mapper>

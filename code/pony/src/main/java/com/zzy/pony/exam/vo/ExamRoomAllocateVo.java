@@ -12,6 +12,7 @@ public class ExamRoomAllocateVo {
 	private Date startTime;
 	private Date endTime;
 	private Integer gradeId;
+	private String gradeName;
 	private Integer subjectId;
 	private String subjectName;
 	private Integer teacherId;
@@ -31,6 +32,12 @@ public class ExamRoomAllocateVo {
 			result +=DateTimeUtil.dateToStr(startTime, "HH:mm");
 		}
 		return result;
+	}
+	public boolean isFit(String room,String examDate,String startTime){
+		if(getTimeAllocated().equals(examDate+" "+startTime) && roomName.equals(room)){
+			return true;
+		}
+		return false;
 	}
 	public int getRoomId() {
 		return roomId;
@@ -103,6 +110,12 @@ public class ExamRoomAllocateVo {
 	}
 	public void setTeacherNo(String teacherNo) {
 		this.teacherNo = teacherNo;
+	}
+	public String getGradeName() {
+		return gradeName;
+	}
+	public void setGradeName(String gradeName) {
+		this.gradeName = gradeName;
 	}
 	
 }

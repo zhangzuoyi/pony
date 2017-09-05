@@ -12,4 +12,6 @@ public interface ExamRoomAllocateMapper {
 	 */
 	void setMonitorEmpty(Integer examId);
 	void updateMonitor(Integer roomId,Integer teacherId);
+	List<ExamRoomAllocateVo> findByExamAndRoom(Integer examId,String roomName);
+	List<String> roomList(Integer examId);
 }
