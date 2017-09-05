@@ -11,12 +11,16 @@
 	</sql>
 	<sql id="base_select2">
 		select t.EXAMINEE_ID as examineeId,t.EXAM_ID as examId,t.STUDENT_ID as studentId,t.REG_NO as regNo,
-		a.`NAME` as name,a.SEX as sex,a.STUDENT_NO as studentNo from t_examinee t 
+		a.`NAME` as name,a.SEX as sex,a.STUDENT_NO as studentNo,a.exam_subjects as examSubjects from t_examinee t 
 		left join t_student a on t.STUDENT_ID = a.STUDENT_ID
 	</sql>
 	<select id="findPageByClass" resultType="com.zzy.pony.exam.vo.ExamineeVo">
 		<include refid="base_select2"></include>
 		 where a.class_id=#{3} and t.EXAM_ID=#{2} limit #{0},#{1}
+	</select>
+	<select id="findByClass" resultType="com.zzy.pony.exam.vo.ExamineeVo">
+		<include refid="base_select2"></include>
+		 where a.class_id=#{1} and t.EXAM_ID=#{0} 
 	</select>
 	<select id="findCountByClass" resultType="int">
 		select count(1) from 

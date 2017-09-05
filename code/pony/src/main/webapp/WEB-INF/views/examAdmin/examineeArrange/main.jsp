@@ -201,6 +201,7 @@ width:200px;
 			</el-row>
 			<el-row>
 				<el-table
+						ref="studentTable"
 						:data="tableData2"
 						height="250"
 						border
@@ -228,21 +229,9 @@ width:200px;
 							label="考生号">
 					</el-table-column>
 				</el-table>	
-				<el-row>	
-				<el-col :offset="12" :span="12">	
-				<el-pagination
-                @size-change="handleSizeChange2"
-                @current-change="handleCurrentChange2"
-                :current-page="currentPage2"
-                :page-sizes="pageSizes"
-                :page-size="pageSize2"
-                layout="total,sizes,prev,pager,next,jumper"
-                :total="total2"
-                ></el-pagination>
-                </el-col>
-                </el-row>
 			</el-row>
 			<el-row>
+			<el-button type="primary" size="small" @click="selectStudentBySubject">按考试科目</el-button>
 			<el-button type="primary" size="small" @click="submitByStudent">确认</el-button>
 			</el-row>
              </div>
@@ -357,7 +346,7 @@ var app = new Vue({
 		generateNoUrl:"<s:url value='/examAdmin/examinee/generateNo'/>",
         submitByClassUrl:"<s:url value='/examAdmin/examineeArrange/submitByClass'/>",
         submitByStudentUrl:"<s:url value='/examAdmin/examineeArrange/submitByStudent'/>",
-        getExamineeUrl:"<s:url value='/examAdmin/examinee/listPageByClass'/>",
+        getExamineeUrl:"<s:url value='/examAdmin/examinee/listByClass'/>",
         findExamineeUrl:"<s:url value='/examAdmin/examinee/listPageByClassAndArrange'/>", 
         deleteUrl:"<s:url value='/examAdmin/examineeArrange/delete'/>",
         isGenerateShowUrl:"<s:url value='/examAdmin/examinee/isGenerateShow'/>",             
@@ -698,10 +687,10 @@ var app = new Vue({
 				});
 				return;
               }
-             this.$http.get(this.getExamineeUrl,{params:{currentPage:this.currentPage2-1,pageSize:this.pageSize2,examId:this.examId,classId:this.schoolClass}}).then(
+             this.$http.get(this.getExamineeUrl,{params:{examId:this.examId,classId:this.schoolClass}}).then(
                     function(response){
-                        this.tableData2=response.data.content;
-                        this.total2 = response.data.totalElements;                       
+                        this.tableData2=response.data;
+                        //this.total2 = response.data.totalElements;                       
                         });
             
             },
@@ -746,23 +735,29 @@ var app = new Vue({
                         this.isGenerateShowFlag = response.data;
                         });
          
+            },
+            selectStudentBySubject : function(){
+            	var subjectNames = [];//选择的科目
+                for(var index in this.multipleSelection){
+                	subjectNames.push(this.multipleSelection[index].subjectName);
+                }
+                this.$refs.studentTable.clearSelection();
+                for(var i=0;i<this.tableData2.length;i++){
+                	var td=this.tableData2[i];
+                	if(td.examSubjects != null ){
+                		var isContain=true;//考试科目是否包含选择的科目
+                		for(var j=0;j<subjectNames.length;j++){
+                			if(td.examSubjects.indexOf(subjectNames[j]) < 0){
+                				isContain=false;
+                				break;
+                			}
+                		}
+                		if(isContain)
+                			this.$refs.studentTable.toggleRowSelection(td,true);
+                	}
+                }
+                console.log(this.multipleSelection2.length);
             }
-
-
-
-
-
-			
-
-
-
-
-
-
-            
-			
-			
-            
             		   		  
         }	        
 	 

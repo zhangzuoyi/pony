@@ -216,27 +216,9 @@ public class ExamineeServiceImpl implements ExamineeService {
 		return null;
 	}
 
+	@Override
+	public List<ExamineeVo> findByClass(int examId, int classId) {
+		return examineeMapper.findByClass(examId, classId);
+	}
 
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	
-	
 }

@@ -4,6 +4,8 @@ package com.zzy.pony.exam.controller;
 
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -38,6 +40,13 @@ public class ExamineeController {
 			@RequestParam(value="examId") int examId,
 			@RequestParam(value="classId") int classId){					
 		return examineeService.findPageByClass(currentPage, pageSize, examId, classId);		
+	}
+	@RequestMapping(value="listByClass",method=RequestMethod.GET)
+	@ResponseBody
+	public List<ExamineeVo> listByClass(
+			@RequestParam(value="examId") int examId,
+			@RequestParam(value="classId") int classId){					
+		return examineeService.findByClass(examId, classId);
 	}
 	@RequestMapping(value="listPageByClassAndArrange",method=RequestMethod.GET)
 	@ResponseBody

@@ -14,6 +14,7 @@ public interface ExamineeService {
 	
 	void generateNo(int examId,int gradeId,String prefixNo,int bitNo);
 	Page<ExamineeVo> findPageByClass(int currentPage,int pageSize,int examId,int classId);
+	List<ExamineeVo> findByClass(int examId,int classId);
 	Page<ExamineeVo> findPageByClassAndArrange(int currentPage,int pageSize,int examId,int classId,int arrangeId);
 	List<Examinee> findByExamIdAndClassId(int examId,int classId);
 	List<Examinee> findByArrangeId(int arrangeId);

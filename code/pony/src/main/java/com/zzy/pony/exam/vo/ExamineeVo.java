@@ -11,6 +11,7 @@ public class ExamineeVo {
 	private String name;
 	private String sex;
 	private String studentNo;
+	private String examSubjects;
 
 	public ExamineeVo(){}
 
@@ -69,15 +70,13 @@ public class ExamineeVo {
 	public void setStudentNo(String studentNo) {
 		this.studentNo = studentNo;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+	public String getExamSubjects() {
+		return examSubjects;
+	}
+
+	public void setExamSubjects(String examSubjects) {
+		this.examSubjects = examSubjects;
+	}
 	
 }
