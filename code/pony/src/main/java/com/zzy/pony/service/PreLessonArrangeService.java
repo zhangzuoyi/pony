@@ -13,6 +13,7 @@ public interface PreLessonArrangeService {
 	void deleteByClassIdAndSubject(Integer classId,Integer subjectId);
 	void save(ArrangeVo arrangeVo);
 	List<ArrangeVo> findCurrentVo();
+	List<ArrangeVo> findCurrentVoByGrade(int gradeId);
 	List<ArrangeVo> findCurrentWeekArrange();
 
 }

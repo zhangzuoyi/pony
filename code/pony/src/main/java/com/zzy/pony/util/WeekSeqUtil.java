@@ -37,9 +37,12 @@ public class WeekSeqUtil {
 									 {6,14,22,30,38},
 									 {7,15,23,31,39},
 									 {8,16,24,32,40}};
-		
-	
-	/*** 
+
+
+	public static int getWeekPeriod(int week,int periodSeq){
+		return (week-1)*8+periodSeq;
+	}
+	/***
 	* <p>Description: 获取星期</p>
 	* @author  wangchao262
 	*/
@@ -62,6 +65,7 @@ public class WeekSeqUtil {
 	* @author  wangchao262
 	*/
 	public static Set<Integer> getWeek(List<Integer> list){
+
 		Set<Integer> result = new HashSet<Integer>();
 		for (int weekSeq : list) {
 			result.add(getWeek(weekSeq));			

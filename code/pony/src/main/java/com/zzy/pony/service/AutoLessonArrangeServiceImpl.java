@@ -332,7 +332,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
         List<TeacherSubjectVo> teacherSubjectVos = teacherSubjectService.findByGrade(year.getYearId(),term.getTermId(),gradeId);
         GAUtilTwo.getTeacherSubject(teacherSubjectVos,classTSMap,teacherTSMap,teacherSubjectMap,subjectTeacherMap);
 		//2获取预排
-		List<ArrangeVo> preArrangeVos = preLessonArrangeService.findCurrentVo();
+		List<ArrangeVo> preArrangeVos = preLessonArrangeService.findCurrentVoByGrade(gradeId);
 		GAUtilTwo.getPre(preArrangeVos,classMap,teacherMap,classAlreadyMap);
         //3按照班级顺序排课
         List<SchoolClass> schoolClasses = schoolClassService.findByYearAndGradeOrderBySeq(year.getYearId(),gradeId);
@@ -342,15 +342,22 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
         	Map<Integer,Integer> classTSInnerMap = classTSMap.get(sc.getClassId());
         	Map<Integer, Integer> classSubjectTeacherMap = subjectTeacherMap.get(sc.getClassId());
         	Map<Integer, Integer> sortClassTSInnerMap =  GAUtilTwo.sortBySubject(classTSInnerMap,classSubjectTeacherMap,subjects);
-			Map<Integer,List<Integer>> preClassMap = classMap.get(sc.getClass());
+			Map<Integer,List<Integer>> preClassMap = classMap.get(sc.getClassId());
 			Set<Integer> classAlreadySet = classAlreadyMap.get(sc.getClassId());
 			Map<Integer,Integer> innerAutoArrangeMap = new HashMap<Integer, Integer>();			
 			//按照老师(即科目)的顺序来排
 			for (Integer teacherId:
 				sortClassTSInnerMap.keySet()) {
-				int preArrangeCount = preClassMap.get(teacherId).size();
+				int preArrangeCount = 0;
+				if (preClassMap!= null && preClassMap.get(teacherId) != null){
+					preArrangeCount = preClassMap.get(teacherId).size();
+				}
 				int autoArrangeCount = classTSInnerMap.get(teacherId) - preArrangeCount;
-				List<Integer> alreadyTeacherList = teacherMap.get(teacherId).get(sc.getClassId());//已经预排的  
+				List<Integer> alreadyTeacherList = new ArrayList<Integer>();
+				if (teacherMap.get(teacherId)!=null && teacherMap.get(teacherId).get(sc.getClassId())!= null){
+					alreadyTeacherList = teacherMap.get(teacherId).get(sc.getClassId());//已经预排的
+				}
+
 				//已经预排的和未排的超过5天
 				if (autoArrangeCount+WeekSeqUtil.getWeek(alreadyTeacherList).size()>5) {
 					log.error("----------------"+sc.getName()+":老师("+teacherId+")"+"预排与自动排的超过5天----------------");
