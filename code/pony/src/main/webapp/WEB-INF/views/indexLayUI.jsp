@@ -63,56 +63,47 @@
                 <dl class="layui-nav-child">
                     <shiro:hasPermission name="schoolyear_admin">
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/schoolYear/main/' />">
-                            <label>学年管理</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/schoolYear/main/' />"><label>学年管理</label></a>
                     </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="grade_admin">
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/grade/main/' />">
-                            <label>年级管理</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/grade/main/' />"><label>年级管理</label></a>
                     </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="class_admin">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/schoolClass/main/' />">
-                                <label>班级管理</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/schoolClass/main/' />"><label>班级管理</label></a>
                         </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="subject_admin">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/subject/main/' />">
-                                <label>科目管理</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/subject/main/' />"><label>科目管理</label></a>
                         </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="teacher_admin">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/teacherAdmin/main/' />">
-                                <label>教师管理</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/teacherAdmin/main/' />"><label>教师管理</label></a>
                         </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="dict_admin">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/commonDict/main/' />">
-                                <label>通用字典管理</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/commonDict/main/' />"><label>通用字典管理</label></a>
                         </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="resource_admin">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/resourceAdmin/main/' />">
-                                <label>资源管理</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/resourceAdmin/main/' />"><label>资源管理</label></a>
                         </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="role_admin">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/roleAdmin/main/' />">
-                                <label>角色管理</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/roleAdmin/main/' />"><label>角色管理</label></a>
                         </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="user_admin">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/user/main/' />">
-                                <label>用户管理</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/user/main/' />"><label>用户管理</label></a>
                         </dd>
                     </shiro:hasPermission>
                 </dl>
@@ -123,28 +114,22 @@
                 <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe629;</i>成绩分析</a>
                 <dl class="layui-nav-child">
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/examResultRank/main/' />">
-                            <label>成绩排名管理</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/examResultRank/main/' />"><label>成绩排名管理</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/studentComprehensiveTrack/main/' />">
-                            <label>学生综合成绩追踪</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/studentComprehensiveTrack/main/' />"><label>学生综合成绩追踪</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/studentSingleTrack/main/' />">
-                            <label>学生单科成绩追踪</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/studentSingleTrack/main/' />"><label>学生单科成绩追踪</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/classComprehensiveCompare/main/' />">
-                            <label>班级综合成绩对比</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/classComprehensiveCompare/main/' />"><label>班级综合成绩对比</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/classSingleCompare/main/' />">
-                            <label>班级单科成绩对比</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/classSingleCompare/main/' />"><label>班级单科成绩对比</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/comprehensiveRank/main/' />">
-                            <label>学生整体成绩分析</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/comprehensiveRank/main/' />"><label>学生整体成绩分析</label></a>
                     </dd>
                 </dl>
             </li>
@@ -154,27 +139,21 @@
                 <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe63c;</i>学籍管理</a>
                 <dl class="layui-nav-child">
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/studentAdmin/entrance/' />">
-                            <label>入学管理</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/studentAdmin/entrance/' />"><label>入学管理</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/studentAdmin/main/' />">
-                            <label>学生管理</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/studentAdmin/main/' />"><label>学生管理</label></a>
                     </dd><dd>
-                    <a href="javascript:;" data-url="<s:url value='/studentRemark/main/' />">
-                        <label>学生评语管理</label></a>
+                    <a href="javascript:;" data-url="<s:url value='/studentRemark/main/' />"><label>学生评语管理</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/prizePunish/main/' />">
-                            <label>学生奖惩管理</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/prizePunish/main/' />"><label>学生奖惩管理</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/upgrade/main/' />">
-                            <label>升级管理</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/upgrade/main/' />"><label>升级管理</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/studentCard/main/' />">
-                            <label>学籍卡</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/studentCard/main/' />"><label>学籍卡</label></a>
                     </dd>
 
                 </dl>
@@ -185,48 +164,37 @@
                 <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe62a;</i>考试管理</a>
                 <dl class="layui-nav-child">
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/exam/main/' />">
-                            <label>考试管理</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/exam/main/' />"><label>考试管理</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/examAdmin/examRoom/main/' />">
-                            <label>考场管理</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/examAdmin/examRoom/main/' />"><label>考场管理</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/examAdmin/examArrange/main' />">
-                            <label>考试安排</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/examAdmin/examArrange/main' />"><label>考试安排</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/examAdmin/examRoomArrange/main/' />">
-                            <label>考场设置</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/examAdmin/examRoomArrange/main/' />"><label>考场设置</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/examAdmin/examineeArrange/main/' />">
-                            <label>考生设置</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/examAdmin/examineeArrange/main/' />"><label>考生设置</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/examAdmin/examineeRoomArrange/main/' />">
-                            <label>考生考场安排</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/examAdmin/examineeRoomArrange/main/' />"><label>考生考场安排</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/examAdmin/classExamineeRoomArrange/main/' />">
-                            <label>班级考生安排</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/examAdmin/classExamineeRoomArrange/main/' />"><label>班级考生安排</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/examAdmin/roomExamineeRoomArrange/main/' />">
-                            <label>考场考生安排</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/examAdmin/roomExamineeRoomArrange/main/' />"><label>考场考生安排</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/examAdmin/monitorArrange/main/' />">
-                            <label>监考设置</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/examAdmin/monitorArrange/main/' />"><label>监考设置</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/examAdmin/monitorArrange/resultQuery/' />">
-                            <label>监考查询</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/examAdmin/monitorArrange/resultQuery/' />"><label>监考查询</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/examResult/main/' />">
-                            <label>成绩管理</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/examResult/main/' />"><label>成绩管理</label></a>
                     </dd>
                 </dl>
             </li>
@@ -237,86 +205,72 @@
                 <dl class="layui-nav-child">
                     <shiro:hasPermission name="lesson_period">
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/lessonPeriod/main/' />">
-                            <label>上课时段管理</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/lessonPeriod/main/' />"><label>上课时段管理</label></a>
                     </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="teacher_lesson_arrange">
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/teacherLessonArrange/main/' />">
-                            <label>老师任课安排</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/teacherLessonArrange/main/' />"><label>老师任课安排</label></a>
                     </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="teacher_lesson_list">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/teacherLesson/main/' />">
-                                <label>老师任课列表</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/teacherLesson/main/' />"><label>老师任课列表</label></a>
                         </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="week_lesson_admin">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/weekLessonAdmin/main/' />">
-                                <label>星期上课设置</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/weekLessonAdmin/main/' />"><label>星期上课设置</label></a>
                         </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="grade_no_course">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/gradeNoCourse/main/' />">
-                                <label>年级不排课设置</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/gradeNoCourse/main/' />"><label>年级不排课设置</label></a>
                         </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="class_no_course">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/classNoCourse/main/' />">
-                                <label>班级不排课设置</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/classNoCourse/main/' />"><label>班级不排课设置</label></a>
                         </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="teacher_no_course">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/teacherNoCourse/main/' />">
-                                <label>老师不排课设置</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/teacherNoCourse/main/' />"><label>老师不排课设置</label></a>
                         </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="subject_no_course">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/subjectNoCourse/main/' />">
-                                <label>科目不排课设置</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/subjectNoCourse/main/' />"><label>科目不排课设置</label></a>
                         </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="arrange_combine">
                     	<dd>
-                            <a href="javascript:;" data-url="<s:url value='/arrangeCombine/main/' />">
-                                <label>合班设置</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/arrangeCombine/main/' />"><label>合班设置</label></a>
                         </dd>
                 	</shiro:hasPermission>
                     <shiro:hasPermission name="arrange_rotation">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/arrangeRotation/main/' />">
-                                <label>走班设置</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/arrangeRotation/main/' />"><label>走班设置</label></a>
                         </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="prelesson_arrange">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/preLessonArrange/main/' />">
-                                <label>预排</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/preLessonArrange/main/' />"><label>预排</label></a>
                         </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="auto_lesson_arrange">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/autoLessonArrange/main/' />">
-                                <label>自动排课</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/autoLessonArrange/main/' />"><label>自动排课</label></a>
                         </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="relesson_arrange">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/reLessonArrange/main/' />">
-                                <label>调课</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/reLessonArrange/main/' />"><label>调课</label></a>
                         </dd>
                     </shiro:hasPermission>
                     <shiro:hasPermission name="teacher_course">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/teacherCourse/main/' />">
-                                <label>教师课表</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/teacherCourse/main/' />"><label>教师课表</label></a>
                         </dd>
                     </shiro:hasPermission>
                 </dl>
@@ -327,19 +281,15 @@
                     <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe637;</i>选课管理</a>
                     <dl class="layui-nav-child">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/lessonSelectArrange/main/' />">
-                                <label>可选课程设置</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/lessonSelectArrange/main/' />"><label>可选课程设置</label></a>
                         </dd>
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/lessonSelect/main/' />">
-                                <label>学生选课</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/lessonSelect/main/' />"><label>学生选课</label></a>
                         </dd><dd>
-                        <a href="javascript:;" data-url="<s:url value='/ss/config/main/' />">
-                            <label>科目选择配置</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/ss/config/main/' />"><label>科目选择配置</label></a>
                     </dd>
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/ss/select/main/' />">
-                                <label>科目选择</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/ss/select/main/' />"><label>科目选择</label></a>
                         </dd>
                     </dl>
                 </li>
@@ -349,20 +299,16 @@
                     <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe62d;</i>考勤管理</a>
                     <dl class="layui-nav-child">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/attendance/attendance/main/' />">
-                                <label>考勤打卡</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/attendance/attendance/main/' />"><label>考勤打卡</label></a>
                         </dd>
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/attendance/attendance/my/' />">
-                                <label>考勤记录</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/attendance/attendance/my/' />"><label>考勤记录</label></a>
                         </dd>
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/attendance/leave/applyMain/' />">
-                                <label>请假</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/attendance/leave/applyMain/' />"><label>请假</label></a>
                         </dd>
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/attendance/leave/tasksMain/' />">
-                                <label>请假待办任务</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/attendance/leave/tasksMain/' />"><label>请假待办任务</label></a>
                         </dd>
                     </dl>
                 </li>
@@ -372,20 +318,16 @@
                     <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe63a;</i>消息管理</a>
                     <dl class="layui-nav-child">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/userGroup/main/' />">
-                                <label>用户组</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/userGroup/main/' />"><label>用户组</label></a>
                         </dd>
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/message/messageSend/main/' />">
-                                <label>消息发送</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/message/messageSend/main/' />"><label>消息发送</label></a>
                         </dd>
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/message/messageReceive/main/' />">
-                                <label>消息接收</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/message/messageReceive/main/' />"><label>消息接收</label></a>
                         </dd>
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/message/messageSent/main/' />">
-                                <label>已发送消息</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/message/messageSent/main/' />"><label>已发送消息</label></a>
                         </dd>
                     </dl>
                 </li>
@@ -395,28 +337,22 @@
                     <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe600;</i>资产管理</a>
                     <dl class="layui-nav-child">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/property/propertyType/main/' />">
-                                <label>资产分类</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/property/propertyType/main/' />"><label>资产分类</label></a>
                         </dd>
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/property/department/main/' />">
-                                <label>部门管理</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/property/department/main/' />"><label>部门管理</label></a>
                         </dd>
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/property/add/main/' />">
-                                <label>新增资产</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/property/add/main/' />"><label>新增资产</label></a>
                         </dd>
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/property/propertyAdmin/main/' />">
-                                <label>资产管理</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/property/propertyAdmin/main/' />"><label>资产管理</label></a>
                         </dd>
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/property/addConsumable/main/' />">
-                                <label>新增损耗品</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/property/addConsumable/main/' />"><label>新增损耗品</label></a>
                         </dd>
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/property/consumableAdmin/main/' />">
-                                <label>损耗品管理</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/property/consumableAdmin/main/' />"><label>损耗品管理</label></a>
                         </dd>
                     </dl>
                 </li>
@@ -426,16 +362,13 @@
                     <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe612;</i>任课管理</a>
                     <dl class="layui-nav-child">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/teacher/courses/' />">
-                                <label>我的任课</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/teacher/courses/' />"><label>我的任课</label></a>
                         </dd>
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/teacher/mycourse/' />">
-                                <label>我的课表</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/teacher/mycourse/' />"><label>我的课表</label></a>
                         </dd>
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/teacher/examresult/' />">
-                                <label>成绩管理</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/teacher/examresult/' />"><label>成绩管理</label></a>
                         </dd>
                     </dl>
                 </li>
@@ -445,12 +378,10 @@
                     <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe613;</i>学生菜单</a>
                     <dl class="layui-nav-child">
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/student/chooseCourseMain/' />">
-                                <label>选课</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/student/chooseCourseMain/' />"><label>选课</label></a>
                         </dd>
                         <dd>
-                            <a href="javascript:;" data-url="<s:url value='/student/myresultsMain/' />">
-                                <label>我的成绩</label></a>
+                            <a href="javascript:;" data-url="<s:url value='/student/myresultsMain/' />"><label>我的成绩</label></a>
                         </dd>
                     </dl>
                 </li>
@@ -461,10 +392,11 @@
         <div class="layui-tab fly-tab layui-tab-card" lay-filter="page-tab" lay-allowclose="true">
             <ul class="layui-tab-title" id="tabTitle">
                 <li class="layui-this" lay-id="0">
-                    <label>首页</label></li>
+                    <label>首页</label></li>                                     
             </ul>
             <div class="layui-tab-content" id="tabContainers">
                 <div class="layui-tab-item layui-show">
+                <!-- <button onclick="addTab('学年管理','/pony/schoolYear/main/')">测试</button> -->
                     <%--<p>提示
                         <span class="icon-i-b tips-icon mgl-5 ve-m">
                   <span class="dialog-warp right">
