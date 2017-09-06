@@ -132,13 +132,7 @@ public class TestService {
 		if (arrangeVos != null && arrangeVos.size()>0) {
 			lessonArrangeMapper.deleteByArrangeVo(arrangeVos);
 		}
-		
-		
-		
-		/*List<LessonArrange> autoList = lessonArrangeService.findBySchooleYearAndTermAndGradeIdAndSourceType(year, term,grade.getGradeId(), Constants.SOURCE_TYPE_AUTO);
-		List<LessonArrange> changeList = lessonArrangeService.findBySchooleYearAndTermAndGradeIdAndSourceType(year, term,grade.getGradeId(), Constants.SOURCE_TYPE_CHANGE);
-		autoList.addAll(changeList);
-		lessonArrangeService.deleteList(autoList);*/
+
 		autoLessonArrangeService.autoLessonArrangeTwo(grade.getGradeId());
 		
 	}
