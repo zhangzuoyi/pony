@@ -11,7 +11,7 @@ import com.zzy.pony.vo.ArrangeVo;
 public interface PreLessonArrangeService {
 	List<ArrangeVo> findVoByClassIdAndSubject(Integer classId,Integer subjectId);
 	void deleteByClassIdAndSubject(Integer classId,Integer subjectId);
-	void save(ArrangeVo arrangeVo);
+	String save(ArrangeVo arrangeVo);
 	List<ArrangeVo> findCurrentVo();
 	List<ArrangeVo> findCurrentVoByGrade(int gradeId);
 	List<ArrangeVo> findCurrentWeekArrange();

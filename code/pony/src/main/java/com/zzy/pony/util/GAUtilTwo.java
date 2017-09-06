@@ -1,11 +1,6 @@
 package com.zzy.pony.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.model.Subject;
@@ -130,7 +125,7 @@ public class GAUtilTwo {
 	
 	public static Map<Integer,Integer> sortBySubject(Map<Integer,Integer> classTSInnerMap,Map<Integer, Integer> classSubjectTeacherMap,List<Subject> subjects){
 		
-		Map<Integer, Integer> result = new HashMap<Integer, Integer>();
+		Map<Integer, Integer> result = new LinkedHashMap<Integer, Integer>();
 		for (Subject subject : subjects) {
 			if (classSubjectTeacherMap.get(subject.getSubjectId())!= null) {
 				int teacherId = classSubjectTeacherMap.get(subject.getSubjectId());

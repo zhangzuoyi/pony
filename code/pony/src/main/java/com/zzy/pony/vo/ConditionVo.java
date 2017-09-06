@@ -19,6 +19,9 @@ public class ConditionVo {
 	private int messageId;
 	
 	private String sourceType;
+
+	private int weekdayId;
+	private int periodId;
 	
 	public ConditionVo(){
 		
@@ -132,16 +135,20 @@ public class ConditionVo {
 	public void setSourceType(String sourceType) {
 		this.sourceType = sourceType;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
-	
+	public int getWeekdayId() {
+		return weekdayId;
+	}
+
+	public void setWeekdayId(int weekdayId) {
+		this.weekdayId = weekdayId;
+	}
+
+	public int getPeriodId() {
+		return periodId;
+	}
+
+	public void setPeriodId(int periodId) {
+		this.periodId = periodId;
+	}
 }

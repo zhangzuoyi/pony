@@ -203,9 +203,12 @@ var app = new Vue({
 			},
 		  getTeacherLesson : function(gradeId,classId){
 			  this.$http.get(this.teacherLessonUrl,{params:{gradeId:gradeId,classId:classId}}).then(
-						function(response){this.teacherLessonTableData=response.data; },
+						function(response){
+						    this.teacherLessonTableData=response.data;
+                            this.$message({type:"info",message:"查询成功!"});
+                            },
 						function(response){}  	 			
-						);  
+						);  pre
 		  },
 		getHaveClass : function(){ 			
 				this.$http.get(this.weekdaysUrl).then(
@@ -291,11 +294,15 @@ var app = new Vue({
 					if(this.selectData.length ==0){
 					 this.$http.get(this.deleteUrl, {params:{classId:this.classId,subjectId:this.subjectId}}).then(
 							function(response){
+                                if(response.data["key"]!= null &&response.data["key"] != ""){
+                                    this.$alert(response.data["key"]+"存在重课,请重新安排","提示",{confirmButtonText : '确认'});
+                                }else{
+                                    this.$alert("保存成功","提示",{
+                                        confirmButtonText : '确认',
+                                    });
+                                }
 								this.selectData = [];
-								this.getListTableData();		
-								this.$alert("保存成功","提示",{
-		 							confirmButtonText : '确认',		 
-								 });
+								this.getListTableData();
 							 },
 							function(response){}  			
 							); 

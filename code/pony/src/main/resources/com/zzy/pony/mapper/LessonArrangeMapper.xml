@@ -28,8 +28,17 @@ left join t_teacher i on h.teacher_id = i.teacher_id
 		<if test=" sourceType != null">
 			and t.source_type =#{sourceType}
 		</if>
-		<if test=" gradeId != null">
+		<if test=" gradeId != null and gradeId !=0 ">
 			and t.class_id  in (select class_id from t_school_class where grade_id =  #{gradeId})
+		</if>
+		<if test=" classId != null and classId != 0">
+			and t.class_id  =#{classId}
+		</if>
+		<if test=" weekdayId != null and weekdayId != 0">
+			and t.week_day  =#{weekdayId}
+		</if>
+		<if test=" periodId != null and periodId !=0">
+			and t.period_id  =#{periodId}
 		</if>
 		 <if test="schoolClasses != null">
 		 	and  t.CLASS_ID in  
@@ -82,10 +91,8 @@ left join t_teacher i on h.teacher_id = i.teacher_id
 		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
 			#{item.arrangeId}
 		</foreach>
-
-
-
 	</delete>
+
 	
 	
 </mapper>

@@ -111,13 +111,16 @@ public class PreLessonArrangeController {
 	
 	@RequestMapping(value="save",method = RequestMethod.POST)
 	@ResponseBody
-	public void save(@RequestBody List<ArrangeVo> arrangeVos){
+	public Map<String,String> save(@RequestBody List<ArrangeVo> arrangeVos){
+		Map<String,String> result= new HashMap<String, String>();
+		StringBuilder sb = new StringBuilder();
 		//保存逻辑,现删除原有排课，再插入
 		preLessonArrangeService.deleteByClassIdAndSubject(arrangeVos.get(0).getClassId(), arrangeVos.get(0).getSubjectId());
-		for (ArrangeVo arrangeVo : arrangeVos) {					
-			preLessonArrangeService.save(arrangeVo);												
+		for (ArrangeVo arrangeVo : arrangeVos) {
+			sb.append(preLessonArrangeService.save(arrangeVo));
 		}
-		
+		result.put("key",sb.toString());
+		return result;
 	}
 	
 	

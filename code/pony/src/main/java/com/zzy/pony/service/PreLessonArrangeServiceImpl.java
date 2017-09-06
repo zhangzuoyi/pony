@@ -101,9 +101,9 @@ public class PreLessonArrangeServiceImpl implements PreLessonArrangeService {
 
 
 	@Override
-	public void save(ArrangeVo arrangeVo) {
+	public String save(ArrangeVo arrangeVo) {
 		// TODO Auto-generated method stub
-		
+		String result = "";
 		LessonArrange lessonArrange = new LessonArrange();
 	
 		SchoolYear schoolYear = schoolYearService.getCurrent();
@@ -115,6 +115,13 @@ public class PreLessonArrangeServiceImpl implements PreLessonArrangeService {
 		//String[] periods = arrangeVo.getPeriod().split("--");
 		//LessonPeriod lessonPeriod = lessonPeriodService.findByStartTimeAndEndTime(periods[0], periods[1]);
 		LessonPeriod lessonPeriod = lessonPeriodService.findBySchoolYearAndTermAndSeq(schoolYear, term,Integer.valueOf(arrangeVo.getPeriod()) );
+		ConditionVo cv = new ConditionVo();
+		cv.setYearId(schoolYear.getYearId());
+		cv.setTermId(term.getTermId());
+		cv.setClassId(arrangeVo.getClassId());
+		cv.setWeekdayId(weekday.getSeq());
+		cv.setPeriodId(lessonPeriod.getPeriodId());
+		List<ArrangeVo> list = lessonArrangeMapper.findByCondition(cv);
 		lessonArrange.setClassId(arrangeVo.getClassId());
 		lessonArrange.setCreateTime(new Date());
 		lessonArrange.setCreateUser(ShiroUtil.getLoginUser().getLoginName());
@@ -125,9 +132,13 @@ public class PreLessonArrangeServiceImpl implements PreLessonArrangeService {
 		lessonArrange.setSubject(subject);
 		lessonArrange.setTerm(term);
 		lessonArrange.setWeekDay(weekday.getSeq()+"");
-		
-		lessonArrangeDao.save(lessonArrange);
-		
+
+		if (list == null || list.size() ==0) {
+			lessonArrangeDao.save(lessonArrange);
+		}else {
+			result = weekday.getName() +"第"+ lessonPeriod.getSeq()+"节 ";
+		}
+		return result;
 	}
 	
 	
