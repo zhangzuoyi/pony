@@ -314,7 +314,9 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
         Map<Integer,Set<Integer>> classAlreadyMap = new HashMap<Integer, Set<Integer>>();
         //key classId value(key:teacherId value: weekSeq)
 		Map<Integer,Map<Integer,List<Integer>>> classMap = new HashMap<Integer, Map<Integer, List<Integer>>>();
-		//key teacherId value(key:classId value: weekSeq)
+		//key teacherId value(key:classId value: weekSeq)  预排的
+		Map<Integer,Map<Integer,List<Integer>>> preTeacherMap = new LinkedHashMap<Integer, Map<Integer, List<Integer>>>();
+		//key teacherId value(key:classId value: weekSeq)  整体的
 		Map<Integer,Map<Integer,List<Integer>>> teacherMap = new LinkedHashMap<Integer, Map<Integer, List<Integer>>>();
 		//key teacherId value subjectId
 		Map<Integer,Integer> teacherSubjectMap = new HashMap<Integer, Integer>();
@@ -333,7 +335,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
         GAUtilTwo.getTeacherSubject(teacherSubjectVos,classTSMap,teacherTSMap,teacherSubjectMap,subjectTeacherMap);
 		//2获取预排
 		List<ArrangeVo> preArrangeVos = preLessonArrangeService.findCurrentVoByGrade(gradeId);
-		GAUtilTwo.getPre(preArrangeVos,classMap,teacherMap,classAlreadyMap);
+		GAUtilTwo.getPre(preArrangeVos,classMap,teacherMap,preTeacherMap,classAlreadyMap);
         //3按照班级顺序排课
         List<SchoolClass> schoolClasses = schoolClassService.findByYearAndGradeOrderBySeq(year.getYearId(),gradeId);
         for (SchoolClass sc:
@@ -353,20 +355,24 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 					preArrangeCount = preClassMap.get(teacherId).size();
 				}
 				int autoArrangeCount = classTSInnerMap.get(teacherId) - preArrangeCount;
+				List<Integer> preAlreadyTeacherList = new ArrayList<Integer>();
 				List<Integer> alreadyTeacherList = new ArrayList<Integer>();
-				if (teacherMap.get(teacherId)!=null && teacherMap.get(teacherId).get(sc.getClassId())!= null){
-					alreadyTeacherList = teacherMap.get(teacherId).get(sc.getClassId());//已经预排的
+				if (preTeacherMap.get(teacherId)!=null && preTeacherMap.get(teacherId).get(sc.getClassId())!= null){
+					preAlreadyTeacherList = preTeacherMap.get(teacherId).get(sc.getClassId());//已经预排的
+					alreadyTeacherList = teacherMap.get(teacherId).get(sc.getClassId());
 				}
 
 				//已经预排的和未排的超过5天
 				if (autoArrangeCount+WeekSeqUtil.getWeek(alreadyTeacherList).size()>5) {
 					log.error("----------------"+sc.getName()+":老师("+teacherId+")"+"预排与自动排的超过5天----------------");
 				}
+
 				Set<Integer> availWeek = WeekSeqUtil.getAvailWeek(alreadyTeacherList);
+				Set<Integer> teacherSet = new HashSet<Integer>();//保存当次的教师上课安排
 				for (int i = 0; i<autoArrangeCount;i++){
-					
+
 					//从预排过后的剩下的星期中选择 (每天安排的课程不能超过3节)
-					int week = WeekSeqUtil.getRandomWeek(availWeek,alreadyTeacherList,classAlreadySet);
+					int week = WeekSeqUtil.getRandomWeek(availWeek,preAlreadyTeacherList,alreadyTeacherList,classAlreadySet);
 					/*weekseq的获取 
 					 * 1 不能在已安排的课程中 classAlreadySet
 					 * 2 满足年级不排课(放在classAlreadySet)
@@ -389,22 +395,13 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 						 type = Constants.SUBJECT_COMMON;
 					}
 					int weekSeq = WeekSeqUtil.getWeekSeq(week, alreadyTeacherList, classAlreadySet, type);																									
-					alreadyTeacherList.add(weekSeq);
-					classAlreadySet.add(weekSeq);				
-					
+
+					classAlreadySet.add(weekSeq);
+					teacherSet.add(weekSeq);
 				}
+				alreadyTeacherList.addAll(teacherSet);
 			}
-			//按照时间来排
-			/*for (int i = 1 ; i<=5 ; i++){
-				for (int j=1; j<=8;	 j++){
-					int weekSeq = (i-1)*8+j;
-					if (classAlreadySet.contains(weekSeq)){
-						continue;
-					}else{
-						//todo 优先排语数英  且老师上课需要相邻																		
-					}
-				}
-			}*/
+
 
 
 			autoArrangeMap.put(sc.getClassId(),innerAutoArrangeMap);
