@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 /**
  * DiskInfo .
@@ -136,7 +137,23 @@ public class DiskInfo implements java.io.Serializable {
         this.diskInfos = diskInfos;
         this.diskShares = diskShares;
     }
-
+    @Transient
+    public String getFileSizeShow() {
+    	String showSize = "";
+    	  
+		  if (fileSize == 0) {
+		    showSize = "-";
+		  } else if (fileSize > 0 && fileSize < 1024) {
+		    showSize = Long.toString(fileSize) + "B";
+		  } else if (fileSize >= 1024 && fileSize < (1024 * 1024)) {
+		    showSize = Long.toString(fileSize / 1024) + "KB";
+		  } else if (fileSize >= (1024 * 1024) && fileSize < (1024 * 1024 * 1024)) {
+		    showSize = Long.toString(fileSize / (1024 * 1024)) + "MB";
+		  } else if (fileSize >= (1024 * 1024 * 1024)) {
+		    showSize = Long.toString(fileSize / (1024 * 1024 * 1024)) + "GB";
+		  }
+		  return showSize;
+    }
     /** @return null. */
     @Id
     @Column(name = "ID", unique = true, nullable = false)

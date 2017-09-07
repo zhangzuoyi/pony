@@ -39,11 +39,11 @@
 	      <td class="col-md-3">文件类型</td>
 	      <td class="col-md-3">${diskShare.type}</td>
 	      <td class="col-md-3">文件大小</td>
-	      <td class="col-md-3"><tags:fileSize fileSize="${diskShare.diskInfo.fileSize}"/></td>
+	      <td class="col-md-3">${diskShare.diskInfo.fileSizeShow}</td>
 		</tr>
 	    <tr>
 	      <td>创建人</td>
-	      <td><tags:user userId="${diskShare.creator}"/></td>
+	      <td>${diskShare.creator}</td>
 	      <td>分享时间</td>
 	      <td><fmt:formatDate value="${diskShare.shareTime}" type="both"/></td>
 		</tr>
@@ -60,7 +60,11 @@
       <hr class="soften">
     </div>
 
-    <%@include file="_footer.jsp"%>
+    <div id="footer">
+	  <div class="container">
+	    <p class="pull-right"><a class="back-to-top" href="<s:url value='/disk/disk-share-list' />">返回</a></p>
+	  </div>
+	</div>
 
   </body>
 </html>

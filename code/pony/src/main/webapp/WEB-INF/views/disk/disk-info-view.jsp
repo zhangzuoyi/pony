@@ -41,7 +41,7 @@
     <ul class="dropdown-menu">
       <li><span id="qrcode"></span></li>
 	  <script>
-$('#qrcode').qrcode("<tags:baseUrl/>/disk/disk-info-download.do?id=${diskInfo.id}");
+$('#qrcode').qrcode("${baseUrl}/disk/disk-info-download.do?id=${diskInfo.id}");
 	  </script>
     </ul>
   </div>
@@ -57,11 +57,11 @@ $('#qrcode').qrcode("<tags:baseUrl/>/disk/disk-info-download.do?id=${diskInfo.id
 	      <td class="col-md-3">文件类型</td>
 	      <td class="col-md-3">${diskInfo.type}</td>
 	      <td class="col-md-3">文件大小</td>
-	      <td class="col-md-3"><tags:fileSize fileSize="${diskInfo.fileSize}"/></td>
+	      <td class="col-md-3">${diskInfo.fileSizeShow}</td>
 		</tr>
 	    <tr>
 	      <td>创建人</td>
-	      <td><tags:user userId="${diskInfo.creator}"/></td>
+	      <td>${diskInfo.creator}</td>
 	      <td>创建时间</td>
 	      <td><fmt:formatDate value="${diskInfo.createTime}" type="both"/></td>
 		</tr>
@@ -78,7 +78,11 @@ $('#qrcode').qrcode("<tags:baseUrl/>/disk/disk-info-download.do?id=${diskInfo.id
       <hr class="soften">
     </div>
 
-    <%@include file="_footer.jsp"%>
+    <div id="footer">
+	  <div class="container">
+	    <p class="pull-right"><a class="back-to-top" href="<s:url value='/disk/disk-info-list' />">返回</a></p>
+	  </div>
+	</div>
 
   </body>
 </html>

@@ -55,7 +55,7 @@
 			</a>
 			</c:if>
 	      </td>
-          <td class="text-left"><tags:fileSize fileSize="${item.fileSize}"/></td>
+          <td class="text-left">${item.fileSizeShow}</td>
           <td class="text-left"><fmt:formatDate value="${item.lastModifiedTime}" type="both"/></td>
         </tr>
 		</c:forEach>

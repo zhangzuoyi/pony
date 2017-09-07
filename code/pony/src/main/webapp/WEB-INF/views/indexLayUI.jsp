@@ -357,6 +357,22 @@
                     </dl>
                 </li>
             </shiro:hasPermission>
+            <shiro:hasPermission name="disk">;
+                <li class="layui-nav-item">
+                    <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe61d;</i>网盘</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="javascript:;" data-url="<s:url value='/disk/disk-info-list' />"><label>我的文件</label></a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:;" data-url="<s:url value='/disk/disk-share-list' />"><label>我的分享</label></a>
+                        </dd>
+                        <%-- <dd>
+                            <a href="javascript:;" data-url="<s:url value='/disk/trash/' />"><label>回收站</label></a>
+                        </dd> --%>
+                    </dl>
+                </li>
+            </shiro:hasPermission>
             <shiro:hasPermission name="teacher_page">
                 <li class="layui-nav-item">
                     <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe612;</i>任课管理</a>

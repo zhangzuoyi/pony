@@ -172,6 +172,7 @@ public class DiskInfoController {
     public String view(@RequestParam("id") Long id, Model model) {
         DiskInfo diskInfo = diskInfoDao.findOne(id);
         model.addAttribute("diskInfo", diskInfo);
+        model.addAttribute("baseUrl", diskService.getBaseUrl());
 
         return "disk/disk-info-view";
     }
