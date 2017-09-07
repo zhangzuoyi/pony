@@ -63,7 +63,7 @@ public class ShiroDbRealm extends AuthorizingRealm {
 //		Teacher teacher=teacherService.findByTeacherNo(token.getUsername());
 		UserVo vo=userService.findVo(token.getUsername());
 		if(vo != null){
-			ShiroUser shUser=new ShiroUser(vo.getUserId(), vo.getLoginName(), vo.getShowName(), vo.getUserType());
+			ShiroUser shUser=new ShiroUser(vo.getUserId(), vo.getLoginName(), vo.getShowName(), vo.getUserType(), vo.getTeacherId(), vo.getStudentId());
 			if(Constants.USER_TYPE_TEACHER.equals(vo.getUserType())){
 				Teacher teacher=new Teacher();
 				teacher.setTeacherId(vo.getTeacherId());
@@ -160,14 +160,18 @@ public class ShiroDbRealm extends AuthorizingRealm {
 		private String loginName;
 		private String showName;
 		private String userType;
+		private Integer teacherId;
+		private Integer studentId;
 		private List<Integer> tsIds;//老师任课表的ID
 		private List<Integer> classIds;//担任班主任的班级列表
 		
-		public ShiroUser(Integer id, String loginName, String showName, String userType) {
+		public ShiroUser(Integer id, String loginName, String showName, String userType, Integer teacherId, Integer studentId) {
 			this.id=id;
 			this.loginName=loginName;
 			this.showName = showName;
 			this.userType=userType;
+			this.teacherId=teacherId;
+			this.studentId=studentId;
 		}
 
 		public Integer getId() {
@@ -186,6 +190,14 @@ public class ShiroDbRealm extends AuthorizingRealm {
 			return userType;
 		}
 		
+		public Integer getTeacherId() {
+			return teacherId;
+		}
+
+		public Integer getStudentId() {
+			return studentId;
+		}
+
 		public List<Integer> getTsIds() {
 			return tsIds;
 		}

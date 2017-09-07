@@ -373,6 +373,16 @@
                     </dl>
                 </li>
             </shiro:hasPermission>
+            <shiro:hasPermission name="disk">;
+                <li class="layui-nav-item">
+                    <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe6b2;</i>评价管理</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="javascript:;" data-url="<s:url value='/evaluation/outcome/userMain' />"><label>我的成果</label></a>
+                        </dd>
+                    </dl>
+                </li>
+            </shiro:hasPermission>
             <shiro:hasPermission name="teacher_page">
                 <li class="layui-nav-item">
                     <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe612;</i>任课管理</a>

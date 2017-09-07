@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.evaluation.mapper.OutcomeMapper">
+	<sql id="base_select">
+		select t.OUTCOME_ID outcomeId,t.TEACHER_ID teacherId,t.CATEGORY category,t.LEVEL1 level1,t.LEVEL2 level2,
+t.occur_date occurDate,t.description,t.score,t.create_time createTime,t.check_time checkTime,t.check_user checkUser,
+t.status,a.NAME teacherName,a.TEACHER_NO teacherNo from teacher_outcome t left join t_teacher a on t.TEACHER_ID=a.TEACHER_ID 
+	</sql>
+	<select id="findByTeacher" resultType="com.zzy.pony.evaluation.vo.OutcomeVo">
+		<include refid="base_select"></include>
+		 where t.teacher_id=#{0}
+	</select>
+	
+</mapper>
