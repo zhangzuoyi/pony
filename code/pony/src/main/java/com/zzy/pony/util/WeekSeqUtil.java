@@ -95,16 +95,41 @@ public class WeekSeqUtil {
 	* </p>
 	* @author  wangchao262
 	*/
-	public static Integer getRandomWeek(Set<Integer> set,List<Integer> alreadyTeacherList,Set<Integer> classAlreadySet){  						
-		Random random = new Random();			
+	public static Integer getRandomWeek(Set<Integer> set,List<Integer> preAlreadyTeacherList,List<Integer> alreadyTeacherList,Set<Integer> classAlreadySet){
+		Random random = new Random();
+		Set<Integer> alreadySet = new HashSet<Integer>();
+		if(alreadyTeacherList!= null){
+			alreadySet =  getWeek(alreadyTeacherList);//已经安排的星期,需要排除掉预排的
+			alreadySet.removeAll(getWeek(preAlreadyTeacherList));
+			for (int e:
+			alreadySet) {
+				int[] seqs = WeekSeq[e-1];
+				int count = 0;
+				for (int j : seqs) {
+					if (alreadyTeacherList.contains(j)) {
+						count++;
+					}
+				}
+				//条件2
+				if (classAlreadySet.containsAll(Arrays.asList( WeekSeq[e-1]))) {
+					continue ;
+				}else {
+					//条件1
+					if (count >=3) {
+						continue ;
+					}
+				}
 
+				return e;
+			}
+		}
         for (int e : set) {
             	int[] seqs = WeekSeq[e-1];
             	int count = 0;
             	for (int j : seqs) {
             		if (alreadyTeacherList.contains(j)) {
 						count++;
-					}  
+					}
 				}
             	//条件2
             	if (classAlreadySet.containsAll(Arrays.asList( WeekSeq[e-1]))) {
@@ -113,15 +138,8 @@ public class WeekSeqUtil {
 					//条件1
 					if (count >=3) {
 						continue ;
-					} 
-					//条件3(非硬性) 如何处理优先选择的问题?
-					int maxCount = 0;
-					if (alreadyTeacherList!=null && !getWeek(alreadyTeacherList).contains(e) && maxCount < 20) {
-						continue ;
 					}
 				}
-            	
-            	         	
                 return e;  
         }
         return null;  

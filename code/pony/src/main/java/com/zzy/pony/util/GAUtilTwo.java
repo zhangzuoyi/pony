@@ -24,7 +24,8 @@ public class GAUtilTwo {
 	 8	16	24	32	40
 	*/
 
-	public static void getPre(List<ArrangeVo> preArrangeVos, Map<Integer,Map<Integer,List<Integer>>> classMap, Map<Integer,Map<Integer,List<Integer>>> teacherMap, Map<Integer,Set<Integer>> classAlreadyMap){
+	public static void getPre(List<ArrangeVo> preArrangeVos, Map<Integer,Map<Integer,List<Integer>>> classMap, Map<Integer,Map<Integer,List<Integer>>> teacherMap,
+							  Map<Integer,Map<Integer,List<Integer>>> preTeacherMap, Map<Integer,Set<Integer>> classAlreadyMap){
         for (ArrangeVo vo:
                 preArrangeVos) {
             if (classMap.containsKey(vo.getClassId())){
@@ -58,6 +59,22 @@ public class GAUtilTwo {
 				innerTeacherList.add(WeekSeqUtil.getWeekPeriod(vo.getWeekdayId(),vo.getPeriodSeq()));
 				innerTeacherMap.put(vo.getClassId(),innerTeacherList);
 				teacherMap.put(vo.getTeacherId(),innerTeacherMap);
+			}
+			if (preTeacherMap.containsKey(vo.getTeacherId())){
+				Map<Integer,List<Integer>> innerTeacherMap =  preTeacherMap.get(vo.getTeacherId());
+				if (innerTeacherMap.containsKey(vo.getClassId())){
+					innerTeacherMap.get(vo.getClassId()).add(WeekSeqUtil.getWeekPeriod(vo.getWeekdayId(),vo.getPeriodSeq()));
+				}else{
+					List<Integer> innerTeacherList = new ArrayList<Integer>();
+					innerTeacherList.add(WeekSeqUtil.getWeekPeriod(vo.getWeekdayId(),vo.getPeriodSeq()));
+					innerTeacherMap.put(vo.getClassId(),innerTeacherList);
+				}
+			}else{
+				Map<Integer,List<Integer>> innerTeacherMap = new HashMap<Integer, List<Integer>>();
+				List<Integer> innerTeacherList = new ArrayList<Integer>();
+				innerTeacherList.add(WeekSeqUtil.getWeekPeriod(vo.getWeekdayId(),vo.getPeriodSeq()));
+				innerTeacherMap.put(vo.getClassId(),innerTeacherList);
+				preTeacherMap.put(vo.getTeacherId(),innerTeacherMap);
 			}
         }
 		for (int classId:
