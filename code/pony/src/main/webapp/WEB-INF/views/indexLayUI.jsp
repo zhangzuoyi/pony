@@ -375,7 +375,7 @@
             </shiro:hasPermission>
             <shiro:hasPermission name="disk">;
                 <li class="layui-nav-item">
-                    <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe6b2;</i>评价管理</a>
+                    <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe605;</i>评价管理</a>
                     <dl class="layui-nav-child">
                         <dd>
                             <a href="javascript:;" data-url="<s:url value='/evaluation/outcome/userMain' />"><label>我的成果</label></a>

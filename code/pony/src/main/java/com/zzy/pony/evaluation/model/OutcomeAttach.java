@@ -3,6 +3,8 @@ package com.zzy.pony.evaluation.model;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 /**
  * The persistent class for the teacher_outcome_attach database table.
@@ -11,6 +13,7 @@ import javax.persistence.*;
 @Entity
 @Table(name="teacher_outcome_attach")
 @NamedQuery(name="OutcomeAttach.findAll", query="SELECT o FROM OutcomeAttach o")
+@JsonIgnoreProperties(value={"outcome"})
 public class OutcomeAttach implements Serializable {
 	private static final long serialVersionUID = 1L;
 

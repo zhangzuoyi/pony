@@ -80,13 +80,20 @@ width:200px;
                         >
                  <div>{{row.status | statusFilter}}</div>
                 </el-table-column>
-                
+                <el-table-column                       
+                        label="操作">
+	                 <template scope="scope" v-if="row.status == 0">
+	                 <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
+	                 <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>               
+	                 </template>
+                </el-table-column>
             </el-table> 
         </el-card>
         
 		<el-dialog  v-model="dialogFormVisible" >
 			<div slot="title" class="dialog-title">
-                  <b>新增成果</b>
+                  <b v-if=" ! outcome.outcomeId">新增成果</b>
+                  <b v-if="outcome.outcomeId">修改成果</b>
             </div>
 			<el-form :model="outcome" >			 
 			  <el-form-item label="分类" prop="category" :label-width="formLabelWidth"> 
@@ -108,10 +115,28 @@ width:200px;
 			  <el-form-item label="说明" prop="description" :label-width="formLabelWidth"> 
 			 	<el-input type="textarea" :rows="5" v-model="outcome.description" ></el-input>
 			  </el-form-item>
+			  <el-form-item label="附件" :label-width="formLabelWidth">
+			  	<div v-for="attach in attaches">
+			  		<a href="javascript:void(0)" @click="downloadAttach(attach.id)">{{attach.oldFileName}}</a>
+			  		<el-button size="small" @click="deleteAttach(attach)">删除</el-button>
+			  	</div>
+			 	<el-upload					
+	  			 ref="upload" 	
+	  			 name="fileUpload"
+	  			 action="<s:url value='/evaluation/outcome/fileUpload'/>"
+	  			:on-remove="handleRemove"
+	  			:file-list="fileList"
+	  			:auto-upload="false"
+	  			:data="conditionVo"
+	  			multiple>
+	  			<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+	  			<el-button style="margin-left:10px;" size="small" type="primary" @click="clearFiles">清空文件</el-button>
+				</el-upload>
+			  </el-form-item>
 		    </el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button type="primary" @click="addOutcome()">确定</el-button>
-				<el-button @click="dialogFormVisible = false">取 消</el-button>				
+				<el-button @click="dialogFormVisible = false">取 消</el-button>
 			</div>
 		</el-dialog>
 
@@ -125,10 +150,16 @@ var app = new Vue({
 		tableData:[],
 		mylistUrl:"<s:url value='/evaluation/outcome/mylist'/>",
 		addUrl:"<s:url value='/evaluation/outcome/addOutcome'/>",
+		updateUrl:"<s:url value='/evaluation/outcome/updateOutcome'/>",
+		findAttachUrl:"<s:url value='/evaluation/outcome/findAttach'/>",
+		downloadAttachUrl:"<s:url value='/evaluation/outcome/downloadAttach'/>",
+		deleteAttachUrl:"<s:url value='/evaluation/outcome/deleteAttach'/>",
 		outcome:{occurDate:""},
 		dialogFormVisible : false,
-		formLabelWidth:"120px"
-		
+		formLabelWidth:"120px",
+		conditionVo:{outcomeId : null},
+		fileList:[],
+		attaches:[]
 	},
 	filters: {    
  		 statusFilter: function (value) {
@@ -153,21 +184,62 @@ var app = new Vue({
 		  },
 		  showAdd : function(){
 			  this.outcome={occurDate:""};
+			  this.attaches=[];
 			  this.dialogFormVisible=true;
 		  },
 		  addOutcome : function(){ 
-			 this.$http.post(this.addUrl, this.outcome).then(
+			 var url=this.addUrl;
+			 var msg="新增成功";
+			 if(this.outcome.outcomeId){
+				 url=this.updateUrl;
+				 msg="修改成功";
+			 }
+			 this.$http.post(url, this.outcome).then(
 				function(response){
+					this.conditionVo.outcomeId =  response.data;
+		            this.$refs.upload.submit();
+		            this.clearFiles();
 					this.outcome={occurDate:""};
 					this.dialogFormVisible=false;
 					this.$message({
 						type:"info",
-						message:"新增成功"
+						message:msg
 					});
 				},
 				function(response){}
 			 ); 
-	  	  }
+	  	  },
+	  	  handleRemove : function(file, fileList) {
+            console.log(file, fileList);
+          },
+          clearFiles : function(){
+              this.$refs.upload.clearFiles();
+       	  },
+       	  handleEdit : function(row){
+       		  this.outcome=row;
+       		  this.$http.get(this.findAttachUrl, {params:{outcomeId : this.outcome.outcomeId}}).then(
+    				function(response){
+    					this.attaches =  response.data;
+    		            this.dialogFormVisible = true;
+    				},
+    				function(response){}
+    		   );
+       	  },
+       	  downloadAttach : function(attachId){
+       		  window.location.href=this.downloadAttachUrl+"?attachId="+attachId;
+       	  },
+       	  deleteAttach : function(attach){
+       		  this.$http.delete(this.deleteAttachUrl, {params:{attachId : attach.id}}).then(
+    				function(response){
+    					for(var i in this.attaches){
+    						if(this.attaches[i] == attach){
+    							this.attaches.splice(i,1);
+    						}
+    					}
+    				},
+    				function(response){}
+    		   );
+     	  }
 		 
      }	        
 	 
