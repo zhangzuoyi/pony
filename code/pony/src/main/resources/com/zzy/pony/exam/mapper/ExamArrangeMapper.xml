@@ -7,4 +7,20 @@
 		SELECT distinct DATE_FORMAT(exam_date,'%Y-%m-%d') examDate,DATE_FORMAT(start_time,'%H:%i') startTime,DATE_FORMAT(end_time,'%H:%i') endTime 
  		FROM t_exam_arrange where exam_id=#{0} order by exam_date,start_time
 	</select>
+
+	<update id="updateExamDate" parameterType="java.util.Map" >
+		update t_exam_arrange t set t.exam_date =DATE_FORMAT( #{examDate},'%Y-%m-%d')
+		where t.arrange_id in
+		<foreach collection="examArrangeIds" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</update>
+
+	<update id="updateExamTime" parameterType="java.util.Map">
+		update t_exam_arrange t set t.start_time =DATE_FORMAT(#{startTime},'%Y-%m-%d %k:%i:%s')  ,t.end_time = DATE_FORMAT(#{endTime},'%Y-%m-%d %k:%i:%s')
+		where t.arrange_id in
+		<foreach collection="examArrangeIds" item="item" index="index" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</update>
 </mapper>

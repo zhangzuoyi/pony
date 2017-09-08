@@ -1,10 +1,10 @@
 package com.zzy.pony.exam.service;
 
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
+import com.sun.javafx.scene.control.skin.VirtualFlow;
+import com.zzy.pony.exam.mapper.ExamArrangeMapper;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.service.SubjectService;
 
@@ -39,6 +39,8 @@ public class ExamArrangeServiceImpl implements ExamArrangeService {
 	private SubjectService subjectService;
 	@Autowired
 	private ExamArrangeGroupDao examArrangeGroupDao;
+	@Autowired
+	private ExamArrangeMapper examArrangeMapper;
 	
 	
 	
@@ -91,25 +93,41 @@ public class ExamArrangeServiceImpl implements ExamArrangeService {
 	@Override
 	public void addExamDate(int[] examArranges, Date examDate) {
 		// TODO Auto-generated method stub
+		List<Integer> examArrangeIds = new ArrayList<Integer>();
+		Map<String,Object> map = new HashMap<String, Object>();
 		if (examArranges.length>0) {
 			for (int arrangeId : examArranges) {
-				ExamArrange examArrange = examArrangeDao.findOne(arrangeId);
+				examArrangeIds.add(arrangeId);
+
+				/*ExamArrange examArrange = examArrangeDao.findOne(arrangeId);
 				examArrange.setExamDate(examDate);
-				examArrangeDao.save(examArrange);
+				examArrangeDao.save(examArrange);*/
 			}
+			map.put("examDate",examDate);
+			map.put("examArrangeIds",examArrangeIds);
+			examArrangeMapper.updateExamDate(map);
+
 		}
 	}
 
 	@Override
 	public void addExamTime(int[] examArranges, Date startTime, Date endTime) {
 		// TODO Auto-generated method stub
+		Map<String,Object> map = new HashMap<String, Object>();
+		List<Integer> examArrangeIds = new ArrayList<Integer>();
 		if (examArranges.length>0) {
 			for (int arrangeId : examArranges) {
-				ExamArrange examArrange = examArrangeDao.findOne(arrangeId);
+
+				examArrangeIds.add(arrangeId);
+				/*ExamArrange examArrange = examArrangeDao.findOne(arrangeId);
 				examArrange.setStartTime(startTime);
 				examArrange.setEndTime(endTime);
-				examArrangeDao.save(examArrange);
+				examArrangeDao.save(examArrange);*/
 			}
+			map.put("startTime",startTime);
+			map.put("endTime",endTime);
+			map.put("examArrangeIds",examArrangeIds);
+			examArrangeMapper.updateExamTime(map);
 		}
 	}
 

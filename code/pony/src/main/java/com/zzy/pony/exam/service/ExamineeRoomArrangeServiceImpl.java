@@ -258,29 +258,38 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 			Map<String, Object> headMap = new HashMap<String, Object>();
 			headMap.put("prop", arrangeHeadMap.get(arrangeId));
 			headMap.put("label", arrangeMap.get(arrangeId));
-			headList.add(headMap);		
+			Map<String, Object> headSeqMap = new HashMap<String, Object>();
+			headSeqMap.put("prop", arrangeSeqHeadMap.get(arrangeId));
+			headSeqMap.put("label", "序号");
+			headList.add(headMap);
+			headList.add(headSeqMap);
 		} 
-		for (Integer arrangeId : arrangeSeqHeadMap.keySet()) {
+		/*for (Integer arrangeId : arrangeSeqHeadMap.keySet()) {
 			  arrangeHeadMap.get(arrangeId);
 			Map<String, Object> headMap = new HashMap<String, Object>();
 			headMap.put("prop", arrangeSeqHeadMap.get(arrangeId));
 			headMap.put("label", "序号");
 			headList.add(headMap);		
-		} 
+		} */
 		for (Integer arrangeId : groupHeadMap.keySet()) {
 			  arrangeHeadMap.get(arrangeId);
 			Map<String, Object> headMap = new HashMap<String, Object>();
 			headMap.put("prop", groupHeadMap.get(arrangeId));
 			headMap.put("label", groupMap.get(arrangeId));
-			headList.add(headMap);		
+			Map<String, Object> headSeqMap = new HashMap<String, Object>();
+			headSeqMap.put("prop", groupSeqHeadMap.get(arrangeId));
+			headSeqMap.put("label", "序号");
+			headList.add(headMap);
+			headList.add(headSeqMap);
+
 		} 
-		for (Integer arrangeId : groupSeqHeadMap.keySet()) {
+		/*for (Integer arrangeId : groupSeqHeadMap.keySet()) {
 			  arrangeHeadMap.get(arrangeId);
 			Map<String, Object> headMap = new HashMap<String, Object>();
 			headMap.put("prop", groupSeqHeadMap.get(arrangeId));
 			headMap.put("label", "序号");
 			headList.add(headMap);		
-		} 
+		}*/
 		
 		GsonBuilder gb = new GsonBuilder();
 		Gson gson = gb.create();
@@ -398,29 +407,39 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 			Map<String, Object> headMap = new HashMap<String, Object>();
 			headMap.put("prop", arrangeHeadMap.get(arrangeId));
 			headMap.put("label", arrangeMap.get(arrangeId));
-			headList.add(headMap);		
+			Map<String, Object> headSeqMap = new HashMap<String, Object>();
+			headSeqMap.put("prop", arrangeSeqHeadMap.get(arrangeId));
+			headSeqMap.put("label", "准考证号");
+			headList.add(headMap);
+			headList.add(headSeqMap);
+
 		} 
-		for (Integer arrangeId : arrangeSeqHeadMap.keySet()) {
+		/*for (Integer arrangeId : arrangeSeqHeadMap.keySet()) {
 			  arrangeHeadMap.get(arrangeId);
 			Map<String, Object> headMap = new HashMap<String, Object>();
 			headMap.put("prop", arrangeSeqHeadMap.get(arrangeId));
 			headMap.put("label", "准考证号");
 			headList.add(headMap);		
-		} 
+		}*/
 		for (Integer arrangeId : groupHeadMap.keySet()) {
 			  arrangeHeadMap.get(arrangeId);
 			Map<String, Object> headMap = new HashMap<String, Object>();
 			headMap.put("prop", groupHeadMap.get(arrangeId));
 			headMap.put("label", groupMap.get(arrangeId));
-			headList.add(headMap);		
+			Map<String, Object> headSeqMap = new HashMap<String, Object>();
+			headSeqMap.put("prop", groupSeqHeadMap.get(arrangeId));
+			headSeqMap.put("label", "准考证号");
+			headList.add(headMap);
+			headList.add(headSeqMap);
+
 		} 
-		for (Integer arrangeId : groupSeqHeadMap.keySet()) {
+		/*for (Integer arrangeId : groupSeqHeadMap.keySet()) {
 			  arrangeHeadMap.get(arrangeId);
 			Map<String, Object> headMap = new HashMap<String, Object>();
 			headMap.put("prop", groupSeqHeadMap.get(arrangeId));
 			headMap.put("label", "准考证号");
 			headList.add(headMap);		
-		} 
+		} */
 		
 		GsonBuilder gb = new GsonBuilder();
 		Gson gson = gb.create();
