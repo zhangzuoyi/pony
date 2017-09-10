@@ -155,9 +155,9 @@ public class StudentServiceImpl implements StudentService {
 	
 
 	@Override
-	public List<Student> findByGradeOrderByStudentId(int gradeId) {
+	public List<Student> findByGradeOrderByStudentId(int gradeId,int yearId) {
 		// TODO Auto-generated method stub
-		return studentMapper.findByGradeOrderByStudentId(gradeId);
+		return studentMapper.findByGradeOrderByStudentId(gradeId,yearId);
 	}
 	
 	

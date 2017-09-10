@@ -5,5 +5,5 @@ import java.util.List;
 import com.zzy.pony.model.Student;
 
 public interface StudentMapper {
-	List<Student> findByGradeOrderByStudentId(int  gradeId);
+	List<Student> findByGradeOrderByStudentId(int  gradeId,int yearId);
 }

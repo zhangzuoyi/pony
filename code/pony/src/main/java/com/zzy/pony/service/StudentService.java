@@ -27,7 +27,7 @@ public interface StudentService {
 	List<Student> findBySchoolClass(Integer classId);
 	void upload(List<Student> students, String loginUser);
 	void changeStatus(StudentStatusChange sc);
-	List<Student> findByGradeOrderByStudentId(int gradeId);
+	List<Student> findByGradeOrderByStudentId(int gradeId,int yearId);
 	/**
 	 * 设置学生的考试科目
 	 * @param subjects 科目名称

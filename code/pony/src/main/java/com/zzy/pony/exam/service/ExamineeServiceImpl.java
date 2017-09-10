@@ -133,7 +133,7 @@ public class ExamineeServiceImpl implements ExamineeService {
 		List<ExamVo> examVos = examService.findByYearAndTermOrderByExamDate(year, term);
 		if (examVos == null || examVos.size() == 0 || examVos.size() == 1) {
 			//按规则生成考生号  先按照同一班级，同一班级的按照studentId进行排序
-			List<Student> students = studentService.findByGradeOrderByStudentId(gradeId);
+			List<Student> students = studentService.findByGradeOrderByStudentId(gradeId,year.getYearId());
 			for (int i=1;i<=students.size();i++) {
 				result.put(students.get(i-1).getStudentId(), prefixNo+String.format("%0"+bitNo+"d",i));
 			}
@@ -144,7 +144,7 @@ public class ExamineeServiceImpl implements ExamineeService {
 		    Map<Integer, String> map =  studentComprehensiveTrackService.findExamRank(examVo.getExamId());
 		    if (map == null ||map.size()==0) {
 		    	//按规则生成考生号  先按照同一班级，同一班级的按照studentId进行排序
-				List<Student> students = studentService.findByGradeOrderByStudentId(gradeId);
+				List<Student> students = studentService.findByGradeOrderByStudentId(gradeId,year.getYearId());
 				for (int i=1;i<=students.size();i++) {
 					result.put(students.get(i-1).getStudentId(), prefixNo+String.format("%0"+bitNo+"d",i));
 				}	    			    	

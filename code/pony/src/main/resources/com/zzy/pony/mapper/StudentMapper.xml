@@ -15,7 +15,7 @@
 	</sql>
 	<select id="findByGradeOrderByStudentId" resultType="com.zzy.pony.model.Student">
 		<include refid="base_select"></include>
-		where a.GRADE_ID = #{0} 
+		where a.GRADE_ID = #{0} and a.year_id = #{1}
 		order by t.class_id,t.STUDENT_ID 
 	</select>
 	
