@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>成果管理</title>
+<title>成果审核</title>
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/easyui/themes/default/easyui.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/style.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/icon.css' />" />
@@ -37,11 +37,6 @@ width:200px;
 	              <el-col :span="4">
 	              <b>成果列表</b>
 	              </el-col>
-              </el-row>
-              <el-row>
-               <el-col :span="16">
-               	<el-button type="primary" @click="showAdd">新增</el-button>
-               </el-col>
               </el-row>
             </div>
             <el-table
@@ -83,8 +78,7 @@ width:200px;
                 <el-table-column                       
                         label="操作">
 	                 <template scope="scope" >
-	                 <el-button v-if="scope.row.status == 0" size="small" @click="handleEdit(scope.row)">编辑</el-button>
-	                 <el-button v-if="scope.row.status == 0" size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>               
+	                 <el-button v-if="scope.row.status == 0" size="small" @click="showCheck(scope.row)">审核</el-button>
 	                 </template>
                 </el-table-column>
             </el-table> 
@@ -92,56 +86,32 @@ width:200px;
         
 		<el-dialog  v-model="dialogFormVisible" >
 			<div slot="title" class="dialog-title">
-                  <b v-if=" ! outcome.outcomeId">新增成果</b>
-                  <b v-if="outcome.outcomeId">修改成果</b>
+                  <b>新增审核</b>
             </div>
 			<el-form :model="outcome" >			 
 			  <el-form-item label="分类" prop="category" :label-width="formLabelWidth"> 
-			 	<el-select v-model="outcome.category" placeholder="请选择" @change="categoryChange()">
-                    <el-option v-for="x in categories" :label="x" :value="x"></el-option>
-                </el-select>
+			 	<div>{{outcome.category}}</div>
 			  </el-form-item>
 			  <el-form-item label="类别" prop="level1" :label-width="formLabelWidth"> 
-			 	<el-select v-model="outcome.level1" placeholder="请选择" @change="level1Change()">
-                    <el-option v-for="x in level1List" :label="x" :value="x"></el-option>
-                </el-select> 			
+			 	<div>{{outcome.level1}}</div>
 			  </el-form-item>
 			  <el-form-item label="级别" prop="level2" :label-width="formLabelWidth"> 
-			 	<el-select v-model="outcome.level2" placeholder="请选择" >
-                    <el-option v-for="x in level2List" :label="x.level2" :value="x.level2"></el-option>
-                </el-select>
+			 	<div>{{outcome.level2}}</div>
 			  </el-form-item>
 			  <el-form-item label="发生日期" prop="occurDate" :label-width="formLabelWidth"> 
-			 	<el-date-picker
-                    v-model="outcome.occurDate"
-                    type="date"
-                    placeholder="选择日期">
-            	</el-date-picker>
+			 	<div>{{outcome.occurDate | date}}</div>
 			  </el-form-item>
 			  <el-form-item label="说明" prop="description" :label-width="formLabelWidth"> 
-			 	<el-input type="textarea" :rows="5" v-model="outcome.description" ></el-input>
+			 	<div>{{outcome.description}}</div>
 			  </el-form-item>
 			  <el-form-item label="附件" :label-width="formLabelWidth">
 			  	<div v-for="attach in attaches">
 			  		<a href="javascript:void(0)" @click="downloadAttach(attach.id)">{{attach.oldFileName}}</a>
-			  		<el-button size="small" @click="deleteAttach(attach)">删除</el-button>
 			  	</div>
-			 	<el-upload					
-	  			 ref="upload" 	
-	  			 name="fileUpload"
-	  			 action="<s:url value='/evaluation/outcome/fileUpload'/>"
-	  			:on-remove="handleRemove"
-	  			:file-list="fileList"
-	  			:auto-upload="false"
-	  			:data="conditionVo"
-	  			multiple>
-	  			<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-	  			<el-button style="margin-left:10px;" size="small" type="primary" @click="clearFiles">清空文件</el-button>
-				</el-upload>
 			  </el-form-item>
 		    </el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button type="primary" @click="addOutcome()">确定</el-button>
+				<el-button type="primary" @click="submitCheck()">确定</el-button>
 				<el-button @click="dialogFormVisible = false">取 消</el-button>
 			</div>
 		</el-dialog>
@@ -154,24 +124,16 @@ var app = new Vue({
 	el : '#app' ,
 	data : { 		
 		tableData:[],
-		mylistUrl:"<s:url value='/evaluation/outcome/mylist'/>",
-		addUrl:"<s:url value='/evaluation/outcome/addOutcome'/>",
-		updateUrl:"<s:url value='/evaluation/outcome/updateOutcome'/>",
+		findPageUrl:"<s:url value='/evaluation/outcome/findPage'/>",
 		findAttachUrl:"<s:url value='/evaluation/outcome/findAttach'/>",
 		downloadAttachUrl:"<s:url value='/evaluation/outcome/downloadAttach'/>",
-		deleteAttachUrl:"<s:url value='/evaluation/outcome/deleteAttach'/>",
-		findCategoryUrl:"<s:url value='/evaluation/outcomeValues/categories'/>",
-		findLevel1Url:"<s:url value='/evaluation/outcomeValues/findLevel1'/>",
-		findLevel2Url:"<s:url value='/evaluation/outcomeValues/findLevel2'/>",
+		checkUrl:"<s:url value='/evaluation/outcome/check'/>",
 		outcome:{occurDate:"",category:"",level1:"",level2:""},
 		dialogFormVisible : false,
 		formLabelWidth:"120px",
 		conditionVo:{outcomeId : null},
 		fileList:[],
-		attaches:[],
-		categories:[],
-		level1List:[],
-		level2List:[]
+		attaches:[]
 	},
 	filters: {    
  		 statusFilter: function (value) {
@@ -182,100 +144,43 @@ var app = new Vue({
  		},
 	
 	mounted : function() { 
-		this.mylist();
-		this.getCategories();
+		this.list();
 			
 	}, 
 	methods : { 
-	      mylist : function(){ 
-					this.$http.get(this.mylistUrl).then(
+	      list : function(){ 
+					this.$http.get(this.findPageUrl).then(
 					function(response){
 					this.tableData=response.data;},
 					function(response){}  			
 					); 
 		  },
-		  showAdd : function(){
-			  this.outcome={occurDate:"",category:"",level1:"",level2:""};
-			  this.attaches=[];
-			  this.dialogFormVisible=true;
-		  },
-		  addOutcome : function(){ 
-			 var url=this.addUrl;
-			 var msg="新增成功";
-			 if(this.outcome.outcomeId){
-				 url=this.updateUrl;
-				 msg="修改成功";
-			 }
-			 this.$http.post(url, this.outcome).then(
-				function(response){
-					this.conditionVo.outcomeId =  response.data;
-		            this.$refs.upload.submit();
-		            this.clearFiles();
-					this.outcome={occurDate:"",category:"",level1:"",level2:""};
-					this.dialogFormVisible=false;
-					this.$message({
-						type:"info",
-						message:msg
-					});
-				},
-				function(response){}
-			 ); 
-	  	  },
-	  	  handleRemove : function(file, fileList) {
-            console.log(file, fileList);
-          },
-          clearFiles : function(){
-              this.$refs.upload.clearFiles();
-       	  },
-       	  handleEdit : function(row){
-       		  this.outcome=row;
-       		  this.$http.get(this.findAttachUrl, {params:{outcomeId : this.outcome.outcomeId}}).then(
+		  showCheck : function(row){
+			  this.outcome=row;
+			  this.$http.get(this.findAttachUrl, {params:{outcomeId : this.outcome.outcomeId}}).then(
     				function(response){
     					this.attaches =  response.data;
     		            this.dialogFormVisible = true;
     				},
     				function(response){}
     		   );
-       	  },
+		  },
        	  downloadAttach : function(attachId){
        		  window.location.href=this.downloadAttachUrl+"?attachId="+attachId;
        	  },
-       	  deleteAttach : function(attach){
-       		  this.$http.delete(this.deleteAttachUrl, {params:{attachId : attach.id}}).then(
-    				function(response){
-    					for(var i in this.attaches){
-    						if(this.attaches[i] == attach){
-    							this.attaches.splice(i,1);
-    						}
-    					}
-    				},
-    				function(response){}
-    		   );
-     	  },
-     	  getCategories : function(){ 
-				this.$http.get(this.findCategoryUrl).then(
+       	  submitCheck : function(){
+       		  this.$http.post(this.checkUrl,{outcomeId : this.outcome.outcomeId},{emulateJSON:true}).then(
 					function(response){
-						this.categories=response.data;
-					},
-					function(response){}
-				); 
-	      },
-	      categoryChange : function(){
-	    	  this.$http.get(this.findLevel1Url, {params:{category : this.outcome.category}}).then(
-    				function(response){
-    					this.level1List=response.data;
-    				},
-    				function(response){}
-	    	  );
-	      },
-	      level1Change : function(){
-	    	  this.$http.get(this.findLevel2Url, {params:{category : this.outcome.category , level1 : this.outcome.level1}}).then(
-    				function(response){
-    					this.level2List=response.data;
-    				},
-    				function(response){}
-		      );
-	      }
+						this.$message({
+							type:"info",
+							message:"审核成功"
+						});
+						this.dialogFormVisible = false;
+						this.list();
+					 },
+					function(response){}  			
+			  );  
+       	  }
 		 
      }	        
 	 

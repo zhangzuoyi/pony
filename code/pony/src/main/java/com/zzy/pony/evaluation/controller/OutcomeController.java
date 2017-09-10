@@ -22,12 +22,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.zzy.pony.evaluation.dao.OutcomeAttachDao;
+import com.zzy.pony.evaluation.dao.OutcomeValueDao;
 import com.zzy.pony.evaluation.model.Outcome;
 import com.zzy.pony.evaluation.model.OutcomeAttach;
 import com.zzy.pony.evaluation.service.OutcomeService;
 import com.zzy.pony.evaluation.vo.OutcomeVo;
-import com.zzy.pony.message.model.Message;
-import com.zzy.pony.message.model.MessageAttach;
 import com.zzy.pony.model.Teacher;
 import com.zzy.pony.security.ShiroUtil;
 
@@ -99,5 +98,20 @@ public class OutcomeController {
 		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 		
 		return new ResponseEntity<byte[]>(service.getAttachContent(attach), headers,HttpStatus.CREATED);
+	}
+	@RequestMapping(value="checkMain",method = RequestMethod.GET)
+	public String checkMain(Model model){
+		return "evaluation/outcome/checkMain";
+	}
+	@RequestMapping(value="findPage",method = RequestMethod.GET)
+	@ResponseBody
+	public List<OutcomeVo> findPage(){
+		return service.findAll();
+	}
+	@RequestMapping(value="check",method = RequestMethod.POST)
+	@ResponseBody
+	public String check(@RequestParam(value="outcomeId") Long outcomeId){
+		service.check(outcomeId, ShiroUtil.getLoginName());
+		return "success";
 	}
 }

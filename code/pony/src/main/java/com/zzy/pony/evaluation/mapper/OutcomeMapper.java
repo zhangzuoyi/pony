@@ -6,4 +6,5 @@ import com.zzy.pony.evaluation.vo.OutcomeVo;
 
 public interface OutcomeMapper {
 	List<OutcomeVo> findByTeacher(Integer teacherId);
+	List<OutcomeVo> findAll();
 }

@@ -10,10 +10,12 @@ import com.zzy.pony.evaluation.vo.OutcomeVo;
 
 public interface OutcomeService {
 	List<OutcomeVo> findByTeacher(Integer teacherId);
+	List<OutcomeVo> findAll();
 	void add(Outcome outcome);
 	void update(Outcome outcome);
 	void saveAttach(MultipartFile file, Long outcomeId);
 	List<OutcomeAttach> findAttach(Long outcomeId);
 	byte[] getAttachContent(OutcomeAttach attach);
 	void deleteAttach(Long attachId);
+	void check(Long outcomeId,String loginName);
 }

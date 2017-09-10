@@ -20,9 +20,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.zzy.pony.evaluation.dao.OutcomeAttachDao;
 import com.zzy.pony.evaluation.dao.OutcomeDao;
+import com.zzy.pony.evaluation.dao.OutcomeValueDao;
 import com.zzy.pony.evaluation.mapper.OutcomeMapper;
 import com.zzy.pony.evaluation.model.Outcome;
 import com.zzy.pony.evaluation.model.OutcomeAttach;
+import com.zzy.pony.evaluation.model.OutcomeValue;
 import com.zzy.pony.evaluation.vo.OutcomeVo;
 import com.zzy.pony.util.DateTimeUtil;
 @Service
@@ -32,6 +34,8 @@ public class OutcomeServiceImpl implements OutcomeService {
 	private OutcomeMapper mapper;
 	@Autowired
 	private OutcomeDao dao;
+	@Autowired
+	private OutcomeValueDao valueDao;
 	@Autowired
 	private OutcomeAttachDao attachDao;
 	@Value("${outcomeAttach.baseDir}")
@@ -44,7 +48,15 @@ public class OutcomeServiceImpl implements OutcomeService {
 
 	@Override
 	public void add(Outcome outcome) {
+		setScore(outcome);
 		dao.save(outcome);
+	}
+	
+	private void setScore(Outcome outcome){
+		OutcomeValue ov=valueDao.findByCategoryAndLevel1AndLevel2(outcome.getCategory(), outcome.getLevel1(), outcome.getLevel2());
+		if(ov != null){
+			outcome.setScore(ov.getScore());
+		}
 	}
 
 	@Override
@@ -112,7 +124,7 @@ public class OutcomeServiceImpl implements OutcomeService {
 		old.setLevel1(outcome.getLevel1());
 		old.setLevel2(outcome.getLevel2());
 		old.setOccurDate(outcome.getOccurDate());
-		//TODO 取得分值
+		setScore(old);
 		dao.save(old);
 	}
 
@@ -122,6 +134,20 @@ public class OutcomeServiceImpl implements OutcomeService {
 		File localFile = new File(attachBaseDir,attach.getSavePath());
 		localFile.delete();
 		attachDao.delete(attach);
+	}
+
+	@Override
+	public List<OutcomeVo> findAll() {
+		return mapper.findAll();
+	}
+
+	@Override
+	public void check(Long outcomeId,String loginName) {
+		Outcome outcome=dao.findOne(outcomeId);
+		outcome.setStatus(Outcome.STATUS_CHECKED);
+		outcome.setCheckTime(new Date());
+		outcome.setCheckUser(loginName);
+		dao.save(outcome);
 	}
 
 }

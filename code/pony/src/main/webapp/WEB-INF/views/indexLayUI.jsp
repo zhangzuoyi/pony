@@ -179,7 +179,7 @@
                         <a href="javascript:;" data-url="<s:url value='/examAdmin/examineeArrange/main/' />"><label>考生设置</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/examAdmin/examineeRoomArrange/main/' />"><label>考生考场安排</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/examAdmin/examineeRoomArrange/main/' />"><label>自动考场安排</label></a>
                     </dd>
                     <dd>
                         <a href="javascript:;" data-url="<s:url value='/examAdmin/classExamineeRoomArrange/main/' />"><label>班级考生安排</label></a>
@@ -379,6 +379,9 @@
                     <dl class="layui-nav-child">
                         <dd>
                             <a href="javascript:;" data-url="<s:url value='/evaluation/outcome/userMain' />"><label>我的成果</label></a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:;" data-url="<s:url value='/evaluation/outcome/checkMain' />"><label>成果审核</label></a>
                         </dd>
                     </dl>
                 </li>
