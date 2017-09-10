@@ -7,7 +7,9 @@
 		SELECT distinct DATE_FORMAT(exam_date,'%Y-%m-%d') examDate,DATE_FORMAT(start_time,'%H:%i') startTime,DATE_FORMAT(end_time,'%H:%i') endTime 
  		FROM t_exam_arrange where exam_id=#{0} order by exam_date,start_time
 	</select>
-
+	<insert id="addExamArrange" useGeneratedKeys="true" keyProperty="arrangeId" >
+		insert into t_exam_arrange (exam_id,grade_id,subject_id) VALUES (#{0},#{1},#{2})
+	</insert>
 	<update id="updateExamDate" parameterType="java.util.Map" >
 		update t_exam_arrange t set t.exam_date =DATE_FORMAT( #{examDate},'%Y-%m-%d')
 		where t.arrange_id in

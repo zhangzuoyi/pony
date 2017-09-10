@@ -148,7 +148,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 	
 	@Override
 	public String findExamineeRoomArrangeByClassId(
-			int classId,int examId) {
+			int classId,int gradeId,int examId) {
 		// TODO Auto-generated method stub
 		
 		StringBuilder result = new StringBuilder();
@@ -157,7 +157,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		String[] arrangeSeqStrings = {"colSeqOne","colSeqTwo","colSeqThree","colSeqFour","colSeqFive","colSeqSix","colSeqSeven","colSeqEight","colSeqNine","colSeqTen","colSeqEleven","colSeqTwelve"};
 		String[] groupSeqStrings = {"columnSeqOne","columnSeqTwo","columnSeqThree","columnSeqFour","columnSeqFive","columnSeqSix","columnSeqSeven","columnSeqEight","columnSeqNine","columnSeqTen","columnSeqEleven","columnSeqTwelve"};
 
-		List<ExamArrange> examArranges = examArrangeService.findByExam(examId);
+		List<ExamArrange> examArranges = examArrangeService.findByExamAndGrade(examId,gradeId);
 		Map<Integer , String> arrangeMap = new HashMap<Integer, String>();//不在组内
 		Map<Integer, String> groupMap = new HashMap<Integer, String>();//在组内
 		Map<Integer, String> arrangeHeadMap = new HashMap<Integer, String>();
@@ -308,7 +308,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 	}
 
 	@Override
-	public String findExamineeRoomArrangeByRoomId(int roomId,int examId) {
+	public String findExamineeRoomArrangeByRoomId(int roomId,int gradeId,int examId) {
 		// TODO Auto-generated method stub
 		StringBuilder result = new StringBuilder();
 		String[] arrangeStrings = {"colOne","colTwo","colThree","colFour","colFive","colSix","colSeven","colEight","colNine","colTen","colEleven","colTwelve"};
@@ -316,7 +316,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		String[] arrangeSeqStrings = {"colSeqOne","colSeqTwo","colSeqThree","colSeqFour","colSeqFive","colSeqSix","colSeqSeven","colSeqEight","colSeqNine","colSeqTen","colSeqEleven","colSeqTwelve"};
 		String[] groupSeqStrings = {"columnSeqOne","columnSeqTwo","columnSeqThree","columnSeqFour","columnSeqFive","columnSeqSix","columnSeqSeven","columnSeqEight","columnSeqNine","columnSeqTen","columnSeqEleven","columnSeqTwelve"};
 
-		List<ExamArrange> examArranges = examArrangeService.findByExam(examId);
+		List<ExamArrange> examArranges = examArrangeService.findByExamAndGrade(examId,gradeId);
 		Map<Integer , String> arrangeMap = new HashMap<Integer, String>();//不在组内
 		Map<Integer, String> groupMap = new HashMap<Integer, String>();//在组内
 		Map<Integer, String> arrangeHeadMap = new HashMap<Integer, String>();

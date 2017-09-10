@@ -23,6 +23,7 @@ public interface ExamArrangeDao extends JpaRepository<ExamArrange, Integer> {
 	List<ExamArrange> findByExam(Exam exam);
 	List<ExamArrange> findByExamAndGroupIsNull(Exam exam);
 	List<ExamArrange> findByExamAndGrade(Exam exam,Grade grade);
+
 	@Modifying
 	@Query("update ExamArrange set examDate = :examDate where arrangeId =:arrangeId")
 	void setExamDate(@Param("arrangeId")int arrangeId,@Param("examDate")Date examDate);

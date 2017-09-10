@@ -69,29 +69,30 @@ public class ExamineeRoomArrangeController {
 	
 	@RequestMapping(value="findExamineeRoomArrangeByClassId",method=RequestMethod.GET)
 	@ResponseBody
-	public String findExamineeRoomArrangeByClassId(@RequestParam(value="examId") int examId,			
+	public String findExamineeRoomArrangeByClassId(@RequestParam(value="examId") int examId,@RequestParam(value="gradeId") int gradeId,
 			@RequestParam(value="classId") int classId
 			){					
-		return examineeRoomArrangeService.findExamineeRoomArrangeByClassId(classId, examId);
+		return examineeRoomArrangeService.findExamineeRoomArrangeByClassId(classId,gradeId, examId);
 	}
 	
 	@RequestMapping(value="findExamineeRoomArrangeByRoomId",method=RequestMethod.GET)
 	@ResponseBody
-	public String findExamineeRoomArrangeByRoomId(@RequestParam(value="examId") int examId,			
+	public String findExamineeRoomArrangeByRoomId(@RequestParam(value="examId") int examId,@RequestParam(value="gradeId") int gradeId,
 			@RequestParam(value="roomId") int roomId
 			){					
-		return examineeRoomArrangeService.findExamineeRoomArrangeByRoomId(roomId, examId);
+		return examineeRoomArrangeService.findExamineeRoomArrangeByRoomId(roomId,gradeId, examId);
 	}
 	@SuppressWarnings("deprecation")
 	@RequestMapping(value="exportByClassId",method = RequestMethod.GET)	 
     public void exportByClassId(HttpServletRequest request,HttpServletResponse response) throws Exception{  
         
 		int examId = Integer.valueOf(request.getParameter("examId"));
-		int classId = Integer.valueOf(request.getParameter("classId"));
+        int gradeId = Integer.valueOf(request.getParameter("gradeId"));
+        int classId = Integer.valueOf(request.getParameter("classId"));
 		SchoolClass schoolClass = schoolClassService.get(classId);
 		Exam exam = examService.get(examId);	
 		String title = exam.getName()+" "+schoolClass.getName()+" "+"考场安排表"; 
-		String gsonString = examineeRoomArrangeService.findExamineeRoomArrangeByClassId(classId, examId);
+		String gsonString = examineeRoomArrangeService.findExamineeRoomArrangeByClassId(classId,gradeId, examId);
 		Gson gson = new Gson();
 		GsonVo gsonVo = gson.fromJson(gsonString, GsonVo.class);
 		List<Map<String, Object>> headList = gsonVo.getTitle();
@@ -222,11 +223,12 @@ public class ExamineeRoomArrangeController {
     public void exportByRoomId(HttpServletRequest request,HttpServletResponse response) throws Exception{  
         
 		int examId = Integer.valueOf(request.getParameter("examId"));
-		int roomId = Integer.valueOf(request.getParameter("roomId"));
+        int gradeId = Integer.valueOf(request.getParameter("gradeId"));
+        int roomId = Integer.valueOf(request.getParameter("roomId"));
 		Exam exam = examService.get(examId);
 		ExamRoom examRoom = examRoomService.get(roomId); 	
 		String title = exam.getName()+" "+ examRoom.getName()+" "+"考场安排表"; 
-		String gsonString = examineeRoomArrangeService.findExamineeRoomArrangeByRoomId(roomId, examId);
+		String gsonString = examineeRoomArrangeService.findExamineeRoomArrangeByRoomId(roomId,gradeId, examId);
 		Gson gson = new Gson();
 		GsonVo gsonVo = gson.fromJson(gsonString, GsonVo.class);
 		List<Map<String, Object>> headList = gsonVo.getTitle();

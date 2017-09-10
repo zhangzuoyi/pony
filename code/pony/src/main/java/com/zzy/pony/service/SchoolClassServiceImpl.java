@@ -4,16 +4,13 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import com.zzy.pony.model.*;
+import org.jfree.data.time.Year;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zzy.pony.dao.ExamDao;
 import com.zzy.pony.dao.SchoolClassDao;
-import com.zzy.pony.model.Exam;
-import com.zzy.pony.model.Grade;
-import com.zzy.pony.model.SchoolClass;
-import com.zzy.pony.model.SchoolYear;
-import com.zzy.pony.model.Teacher;
 import com.zzy.pony.vo.ExamVo;
 @Service
 @Transactional
@@ -28,6 +25,7 @@ public class SchoolClassServiceImpl implements SchoolClassService {
 	private ExamService examService;
 	@Autowired
 	private GradeService gradeService;
+
 
 	@Override
 	public void add(SchoolClass sy) {
@@ -66,8 +64,9 @@ public class SchoolClassServiceImpl implements SchoolClassService {
 	@Override
 	public List<SchoolClass> findByGrade(int gradeId) {
 		Grade grade=new Grade();
+		SchoolYear year = yearService.getCurrent();
 		grade.setGradeId(gradeId);
-		return dao.findByGrade(grade);
+		return dao.findByYearIdAndGrade(year.getYearId(),grade);
 	}
 
 	@Override

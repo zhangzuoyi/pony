@@ -8,6 +8,7 @@ import java.util.Map;
 
 public interface ExamArrangeMapper {
 	List<Map<String, String>> timeList(Integer examId);
+	void  addExamArrange(int examId,int gradeId,int subjectId);
 	void  updateExamDate(Map<String,Object> map );
 	void  updateExamTime(Map<String,Object> map );
 

@@ -225,7 +225,7 @@ var app = new Vue({
 				});
 				return;
               }                                    
-              this.$http.get(this.findExamineeRoomArrangeUrl,{params:{examId: this.examId,classId:this.classId}}).then(
+              this.$http.get(this.findExamineeRoomArrangeUrl,{params:{examId: this.examId,gradeId:this.gradeId,classId:this.classId}}).then(
                     function(response){                          
                            this.cols= response.data.title;
                    		   this.tableData  = response.data.rows;
@@ -256,7 +256,8 @@ var app = new Vue({
               }
 					var exportParams = {
 										examId : this.examId,
-										classId  :  this.classId,																				
+										gradeId :this.gradeId,
+										classId  :  this.classId
 								};
 					var url = "<s:url value='/examAdmin/examineeRoomArrange/exportByClassId?'/>"+jQuery.param(exportParams);
 					/*  window.location.href = encodeURI(encodeURI(url));*/
