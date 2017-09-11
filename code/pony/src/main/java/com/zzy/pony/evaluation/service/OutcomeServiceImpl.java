@@ -150,4 +150,15 @@ public class OutcomeServiceImpl implements OutcomeService {
 		dao.save(outcome);
 	}
 
+	@Override
+	public void delete(Long outcomeId) {
+		Outcome outcome=dao.findOne(outcomeId);
+		if(outcome.getAttaches() !=null && outcome.getAttaches().size()>0) {
+			for(OutcomeAttach oa : outcome.getAttaches()) {
+				deleteAttach(oa.getId());
+			}
+		}
+		dao.delete(outcome);
+	}
+
 }

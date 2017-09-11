@@ -46,6 +46,11 @@ width:200px;
                     highlight-current-row> 
                 <el-table-column
                          inline-template
+                        label="老师姓名">
+                 <div>{{row.teacherName }}</div>       
+                </el-table-column>
+                <el-table-column
+                         inline-template
                         label="分类">
                  <div>{{row.category }}</div>       
                 </el-table-column>
@@ -86,9 +91,12 @@ width:200px;
         
 		<el-dialog  v-model="dialogFormVisible" >
 			<div slot="title" class="dialog-title">
-                  <b>新增审核</b>
+                  <b>成果审核</b>
             </div>
 			<el-form :model="outcome" >			 
+			  <el-form-item label="老师姓名" prop="teacherName" :label-width="formLabelWidth"> 
+			 	<div>{{outcome.teacherName}}</div>
+			  </el-form-item>
 			  <el-form-item label="分类" prop="category" :label-width="formLabelWidth"> 
 			 	<div>{{outcome.category}}</div>
 			  </el-form-item>

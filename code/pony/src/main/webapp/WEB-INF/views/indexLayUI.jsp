@@ -383,6 +383,9 @@
                         <dd>
                             <a href="javascript:;" data-url="<s:url value='/evaluation/outcome/checkMain' />"><label>成果审核</label></a>
                         </dd>
+                        <dd>
+                            <a href="javascript:;" data-url="<s:url value='/evaluation/config/main' />"><label>评价主题管理</label></a>
+                        </dd>
                     </dl>
                 </li>
             </shiro:hasPermission>

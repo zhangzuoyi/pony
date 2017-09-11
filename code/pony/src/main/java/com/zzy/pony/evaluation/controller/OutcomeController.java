@@ -66,6 +66,11 @@ public class OutcomeController {
 		service.update(outcome);
 		return outcome.getOutcomeId().toString();
 	}
+	@RequestMapping(value="deleteOutcome",method = RequestMethod.DELETE)
+	@ResponseBody
+	public void deleteOutcome(@RequestParam(value="outcomeId") Long outcomeId){
+		service.delete(outcomeId);
+	}
 	@ResponseBody
 	@RequestMapping(value="fileUpload",method = RequestMethod.POST)
 	public void fileUpload(MultipartFile fileUpload,HttpServletRequest request,@RequestParam(value="outcomeId") Long outcomeId){

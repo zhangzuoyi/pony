@@ -157,6 +157,7 @@ var app = new Vue({
 		mylistUrl:"<s:url value='/evaluation/outcome/mylist'/>",
 		addUrl:"<s:url value='/evaluation/outcome/addOutcome'/>",
 		updateUrl:"<s:url value='/evaluation/outcome/updateOutcome'/>",
+		deleteUrl:"<s:url value='/evaluation/outcome/deleteOutcome'/>",
 		findAttachUrl:"<s:url value='/evaluation/outcome/findAttach'/>",
 		downloadAttachUrl:"<s:url value='/evaluation/outcome/downloadAttach'/>",
 		deleteAttachUrl:"<s:url value='/evaluation/outcome/deleteAttach'/>",
@@ -217,6 +218,7 @@ var app = new Vue({
 						type:"info",
 						message:msg
 					});
+					this.mylist();
 				},
 				function(response){}
 			 ); 
@@ -236,6 +238,24 @@ var app = new Vue({
     				},
     				function(response){}
     		   );
+       	  },
+       	  handleDelete : function(row){
+       		  this.$confirm("确认删除吗？","提示",{
+	    			confirmButtonText:'确认',
+	    			cancleButtonText:'取消',
+	    			type:'warning'
+    			}).then(function(){  
+    				app.$http.delete(app.deleteUrl, {params:{outcomeId : row.outcomeId}}).then(
+   	       				function(response){
+   	       					this.$message({
+   	    						type:"info",
+   	    						message:"删除成功"
+   	    					});
+   	       					app.mylist();
+   	       				},
+   	       				function(response){}
+   	        		 );
+    			}).catch(function(){ app.$message({ type:'info',message:'已取消删除'})});
        	  },
        	  downloadAttach : function(attachId){
        		  window.location.href=this.downloadAttachUrl+"?attachId="+attachId;

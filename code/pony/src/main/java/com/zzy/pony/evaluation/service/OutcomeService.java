@@ -13,6 +13,7 @@ public interface OutcomeService {
 	List<OutcomeVo> findAll();
 	void add(Outcome outcome);
 	void update(Outcome outcome);
+	void delete(Long outcomeId);
 	void saveAttach(MultipartFile file, Long outcomeId);
 	List<OutcomeAttach> findAttach(Long outcomeId);
 	byte[] getAttachContent(OutcomeAttach attach);
