@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.exam.mapper.ExamineeRoomArrangeMapper;
 import com.zzy.pony.exam.model.*;
+import com.zzy.pony.exam.vo.ExamArrangeVo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.exam.dao.ExamineeRoomArrangeDao;
+import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.service.ExamService;
@@ -60,6 +62,8 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 	private ExamineeRoomArrangeMapper examineeRoomArrangeMapper;
 	@Autowired
 	private StudentService studentService;
+	@Autowired
+	private ExamineeService examineeService;
 	
 	
 	
@@ -77,25 +81,25 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		//2 确定要排的考场，其中有组ID的一起排，没有组ID的单独排
 		List<ExamVo> examVos = examService.findByYearAndTermOrderByExamDate(year, term); 
 		ExamVo examVo = examVos.get(0);//当前考试
-		List<ExamArrange> examArranges = examArrangeService.findByExamAndGroupIsNull(examVo.getExamId());//所有不在组里面的考试
-		List<ExamArrangeGroup> examArrangeGroups = examArrangeService.findByExamAndGroup(examId, gradeId);//所有处于同一组的考试 
+		List<ExamArrangeVo> examArranges = examArrangeService.findVoByExamAndGradeAndGroupIsNull(examId,gradeId);//所有不在组里面的考试
+		List<ExamArrangeVo> ExamArrangeVos = examArrangeService.findVoByExamAndGrade(examId, gradeId);//所有处于同一组的考试 
 		Map<Integer, String> groupMap = new HashMap<Integer, String>();
-		for (ExamArrangeGroup examArrangeGroup : examArrangeGroups) {
-			List<ExamArrange> eas = examArrangeGroup.getExamArranges();
-			for (ExamArrange examArrange : eas) {
-				if (groupMap.get(examArrangeGroup.getGroupId()) != null) {
-					groupMap.put(examArrangeGroup.getGroupId(), groupMap.get(examArrangeGroup.getGroupId())+";"+examArrange.getArrangeId());
+		for (ExamArrangeVo vo : ExamArrangeVos) {
+			if (vo.getGroupId() != 0) {
+				if (groupMap.get(vo.getGroupId()) != null) {
+					groupMap.put(vo.getGroupId(), groupMap.get(vo.getGroupId())+";"+vo.getArrangeId());
 				}else {
-					groupMap.put(examArrangeGroup.getGroupId(), examArrange.getArrangeId()+"");
+					groupMap.put(vo.getGroupId(), vo.getArrangeId()+"");
 				}
-			}
+			}							
 		}		
 		//3排考场(排不在组里面的)
-		for (ExamArrange examArrange : examArranges) {
+		for (ExamArrangeVo vo : examArranges) {
 			//根据examArrange分别去找考生以及考场
-			List<Examinee> examinees = examArrange.getExaminees();//所有该门考试的考生
+			
+			List<Examinee> examinees = examineeService.findByArrangeId(vo.getExamId());//所有该门考试的考生
 			List<ExamRoomAllocate> examRoomAllocates = new ArrayList<ExamRoomAllocate>();
-            examRoomAllocates =  examRoomService.findByExamArrangeOrderByRoomSeq(examArrange);//所有该门考试的考场
+            examRoomAllocates =  examRoomService.findByExamArrangeOrderByRoomSeq(vo.getArrangeId());//所有该门考试的考场
 			//同班同学不相临			
 			if (autoMode == Constants.AUTO_MODE_ONE) {
 				//考生平均分配到考场
@@ -110,13 +114,11 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		for (Integer groupId   : groupMap.keySet()) {
 			String examArrangeIds =  groupMap.get(groupId); 
 			String[] arrangeIds = examArrangeIds.split(";");
-			ExamArrange examArrange = examArrangeService.get(Integer.valueOf(arrangeIds[0]));
-			List<Examinee> examinees = examArrange.getExaminees();//所有该门考试的考生
+			List<Examinee> examinees = examineeService.findByArrangeId(Integer.valueOf(arrangeIds[0]));//所有该门考试的考生
 			//Collections.sort(examinees);			
 			for (String arrangeId : arrangeIds) {					
-				examArrange = examArrangeService.get(Integer.valueOf(arrangeId));
 				List<ExamRoomAllocate> examRoomAllocates = new ArrayList<ExamRoomAllocate>();
-	            examRoomAllocates =  examRoomService.findByExamArrangeOrderByRoomSeq(examArrange);//所有该门考试的考场
+	            examRoomAllocates =  examRoomService.findByExamArrangeOrderByRoomSeq(Integer.valueOf(arrangeId));//所有该门考试的考场
 				
 	            if (autoMode == Constants.AUTO_MODE_ONE) {				
 					autoModeOne(examinees, examRoomAllocates);										

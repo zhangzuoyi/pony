@@ -19,6 +19,7 @@ import com.zzy.pony.exam.dao.ExamArrangeDao;
 import com.zzy.pony.exam.dao.ExamArrangeGroupDao;
 import com.zzy.pony.exam.model.ExamArrange;
 import com.zzy.pony.exam.model.ExamArrangeGroup;
+import com.zzy.pony.exam.vo.ExamArrangeVo;
 import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.Grade;
 import com.zzy.pony.service.ExamService;
@@ -184,11 +185,9 @@ public class ExamArrangeServiceImpl implements ExamArrangeService {
 	}
 
 	@Override
-	public List<ExamArrangeGroup> findByExamAndGroup(int examId, int gradeId) {
-		// TODO Auto-generated method stub
-		Exam exam = examService.get(examId);
-		Grade grade = gradeService.get(gradeId);
-		return examArrangeGroupDao.findByExamAndGrade(exam, grade);
+	public List<ExamArrangeVo> findVoByExamAndGrade(int examId, int gradeId) {
+		// TODO Auto-generated method stub		
+		return examArrangeMapper.findByExamAndGrade(examId, gradeId);
 	}
 
 	@Override
@@ -198,10 +197,9 @@ public class ExamArrangeServiceImpl implements ExamArrangeService {
 	}
 
 	@Override
-	public List<ExamArrange> findByExamAndGroupIsNull(int examId) {
+	public List<ExamArrangeVo> findVoByExamAndGradeAndGroupIsNull(int examId,int gradeId) {
 		// TODO Auto-generated method stub
-		Exam exam = examService.get(examId);
-		return examArrangeDao.findByExamAndGroupIsNull(exam);
+		return examArrangeMapper.findByExamAndGradeAndGroupIsNull(examId,gradeId);
 	}
 	
 	

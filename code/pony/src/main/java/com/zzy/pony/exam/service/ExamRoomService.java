@@ -11,7 +11,6 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.zzy.pony.exam.model.ExamArrange;
 import com.zzy.pony.exam.model.ExamRoom;
 import com.zzy.pony.exam.model.ExamRoomAllocate;
 
@@ -24,6 +23,6 @@ public interface ExamRoomService {
 	Boolean isExist(ExamRoom examroom);
 	List<ExamRoom> getExamRooms(int[] roomIds);
 	void save(int[] subjectIds,int[] roomIds,int examId,int gradeId);
-	List<ExamRoomAllocate> findByExamArrangeOrderByRoomSeq(ExamArrange examArrange);
+	List<ExamRoomAllocate> findByExamArrangeOrderByRoomSeq(int  arrangeId);
 	ExamRoom get(int roomId);
 }
