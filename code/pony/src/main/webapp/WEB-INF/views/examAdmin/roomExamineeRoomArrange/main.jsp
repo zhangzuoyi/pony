@@ -90,7 +90,7 @@ width:200px;
                		 <el-option
                         v-for="item in examRooms" 
                         :label="item.name"                      
-                        :value="item.id">
+                        :value="item.name">
                         <span style="float: left">{{item.name}}</span>
                		 </el-option>
            			 </el-select>				

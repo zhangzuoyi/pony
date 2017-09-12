@@ -23,6 +23,7 @@ public interface ExamineeService {
 	List<Examinee> findByExamAndTotalScoreIsNull(int examId);
 	List<Examinee> findByExamId(int examId);
 	Examinee findByExamAndStudent(int examId,int studentId);
+	List<ExamineeVo> findVoByArrangeId(int arrangeId,int yearId);
 
 	
 }

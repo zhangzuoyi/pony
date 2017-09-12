@@ -18,6 +18,7 @@ public class ExamineeRoomArrangeVo {
 	private int arrangeId;
 	private int groupId;
 	private String studentNo;
+	private int examineeId;
 	
 	public ExamineeRoomArrangeVo(){}
 
@@ -132,21 +133,12 @@ public class ExamineeRoomArrangeVo {
 	public void setStudentNo(String studentNo) {
 		this.studentNo = studentNo;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
-	
+	public int getExamineeId() {
+		return examineeId;
+	}
+
+	public void setExamineeId(int examineeId) {
+		this.examineeId = examineeId;
+	}
 }

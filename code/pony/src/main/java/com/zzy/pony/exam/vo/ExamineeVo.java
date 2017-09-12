@@ -12,6 +12,10 @@ public class ExamineeVo {
 	private String sex;
 	private String studentNo;
 	private String examSubjects;
+	private int classId;
+	private float totalScore;
+	private int classRank;
+	private int gradeRank;
 
 	public ExamineeVo(){}
 
@@ -78,5 +82,36 @@ public class ExamineeVo {
 	public void setExamSubjects(String examSubjects) {
 		this.examSubjects = examSubjects;
 	}
-	
+
+    public int getClassId() {
+        return classId;
+    }
+
+    public void setClassId(int classId) {
+        this.classId = classId;
+    }
+
+    public float getTotalScore() {
+        return totalScore;
+    }
+
+    public void setTotalScore(float totalScore) {
+        this.totalScore = totalScore;
+    }
+
+    public int getClassRank() {
+        return classRank;
+    }
+
+    public void setClassRank(int classRank) {
+        this.classRank = classRank;
+    }
+
+    public int getGradeRank() {
+        return gradeRank;
+    }
+
+    public void setGradeRank(int gradeRank) {
+        this.gradeRank = gradeRank;
+    }
 }

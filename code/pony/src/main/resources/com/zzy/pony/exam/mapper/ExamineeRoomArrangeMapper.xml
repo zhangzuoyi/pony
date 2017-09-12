@@ -48,11 +48,14 @@
 		left join t_exam_room_allocate e on t.ROOM_ID = e.ROOM_ID
 		left join t_exam_arrange f on e.arrange_id = f.arrange_id 
 		left join t_subject g on f.subject_id = g.subject_id
-		where e.room_seq = #{0} 
+		where e.room_name = #{0}
 		and a.EXAM_ID = #{1}
 		order by t.seq;
 	
 	</select>
+	<insert id="insertExamineeRoomArrange" parameterType="com.zzy.pony.vo.ExamineeRoomArrangeVo" useGeneratedKeys="true" keyProperty="id">
+		insert into t_examinee_room_arrange(room_id,examinee_id,seq) values(#{roomId},#{examineeId},#{seq})
+	</insert>
 	
 	
 	

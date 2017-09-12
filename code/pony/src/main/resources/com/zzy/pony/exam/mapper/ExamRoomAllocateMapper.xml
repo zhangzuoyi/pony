@@ -6,7 +6,7 @@
 	<sql id="base_select">
 		select t.room_id roomId,t.room_seq roomSeq,t.room_name roomName,a.exam_date examDate,
 		a.start_time startTime,a.end_time endTime,a.grade_id gradeId,g.name gradeName,a.subject_id,b.name subjectName,
-		c.teacher_id teacherId,c.name teacherName,c.teacher_no teacherNo from t_exam_room_allocate t 
+		c.teacher_id teacherId,c.name teacherName,c.teacher_no teacherNo ,t.capacity as capacity from t_exam_room_allocate t
 		left join t_exam_arrange a on t.arrange_id=a.arrange_id 
 		left join t_subject b on a.subject_id=b.subject_id 
 		left join t_teacher c on t.teacher_id=c.teacher_id 
@@ -32,5 +32,11 @@
 	<select id="roomList" resultType="java.lang.String">
 		select distinct t.room_name from t_exam_room_allocate t where t.arrange_id in 
 		(select a.arrange_id from t_exam_arrange a where a.exam_id=#{0} )
+	</select>
+
+	<select id="findByArrangeId" resultType="com.zzy.pony.exam.vo.ExamRoomAllocateVo">
+		<include refid="base_select"></include>
+		where t.arrange_id = #{0}
+		order by t.room_seq
 	</select>
 </mapper>

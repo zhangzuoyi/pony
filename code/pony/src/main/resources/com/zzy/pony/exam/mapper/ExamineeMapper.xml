@@ -111,4 +111,25 @@ order by t.grade_rank
 	<delete id="deleteExamineeArrangeByArrangeId" >
 		delete from t_examinee_arrange where arrange_id=#{0}
 	</delete>
+
+	<select id="findVoByArrangeId" resultType="com.zzy.pony.exam.vo.ExamineeVo">
+	SELECT
+	t.EXAMINEE_ID AS examineeId,
+	t.EXAM_ID AS examId,
+	t.STUDENT_ID AS studentId,
+	t.REG_NO AS regNo,
+	t.TOTAL_SCORE AS totalScore,
+	t.CLASS_RANK AS classRank,
+	t.GRADE_RANK AS gradeRank,
+	a.CLASS_ID as classId
+	FROM
+	t_examinee t left join t_student a on a.STUDENT_ID = t.STUDENT_ID
+	left join t_school_class b on a.CLASS_ID = b.CLASS_ID
+	left join t_examinee_arrange c on t.examinee_id = c.examinee_id
+	where
+	c.arrange_id = #{0} and b.year_id = #{1}
+	order by t.grade_rank
+	</select>
+
+
 </mapper>

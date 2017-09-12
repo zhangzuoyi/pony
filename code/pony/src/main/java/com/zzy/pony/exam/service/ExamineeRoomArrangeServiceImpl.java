@@ -10,10 +10,13 @@ import java.util.*;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.zzy.pony.exam.mapper.ExamineeMapper;
 import com.zzy.pony.exam.mapper.ExamineeRoomArrangeMapper;
 import com.zzy.pony.exam.model.*;
 import com.zzy.pony.exam.vo.ExamArrangeVo;
 
+import com.zzy.pony.exam.vo.ExamRoomAllocateVo;
+import com.zzy.pony.exam.vo.ExamineeVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +67,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 	private StudentService studentService;
 	@Autowired
 	private ExamineeService examineeService;
+
 	
 	
 	
@@ -96,10 +100,8 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		//3排考场(排不在组里面的)
 		for (ExamArrangeVo vo : examArranges) {
 			//根据examArrange分别去找考生以及考场
-			
-			List<Examinee> examinees = examineeService.findByArrangeId(vo.getExamId());//所有该门考试的考生
-			List<ExamRoomAllocate> examRoomAllocates = new ArrayList<ExamRoomAllocate>();
-            examRoomAllocates =  examRoomService.findByExamArrangeOrderByRoomSeq(vo.getArrangeId());//所有该门考试的考场
+			List<ExamineeVo> examinees = examineeService.findVoByArrangeId(vo.getArrangeId(),year.getYearId());//所有该门考试的考生
+			List<ExamRoomAllocateVo> examRoomAllocates = examRoomService.findByArrangeId(vo.getArrangeId());//所有该门考试的考场
 			//同班同学不相临			
 			if (autoMode == Constants.AUTO_MODE_ONE) {
 				//考生平均分配到考场
@@ -114,11 +116,10 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		for (Integer groupId   : groupMap.keySet()) {
 			String examArrangeIds =  groupMap.get(groupId); 
 			String[] arrangeIds = examArrangeIds.split(";");
-			List<Examinee> examinees = examineeService.findByArrangeId(Integer.valueOf(arrangeIds[0]));//所有该门考试的考生
+			List<ExamineeVo> examinees = examineeService.findVoByArrangeId(Integer.valueOf(arrangeIds[0]),year.getYearId());///所有该门考试的考生
 			//Collections.sort(examinees);			
-			for (String arrangeId : arrangeIds) {					
-				List<ExamRoomAllocate> examRoomAllocates = new ArrayList<ExamRoomAllocate>();
-	            examRoomAllocates =  examRoomService.findByExamArrangeOrderByRoomSeq(Integer.valueOf(arrangeId));//所有该门考试的考场
+			for (String arrangeId : arrangeIds) {
+				List<ExamRoomAllocateVo> examRoomAllocates = examRoomService.findByArrangeId(Integer.valueOf(arrangeId));//所有该门考试的考场
 				
 	            if (autoMode == Constants.AUTO_MODE_ONE) {				
 					autoModeOne(examinees, examRoomAllocates);										
@@ -191,7 +192,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		int m=0;
 		for (Integer key : arrangeMap.keySet()) {
 			arrangeSeqHeadMap.put(key,arrangeSeqStrings[m]);
-			i++;
+			m++;
 		}
 		int n=0;
 		for (Integer key : groupMap.keySet()) {
@@ -310,7 +311,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 	}
 
 	@Override
-	public String findExamineeRoomArrangeByRoomId(int roomId,int gradeId,int examId) {
+	public String findExamineeRoomArrangeByRoomId(String roomId,int gradeId,int examId) {
 		// TODO Auto-generated method stub
 		StringBuilder result = new StringBuilder();
 		String[] arrangeStrings = {"colOne","colTwo","colThree","colFour","colFive","colSix","colSeven","colEight","colNine","colTen","colEleven","colTwelve"};
@@ -350,7 +351,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		int m=0;
 		for (Integer key : arrangeMap.keySet()) {
 			arrangeSeqHeadMap.put(key,arrangeSeqStrings[m]);
-			i++;
+			m++;
 		}
 		int n=0;
 		for (Integer key : groupMap.keySet()) {
@@ -460,74 +461,74 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 	}
 
 	//考生平均分配到考场
-	private void autoModeOne(List<Examinee> examinees,List<ExamRoomAllocate> examRoomAllocates){		
+	private void autoModeOne(List<ExamineeVo> examinees,List<ExamRoomAllocateVo> examRoomAllocates){
 		int examineeCount = examinees.size();
 		int examRoomCount = examRoomAllocates.size();
 		int averageExaminee = examineeCount/examRoomCount;//每个考场分配多少考生
 		int remainExaminee = examineeCount%examRoomCount;//剩余的考生
 		//将所有考生排序
-		Collections.sort(examinees);
+		//Collections.sort(examinees);
 		//todo 同班同学不相临
 		swap(examinees);
         int i=0;
-        for (ExamRoomAllocate era:
+        for (ExamRoomAllocateVo era:
         examRoomAllocates) {
-            List<Examinee> averageExaminees = examinees.subList(i*averageExaminee,(i+1)*averageExaminee);
+            List<ExamineeVo> averageExaminees = examinees.subList(i*averageExaminee,(i+1)*averageExaminee);
             int seq=1;
-            for (Examinee examinee:
+            for (ExamineeVo examinee:
             averageExaminees) {
-                ExamineeRoomArrange examineeRoomArrange = new ExamineeRoomArrange();
-                examineeRoomArrange.setExaminee(examinee);
-                examineeRoomArrange.setExamRoomAllocate(era);
-                examineeRoomArrange.setSeq(seq);
-                examineeRoomArrangeDao.save(examineeRoomArrange);
+				ExamineeRoomArrangeVo vo = new ExamineeRoomArrangeVo();
+				vo.setRoomId(era.getRoomId());
+				vo.setExamineeId(examinee.getExamineeId());
+				vo.setSeq(seq);
+				examineeRoomArrangeMapper.insertExamineeRoomArrange(vo);
                 seq++;
             }
             i++;
         }
-        List<Examinee> remainExaminees = new ArrayList<Examinee>();
+        List<ExamineeVo> remainExaminees = new ArrayList<ExamineeVo>();
         remainExaminees =     examinees.subList(examinees.size()-remainExaminee,examinees.size());
         for (int j=0;j<remainExaminee;j++){
-            ExamineeRoomArrange examineeRoomArrange = new ExamineeRoomArrange();
-            examineeRoomArrange.setSeq(averageExaminee+1);
-            examineeRoomArrange.setExamRoomAllocate(examRoomAllocates.get(j));
-            examineeRoomArrange.setExaminee(remainExaminees.get(j));
-            examineeRoomArrangeDao.save(examineeRoomArrange);
-
-        }	
+			ExamineeRoomArrangeVo vo = new ExamineeRoomArrangeVo();
+			vo.setRoomId(examRoomAllocates.get(j).getRoomId());
+			vo.setExamineeId(remainExaminees.get(j).getExamineeId());
+			vo.setSeq(averageExaminee+1);
+			examineeRoomArrangeMapper.insertExamineeRoomArrange(vo);
+		}
 	}
 	//按考场容量分配
-	private void autoModeTwo(List<Examinee> examinees,List<ExamRoomAllocate> examRoomAllocates){		
+	private void autoModeTwo(List<ExamineeVo> examinees,List<ExamRoomAllocateVo> examRoomAllocates){
         //int examineeCount = examinees.size();
         //将所有考生排序
-        Collections.sort(examinees);
+        //Collections.sort(examinees);
         swap(examinees);
         int m=0;
         int count=1;
-        ExamRoomAllocate era = examRoomAllocates.get(m);
-        for (Examinee examinee:
+        ExamRoomAllocateVo era = examRoomAllocates.get(m);
+        for (ExamineeVo examinee:
              examinees) {
          if(count>era.getCapacity()){
              m++;
              era=examRoomAllocates.get(m);
              count = 1;
          }
-         ExamineeRoomArrange examineeRoomArrange = new ExamineeRoomArrange();
-         examineeRoomArrange.setExaminee(examinee);
-         examineeRoomArrange.setSeq(count);
-         examineeRoomArrange.setExamRoomAllocate(era);
-         examineeRoomArrangeDao.save(examineeRoomArrange);
+         ExamineeRoomArrangeVo vo = new ExamineeRoomArrangeVo();
+         vo.setRoomId(era.getRoomId());
+         vo.setExamineeId(examinee.getExamineeId());
+         vo.setSeq(count);
+
+         examineeRoomArrangeMapper.insertExamineeRoomArrange(vo);
          count++;
         }	
 		
 	}
 	//同班同学不相邻
-	private void swap(List<Examinee> examinees){
+	private void swap(List<ExamineeVo> examinees){
 		
 		for (int i = 0; i < examinees.size()-2; i++) {
 			int j = i;
-			if (examinees.get(i+1).getStudent().getSchoolClass().equals(examinees.get(i).getStudent().getSchoolClass())) {			
-				while((j+2)<examinees.size() && examinees.get(i+1).getStudent().getSchoolClass().equals(examinees.get(j+2).getStudent().getSchoolClass())){
+			if (examinees.get(i+1).getClassId()==examinees.get(i).getClassId()) {
+				while((j+2)<examinees.size() && examinees.get(i+1).getClassId()==(examinees.get(j+2).getClassId())){
 					j++;
 				}
 				if((j+2)<examinees.size())

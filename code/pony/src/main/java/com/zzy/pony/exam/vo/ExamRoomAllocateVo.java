@@ -18,6 +18,7 @@ public class ExamRoomAllocateVo {
 	private Integer teacherId;
 	private String teacherName;
 	private String teacherNo;
+	private int capacity;
 	/**
 	 * 时间段，日期(yyyy-MM-dd)+空格+开始时间(HH:mm)
 	 * @return
@@ -117,5 +118,12 @@ public class ExamRoomAllocateVo {
 	public void setGradeName(String gradeName) {
 		this.gradeName = gradeName;
 	}
-	
+
+	public int getCapacity() {
+		return capacity;
+	}
+
+	public void setCapacity(int capacity) {
+		this.capacity = capacity;
+	}
 }

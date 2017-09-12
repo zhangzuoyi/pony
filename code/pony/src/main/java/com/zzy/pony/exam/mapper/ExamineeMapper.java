@@ -22,4 +22,5 @@ public interface ExamineeMapper {
 	void insertExamineeArrangeByClass(int examId,int arrangeId,@Param(value="classIds")int[] classIds);
 	void insertExamineeArrangeByExaminee(int arrangeId,int examineeId);
 	void deleteExamineeArrangeByArrangeId(int arrangeId);
+	List<ExamineeVo> findVoByArrangeId(int arrangeId,int yearId);
 }

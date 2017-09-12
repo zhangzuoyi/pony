@@ -254,7 +254,7 @@ width:200px;
                   </el-option>
               </el-select>
           </el-col>
-          <el-col>
+          <el-col :span="4">
           <el-button type="primary" size="small" @click="findExaminee">查询</el-button>
           </el-col>
           </el-row>
@@ -636,6 +636,7 @@ var app = new Vue({
                         this.multipleSelection=[];
                         this.setExamineeDialogFormVisible=false;
                         this.flag=true;
+                        this.listByPage();
                         });
 
 
