@@ -386,6 +386,9 @@
                         <dd>
                             <a href="javascript:;" data-url="<s:url value='/evaluation/config/main' />"><label>评价主题管理</label></a>
                         </dd>
+                        <dd>
+                            <a href="javascript:;" data-url="<s:url value='/evaluation/make/main' />?subjectId=1"><label>教师发展性评价</label></a>
+                        </dd>
                     </dl>
                 </li>
             </shiro:hasPermission>

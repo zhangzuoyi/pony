@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.evaluation.mapper.EvaluationItemDataMapper">
+	<select id="findByRecord" resultType="com.zzy.pony.evaluation.vo.EvaluationItemDataVo">
+		select t.id,t.item_id itemId,t.SCORE inputScore,t.CHECK_SCORE checkScore,t.according,e.NAME itemName,e.SCORE itemScore from evaluation_item_data t 
+		left join evaluation_item e on t.item_id=e.item_id where t.record_id=#{0}
+	</select>
+	
+</mapper>

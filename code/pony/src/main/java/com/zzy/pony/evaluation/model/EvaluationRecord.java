@@ -55,9 +55,8 @@ public class EvaluationRecord implements Serializable {
 	@Column(name="EVL_RESULT")
 	private String evlResult;
 
-	@Temporal(TemporalType.DATE)
 	@Column(name="EVL_TIME")
-	private Date evlTime;
+	private String evlTime;
 
 	@Column(name="RANK")
 	private int rank;
@@ -138,11 +137,11 @@ public class EvaluationRecord implements Serializable {
 		this.evlResult = evlResult;
 	}
 
-	public Date getEvlTime() {
+	public String getEvlTime() {
 		return this.evlTime;
 	}
 
-	public void setEvlTime(Date evlTime) {
+	public void setEvlTime(String evlTime) {
 		this.evlTime = evlTime;
 	}
 

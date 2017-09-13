@@ -72,7 +72,7 @@ width:200px;
             <el-row type="flex" justify="end">
 	            <el-col :span="4">级别:<font style="color:red;">*</font></el-col>
 	            <el-col :span="20">
-	            	<el-input v-model="selectResource.level"></el-input>	
+	            	{{selectResource.level}}
 	            </el-col>
             </el-row>
             <el-row type="flex" justify="end">
@@ -244,56 +244,7 @@ width:200px;
  	       				function(response){}
  	        		 );
   			}).catch(function(){ app.$message({ type:'info',message:'已取消删除'})});
-     	},
-			getResoureTree : function(){
-			this.$http.get(this.resoureTreeUrl).then(
-			function(response){
-			var firstNode = {label:'根节点',children : response.data.treeData};			
-			this.treeData.push(firstNode); 
-			//this.treeData = [{label:'知识库',children : [{"id":1,"resKey":"sys_admin","children":[],"label":"系统管理","presId":0,"resLevel":1}]}];
-			},
-			function(response){}  			
-			); 
-			} ,
-			getParentResource : function(){
-			this.$http.get(this.parentResoureUrl).then(
-			function(response){
-			this.parentResource=response.data;},
-			function(response){}  			
-			); 
-			} ,
-			update :function(){
-			if(this.selectResource.presId == null ||this.selectResource.resName == null ||this.selectResource.resKey == null ||this.selectResource.resLevel == null  ){
-			this.$message({type:"info",message:"请输入完整"});
-			return ;
-			}
-			this.$http.post(this.updateResoureUrl,this.selectResource).then(
-			function(response){
-			this.selectResource = {presId:null,resName :null,resLevel:null,resKey:null,comments:null};
-			this.treeData = [];
-			this.flag = false;
-			this.getResoureTree();
-			},
-			function(response){}  			
-			);
-			
-			},
-		    cancle :function(){
-			if(this.selectResource.resId == null){
-			this.$message({type:"info",message:"请选择菜单"});
-			return ;
-			}
-			this.$http.get(this.deleteResoureUrl,{params:{resId:this.selectResource.resId}}).then(
-			function(response){
-			this.selectResource = {presId:null,resName :null,resLevel:null,resKey:null,comments:null};
-			this.treeData = [];
-			this.flag = false;
-			this.getResoureTree();
-			},
-			function(response){}  			
-			);						
-			}
-			
+     	}
 		   	
 	  }
         	        
