@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.zzy.pony.exam.model.ExamArrange;
 import com.zzy.pony.exam.model.ExamArrangeGroup;
+import com.zzy.pony.exam.vo.ExamArrangeVo;
 
 public interface ExamArrangeService {
 	Page<ExamArrange> findByExamAndGrade(Pageable pageable,int examId,int gradeId);
@@ -23,7 +24,7 @@ public interface ExamArrangeService {
 	void delete(int arrangeId);
 	ExamArrange findByExamAndGradeAndSubject(int examId,int gradeId,int subjectId);
 	List<ExamArrange> findByExam(int examId);
-	List<ExamArrange> findByExamAndGroupIsNull(int examId);
-	List<ExamArrangeGroup> findByExamAndGroup(int examId,int gradeId);
+	List<ExamArrangeVo> findVoByExamAndGradeAndGroupIsNull(int examId,int gradeId);
+	List<ExamArrangeVo> findVoByExamAndGrade(int examId,int gradeId);
 	ExamArrange get(int arrangeId);
 }

@@ -6,8 +6,10 @@ import java.util.List;
 
 
 import com.zzy.pony.exam.dao.ExamRoomAllocateDao;
+import com.zzy.pony.exam.mapper.ExamRoomAllocateMapper;
 import com.zzy.pony.exam.model.ExamArrange;
 import com.zzy.pony.exam.model.ExamRoomAllocate;
+import com.zzy.pony.exam.vo.ExamRoomAllocateVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +36,8 @@ public class ExamRoomServiceImpl implements ExamRoomService {
 	private ExamArrangeService examArrangeService;
 	@Autowired
 	private ExamRoomAllocateDao examRoomAllocateDao;
+	@Autowired
+	private ExamRoomAllocateMapper examRoomAllocateMapper;
 	
 	@Override
 	public List<ExamRoom> list() {
@@ -117,8 +121,10 @@ public class ExamRoomServiceImpl implements ExamRoomService {
 	}
 
 	@Override
-	public List<ExamRoomAllocate> findByExamArrangeOrderByRoomSeq(ExamArrange examArrange) {
+	public List<ExamRoomAllocate> findByExamArrangeOrderByRoomSeq(int arrangeId) {
 		// TODO Auto-generated method stub
+		ExamArrange examArrange = new ExamArrange();
+		examArrange.setArrangeId(arrangeId);
 		return examRoomAllocateDao.findByExamArrangeOrderByRoomSeq(examArrange);
 	}
 
@@ -127,11 +133,9 @@ public class ExamRoomServiceImpl implements ExamRoomService {
 		// TODO Auto-generated method stub
 		return examRoomDao.findOne(roomId);
 	}
-	
-	
 
-	
-	
-	
-	
+	@Override
+	public List<ExamRoomAllocateVo> findByArrangeId(int arrangeId) {
+		return examRoomAllocateMapper.findByArrangeId(arrangeId);
+	}
 }

@@ -9,6 +9,7 @@ public class ExamArrangeVo {
 	private Date examDate;
 	private String startTime;
 	private String groupName;
+	private int groupId;
 	private int examId;
 	private String examName;
 	private int gradeId;
@@ -117,6 +118,13 @@ public class ExamArrangeVo {
 	public void setExamineeTotal(int examineeTotal) {
 		this.examineeTotal = examineeTotal;
 	}
+	public int getGroupId() {
+		return groupId;
+	}
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
+	}
+	
 	
 	
 	

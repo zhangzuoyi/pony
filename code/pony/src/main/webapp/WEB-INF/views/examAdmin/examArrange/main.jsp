@@ -499,6 +499,10 @@ var app = new Vue({
               var year = this.examDate.getFullYear();
               var month = this.examDate.getMonth()+1;
               var day = this.examDate.getDate();
+              if(day<10){
+            	  day = "0"+day;
+              }
+              
               var examDate = year+"-"+month+"-"+day;
               
               this.$http.get(this.addExamDateUrl,{params:{examArranges:examArranges,examDate:examDate}}).then(

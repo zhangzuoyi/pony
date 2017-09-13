@@ -19,7 +19,7 @@ public class ExamineeRoomArrangeServiceTest {
 	@Test
 	public void testAutoExamineeRoomArrange(){
 			
-		examineeRoomArrangeService.autoExamineeRoomArrange(2, 1);
+		examineeRoomArrangeService.autoExamineeRoomArrange(23, 1);
 	}
 	
 	

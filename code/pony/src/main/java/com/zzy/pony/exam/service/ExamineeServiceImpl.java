@@ -221,4 +221,8 @@ public class ExamineeServiceImpl implements ExamineeService {
 		return examineeMapper.findByClass(examId, classId);
 	}
 
+	@Override
+	public List<ExamineeVo> findVoByArrangeId(int arrangeId,int yearId) {
+		return examineeMapper.findVoByArrangeId(arrangeId,yearId);
+	}
 }

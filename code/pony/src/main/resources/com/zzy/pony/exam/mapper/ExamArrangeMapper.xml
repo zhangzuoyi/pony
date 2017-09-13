@@ -25,4 +25,18 @@
 			#{item}
 		</foreach>
 	</update>
+	<select id="findByExamAndGrade" resultType="com.zzy.pony.exam.vo.ExamArrangeVo">
+		select t.arrange_id as arrangeId,t.exam_id as examId,t.grade_id as gradeId,
+		t.subject_id as subjectId,t.group_id as groupId ,t.exam_date as examDate,
+		t.start_time as startTime,t.end_time as endTime from t_exam_arrange t
+		where t.exam_id = #{0} and t.grade_id =#{1}
+	
+	</select>
+	<select id="findByExamAndGradeAndGroupIsNull" resultType="com.zzy.pony.exam.vo.ExamArrangeVo">
+		select t.arrange_id as arrangeId,t.exam_id as examId,t.grade_id as gradeId,
+		t.subject_id as subjectId,t.group_id as groupId ,t.exam_date as examDate,
+		t.start_time as startTime,t.end_time as endTime from t_exam_arrange t
+		where t.exam_id = #{0} and t.grade_id =#{1} and t.group_id is null
+	
+	</select>
 </mapper>

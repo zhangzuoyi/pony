@@ -78,7 +78,7 @@ public class ExamineeRoomArrangeController {
 	@RequestMapping(value="findExamineeRoomArrangeByRoomId",method=RequestMethod.GET)
 	@ResponseBody
 	public String findExamineeRoomArrangeByRoomId(@RequestParam(value="examId") int examId,@RequestParam(value="gradeId") int gradeId,
-			@RequestParam(value="roomId") int roomId
+			@RequestParam(value="roomId") String roomId
 			){					
 		return examineeRoomArrangeService.findExamineeRoomArrangeByRoomId(roomId,gradeId, examId);
 	}
@@ -224,10 +224,10 @@ public class ExamineeRoomArrangeController {
         
 		int examId = Integer.valueOf(request.getParameter("examId"));
         int gradeId = Integer.valueOf(request.getParameter("gradeId"));
-        int roomId = Integer.valueOf(request.getParameter("roomId"));
+        String roomId =request.getParameter("roomId");
 		Exam exam = examService.get(examId);
-		ExamRoom examRoom = examRoomService.get(roomId); 	
-		String title = exam.getName()+" "+ examRoom.getName()+" "+"考场安排表"; 
+		//ExamRoom examRoom = examRoomService.get(roomId);
+		String title = exam.getName()+" "+ roomId+" "+"考场安排表";
 		String gsonString = examineeRoomArrangeService.findExamineeRoomArrangeByRoomId(roomId,gradeId, examId);
 		Gson gson = new Gson();
 		GsonVo gsonVo = gson.fromJson(gsonString, GsonVo.class);
