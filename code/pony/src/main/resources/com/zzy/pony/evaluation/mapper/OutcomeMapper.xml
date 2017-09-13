@@ -12,6 +12,10 @@ t.status,a.NAME teacherName,a.TEACHER_NO teacherNo from teacher_outcome t left j
 		<include refid="base_select"></include>
 		 where t.teacher_id=#{0}
 	</select>
+	<select id="findByTeacherAndStatus" resultType="com.zzy.pony.evaluation.vo.OutcomeVo">
+		<include refid="base_select"></include>
+		 where t.teacher_id=#{0} and t.status=#{1}
+	</select>
 	<select id="findAll" resultType="com.zzy.pony.evaluation.vo.OutcomeVo">
 		<include refid="base_select"></include>
 		 order by t.status desc,t.create_time desc

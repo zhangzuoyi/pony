@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,14 +14,17 @@ import com.zzy.pony.evaluation.dao.EvaluationItemDao;
 import com.zzy.pony.evaluation.dao.EvaluationItemDataDao;
 import com.zzy.pony.evaluation.dao.EvaluationRecordDao;
 import com.zzy.pony.evaluation.mapper.EvaluationItemDataMapper;
+import com.zzy.pony.evaluation.mapper.OutcomeMapper;
 import com.zzy.pony.evaluation.model.EvaluationItem;
 import com.zzy.pony.evaluation.model.EvaluationItemData;
 import com.zzy.pony.evaluation.model.EvaluationRecord;
 import com.zzy.pony.evaluation.model.EvaluationSubject;
+import com.zzy.pony.evaluation.model.Outcome;
 import com.zzy.pony.evaluation.vo.EvaluationItemDataVo;
 import com.zzy.pony.evaluation.vo.EvaluationItemVo;
 import com.zzy.pony.evaluation.vo.EvaluationRecordVo;
 import com.zzy.pony.evaluation.vo.EvaluationRowVo;
+import com.zzy.pony.evaluation.vo.OutcomeVo;
 import com.zzy.pony.model.Teacher;
 @Service
 @Transactional
@@ -34,6 +38,8 @@ public class EvaluationServiceImpl implements EvaluationService {
 	private EvaluationItemDataDao dataDao;
 	@Autowired
 	private EvaluationItemDataMapper dataMapper;
+	@Autowired
+	private OutcomeMapper outcomeMapper;
 
 	@Override
 	public List<EvaluationItemVo> itemTreeData(Long subjectId) {
@@ -51,6 +57,7 @@ public class EvaluationServiceImpl implements EvaluationService {
 			vo.setScore(item.getScore());
 			vo.setSeq(item.getSeq());
 			vo.setType(item.getType());
+			vo.setDataSource(item.getDataSource());
 			vos.add(vo);
 		}
 		List<EvaluationItemVo> result=new ArrayList<EvaluationItemVo>();
@@ -83,6 +90,7 @@ public class EvaluationServiceImpl implements EvaluationService {
 		old.setName(item.getName());
 		old.setScore(item.getScore());
 		old.setSeq(item.getSeq());
+		old.setDataSource(item.getDataSource());
 		int childCount=itemDao.findCountByParentItemId(old.getItemId());
 		if(childCount > 0) {
 			old.setType(EvaluationItem.TYPE_DIR);//有子节点
@@ -108,6 +116,7 @@ public class EvaluationServiceImpl implements EvaluationService {
 				rvo.setItemId(vo.getItemId());
 				rvo.setName(vo.getName());
 				rvo.setScore(vo.getScore());
+				rvo.setDataSource(vo.getDataSource());
 				
 				result.add(rvo);
 			}else {
@@ -123,6 +132,7 @@ public class EvaluationServiceImpl implements EvaluationService {
 				rvo.setItemId(firstChild.getItemId());
 				rvo.setName(firstChild.getName());
 				rvo.setScore(firstChild.getScore());
+				rvo.setDataSource(firstChild.getDataSource());
 				result.add(rvo);
 				//插入其它子节点
 				for(int i=1;i<vo.getChildren().size();i++) {
@@ -133,6 +143,7 @@ public class EvaluationServiceImpl implements EvaluationService {
 					rvo.setItemId(child.getItemId());
 					rvo.setName(child.getName());
 					rvo.setScore(child.getScore());
+					rvo.setDataSource(child.getDataSource());
 					result.add(rvo);
 				}
 				
@@ -154,18 +165,36 @@ public class EvaluationServiceImpl implements EvaluationService {
 		er.setSubject(subject);
 		er.setTeacher(teacher);
 		recordDao.save(er);
+		
+		List<OutcomeVo> outcomes=outcomeMapper.findByTeacherAndStatus(teacherId,Outcome.STATUS_CHECKED);//老师成果
 		for(EvaluationItemDataVo vo: record.getItemData()) {
-			EvaluationItem item=new EvaluationItem();
-			item.setItemId(vo.getItemId());
+			EvaluationItem item=itemDao.findOne(vo.getItemId());
 			EvaluationItemData ed=new EvaluationItemData();
-			ed.setAccording(vo.getAccording());
 			ed.setCreateTime(now);
 			ed.setCreateUser(loginName);
 			ed.setItem(item);
 			ed.setRecord(er);
-			ed.setScore(vo.getInputScore());
+			if(StringUtils.isBlank(item.getDataSource())) {
+				ed.setAccording(vo.getAccording());
+				ed.setScore(vo.getInputScore());
+			}else {
+				setScoreFromOutcome(item, outcomes, ed);
+			}
+			
 			dataDao.save(ed);
 		}
+	}
+	private void setScoreFromOutcome(EvaluationItem item, List<OutcomeVo> outcomes, EvaluationItemData ed) {
+		float result=0;
+		StringBuilder according=new StringBuilder();
+		for(OutcomeVo vo: outcomes) {
+			if(vo.getCategory().equals(item.getDataSource())) {
+				result +=vo.getScore();
+				according.append(vo.getCategory()+"-"+vo.getLevel1()+"-"+vo.getLevel2()+":"+vo.getScore()+"分\n");
+			}
+		}
+		ed.setScore(result > item.getScore() ? item.getScore() : result);
+		ed.setAccording(according.toString());
 	}
 	@Override
 	public EvaluationRecordVo findBySubjectAndTeacher(Long subjectId, Integer teacherId) {

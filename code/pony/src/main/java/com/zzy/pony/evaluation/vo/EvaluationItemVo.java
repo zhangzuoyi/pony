@@ -24,6 +24,8 @@ public class EvaluationItemVo implements Serializable {
 	private Integer seq;
 
 	private String type;//目录，叶子节点
+	
+	private String dataSource;
 
 	private List<EvaluationItemVo> children;
 
@@ -100,6 +102,14 @@ public class EvaluationItemVo implements Serializable {
 
 	public void setParentItemName(String parentItemName) {
 		this.parentItemName = parentItemName;
+	}
+
+	public String getDataSource() {
+		return dataSource;
+	}
+
+	public void setDataSource(String dataSource) {
+		this.dataSource = dataSource;
 	}
 
 	public List<EvaluationItemVo> getChildren() {

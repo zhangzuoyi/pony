@@ -231,6 +231,8 @@ var app = new Vue({
        	  },
        	  handleEdit : function(row){
        		  this.outcome=row;
+       		  this.categoryChange();
+       		  this.level1Change();
        		  this.$http.get(this.findAttachUrl, {params:{outcomeId : this.outcome.outcomeId}}).then(
     				function(response){
     					this.attaches =  response.data;

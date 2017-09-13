@@ -12,6 +12,7 @@
 <%-- <link rel="stylesheet" type="text/css" href="<s:url value='/static/bootstrap/css/bootstrap.min.css' />" /> --%>
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/elementUI/index.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/elementUI/element.css' />" />
+<%-- <link rel="stylesheet" href="<s:url value='/static/layui/css/layui.css' />"> --%>
 <script type="text/javascript" src="<s:url value='/static/js/jquery.min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/bootstrap/js/bootstrap.min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/easyui/jquery.easyui.min.js' />"></script>
@@ -21,6 +22,7 @@
 <script type="text/javascript" src="<s:url value='/static/vue/vue-resource.min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/vue/vue-validator.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/elementUI/index.js' />"></script>
+<%-- <script src="<s:url value='/static/layui/layui.js' />"></script> --%>
 <style type="text/css">
 .el-input {
 width:200px;
@@ -30,9 +32,6 @@ width:200px;
 <body>
 <div id="app">
   <div>   	 
-  
-  			
-                      	
         <el-card class="box-card content-margin">
             <div slot="header" class="clearfix">
               <el-row>
@@ -92,13 +91,19 @@ width:200px;
             <el-row type="flex" justify="end">
 	            <el-col :span="4">序号:<font style="color:red;">*</font></el-col>
 	            <el-col :span="20">
-	            	<el-input v-model="selectResource.seq"></el-input>	
+	            	<el-input-number :min="1" v-model="selectResource.seq"></el-input>	
+	            </el-col>
+            </el-row>
+            <el-row type="flex" justify="end">
+	            <el-col :span="4">数据来源:</el-col>
+	            <el-col :span="20">
+	            	<el-input v-model="selectResource.dataSource"></el-input>
 	            </el-col>
             </el-row>
             <el-row type="flex" justify="end">
 	            <el-col :span="4">描述:</el-col>
 	            <el-col :span="20">
-	            	<el-input v-model="selectResource.description"></el-input>	
+	            	<el-input id="descriptionInput" type="textarea" :rows="6" v-model="selectResource.description"></el-input>	
 	            </el-col>
             </el-row>
             
@@ -128,7 +133,20 @@ width:200px;
 
 </div>
 <script type="text/javascript">
-		
+	/* var layedit, layeditIndex;
+	
+function useLayedit(){
+		layui.use('layedit', function(){
+			  layedit = layui.layedit;
+			  layeditIndex=layedit.build('descriptionInput',{
+				  tool: [
+					  'strong' //加粗
+					  ,'italic' //斜体
+					  ,'underline' //下划线
+					]
+			  }); //建立编辑器
+			});
+} */
  var app = new Vue({ 
 	el : '#app' ,
 	data : { 		
@@ -136,12 +154,6 @@ width:200px;
 			children : 'children',
 			label : 'name'
 		},
-		resoureTreeUrl : "<s:url value='/resourceAdmin/listTree'/>",
-		parentResoureUrl : "<s:url value='/resourceAdmin/parentResource'/>",
-		updateResoureUrl : "<s:url value='/resourceAdmin/update'/>",
-		deleteResoureUrl : "<s:url value='/resourceAdmin/delete'/>",
-		addResoureUrl : "<s:url value='/resourceAdmin/add'/>",		
-		parentResource:{},
 		flag : false,
 		subjectsUrl : "<s:url value='/evaluation/config/subjects'/>",
 		itemTreeUrl : "<s:url value='/evaluation/config/itemTree'/>",
@@ -182,6 +194,7 @@ width:200px;
 		},
 		handleNodeClick :function(data){
 			this.selectResource = data;
+			//useLayedit();
 			this.flag = false;
 		},
 		addChild :function(){
@@ -197,6 +210,7 @@ width:200px;
 				this.$message({type:"info",message:"请输入完整"});
 				return ;
 			}
+			//layedit.sync(layeditIndex);
 			this.$http.post(this.addItemUrl,this.selectResource).then(
 				function(response){
 					this.selectResource = {type : ""};
@@ -213,6 +227,7 @@ width:200px;
 				this.$message({type:"info",message:"请输入完整"});
 				return ;
 			}
+			//layedit.sync(layeditIndex);
 			this.$http.post(this.updateItemUrl,this.selectResource).then(
 				function(response){
 					this.$message({type:"info",message:"修改成功"});

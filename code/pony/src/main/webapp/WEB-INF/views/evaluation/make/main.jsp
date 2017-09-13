@@ -51,8 +51,8 @@ width:200px;
             			<td :colspan="item.colspan">{{item.name}}</td>
             			<td>{{item.score}}</td>
             			<td>{{item.description}}</td>
-            			<td><el-input v-model="item.according"></el-input></td>
-            			<td><el-input v-model="item.inputScore"></el-input></td>
+            			<td><el-input type="textarea" v-model="item.according" :disabled="item.dataSource != null"></el-input></td>
+            			<td><el-input v-model="item.inputScore" :disabled="item.dataSource != null"></el-input></td>
             		</tr>
             	</tbody>
             </table>
@@ -71,25 +71,6 @@ width:200px;
 var app = new Vue({ 
 	el : '#app' ,
 	data : { 		
-		mylistUrl:"<s:url value='/evaluation/outcome/mylist'/>",
-		addUrl:"<s:url value='/evaluation/outcome/addOutcome'/>",
-		updateUrl:"<s:url value='/evaluation/outcome/updateOutcome'/>",
-		deleteUrl:"<s:url value='/evaluation/outcome/deleteOutcome'/>",
-		findAttachUrl:"<s:url value='/evaluation/outcome/findAttach'/>",
-		downloadAttachUrl:"<s:url value='/evaluation/outcome/downloadAttach'/>",
-		deleteAttachUrl:"<s:url value='/evaluation/outcome/deleteAttach'/>",
-		findCategoryUrl:"<s:url value='/evaluation/outcomeValues/categories'/>",
-		findLevel1Url:"<s:url value='/evaluation/outcomeValues/findLevel1'/>",
-		findLevel2Url:"<s:url value='/evaluation/outcomeValues/findLevel2'/>",
-		outcome:{occurDate:"",category:"",level1:"",level2:""},
-		dialogFormVisible : false,
-		formLabelWidth:"120px",
-		conditionVo:{outcomeId : null},
-		fileList:[],
-		attaches:[],
-		categories:[],
-		level1List:[],
-		level2List:[],
 		itemTableDataUrl:"<s:url value='/evaluation/make/itemTableData'/>",
 		recordDataUrl:"<s:url value='/evaluation/make/recordData'/>",
 		submitRecordUrl:"<s:url value='/evaluation/make/submitRecord'/>",
@@ -98,14 +79,6 @@ var app = new Vue({
 		subjectId : ${subject.subjectId},
 		recordData : {}
 	},
-	filters: {    
- 		 statusFilter: function (value) {
-     		 if(value == 0){return "未审核"; }
-     		 if(value == 1){return "已审核"; }
-     		 return "";
- 		 }	, 
- 	},
-	
 	mounted : function() { 
 		this.getTableData();
 			
@@ -169,115 +142,7 @@ var app = new Vue({
     				},
     				function(response){}
     		  );
-		  },
-	      mylist : function(){ 
-					this.$http.get(this.mylistUrl).then(
-					function(response){
-					this.tableData=response.data;},
-					function(response){}  			
-					); 
-		  },
-		  showAdd : function(){
-			  this.outcome={occurDate:"",category:"",level1:"",level2:""};
-			  this.attaches=[];
-			  this.dialogFormVisible=true;
-		  },
-		  addOutcome : function(){ 
-			 var url=this.addUrl;
-			 var msg="新增成功";
-			 if(this.outcome.outcomeId){
-				 url=this.updateUrl;
-				 msg="修改成功";
-			 }
-			 this.$http.post(url, this.outcome).then(
-				function(response){
-					this.conditionVo.outcomeId =  response.data;
-		            this.$refs.upload.submit();
-		            this.clearFiles();
-					this.outcome={occurDate:"",category:"",level1:"",level2:""};
-					this.dialogFormVisible=false;
-					this.$message({
-						type:"info",
-						message:msg
-					});
-					this.mylist();
-				},
-				function(response){}
-			 ); 
-	  	  },
-	  	  handleRemove : function(file, fileList) {
-            console.log(file, fileList);
-          },
-          clearFiles : function(){
-              this.$refs.upload.clearFiles();
-       	  },
-       	  handleEdit : function(row){
-       		  this.outcome=row;
-       		  this.$http.get(this.findAttachUrl, {params:{outcomeId : this.outcome.outcomeId}}).then(
-    				function(response){
-    					this.attaches =  response.data;
-    		            this.dialogFormVisible = true;
-    				},
-    				function(response){}
-    		   );
-       	  },
-       	  handleDelete : function(row){
-       		  this.$confirm("确认删除吗？","提示",{
-	    			confirmButtonText:'确认',
-	    			cancleButtonText:'取消',
-	    			type:'warning'
-    			}).then(function(){  
-    				app.$http.delete(app.deleteUrl, {params:{outcomeId : row.outcomeId}}).then(
-   	       				function(response){
-   	       					this.$message({
-   	    						type:"info",
-   	    						message:"删除成功"
-   	    					});
-   	       					app.mylist();
-   	       				},
-   	       				function(response){}
-   	        		 );
-    			}).catch(function(){ app.$message({ type:'info',message:'已取消删除'})});
-       	  },
-       	  downloadAttach : function(attachId){
-       		  window.location.href=this.downloadAttachUrl+"?attachId="+attachId;
-       	  },
-       	  deleteAttach : function(attach){
-       		  this.$http.delete(this.deleteAttachUrl, {params:{attachId : attach.id}}).then(
-    				function(response){
-    					for(var i in this.attaches){
-    						if(this.attaches[i] == attach){
-    							this.attaches.splice(i,1);
-    						}
-    					}
-    				},
-    				function(response){}
-    		   );
-     	  },
-     	  getCategories : function(){ 
-				this.$http.get(this.findCategoryUrl).then(
-					function(response){
-						this.categories=response.data;
-					},
-					function(response){}
-				); 
-	      },
-	      categoryChange : function(){
-	    	  this.$http.get(this.findLevel1Url, {params:{category : this.outcome.category}}).then(
-    				function(response){
-    					this.level1List=response.data;
-    				},
-    				function(response){}
-	    	  );
-	      },
-	      level1Change : function(){
-	    	  this.$http.get(this.findLevel2Url, {params:{category : this.outcome.category , level1 : this.outcome.level1}}).then(
-    				function(response){
-    					this.level2List=response.data;
-    				},
-    				function(response){}
-		      );
-	      }
+		  }
 		 
      }	        
 	 

@@ -43,6 +43,8 @@ public class EvaluationItem implements Serializable {
 	@Column(name="TYPE")
 	private String type;//目录，叶子节点
 
+	@Column(name="DATA_SOURCE")
+	private String dataSource;//数据来源
 	//bi-directional many-to-one association to EvaluationSubject
 	@ManyToOne
 	@JoinColumn(name="SUBJECT_ID")
@@ -117,6 +119,14 @@ public class EvaluationItem implements Serializable {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getDataSource() {
+		return dataSource;
+	}
+
+	public void setDataSource(String dataSource) {
+		this.dataSource = dataSource;
 	}
 
 	public EvaluationSubject getSubject() {

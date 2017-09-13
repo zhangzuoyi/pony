@@ -19,6 +19,8 @@ public class EvaluationRowVo implements Serializable {
 	private String name;
 
 	private float score;
+	
+	private String dataSource;
 
 	private int colspan;//列跨度，若没有分类就跨两列
 	
@@ -79,6 +81,14 @@ public class EvaluationRowVo implements Serializable {
 
 	public void setColspan(int colspan) {
 		this.colspan = colspan;
+	}
+
+	public String getDataSource() {
+		return dataSource;
+	}
+
+	public void setDataSource(String dataSource) {
+		this.dataSource = dataSource;
 	}
 
 	
