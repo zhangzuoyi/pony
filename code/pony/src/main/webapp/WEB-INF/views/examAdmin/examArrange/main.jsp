@@ -419,7 +419,7 @@ var app = new Vue({
 				this.examTimeDialogFormVisible = true;
 			},
 			selectExamRoom: function(){
-			
+				window.parent.addTab("考场设置","<s:url value='/examAdmin/examRoomArrange/main/' />"); 		
 			},
 			joinGroup: function(){
 				if(this.multipleSelection==null||this.multipleSelection.length == 0){
