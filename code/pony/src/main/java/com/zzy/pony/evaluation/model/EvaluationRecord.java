@@ -29,6 +29,8 @@ import com.zzy.pony.model.Teacher;
 @NamedQuery(name="EvaluationRecord.findAll", query="SELECT e FROM EvaluationRecord e")
 public class EvaluationRecord implements Serializable {
 	private static final long serialVersionUID = 1L;
+	public static final int STATUS_UNCHECK=0;//未审核
+	public static final int STATUS_CHECKED=1;//已审核
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -63,6 +65,9 @@ public class EvaluationRecord implements Serializable {
 
 	@Column(name="TOTAL_SCORE")
 	private float totalScore;
+	
+	@Column(name="STATUS")
+	private int status;
 
 	//bi-directional many-to-one association to EvaluationItemData
 	@OneToMany(mappedBy="record")
@@ -197,6 +202,14 @@ public class EvaluationRecord implements Serializable {
 
 	public void setSubject(EvaluationSubject subject) {
 		this.subject = subject;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 }

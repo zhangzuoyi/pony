@@ -51,4 +51,25 @@ public class EvaluationMakeController {
 	public void updateRecord(@RequestBody EvaluationRecordVo record){
 		service.updateRecord(record, ShiroUtil.getLoginName());
 	}
+	@RequestMapping(value="checkMain",method = RequestMethod.GET)
+	public String checkMain(Long subjectId, Model model){
+		EvaluationSubject subject=subjectDao.findOne(subjectId);
+		model.addAttribute("subject", subject);
+		return "evaluation/make/checkMain";
+	}
+	@RequestMapping(value="records",method = RequestMethod.GET)
+	@ResponseBody
+	public List<EvaluationRecordVo> records(Long subjectId) {
+		return service.findRecords(subjectId);
+	}
+	@RequestMapping(value="getRecord",method = RequestMethod.GET)
+	@ResponseBody
+	public EvaluationRecordVo getRecord(Long recordId) {
+		return service.findRecordById(recordId);
+	}
+	@ResponseBody
+	@RequestMapping(value="checkRecord",method = RequestMethod.POST)
+	public void checkRecord(@RequestBody EvaluationRecordVo record){
+		service.checkRecord(record, ShiroUtil.getLoginName());
+	}
 }

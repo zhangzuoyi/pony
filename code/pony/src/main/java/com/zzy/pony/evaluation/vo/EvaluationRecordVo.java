@@ -27,6 +27,7 @@ public class EvaluationRecordVo implements Serializable {
 	private int rank;
 
 	private float totalScore;
+	private int status;
 	
 	private Integer teacherId;
 	private String teacherName;
@@ -166,6 +167,14 @@ public class EvaluationRecordVo implements Serializable {
 
 	public void setItemData(List<EvaluationItemDataVo> itemData) {
 		this.itemData = itemData;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 

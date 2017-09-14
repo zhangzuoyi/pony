@@ -43,6 +43,7 @@ width:200px;
             			<th>描述</th>
             			<th>打分依据</th>
             			<th>本人评分</th>
+            			<th v-if="recordData.status == 1">审核评分</th>
             		</tr>
             	</thead>
             	<tbody>
@@ -51,12 +52,15 @@ width:200px;
             			<td :colspan="item.colspan">{{item.name}}</td>
             			<td>{{item.score}}</td>
             			<td>{{item.description}}</td>
-            			<td><el-input type="textarea" v-model="item.according" :disabled="item.dataSource != null"></el-input></td>
-            			<td><el-input v-model="item.inputScore" :disabled="item.dataSource != null"></el-input></td>
+            			<td v-if="recordData.status == 0"><el-input type="textarea" v-model="item.according" :disabled="item.dataSource != null"></el-input></td>
+            			<td v-if="recordData.status == 0"><el-input v-model="item.inputScore" :disabled="item.dataSource != null"></el-input></td>
+            			<td v-if="recordData.status == 1">{{item.according}}</td>
+            			<td v-if="recordData.status == 1">{{item.inputScore}}</td>
+            			<td v-if="recordData.status == 1">{{item.checkScore}}</td>
             		</tr>
             	</tbody>
             </table>
-            <el-row>
+            <el-row v-if="recordData.status == null || recordData.status == 0">
 	           <el-col :span="10">
 	             <el-button type="primary" @click="submitRecord()" v-if=" ! recordData.recordId">提交新增</el-button>
 	             <el-button type="primary" @click="updateRecord()" v-if="recordData.recordId">提交修改</el-button>
@@ -108,6 +112,7 @@ var app = new Vue({
         								tbItem.id=item.id;
         								tbItem.inputScore=item.inputScore;
         								tbItem.according=item.according;
+        								tbItem.checkScore=item.checkScore;
         							}
         						}
         					}

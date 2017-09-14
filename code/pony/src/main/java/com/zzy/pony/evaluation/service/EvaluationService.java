@@ -26,4 +26,7 @@ public interface EvaluationService {
 	void addRecord(EvaluationRecordVo record, Integer teacherId, String loginName);
 	void updateRecord(EvaluationRecordVo record, String loginName);
 	EvaluationRecordVo findBySubjectAndTeacher(Long subjectId, Integer teacherId);
+	List<EvaluationRecordVo> findRecords(Long subjectId);
+	EvaluationRecordVo findRecordById(Long recordId);
+	void checkRecord(EvaluationRecordVo record, String loginName);
 }

@@ -1,5 +1,6 @@
 package com.zzy.pony.evaluation.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,7 @@ import com.zzy.pony.evaluation.dao.EvaluationItemDao;
 import com.zzy.pony.evaluation.dao.EvaluationItemDataDao;
 import com.zzy.pony.evaluation.dao.EvaluationRecordDao;
 import com.zzy.pony.evaluation.mapper.EvaluationItemDataMapper;
+import com.zzy.pony.evaluation.mapper.EvaluationRecordMapper;
 import com.zzy.pony.evaluation.mapper.OutcomeMapper;
 import com.zzy.pony.evaluation.model.EvaluationItem;
 import com.zzy.pony.evaluation.model.EvaluationItemData;
@@ -40,6 +42,8 @@ public class EvaluationServiceImpl implements EvaluationService {
 	private EvaluationItemDataMapper dataMapper;
 	@Autowired
 	private OutcomeMapper outcomeMapper;
+	@Autowired
+	private EvaluationRecordMapper recordMapper;
 
 	@Override
 	public List<EvaluationItemVo> itemTreeData(Long subjectId) {
@@ -164,6 +168,7 @@ public class EvaluationServiceImpl implements EvaluationService {
 		er.setEvlTime(EVL_TIME);//TODO
 		er.setSubject(subject);
 		er.setTeacher(teacher);
+		er.setStatus(EvaluationRecord.STATUS_UNCHECK);
 		recordDao.save(er);
 		
 		List<OutcomeVo> outcomes=outcomeMapper.findByTeacherAndStatus(teacherId,Outcome.STATUS_CHECKED);//老师成果
@@ -203,6 +208,10 @@ public class EvaluationServiceImpl implements EvaluationService {
 		Teacher teacher=new Teacher();
 		teacher.setTeacherId(teacherId);
 		EvaluationRecord record=recordDao.findBySubjectAndTeacherAndEvlTime(subject, teacher, EVL_TIME);
+		
+		return toRecordVo(record);
+	}
+	private EvaluationRecordVo toRecordVo(EvaluationRecord record) {
 		EvaluationRecordVo result=new EvaluationRecordVo();
 		if(record != null) {
 			result.setCheckTime(record.getCheckTime());
@@ -221,6 +230,7 @@ public class EvaluationServiceImpl implements EvaluationService {
 			result.setTeacherName(record.getTeacher().getName());
 			result.setTeacherNo(record.getTeacher().getTeacherNo());
 			result.setTotalScore(record.getTotalScore());
+			result.setStatus(record.getStatus());
 		}
 		return result;
 	}
@@ -244,5 +254,30 @@ public class EvaluationServiceImpl implements EvaluationService {
 			}
 			
 		}
+	}
+	@Override
+	public List<EvaluationRecordVo> findRecords(Long subjectId) {
+		return recordMapper.findBySubjectId(subjectId);
+	}
+	@Override
+	public EvaluationRecordVo findRecordById(Long recordId) {
+		EvaluationRecord record=recordDao.findOne(recordId);
+		
+		return toRecordVo(record);
+	}
+	@Override
+	public void checkRecord(EvaluationRecordVo record, String loginName) {
+		EvaluationRecord er=recordDao.findOne(record.getRecordId());
+		BigDecimal bd=new BigDecimal(0);
+		Date now=new Date();
+		for(EvaluationItemDataVo vo: record.getItemData()) {
+			dataDao.updateCheckScore(vo.getId(), vo.getCheckScore(), now, loginName);
+			bd=bd.add(new BigDecimal(String.valueOf(vo.getCheckScore())));
+		}
+		er.setCheckTime(now);
+		er.setCheckUser(loginName);
+		er.setTotalScore(bd.floatValue());
+		er.setStatus(EvaluationRecord.STATUS_CHECKED);
+		recordDao.save(er);
 	}
 }

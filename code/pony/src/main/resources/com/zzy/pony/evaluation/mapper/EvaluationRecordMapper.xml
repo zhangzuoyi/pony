@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.evaluation.mapper.EvaluationRecordMapper">
+	<select id="findBySubjectId" resultType="com.zzy.pony.evaluation.vo.EvaluationRecordVo">
+		select t.record_id recordId,t.SUBJECT_ID subjectId,t.TEACHER_ID teacherId,t.EVL_TIME evlTime,
+		t.TOTAL_SCORE totalScore,t.rank,t.EVL_RESULT evlResult,t.comments,t.CREATE_TIME createTime,
+		t.CREATE_USER createUser,t.CHECK_TIME checkTime,t.CHECK_USER checkUser,t.status,
+		a.NAME teacherName,a.teacher_no teacherNo,b.NAME subjectName from evaluation_record t 
+		left join t_teacher a on t.teacher_id=a.TEACHER_ID 
+		left join evaluation_subject b on t.SUBJECT_ID=b.SUBJECT_ID where t.SUBJECT_ID=#{0}
+	</select>
+	
+</mapper>
