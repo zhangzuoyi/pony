@@ -332,7 +332,7 @@
                     </dl>
                 </li>
             </shiro:hasPermission>
-            <shiro:hasPermission name="property">;
+            <shiro:hasPermission name="property">
                 <li class="layui-nav-item">
                     <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe600;</i>资产管理</a>
                     <dl class="layui-nav-child">
@@ -357,7 +357,7 @@
                     </dl>
                 </li>
             </shiro:hasPermission>
-            <shiro:hasPermission name="disk">;
+            <shiro:hasPermission name="disk">
                 <li class="layui-nav-item">
                     <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe61d;</i>网盘</a>
                     <dl class="layui-nav-child">
@@ -373,25 +373,35 @@
                     </dl>
                 </li>
             </shiro:hasPermission>
-            <shiro:hasPermission name="disk">;
+            <shiro:hasPermission name="evaluation">
                 <li class="layui-nav-item">
                     <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe605;</i>评价管理</a>
                     <dl class="layui-nav-child">
+                    	<shiro:hasPermission name="myoutcome">
                         <dd>
                             <a href="javascript:;" data-url="<s:url value='/evaluation/outcome/userMain' />"><label>我的成果</label></a>
                         </dd>
+                        </shiro:hasPermission>
+                        <shiro:hasPermission name="outcome_check">
                         <dd>
                             <a href="javascript:;" data-url="<s:url value='/evaluation/outcome/checkMain' />"><label>成果审核</label></a>
                         </dd>
+                        </shiro:hasPermission>
+                        <shiro:hasPermission name="evl_subjects">
                         <dd>
                             <a href="javascript:;" data-url="<s:url value='/evaluation/config/main' />"><label>评价主题管理</label></a>
                         </dd>
+                        </shiro:hasPermission>
+                        <shiro:hasPermission name="evl_teacher_dep">
                         <dd>
                             <a href="javascript:;" data-url="<s:url value='/evaluation/make/main' />?subjectId=1"><label>教师发展性评价</label></a>
                         </dd>
+                        </shiro:hasPermission>
+                        <shiro:hasPermission name="evl_teacher_dep_check">
                         <dd>
                             <a href="javascript:;" data-url="<s:url value='/evaluation/make/checkMain' />?subjectId=1"><label>教师发展性评价审核</label></a>
                         </dd>
+                        </shiro:hasPermission>
                     </dl>
                 </li>
             </shiro:hasPermission>
