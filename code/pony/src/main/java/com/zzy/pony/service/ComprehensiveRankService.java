@@ -22,5 +22,5 @@ public interface ComprehensiveRankService {
 	*/
 	void rankExaminee(ConditionVo cv);
 
-	List<Map<String, Object>> findRankByExam(int examId);
+	List<Map<String, Object>> findRankByExam(int examId,int yearId,int gradeId);
 }

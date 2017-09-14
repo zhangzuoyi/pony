@@ -83,7 +83,7 @@ LEFT JOIN t_school_class b ON a.CLASS_ID = b.CLASS_ID
 LEFT JOIN t_exam_result c ON t.exam_id = c.exam_id
 AND t.student_id = c.student_id
 LEFT JOIN t_subject d ON c.SUBJECT_ID = d.SUBJECT_ID
-where t.exam_id = #{0}
+where t.exam_id = #{0} and b.year_id = #{1} and b.grade_id = #{2}
 order by t.grade_rank
 	</select>
 	<delete id="deleteExamineeArrangeByClass" >

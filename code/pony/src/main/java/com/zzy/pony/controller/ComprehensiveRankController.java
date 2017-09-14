@@ -57,11 +57,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
-import com.zzy.pony.dao.ExamTypeDao;
-import com.zzy.pony.dao.SchoolClassDao;
 import com.zzy.pony.exam.model.Examinee;
 import com.zzy.pony.exam.service.ExamineeService;
-import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.vo.ConditionVo;
@@ -76,6 +73,8 @@ public class ComprehensiveRankController {
 	private ComprehensiveRankService comprehensiveRankService;
 	@Autowired
 	private ExamResultService examResultService;
+	@Autowired
+	private SchoolYearService schoolYearService;
 	
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
@@ -134,7 +133,8 @@ public class ComprehensiveRankController {
 	public String findByCondition(@RequestBody ConditionVo cv) {
 
 			StringBuilder result = new StringBuilder();
-			List<Map<String, Object>> dataList =  comprehensiveRankService.findRankByExam(cv.getExamId());
+			SchoolYear year = schoolYearService.getCurrent();
+			List<Map<String, Object>> dataList =  comprehensiveRankService.findRankByExam(cv.getExamId(),year.getYearId(),cv.getGradeId());
 			List<Map<String, Object>> headList = new ArrayList<Map<String,Object>>();
 
 			Map<String, Object> studentNameMap = new HashMap<String, Object>();

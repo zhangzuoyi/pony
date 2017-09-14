@@ -41,7 +41,6 @@ import com.zzy.pony.vo.ConditionVo;
 
 /**
  * @author WANGCHAO262
- * @date 2017年1月11日  上午10:36:08
  * @version
  */
 @RunWith(SpringJUnit4ClassRunner.class)

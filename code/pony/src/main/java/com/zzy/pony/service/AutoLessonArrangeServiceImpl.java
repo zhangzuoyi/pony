@@ -361,7 +361,9 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 					preAlreadyTeacherList = preTeacherMap.get(teacherId).get(sc.getClassId());//已经预排的
 					alreadyTeacherList = teacherMap.get(teacherId).get(sc.getClassId());
 				}
-
+				if (alreadyTeacherList == null) {
+					System.out.println("-------------------");
+				}
 				//已经预排的和未排的超过5天
 				if (autoArrangeCount+WeekSeqUtil.getWeek(alreadyTeacherList).size()>5) {
 					log.error("----------------"+sc.getName()+":老师("+teacherId+")"+"预排与自动排的超过5天----------------");
@@ -388,18 +390,35 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 					if (sigList.contains(subjectId)) {
 						 type = Constants.SUBJECT_SIGNIFICANT;
 					}
-					if (sigList.contains(subjectId)) {
+					if (impList.contains(subjectId)) {
 						 type = Constants.SUBJECT_IMPORTANT;
 					}
-					if (sigList.contains(subjectId)) {
+					if (comList.contains(subjectId)) {
 						 type = Constants.SUBJECT_COMMON;
 					}
-					int weekSeq = WeekSeqUtil.getWeekSeq(week, alreadyTeacherList, classAlreadySet, type);																									
+					int weekSeq = WeekSeqUtil.getWeekSeq(week, preAlreadyTeacherList,alreadyTeacherList, classAlreadySet, type);																									
 
 					classAlreadySet.add(weekSeq);
 					teacherSet.add(weekSeq);
+					availWeek.remove(WeekSeqUtil.getWeek(weekSeq));
+					innerAutoArrangeMap.put(weekSeq, teacherSubjectMap.get(teacherId));
 				}
-				alreadyTeacherList.addAll(teacherSet);
+				if (alreadyTeacherList == null || alreadyTeacherList.size() == 0 ) {
+					if (teacherMap.get(teacherId) != null) {
+						List<Integer> innerList = new ArrayList<Integer>();
+						innerList.addAll(teacherSet);
+						teacherMap.get(teacherId).put(sc.getClassId(), innerList);
+					}else{
+						Map<Integer, List<Integer>> innerMap = new HashMap<Integer, List<Integer>>();
+						List<Integer> innerList = new ArrayList<Integer>();
+						innerList.addAll(teacherSet);
+						innerMap.put(sc.getClassId(), innerList);
+						teacherMap.put(teacherId, innerMap);
+					}										
+				}else {
+					alreadyTeacherList.addAll(teacherSet);
+				}
+				
 			}
 
 

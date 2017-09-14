@@ -184,21 +184,21 @@ public class ComprehensiveRankServiceImpl implements ComprehensiveRankService {
 	}
 
 	@Override
-	public List<Map<String, Object>> findRankByExam(int examId) {
+	public List<Map<String, Object>> findRankByExam(int examId,int yearId,int gradeId) {
 		List<Map<String,Object>> result = new ArrayList<Map<String, Object>>();
-		List<RankVo> rankVos = examineeMapper.findRankByExam(examId);
+		List<RankVo> rankVos = examineeMapper.findRankByExam(examId,yearId,gradeId);
 		Map<Integer,Map<String,Object>> map = new LinkedHashMap<Integer, Map<String, Object>>();
 		for (RankVo vo:
 			 rankVos) {
 			if (map.containsKey(vo.getStudentId())){
-				map.get(vo.getStudentId()).put(Constants.SUBJETCS.get(vo.getSubjectName()),vo.getSubjectName());
+				map.get(vo.getStudentId()).put(Constants.SUBJETCS.get(vo.getSubjectName()),vo.getSubjectScore());
 				map.get(vo.getStudentId()).put(Constants.SUBJETCS.get(vo.getSubjectName())+"Rank",vo.getSubjectGradeRank());
 
 			}else{
 				Map<String,Object> innerMap = new HashMap<String, Object>();
 				innerMap.put("studentName",vo.getStudentName());
 				innerMap.put("seq",vo.getSeq());
-				innerMap.put(Constants.SUBJETCS.get(vo.getSubjectName()),vo.getSubjectName());
+				innerMap.put(Constants.SUBJETCS.get(vo.getSubjectName()),vo.getSubjectScore());
 				innerMap.put(Constants.SUBJETCS.get(vo.getSubjectName())+"Rank",vo.getSubjectGradeRank());
 				innerMap.put("totalScore",vo.getTotalScore());
 				innerMap.put("classRank",vo.getClassRank());
