@@ -8,5 +8,6 @@ import com.zzy.pony.exam.model.ExamRoom;
 
 public interface ExamRoomDao extends JpaRepository<ExamRoom, Integer> {
 	List<ExamRoom> findByName(String name);
+	List<ExamRoom> findAllByOrderById();
 
 }

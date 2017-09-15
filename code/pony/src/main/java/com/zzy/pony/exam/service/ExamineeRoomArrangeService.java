@@ -15,6 +15,7 @@ public interface ExamineeRoomArrangeService {
 	void deleteAll();
 	String findExamineeRoomArrangeByClassId(int classId,int gradeId,int examId);
 	String findExamineeRoomArrangeByRoomId(String roomId,int gradeId,int examId);
+	
 
 	
 	

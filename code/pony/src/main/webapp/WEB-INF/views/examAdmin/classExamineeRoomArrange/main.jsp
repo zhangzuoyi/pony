@@ -256,8 +256,7 @@ var app = new Vue({
               }
 					var exportParams = {
 										examId : this.examId,
-										gradeId :this.gradeId,
-										classId  :  this.classId
+										gradeId :this.gradeId
 								};
 					var url = "<s:url value='/examAdmin/examineeRoomArrange/exportByClassId?'/>"+jQuery.param(exportParams);
 					/*  window.location.href = encodeURI(encodeURI(url));*/

@@ -4,7 +4,6 @@ package com.zzy.pony.exam.service;
 import java.util.List;
 
 
-import com.zzy.pony.exam.model.ExamArrange;
 import com.zzy.pony.exam.vo.ExamRoomAllocateVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

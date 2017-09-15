@@ -42,7 +42,7 @@ public class ExamRoomServiceImpl implements ExamRoomService {
 	@Override
 	public List<ExamRoom> list() {
 		// TODO Auto-generated method stub
-		return examRoomDao.findAll();
+		return examRoomDao.findAllByOrderById();
 	}
 
 	@Override
