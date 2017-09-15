@@ -2,6 +2,7 @@ package com.zzy.pony.disk.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class FileUtils {
     /**
@@ -89,6 +90,26 @@ public class FileUtils {
         }
 
         String targetName = targetPrefix;
+
+        if (targetSuffix.length() > 0) {
+            targetName += ("." + targetSuffix);
+        }
+
+        return targetName;
+    }
+    /**
+     * UUID加后缀名
+     * @param name
+     * @return
+     */
+    public static String calculateName(String name) {
+        String targetSuffix = "";
+        int index = name.lastIndexOf(".");
+
+        if (index != -1) {
+            targetSuffix = name.substring(index + 1);
+        }
+        String targetName = UUID.randomUUID().toString();
 
         if (targetSuffix.length() > 0) {
             targetName += ("." + targetSuffix);

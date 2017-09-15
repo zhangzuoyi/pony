@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.zzy.pony.disk.util.FileUtils;
 import com.zzy.pony.evaluation.dao.OutcomeAttachDao;
 import com.zzy.pony.evaluation.dao.OutcomeDao;
 import com.zzy.pony.evaluation.dao.OutcomeValueDao;
@@ -66,7 +67,7 @@ public class OutcomeServiceImpl implements OutcomeService {
 			try {
 				String childPath = DateTimeUtil.dateToStr(new Date());//子路径
 				String oldFileName=file.getOriginalFilename();
-				String newFileName=UUID.randomUUID().toString()+oldFileName;
+				String newFileName=FileUtils.calculateName(oldFileName);//UUID.randomUUID().toString()+oldFileName;
 				String savePath = childPath+File.separator +newFileName;
 				InputStream inputStream = file.getInputStream();
 				File childDir = new File(attachBaseDir, childPath);//根路径+子路径

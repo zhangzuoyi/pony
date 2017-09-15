@@ -44,7 +44,7 @@ public class DiskService {
             String name, long size, String parentPath, String tenantId)
             throws Exception {
         String modelName = "disk/user/" + userId;
-        String keyName = parentPath + "/" + name;
+        String keyName = parentPath + "/" + FileUtils.calculateName(name);//parentPath + "/" + name;
         StoreDTO storeDto = storeConnector.saveStore(modelName, keyName,
                 dataSource, tenantId);
         String type = FileUtils.getSuffix(name);

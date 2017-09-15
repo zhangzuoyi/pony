@@ -155,7 +155,7 @@ public class DiskInfoController {
             ServletUtils.setFileDownloadHeader(request, response,
                     diskInfo.getName());
             is = storeConnector
-                    .getStore("default/user/" + userId, diskInfo.getRef(),
+                    .getStore("disk/user/" + userId, diskInfo.getRef(),
                             tenantId).getDataSource().getInputStream();
             IoUtils.copyStream(is, response.getOutputStream());
         } finally {

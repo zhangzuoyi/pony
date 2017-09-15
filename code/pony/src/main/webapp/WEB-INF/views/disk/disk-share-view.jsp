@@ -28,7 +28,7 @@
       ${diskShare.name}
 	</div>
 	<div>
-	  <a href="disk-share-download.do?id=${diskShare.id}" class="btn btn-default">下载</a>
+	  <a href="disk-download.do?id=${diskShare.id}" class="btn btn-default">下载</a>
 	  <hr>
 	</div>
   </div>
