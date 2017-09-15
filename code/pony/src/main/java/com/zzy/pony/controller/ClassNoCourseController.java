@@ -135,7 +135,7 @@ public class ClassNoCourseController {
 	public String findAll(){
 		StringBuilder result= new StringBuilder();
 		List<Map<String, Object>> list = new ArrayList<Map<String,Object>>();		
-		List<ClassNoCourseVo> classNoCourseVos = classNoCourseService.findAllVo();		
+		List<ClassNoCourseVo> classNoCourseVos = classNoCourseService.findCurrentAllVo();
 		for (ClassNoCourseVo vo : classNoCourseVos) {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("schoolYearName",vo.getSchoolYearName());

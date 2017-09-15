@@ -21,16 +21,16 @@ public class ExamMonitorServiceImpl implements ExamMonitorService {
 	private ExamRoomAllocateMapper allocateMapper;
 
 	@Override
-	public void add(int examId, int[] teacherIds) {
+	public void add(int examId, int gradeId, int[] teacherIds) {
 		for(int teacherId: teacherIds){
-			mapper.insert(examId, teacherId);
+			mapper.insert(examId,gradeId, teacherId);
 		}
 
 	}
 
 	@Override
-	public void setCount(int examId, int[] teacherIds, int count) {
-		mapper.setCount(examId, teacherIds, count);
+	public void setCount(int examId,int gradeId, int[] teacherIds, int count) {
+		mapper.setCount(examId,gradeId, teacherIds, count);
 	}
 
 	@Override
@@ -39,11 +39,11 @@ public class ExamMonitorServiceImpl implements ExamMonitorService {
 	}
 
 	@Override
-	public void monitorArrange(int examId) {
+	public void monitorArrange(int examId, int gradeId) {
 		//查找考场安排数据
 		List<ExamRoomAllocateVo> rooms=allocateMapper.findByExam(examId);
 		//查找监考老师数据
-		List<ExamMonitorVo> monitors=mapper.find(examId);
+		List<ExamMonitorVo> monitors=mapper.find(examId, gradeId);
 		for(ExamMonitorVo em: monitors){
 			em.init();
 		}

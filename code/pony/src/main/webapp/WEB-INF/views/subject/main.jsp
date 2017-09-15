@@ -100,16 +100,21 @@ width:200px;
                         :value="0">
                         <span style="float: left">上课科目</span>
                		 </el-option>
-               		<el-option  
+               		<%-- <el-option  
 						:label="'上课科目'"                   
                         :value="1">
                         <span style="float: left">上课科目</span>
-               		 </el-option>
+               		 </el-option> --%>
                		 <el-option                       
                         :label="'选修科目'"                       
                         :value="2">
                         <span style="float: left">选修科目</span>
-               		 </el-option>				
+               		 </el-option>
+               		 <el-option                       
+                        :label="'考试科目'"                       
+                        :value="3">
+                        <span style="float: left">考试科目</span>
+               		 </el-option>
 				</el-select> 
 			 </el-form-item>
 			 <el-form-item label="重要程度" :label-width="formLabelWidth" prop="importance"> 
@@ -162,6 +167,7 @@ width:200px;
     subjectTypeFilter: function (value) {
       if(value == 0 || value==1){return "上课科目"; }
       if(value == 2){return "选修科目"; }     
+      if(value == 3){return "考试科目"; }    
     }
     
   }	,

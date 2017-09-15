@@ -4,16 +4,16 @@
 
 <mapper namespace="com.zzy.pony.exam.mapper.ExamMonitorMapper">
 	<insert id="insert" >
-		insert into t_exam_monitor (exam_id,teacher_id,monitor_count) 
-		SELECT #{0}, #{1}, 0 FROM dual 
-        WHERE not exists (select 1 from t_exam_monitor t where t.exam_id = #{0} and t.teacher_id=#{1})
+		insert into t_exam_monitor (exam_id,grade_id,teacher_id,monitor_count) 
+		SELECT #{0}, #{1},#{2}, 0 FROM dual 
+        WHERE not exists (select 1 from t_exam_monitor t where t.exam_id = #{0} and t.grade_id=#{1} and t.teacher_id=#{2})
 	</insert>
 	<select id="find" resultType="com.zzy.pony.exam.vo.ExamMonitorVo">
 		select t.id,t.exam_id examId,t.teacher_id teacherId,t.monitor_count monitorCount,a.name teacherName,a.teacher_no teacherNo,b.name subjectName from t_exam_monitor t 
-		left join t_teacher a on t.teacher_id=a.teacher_id left join t_subject b on a.subject_id=b.subject_id where t.exam_id=#{0}
+		left join t_teacher a on t.teacher_id=a.teacher_id left join t_subject b on a.subject_id=b.subject_id where t.exam_id=#{0} and t.grade_id=#{1}
 	</select>
 	<update id="setCount">
-		update t_exam_monitor set monitor_count=#{2} where exam_id=#{0} and teacher_id in 
+		update t_exam_monitor set monitor_count=#{3} where exam_id=#{0} and grade_id=#{1} and teacher_id in 
 		<foreach item="item" index="index" collection="teacherIds" open="(" separator="," close=")">  
      		#{item}  
      	</foreach> 

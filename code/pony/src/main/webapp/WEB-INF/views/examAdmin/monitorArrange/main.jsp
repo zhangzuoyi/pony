@@ -64,9 +64,19 @@ width:200px;
                		 </el-option>
            			 </el-select>				
                     </div>
-            
             	</el-col>
-            	
+            	<el-col :span="5" >
+            	<div class="grid-content bg-purple">                                     
+					<el-select v-model="gradeId" filterable placeholder="请选择..">
+               		 <el-option
+                        v-for="grade in grades" 
+                        :label="grade.name"                      
+                        :value="grade.gradeId">
+                        <span style="float: left">{{grade.name}}</span>
+               		 </el-option>
+           			 </el-select>				
+                    </div>        
+            	</el-col>
             	<el-col :span="4" >
                		<el-button type="primary"  @click="list">查询</el-button>
                		<el-button type="primary"  @click="monitorArrange">自动监考设置</el-button>
@@ -173,6 +183,7 @@ var app = new Vue({
 		schoolYearUrl:"<s:url value='/schoolYear/getCurrent'/>",
 		termUrl:"<s:url value='/term/getCurrent'/>",
 		examUrl:"<s:url value='/exam/list'/>",
+		gradesUrl :"<s:url value='/grade/list'/>",
 		getTeacherUrl:"<s:url value='/teacherAdmin/listAllVo'/>",
 		listUrl:"<s:url value='/examAdmin/monitorArrange/list'/>",
 		submitUrl:"<s:url value='/examAdmin/monitorArrange/submit'/>",
@@ -183,6 +194,8 @@ var app = new Vue({
 		term : null,
 		examId: null,
 		exams:[],
+		grades : [],	
+		gradeId:null,
 		teachers:[],
 		usedTeachers:[],
 		filterText:'',
@@ -209,10 +222,11 @@ var app = new Vue({
         monitorCountSet:0
 	}, 
 	mounted : function() { 
-				this.getCurrentSchoolYear();
-				this.getCurrentTerm();
-				this.getExams();
-				this.getTeachers();
+		this.getCurrentSchoolYear();
+		this.getCurrentTerm();
+		this.getExams();
+		this.getGrades();
+		this.getTeachers();
 	},
 	watch:{
 		filterText :function(val){
@@ -233,19 +247,19 @@ var app = new Vue({
 				}	
 			},
 			getCurrentSchoolYear	:function(){ 			
-			this.$http.get(this.schoolYearUrl).then(
-			function(response){
-			this.schoolYear=response.data;
-			 },
-			function(response){}  	 			
-			);
+				this.$http.get(this.schoolYearUrl).then(
+					function(response){
+					this.schoolYear=response.data;
+					 },
+					function(response){}
+				);
 			},
 			getCurrentTerm	:function(){ 			
-			this.$http.get(this.termUrl).then(
-			function(response){
-			this.term=response.data; },
-			function(response){}  	 			
-			);
+				this.$http.get(this.termUrl).then(
+					function(response){
+					this.term=response.data; },
+					function(response){}
+				);
 			},
 			getExams	:function(){ 			
 			this.$http.get(this.examUrl).then(
@@ -253,6 +267,12 @@ var app = new Vue({
 			this.exams=response.data; },
 			function(response){}  	 			
 			);
+			},
+			getGrades	:function(){ 
+				this.$http.get(this.gradesUrl).then(
+				function(response){this.grades=response.data; },
+				function(response){}  	 			
+				);
 			},
 			getTeachers	:function(){
 				this.$http.get(this.getTeacherUrl).then(
@@ -270,13 +290,9 @@ var app = new Vue({
             	this.monitorSelection = val;
             },
             setTeacher: function(){
-	            if(this.examId == null || this.examId==''){
-	              	this.$alert("请选择考试","提示",{
-						type:"warning",
-						confirmButtonText:'确认'
-					});
-					return;
-	              }
+            	if( ! this.checkExamAndGrade()){
+  					return;
+  	              }
                 this.setTeacherDialogFormVisible = true;
              },
             deleteMonitor: function(){
@@ -299,14 +315,10 @@ var app = new Vue({
                 );
             },
             list : function(){
-				if(this.examId == null || this.examId==''){
-	              	this.$alert("请选择考试","提示",{
-						type:"warning",
-						confirmButtonText:'确认'
-					});
-					return;
-	              }
-              this.$http.get(this.listUrl,{params:{examId:this.examId}}).then(
+            	if( ! this.checkExamAndGrade()){
+  					return;
+  	              }
+                this.$http.get(this.listUrl,{params:{examId:this.examId, gradeId : this.gradeId}}).then(
                     function(response){
                         this.tableData=response.data;
                     });
@@ -325,7 +337,7 @@ var app = new Vue({
             	  teacherIds.push(this.teacherSelection[index].teacherId);        
               }
               
-              this.$http.post(this.submitUrl,{examId:this.examId,teacherIds:teacherIds},{emulateJSON:true}).then(
+              this.$http.post(this.submitUrl,{examId:this.examId, gradeId: this.gradeId, teacherIds:teacherIds},{emulateJSON:true}).then(
                     function(response){
                         this.$message({type:"info",message:"设置成功"});
                         this.teacherSelection=[];
@@ -352,7 +364,7 @@ var app = new Vue({
               	  teacherIds.push(this.monitorSelection[index].teacherId);        
                 }
                 
-                this.$http.post(this.setCountUrl,{examId:this.examId,teacherIds:teacherIds,count:this.monitorCountSet},{emulateJSON:true}).then(
+                this.$http.post(this.setCountUrl,{examId:this.examId,gradeId : this.gradeId, teacherIds:teacherIds,count:this.monitorCountSet},{emulateJSON:true}).then(
                       function(response){
                           this.$message({type:"info",message:"设置成功"});
                           this.monitorSelection=[];
@@ -361,18 +373,31 @@ var app = new Vue({
                       });
               },
               monitorArrange:function(){
-            	  if(this.examId == null || this.examId==''){
-  	              	this.$alert("请选择考试","提示",{
-  						type:"warning",
-  						confirmButtonText:'确认'
-  					});
+            	  if( ! this.checkExamAndGrade()){
   					return;
   	              }
-            	  this.$http.post(this.monitorArrangeUrl,{examId : this.examId},{emulateJSON:true}).then(
+            	  this.$http.post(this.monitorArrangeUrl,{examId : this.examId, gradeId : this.gradeId},{emulateJSON:true}).then(
                           function(response){
                               this.$message({type:"info",message:"自动安排成功"});
                           }
                   );
+              },
+              checkExamAndGrade : function(){
+            	  if(this.examId == null || this.examId==''){
+    	              	this.$alert("请选择考试","提示",{
+    						type:"warning",
+    						confirmButtonText:'确认'
+    					});
+    					return false;
+    	          }
+            	  if(this.gradeId == null || this.gradeId==''){
+  	              	this.$alert("请选择年级","提示",{
+  						type:"warning",
+  						confirmButtonText:'确认'
+  					});
+  					return false;
+  	          	  }
+            	  return true;
               }
         }	        
 });  

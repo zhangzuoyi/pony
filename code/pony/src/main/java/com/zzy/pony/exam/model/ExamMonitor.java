@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.zzy.pony.model.Exam;
+import com.zzy.pony.model.Grade;
 import com.zzy.pony.model.Teacher;
 
 
@@ -36,6 +37,10 @@ public class ExamMonitor implements Serializable {
 	@ManyToOne
 	@JoinColumn(name="EXAM_ID")
 	private Exam exam;
+	
+	@ManyToOne
+	@JoinColumn(name="GRADE_ID")
+	private Grade grade;
 
 	//bi-directional many-to-one association to Grade
 	@ManyToOne
@@ -75,6 +80,14 @@ public class ExamMonitor implements Serializable {
 
 	public void setTeacher(Teacher teacher) {
 		this.teacher = teacher;
+	}
+
+	public Grade getGrade() {
+		return grade;
+	}
+
+	public void setGrade(Grade grade) {
+		this.grade = grade;
 	}
 
 }

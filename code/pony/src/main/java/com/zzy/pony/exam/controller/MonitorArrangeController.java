@@ -63,22 +63,23 @@ public class MonitorArrangeController {
 	
 	@RequestMapping(value="list",method=RequestMethod.GET)
 	@ResponseBody
-	public List<ExamMonitorVo> list(@RequestParam(value="examId") int examId, Model model){
-		return mapper.find(examId);
+	public List<ExamMonitorVo> list(@RequestParam(value="examId") int examId,@RequestParam(value="gradeId") int gradeId, Model model){
+		return mapper.find(examId,gradeId);
 	}
 	
 	@RequestMapping(value="submit",method=RequestMethod.POST)
 	@ResponseBody
-	public void submit(@RequestParam(value="examId") int examId,@RequestParam(value="teacherIds[]") int[] teacherIds){
+	public void submit(@RequestParam(value="examId") int examId,@RequestParam(value="gradeId") int gradeId,@RequestParam(value="teacherIds[]") int[] teacherIds){
 		
-		service.add(examId, teacherIds);
+		service.add(examId, gradeId, teacherIds);
 	}
 	
 	@RequestMapping(value="setCount",method=RequestMethod.POST)
 	@ResponseBody
-	public void setCount(@RequestParam(value="examId") int examId,@RequestParam(value="teacherIds[]") int[] teacherIds,@RequestParam(value="count") int count){
+	public void setCount(@RequestParam(value="examId") int examId,@RequestParam(value="gradeId") int gradeId,
+			@RequestParam(value="teacherIds[]") int[] teacherIds,@RequestParam(value="count") int count){
 		
-		service.setCount(examId, teacherIds, count);
+		service.setCount(examId,gradeId, teacherIds, count);
 	}
 	
 	@RequestMapping(value="delete",method=RequestMethod.POST)
@@ -89,8 +90,8 @@ public class MonitorArrangeController {
 	
 	@RequestMapping(value="monitorArrange",method=RequestMethod.POST)
 	@ResponseBody
-	public void monitorArrange(@RequestParam(value="examId") int examId){
-		service.monitorArrange(examId);
+	public void monitorArrange(@RequestParam(value="examId") int examId,@RequestParam(value="gradeId") int gradeId){
+		service.monitorArrange(examId, gradeId);
 	}
 	
 	@RequestMapping(value="roomList",method=RequestMethod.GET)
