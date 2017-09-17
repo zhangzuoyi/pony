@@ -24,7 +24,8 @@ public class GAUtilTwo {
 	 8	16	24	32	40
 	*/
 
-	public static void getPre(List<ArrangeVo> preArrangeVos, Map<Integer,Map<Integer,List<Integer>>> classMap, Map<Integer,Map<Integer,List<Integer>>> teacherMap,
+	public static void getPre(List<ArrangeVo> preArrangeVos, Map<Integer,Map<Integer,List<Integer>>> classMap, Map<Integer,List<Integer>> teacherMap,
+							  Map<Integer,Map<Integer,List<Integer>>> teacherClassMap,
 							  Map<Integer,Map<Integer,List<Integer>>> preTeacherMap, Map<Integer,Set<Integer>> classAlreadyMap){
         for (ArrangeVo vo:
                 preArrangeVos) {
@@ -44,8 +45,8 @@ public class GAUtilTwo {
                 innerClassMap.put(vo.getTeacherId(),innerClassList);
                 classMap.put(vo.getClassId(),innerClassMap);
             }
-			if (teacherMap.containsKey(vo.getTeacherId())){
-				Map<Integer,List<Integer>> innerTeacherMap =  teacherMap.get(vo.getTeacherId());
+			if (teacherClassMap.containsKey(vo.getTeacherId())){
+				Map<Integer,List<Integer>> innerTeacherMap =  teacherClassMap.get(vo.getTeacherId());
 				if (innerTeacherMap.containsKey(vo.getClassId())){
 					innerTeacherMap.get(vo.getClassId()).add(WeekSeqUtil.getWeekPeriod(vo.getWeekdayId(),vo.getPeriodSeq()));
 				}else{
@@ -58,7 +59,15 @@ public class GAUtilTwo {
 				List<Integer> innerTeacherList = new ArrayList<Integer>();
 				innerTeacherList.add(WeekSeqUtil.getWeekPeriod(vo.getWeekdayId(),vo.getPeriodSeq()));
 				innerTeacherMap.put(vo.getClassId(),innerTeacherList);
-				teacherMap.put(vo.getTeacherId(),innerTeacherMap);
+				teacherClassMap.put(vo.getTeacherId(),innerTeacherMap);
+			}
+			if (teacherMap.containsKey(vo.getTeacherId())){
+				List<Integer> innerList = teacherMap.get(vo.getTeacherId());
+				innerList.add(WeekSeqUtil.getWeekPeriod(vo.getWeekdayId(),vo.getPeriodSeq()));
+			}else{
+				List<Integer> innerList = new ArrayList<Integer>();
+				innerList.add(WeekSeqUtil.getWeekPeriod(vo.getWeekdayId(),vo.getPeriodSeq()));
+				teacherMap.put(vo.getTeacherId(),innerList);
 			}
 			if (preTeacherMap.containsKey(vo.getTeacherId())){
 				Map<Integer,List<Integer>> innerTeacherMap =  preTeacherMap.get(vo.getTeacherId());

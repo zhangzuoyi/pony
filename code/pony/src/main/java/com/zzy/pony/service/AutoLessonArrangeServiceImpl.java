@@ -12,6 +12,9 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
+import antlr.LexerSharedInputState;
+import org.activiti.rest.service.api.engine.variable.IntegerRestVariableConverter;
+import org.apache.cxf.ws.addressing.MAPAggregator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -316,8 +319,9 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		Map<Integer,Map<Integer,List<Integer>>> classMap = new HashMap<Integer, Map<Integer, List<Integer>>>();
 		//key teacherId value(key:classId value: weekSeq)  预排的
 		Map<Integer,Map<Integer,List<Integer>>> preTeacherMap = new LinkedHashMap<Integer, Map<Integer, List<Integer>>>();
-		//key teacherId value(key:classId value: weekSeq)  整体的
-		Map<Integer,Map<Integer,List<Integer>>> teacherMap = new LinkedHashMap<Integer, Map<Integer, List<Integer>>>();
+		//key teacherId value(key:classId value: weekSeq)  整体的 (不用考虑班级因素)
+		Map<Integer,Map<Integer,List<Integer>>> teacherClassMap = new LinkedHashMap<Integer, Map<Integer, List<Integer>>>();
+		Map<Integer,List<Integer>> teacherMap = new LinkedHashMap<Integer,List<Integer>>();//本班的
 		//key teacherId value subjectId
 		Map<Integer,Integer> teacherSubjectMap = new HashMap<Integer, Integer>();
 		//key classId value(key:subjectId value: teacherId)
@@ -335,7 +339,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
         GAUtilTwo.getTeacherSubject(teacherSubjectVos,classTSMap,teacherTSMap,teacherSubjectMap,subjectTeacherMap);
 		//2获取预排
 		List<ArrangeVo> preArrangeVos = preLessonArrangeService.findCurrentVoByGrade(gradeId);
-		GAUtilTwo.getPre(preArrangeVos,classMap,teacherMap,preTeacherMap,classAlreadyMap);
+		GAUtilTwo.getPre(preArrangeVos,classMap,teacherMap,teacherClassMap,preTeacherMap,classAlreadyMap);
         //3按照班级顺序排课
         List<SchoolClass> schoolClasses = schoolClassService.findByYearAndGradeOrderBySeq(year.getYearId(),gradeId);
         for (SchoolClass sc:
@@ -346,7 +350,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
         	Map<Integer, Integer> sortClassTSInnerMap =  GAUtilTwo.sortBySubject(classTSInnerMap,classSubjectTeacherMap,subjects);
 			Map<Integer,List<Integer>> preClassMap = classMap.get(sc.getClassId());
 			Set<Integer> classAlreadySet = classAlreadyMap.get(sc.getClassId());
-			Map<Integer,Integer> innerAutoArrangeMap = new HashMap<Integer, Integer>();			
+			Map<Integer,Integer> innerAutoArrangeMap = new HashMap<Integer, Integer>();
 			//按照老师(即科目)的顺序来排
 			for (Integer teacherId:
 				sortClassTSInnerMap.keySet()) {
@@ -356,26 +360,30 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 				}
 				int autoArrangeCount = classTSInnerMap.get(teacherId) - preArrangeCount;
 				List<Integer> preAlreadyTeacherList = new ArrayList<Integer>();
-				List<Integer> alreadyTeacherList = new ArrayList<Integer>();
+				List<Integer> alreadyTeacherList = new ArrayList<Integer>();//本班的已安排
+				List<Integer> alreadyTeacherAllList = new ArrayList<Integer>();//所有的已安排
+
+
 				if (preTeacherMap.get(teacherId)!=null && preTeacherMap.get(teacherId).get(sc.getClassId())!= null){
 					preAlreadyTeacherList = preTeacherMap.get(teacherId).get(sc.getClassId());//已经预排的
-					alreadyTeacherList = teacherMap.get(teacherId).get(sc.getClassId());
+					alreadyTeacherList = teacherClassMap.get(teacherId).get(sc.getClassId());
 				}
-				if (alreadyTeacherList == null) {
-					System.out.println("-------------------");
+				if (teacherMap.get(teacherId)!= null){
+					alreadyTeacherAllList = teacherMap.get(teacherId);
 				}
+
 				//已经预排的和未排的超过5天
-				if (autoArrangeCount+WeekSeqUtil.getWeek(alreadyTeacherList).size()>5) {
+				if (autoArrangeCount+WeekSeqUtil.getWeek(preAlreadyTeacherList).size()>5) {
 					log.error("----------------"+sc.getName()+":老师("+teacherId+")"+"预排与自动排的超过5天----------------");
 				}
 
-				Set<Integer> availWeek = WeekSeqUtil.getAvailWeek(alreadyTeacherList);
+				Set<Integer> availWeek = WeekSeqUtil.getAvailWeek(preAlreadyTeacherList);
 				Set<Integer> teacherSet = new HashSet<Integer>();//保存当次的教师上课安排
 				for (int i = 0; i<autoArrangeCount;i++){
 
 					//从预排过后的剩下的星期中选择 (每天安排的课程不能超过3节)
-					int week = WeekSeqUtil.getRandomWeek(availWeek,preAlreadyTeacherList,alreadyTeacherList,classAlreadySet);
-					/*weekseq的获取 
+					int week = WeekSeqUtil.getRandomWeek(availWeek,preAlreadyTeacherList,alreadyTeacherList,alreadyTeacherAllList,classAlreadySet);
+					/*weekseq的获取
 					 * 1 不能在已安排的课程中 classAlreadySet
 					 * 2 满足年级不排课(放在classAlreadySet)
 					 * 3 满足班级不排课(放在classAlreadySet)
@@ -396,36 +404,43 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 					if (comList.contains(subjectId)) {
 						 type = Constants.SUBJECT_COMMON;
 					}
-					int weekSeq = WeekSeqUtil.getWeekSeq(week, preAlreadyTeacherList,alreadyTeacherList, classAlreadySet, type);																									
+					int weekSeq = WeekSeqUtil.getWeekSeq(week,preAlreadyTeacherList, preAlreadyTeacherList,alreadyTeacherAllList, classAlreadySet, type);
 
 					classAlreadySet.add(weekSeq);
 					teacherSet.add(weekSeq);
 					availWeek.remove(WeekSeqUtil.getWeek(weekSeq));
 					innerAutoArrangeMap.put(weekSeq, teacherSubjectMap.get(teacherId));
 				}
+				//所有的
+				if (alreadyTeacherAllList == null || alreadyTeacherAllList.size() == 0 ) {
+					List<Integer> innerList = new ArrayList<Integer>();
+						innerList.addAll(teacherSet);
+						teacherMap.put(teacherId, innerList);
+				}else {
+					alreadyTeacherAllList.addAll(teacherSet);
+				}
+				//本班的
 				if (alreadyTeacherList == null || alreadyTeacherList.size() == 0 ) {
-					if (teacherMap.get(teacherId) != null) {
+					if (teacherClassMap.get(teacherId) != null) {
 						List<Integer> innerList = new ArrayList<Integer>();
 						innerList.addAll(teacherSet);
-						teacherMap.get(teacherId).put(sc.getClassId(), innerList);
+						teacherClassMap.get(teacherId).put(sc.getClassId(), innerList);
 					}else{
 						Map<Integer, List<Integer>> innerMap = new HashMap<Integer, List<Integer>>();
 						List<Integer> innerList = new ArrayList<Integer>();
 						innerList.addAll(teacherSet);
 						innerMap.put(sc.getClassId(), innerList);
-						teacherMap.put(teacherId, innerMap);
-					}										
+						teacherClassMap.put(teacherId, innerMap);
+					}
 				}else {
 					alreadyTeacherList.addAll(teacherSet);
 				}
+
+
 				
 			}
-
-
-
 			autoArrangeMap.put(sc.getClassId(),innerAutoArrangeMap);
         }
-
         saveTwo(autoArrangeMap,year,term);
 		return true;
 	}
