@@ -43,6 +43,15 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
+	<filter>
+		<filter-name>examGradeFilter</filter-name>
+		<filter-class>com.zzy.pony.exam.filter.ExamGradeFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>examGradeFilter</filter-name>
+		<url-pattern>/examAdmin/*</url-pattern>
+	</filter-mapping>
+	
 	<!-- 验证码过滤器需要放到Shiro之后 因为Shiro将包装HttpSession 如果不 可能造成两次的sesison id 不一样 -->
     <!-- <filter>
         <filter-name>JCaptchaFilter</filter-name>

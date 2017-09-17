@@ -71,7 +71,7 @@ width:200px;
             	</el-col> 
             	<el-col :span="5" >
             	<div class="grid-content bg-purple">                                     
-					<el-select v-model="gradeId" @change="getSchoolClasses();isGenerateShow()"  filterable clearable placeholder="请选择..">
+					<el-select v-model="gradeId" @change="getSchoolClasses(),isGenerateShow()"  filterable clearable placeholder="请选择..">
                		 <el-option
                         v-for="grade in grades" 
                         :label="grade.name"                      
@@ -333,8 +333,6 @@ width:200px;
 var app = new Vue({ 
 	el : '#app' ,
 	data : { 		
-		
-		
 		schoolYearUrl:"<s:url value='/schoolYear/getCurrent'/>",
 		termUrl:"<s:url value='/term/getCurrent'/>",
 		examUrl:"<s:url value='/exam/list'/>",
@@ -352,10 +350,10 @@ var app = new Vue({
         isGenerateShowUrl:"<s:url value='/examAdmin/examinee/isGenerateShow'/>",             
         schoolYear :null,
 		term : null,
-		examId: null,
+		examId: ${examId == null ? 'null' : examId},
 		exams:[],
 		grades : [],	
-		gradeId:null,
+		gradeId: ${gradeId == null ? 'null' : gradeId},
 		tableData:[],
 		tableData2:[],/*设置考生使用*/
 		tableData3:[],/*查看考生使用*/
@@ -384,14 +382,6 @@ var app = new Vue({
         flag:true,//按照班级或者按照考生
         arrangeId:null,//用来记录查看考生时选择的科目
         isGenerateShowFlag:true
-        
-
-
-
-
-
-	
-		
 	}, 
 	filters: {    
     /* timeFilter : function(input){
@@ -408,8 +398,8 @@ var app = new Vue({
 				this.getCurrentTerm();
 				this.getExams();
 				this.getGrades();
-
-		
+				this.isGenerateShow();
+				this.getSchoolClasses();
 			
 	}, 
 	methods : {
@@ -441,6 +431,18 @@ var app = new Vue({
 			function(response){}  	 			
 			);
 			},
+			getSchoolClasses:function(){   
+				if(this.gradeId){
+					this.$http.get(this.schoolClassesUrl,{params:{gradeId:this.gradeId}}).then(
+		                    function(response){
+		                        this.classes=response.data;
+		                        });
+		             this.$http.get(this.gradeUrl,{params:{id:this.gradeId}}).then(
+		                    function(response){
+		                        this.gradeName=response.data.name;
+		                        });
+				}
+	        },
             getExamSubjects	:function(){this.$http.get(this.examSubjectUrl,{params:{examId:this.examId}}).then(
                 function(response){
                     this.subjects=response.data; },
@@ -534,16 +536,6 @@ var app = new Vue({
 				
 				
             },
-            getSchoolClasses:function(){        
-             this.$http.get(this.schoolClassesUrl,{params:{gradeId:this.gradeId}}).then(
-                    function(response){
-                        this.classes=response.data;
-                        });
-             this.$http.get(this.gradeUrl,{params:{id:this.gradeId}}).then(
-                    function(response){
-                        this.gradeName=response.data.name;
-                        });
-            },
             listByPage : function(){
 			if(this.examId == null || this.examId==''){
               	this.$alert("请选择考试","提示",{
@@ -601,8 +593,8 @@ var app = new Vue({
               }
               this.$http.get(this.generateNoUrl,{params:{examId:this.examId,gradeId:this.gradeId,prefixNo:this.prefixNo,bitNo:this.bitNo}}).then(
                     function(response){
-                        this.examId = null;
-                        this.gradeId= null;
+                        //this.examId = null;
+                        //this.gradeId= null;
                         this.prefixNo= null;
                         this.bitNo=null;
                         this.generateExamineeNoDialogFormVisible=false;

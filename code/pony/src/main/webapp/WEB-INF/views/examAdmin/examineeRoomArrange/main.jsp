@@ -208,8 +208,6 @@ width:200px;
 var app = new Vue({ 
 	el : '#app' ,
 	data : { 		
-		
-		
 		schoolYearUrl:"<s:url value='/schoolYear/getCurrent'/>",
 		termUrl:"<s:url value='/term/getCurrent'/>",
 		examUrl:"<s:url value='/exam/list'/>",
@@ -221,10 +219,10 @@ var app = new Vue({
 		findExamineeRoomArrangeUrl:"<s:url value='/examAdmin/examineeRoomArrange/findExamineeRoomArrange'/>",		          		         
         schoolYear :null,
 		term : null,
-		examId: null,
+		examId: ${examId == null ? 'null' : examId},
 		exams:[],
 		grades : [],	
-		gradeId:null,
+		gradeId: ${gradeId == null ? 'null' : gradeId},
 		schoolClasses:[],
 		examRooms:[],
 		type : null,

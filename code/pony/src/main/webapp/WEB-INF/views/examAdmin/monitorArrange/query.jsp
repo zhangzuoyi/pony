@@ -43,19 +43,19 @@ width:200px;
                <el-col :span="1" >
                     <b>学年:</b>                                    
             	</el-col> 
-               <el-col  :span="3">
+               <el-col  :span="2">
                		{{schoolYear.startYear}}——{{schoolYear.endYear}}
                </el-col>
                <el-col :span="1" >
                     <b>学期:</b>
             	</el-col> 
-               <el-col  :span="3">
+               <el-col  :span="1">
                		{{term.name}}
                </el-col>
              	<el-col :span="1" >
                     <b>考试:</b>                                    
             	</el-col> 
-           		 <el-col :span="5" >
+           		 <el-col :span="4" >
             		<div class="grid-content bg-purple">                                     
 					<el-select v-model="examId" @change="getRoomList()" filterable placeholder="请选择..">
                		 <el-option
@@ -68,9 +68,24 @@ width:200px;
                     </div>
             	</el-col>
             	<el-col :span="1" >
+                    <b>年级:</b>                                    
+            	</el-col> 
+            	<el-col :span="4" >
+            	<div class="grid-content bg-purple">                                     
+					<el-select v-model="gradeId" @change="getRoomList()" filterable placeholder="请选择..">
+               		 <el-option
+                        v-for="grade in grades" 
+                        :label="grade.name"                      
+                        :value="grade.gradeId">
+                        <span style="float: left">{{grade.name}}</span>
+               		 </el-option>
+           			 </el-select>				
+                    </div>        
+            	</el-col>
+            	<el-col :span="1" >
                     <b>考场:</b>                                    
             	</el-col> 
-           		 <el-col :span="5" >
+           		 <el-col :span="4" >
             		<div class="grid-content bg-purple">                                     
 					<el-select v-model="examRoom" filterable clearable placeholder="请选择..">
                		 <el-option
@@ -83,7 +98,7 @@ width:200px;
                     </div>
             	</el-col>
             	
-            	<el-col :span="4" >
+            	<el-col :span="3" >
                		<el-button type="primary"  @click="listByRoom">查询</el-button>
                		<el-button type="primary"  @click="exportAll">导出</el-button>
               	</el-col>                           
@@ -138,21 +153,26 @@ var app = new Vue({
 		schoolYearUrl:"<s:url value='/schoolYear/getCurrent'/>",
 		termUrl:"<s:url value='/term/getCurrent'/>",
 		examUrl:"<s:url value='/exam/list'/>",
+		gradesUrl :"<s:url value='/grade/list'/>",
 		roomListUrl:"<s:url value='/examAdmin/monitorArrange/roomList'/>",
 		listByRoomUrl:"<s:url value='/examAdmin/monitorArrange/arrangeListByRoom'/>",
 		exportAllUrl:"<s:url value='/examAdmin/monitorArrange/exportArrangeResult'/>",
         schoolYear :null,
 		term : null,
-		examId: null,
+		examId: ${examId == null ? 'null' : examId},
 		exams:[],
+		grades : [],	
+		gradeId: ${gradeId == null ? 'null' : gradeId},
 		tableData:[],
         roomList:[],
         examRoom:""
 	}, 
 	mounted : function() { 
-				this.getCurrentSchoolYear();
-				this.getCurrentTerm();
-				this.getExams();
+			this.getCurrentSchoolYear();
+			this.getCurrentTerm();
+			this.getExams();
+			this.getGrades();
+			this.getRoomList();
 	},
 	methods : {
 			getCurrentSchoolYear	:function(){ 			
@@ -177,16 +197,32 @@ var app = new Vue({
 				function(response){}  	 			
 				);
 			},
-			getRoomList	:function(){ 			
-				this.$http.get(this.roomListUrl,{params:{examId : this.examId}}).then(
-				function(response){
-				this.roomList=response.data; },
+			getGrades	:function(){ 
+				this.$http.get(this.gradesUrl).then(
+				function(response){this.grades=response.data; },
 				function(response){}  	 			
 				);
+			},
+			getRoomList	:function(){
+				if(this.examId && this.gradeId){
+					this.$http.get(this.roomListUrl,{params:{examId : this.examId, gradeId : this.gradeId}}).then(
+							function(response){
+							this.roomList=response.data; },
+							function(response){}
+						);
+				}
+				
 			},
             listByRoom : function(){
 				if(this.examId == null || this.examId==''){
 	              	this.$alert("请选择考试","提示",{
+						type:"warning",
+						confirmButtonText:'确认'
+					});
+					return;
+	              }
+				if(this.gradeId == null || this.gradeId==''){
+	              	this.$alert("请选择年级","提示",{
 						type:"warning",
 						confirmButtonText:'确认'
 					});
@@ -199,7 +235,7 @@ var app = new Vue({
 					});
 					return;
 	              }
-              	this.$http.post(this.listByRoomUrl,{examId:this.examId,room : this.examRoom},{emulateJSON:true}).then(
+              	this.$http.post(this.listByRoomUrl,{examId:this.examId,gradeId : this.gradeId,gradeId : this.gradeId, room : this.examRoom},{emulateJSON:true}).then(
                     function(response){
                         this.tableData=response.data;
                     });
@@ -213,7 +249,14 @@ var app = new Vue({
 					});
 					return;
 	             }
-            	window.location.href=this.exportAllUrl+"?examId="+this.examId;
+            	if(this.gradeId == null || this.gradeId==''){
+	              	this.$alert("请选择年级","提示",{
+						type:"warning",
+						confirmButtonText:'确认'
+					});
+					return;
+	              }
+            	window.location.href=this.exportAllUrl+"?examId="+this.examId+"&gradeId="+this.gradeId;
             }
         }	        
 });  

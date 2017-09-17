@@ -4,8 +4,9 @@
 
 <mapper namespace="com.zzy.pony.exam.mapper.ExamArrangeMapper">
 	<select id="timeList" resultType="map">
-		SELECT distinct DATE_FORMAT(exam_date,'%Y-%m-%d') examDate,DATE_FORMAT(start_time,'%H:%i') startTime,DATE_FORMAT(end_time,'%H:%i') endTime 
- 		FROM t_exam_arrange where exam_id=#{0} order by exam_date,start_time
+		SELECT distinct DATE_FORMAT(t.exam_date,'%Y-%m-%d') examDate,DATE_FORMAT(t.start_time,'%H:%i') startTime,DATE_FORMAT(t.end_time,'%H:%i') endTime, 
+ 		t.subject_id subjectId,a.name subjectName FROM t_exam_arrange t left join t_subject a on t.subject_id=a.subject_id 
+ 		where t.exam_id=#{0} and t.grade_id=#{1} order by t.exam_date,t.start_time
 	</select>
 	<insert id="addExamArrange" useGeneratedKeys="true" keyProperty="arrangeId" >
 		insert into t_exam_arrange (exam_id,grade_id,subject_id) VALUES (#{0},#{1},#{2})

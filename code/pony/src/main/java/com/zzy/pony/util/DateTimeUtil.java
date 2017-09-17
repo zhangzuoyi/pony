@@ -2,6 +2,7 @@ package com.zzy.pony.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DateTimeUtil {
@@ -37,6 +38,31 @@ public class DateTimeUtil {
 		}
 		return dt;
 	}
-	
+	/**
+	 * 星期几
+	 * @param date
+	 * @return
+	 */
+	public static String getWeekDayName(Date date){
+		Calendar cal=Calendar.getInstance();
+		cal.setTime(date);
+		int i=cal.get(Calendar.DAY_OF_WEEK);
+		if(i == 1){
+			return "星期日";
+		}else if(i == 2){
+			return "星期一";
+		}else if(i == 3){
+			return "星期二";
+		}else if(i == 4){
+			return "星期三";
+		}else if(i == 5){
+			return "星期四";
+		}else if(i == 6){
+			return "星期五";
+		}else if(i == 7){
+			return "星期六";
+		}
+		return "";
+	}
 	
 }

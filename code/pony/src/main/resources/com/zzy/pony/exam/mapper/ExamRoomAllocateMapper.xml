@@ -14,7 +14,7 @@
 	</sql>
 	<select id="findByExam" resultType="com.zzy.pony.exam.vo.ExamRoomAllocateVo">
 		<include refid="base_select"></include>
-		where a.exam_id=#{0}
+		where a.exam_id=#{0} and a.grade_id=#{1} 
 		order by a.exam_date,a.start_time,a.grade_id,t.room_seq
 	</select>
 	<update id="setMonitorEmpty">
@@ -26,12 +26,12 @@
 	</update>
 	<select id="findByExamAndRoom" resultType="com.zzy.pony.exam.vo.ExamRoomAllocateVo">
 		<include refid="base_select"></include>
-		where a.exam_id=#{0} and t.room_name=#{1} 
+		where a.exam_id=#{0} and a.grade_id=#{1} and t.room_name=#{2} 
 		order by a.exam_date,a.start_time,a.grade_id,t.room_seq
 	</select>
 	<select id="roomList" resultType="java.lang.String">
 		select distinct t.room_name from t_exam_room_allocate t where t.arrange_id in 
-		(select a.arrange_id from t_exam_arrange a where a.exam_id=#{0} )
+		(select a.arrange_id from t_exam_arrange a where a.exam_id=#{0} and a.grade_id=#{1})
 	</select>
 
 	<select id="findByArrangeId" resultType="com.zzy.pony.exam.vo.ExamRoomAllocateVo">

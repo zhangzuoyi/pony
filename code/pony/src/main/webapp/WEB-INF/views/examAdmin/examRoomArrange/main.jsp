@@ -153,8 +153,6 @@ width:200px;
 var app = new Vue({ 
 	el : '#app' ,
 	data : { 		
-		
-		
 		schoolYearUrl:"<s:url value='/schoolYear/getCurrent'/>",
 		termUrl:"<s:url value='/term/getCurrent'/>",
 		examUrl:"<s:url value='/exam/list'/>",
@@ -166,10 +164,10 @@ var app = new Vue({
 		saveUrl:"<s:url value='/examAdmin/examRoom/save'/>",														
 		schoolYear :null,
 		term : null,
-		examId: null,
+		examId: ${examId == null ? 'null' : examId},
 		exams:[],
 		grades : [],	
-		gradeId:null,
+		gradeId: ${gradeId == null ? 'null' : gradeId},
 		tableData:[],						
 		checkAll:true,
 		isIndeterminate:true,
@@ -199,7 +197,7 @@ var app = new Vue({
 				this.getExams();
 				this.getGrades();
 				this.getExamRooms();
-		
+				this.getExamSubjects();
 			
 	}, 
 	methods : {
@@ -318,8 +316,8 @@ var app = new Vue({
 				function(response){
 				    this.checkedSubjects=[];
 				    this.checkedRooms=[];
-				    this.examId=null;
-				    this.gradeId=null;
+				    //this.examId=null;
+				    //this.gradeId=null;
 				    this.$message({type:"info",message:"保存成功!"});
 				    },
 				function(response){}  	 			

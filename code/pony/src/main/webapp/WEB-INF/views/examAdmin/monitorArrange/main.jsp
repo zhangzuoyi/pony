@@ -65,6 +65,9 @@ width:200px;
            			 </el-select>				
                     </div>
             	</el-col>
+            	<el-col :span="1" >
+                    <b>年级:</b>                                    
+            	</el-col> 
             	<el-col :span="5" >
             	<div class="grid-content bg-purple">                                     
 					<el-select v-model="gradeId" filterable placeholder="请选择..">
@@ -92,7 +95,9 @@ width:200px;
                <el-col  :span="3">
                <el-button type="primary" @click="deleteMonitor" >删除</el-button>
                </el-col>
-                           
+               <el-col  :span="3">
+               <el-button type="primary" @click="openUploadTeachers" >导入监考老师</el-button>
+               </el-col>        
               </el-row>
             </div>
             <el-table
@@ -172,6 +177,25 @@ width:200px;
 			<el-button type="primary" size="small" @click="setMonitorCount">提交</el-button>
 			</el-row>
 		</el-dialog>
+		<el-dialog title="导入监考老师"  v-model="uploadTeacherDialogFormVisible" >
+			<el-row>
+			<el-col>
+				<el-upload					
+	  			 ref="upload" 	
+	  			 name="file"
+	  			 action="<s:url value='/examAdmin/monitorArrange/uploadTeachers'/>"
+	  			:file-list="fileList"
+	  			:auto-upload="false"
+	  			:data="conditionVo">
+	  			<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+				</el-upload>
+			</el-col>
+			</el-row>
+			<el-row>
+			<el-button type="primary" size="small" @click="uploadTeachers">提交</el-button>
+			<el-button type="primary" size="small" @click="downloadTemplate">下载模板</el-button>
+			</el-row>
+		</el-dialog>
 
 		</div>
 </div>
@@ -192,10 +216,10 @@ var app = new Vue({
 		monitorArrangeUrl:"<s:url value='/examAdmin/monitorArrange/monitorArrange'/>",
         schoolYear :null,
 		term : null,
-		examId: null,
+		examId: ${examId == null ? 'null' : examId},
 		exams:[],
 		grades : [],	
-		gradeId:null,
+		gradeId: ${gradeId == null ? 'null' : gradeId},
 		teachers:[],
 		usedTeachers:[],
 		filterText:'',
@@ -208,6 +232,7 @@ var app = new Vue({
         setonitorCountDialogFormVisible:false,
         findExamineeDialogFormVisible:false,
         generateExamineeNoDialogFormVisible:false,
+        uploadTeacherDialogFormVisible : false,
         gradeName:null,
         schoolClass:null,
         schoolClass2:null,
@@ -219,7 +244,9 @@ var app = new Vue({
         flag:true,//按照班级或者按照考生
         arrangeId:null,//用来记录查看考生时选择的科目
         isGenerateShowFlag:true,
-        monitorCountSet:0
+        monitorCountSet:0,
+        fileList : [],
+        conditionVo : {}
 	}, 
 	mounted : function() { 
 		this.getCurrentSchoolYear();
@@ -311,6 +338,7 @@ var app = new Vue({
                     function(response){
                         this.$message({type:"info",message:"删除成功"});                   
                         this.monitorSelection=[];
+                        this.list();
                     }
                 );
             },
@@ -342,6 +370,7 @@ var app = new Vue({
                         this.$message({type:"info",message:"设置成功"});
                         this.teacherSelection=[];
                         this.setTeacherDialogFormVisible=false;
+                        this.list();
                     });
             },
             setMonitorCount:function(){				
@@ -370,6 +399,7 @@ var app = new Vue({
                           this.monitorSelection=[];
                           this.setonitorCountDialogFormVisible=false;
                           this.monitorCountSet=0;                        
+                          this.list();
                       });
               },
               monitorArrange:function(){
@@ -398,6 +428,27 @@ var app = new Vue({
   					return false;
   	          	  }
             	  return true;
+              },
+              openUploadTeachers : function(){
+            	  if( ! this.checkExamAndGrade()){
+    					return;
+    	              }
+                  this.uploadTeacherDialogFormVisible = true;
+              },
+              uploadTeachers : function(){
+            	  this.conditionVo.examId=this.examId;
+            	  this.conditionVo.gradeId=this.gradeId;
+            	  this.$refs.upload.submit();
+            	  this.$refs.upload.clearFiles();
+            	  this.uploadTeacherDialogFormVisible = false;
+            	  this.$message({
+						type:"info",
+						message: "导入成功"
+				  });
+            	  this.list();
+              },
+              downloadTemplate : function(){
+            	  window.location.href="<s:url value='/examAdmin/monitorArrange/exportTemplate' />";
               }
         }	        
 });  

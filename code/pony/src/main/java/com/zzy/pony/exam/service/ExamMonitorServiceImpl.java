@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.zzy.pony.dao.TeacherDao;
 import com.zzy.pony.exam.mapper.ExamMonitorMapper;
 import com.zzy.pony.exam.mapper.ExamRoomAllocateMapper;
 import com.zzy.pony.exam.vo.ExamMonitorVo;
@@ -19,6 +20,8 @@ public class ExamMonitorServiceImpl implements ExamMonitorService {
 	private ExamMonitorMapper mapper;
 	@Autowired
 	private ExamRoomAllocateMapper allocateMapper;
+	@Autowired
+	private TeacherDao teacherDao;
 
 	@Override
 	public void add(int examId, int gradeId, int[] teacherIds) {
@@ -41,7 +44,7 @@ public class ExamMonitorServiceImpl implements ExamMonitorService {
 	@Override
 	public void monitorArrange(int examId, int gradeId) {
 		//查找考场安排数据
-		List<ExamRoomAllocateVo> rooms=allocateMapper.findByExam(examId);
+		List<ExamRoomAllocateVo> rooms=allocateMapper.findByExam(examId, gradeId);
 		//查找监考老师数据
 		List<ExamMonitorVo> monitors=mapper.find(examId, gradeId);
 		for(ExamMonitorVo em: monitors){
@@ -66,6 +69,17 @@ public class ExamMonitorServiceImpl implements ExamMonitorService {
 		for(ExamRoomAllocateVo vo: rooms){
 			allocateMapper.updateMonitor(vo.getRoomId(), vo.getTeacherId());
 		}
+	}
+
+	@Override
+	public void add(int examId, int gradeId, List<ExamMonitorVo> list) {
+		for(ExamMonitorVo vo : list){
+			Integer teacherId=teacherDao.findIdByTeacherNo(vo.getTeacherNo());
+			if(teacherId != null){
+				mapper.insertWithCount(examId,gradeId, teacherId, vo.getMonitorCount());
+			}
+		}
+		
 	}
 
 }

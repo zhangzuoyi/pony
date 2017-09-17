@@ -71,7 +71,7 @@ width:200px;
             	</el-col> 
             	<el-col :span="4" >
             	<div class="grid-content bg-purple">                                     
-					<el-select v-model="gradeId" @change="getSchoolClasses(gradeId)"  filterable clearable placeholder="请选择..">
+					<el-select v-model="gradeId" @change="getSchoolClasses()"  filterable clearable placeholder="请选择..">
                		 <el-option
                         v-for="grade in grades" 
                         :label="grade.name"                      
@@ -129,8 +129,6 @@ width:200px;
 var app = new Vue({ 
 	el : '#app' ,
 	data : { 		
-		
-		
 		schoolYearUrl:"<s:url value='/schoolYear/getCurrent'/>",
 		termUrl:"<s:url value='/term/getCurrent'/>",
 		examUrl:"<s:url value='/exam/list'/>",
@@ -139,10 +137,10 @@ var app = new Vue({
 		findExamineeRoomArrangeUrl:"<s:url value='/examAdmin/examineeRoomArrange/findExamineeRoomArrangeByClassId'/>",		          		         
         schoolYear :null,
 		term : null,
-		examId: null,
+		examId: ${examId == null ? 'null' : examId},
 		exams:[],
 		grades : [],	
-		gradeId:null,
+		gradeId: ${gradeId == null ? 'null' : gradeId},
 		schoolClasses:[],
 		classId : null,
 		tableData:[],
@@ -164,9 +162,7 @@ var app = new Vue({
 				this.getCurrentTerm();
 				this.getExams();
 				this.getGrades();
-
-		
-			
+				this.getSchoolClasses();
 	}, 
 	methods : {
 			getCurrentSchoolYear	:function(){ 			
@@ -197,11 +193,14 @@ var app = new Vue({
 			function(response){}  	 			
 			);
 			},
-			getSchoolClasses : function(gradeId){ 
-			this.$http.get(this.schoolClassesUrl,{params:{gradeId:gradeId}}).then(
-			function(response){this.schoolClasses=response.data; },
-			function(response){}  	 			
-			);
+			getSchoolClasses : function(){ 
+				if(this.gradeId){
+					this.$http.get(this.schoolClassesUrl,{params:{gradeId: this.gradeId}}).then(
+							function(response){this.schoolClasses=response.data; },
+							function(response){}  	 			
+						);
+				}
+				
 			},									
 			findExamineeRoomArrangeByClassId : function(){
 			if(this.examId == null || this.examId == ""){

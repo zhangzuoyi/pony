@@ -40,6 +40,12 @@ public class ExamRoomAllocateVo {
 		}
 		return false;
 	}
+	public boolean isFit(String room,String examDate,String startTime,String subjectName){
+		if(getTimeAllocated().equals(examDate+" "+startTime) && roomName.equals(room) && subjectName.equals(this.subjectName)){
+			return true;
+		}
+		return false;
+	}
 	public int getRoomId() {
 		return roomId;
 	}

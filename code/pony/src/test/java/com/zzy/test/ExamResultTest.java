@@ -45,7 +45,7 @@ public class ExamResultTest {
 	@Test
 	public void testInsertTestData(){
 		//取得考试和科目
-		Exam exam=examService.get(1);
+		Exam exam=examService.get(24);
 		List<Subject> subjects=subjectService.findByExam(exam.getExamId());
 		//按班级取得学生
 		for(SchoolClass sc: exam.getSchoolClasses()){

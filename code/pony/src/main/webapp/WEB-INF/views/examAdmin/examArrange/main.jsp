@@ -249,8 +249,6 @@ width:200px;
 var app = new Vue({ 
 	el : '#app' ,
 	data : { 		
-		
-		
 		schoolYearUrl:"<s:url value='/schoolYear/getCurrent'/>",
 		termUrl:"<s:url value='/term/getCurrent'/>",
 		examUrl:"<s:url value='/exam/list'/>",
@@ -265,10 +263,10 @@ var app = new Vue({
         deleteUrl:"<s:url value='/examAdmin/examArrange/delete'/>",
 		schoolYear :null,
 		term : null,
-		examId: null,
+		examId: ${examId == null ? 'null' : examId},
 		exams:[],
 		grades : [],	
-		gradeId:null,
+		gradeId: ${gradeId == null ? 'null' : gradeId},
 		/* rooms : [],
 		roomId : null, */	
 		tableData:[],						
