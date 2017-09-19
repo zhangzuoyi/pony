@@ -131,6 +131,9 @@
                     <dd>
                         <a href="javascript:;" data-url="<s:url value='/comprehensiveRank/main/' />"><label>学生整体成绩分析</label></a>
                     </dd>
+                    <dd>
+                        <a href="javascript:;" data-url="<s:url value='/examAdmin/average/main/' />"><label>均量值</label></a>
+                    </dd>
                 </dl>
             </li>
             </shiro:hasPermission>
