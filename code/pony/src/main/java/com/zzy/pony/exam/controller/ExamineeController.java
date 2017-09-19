@@ -44,6 +44,13 @@ public class ExamineeController {
 			@RequestParam(value="classId") int classId){					
 		return examineeService.findByClass(examId, classId);
 	}
+	@RequestMapping(value="listBySubjects",method=RequestMethod.GET)
+	@ResponseBody
+	public List<ExamineeVo> listBySubjects(
+			@RequestParam(value="examId") int examId,
+			@RequestParam(value="subjects[]") String[] subjects){					
+		return examineeService.findByExamIdAndSubjects(examId, subjects);
+	}
 	@RequestMapping(value="listPageByClassAndArrange",method=RequestMethod.GET)
 	@ResponseBody
 	public Page<ExamineeVo> listPageByClassAndArrange(@RequestParam(value="currentPage",defaultValue="0") int currentPage,

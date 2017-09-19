@@ -13,6 +13,7 @@ public class ExamineeVo {
 	private String studentNo;
 	private String examSubjects;
 	private int classId;
+	private String className;
 	private float totalScore;
 	private int classRank;
 	private int gradeRank;
@@ -114,4 +115,13 @@ public class ExamineeVo {
     public void setGradeRank(int gradeRank) {
         this.gradeRank = gradeRank;
     }
+
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+    
 }

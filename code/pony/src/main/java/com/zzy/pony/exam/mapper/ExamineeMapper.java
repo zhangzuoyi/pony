@@ -23,4 +23,11 @@ public interface ExamineeMapper {
 	void insertExamineeArrangeByExaminee(int arrangeId,int examineeId);
 	void deleteExamineeArrangeByArrangeId(int arrangeId);
 	List<ExamineeVo> findVoByArrangeId(int arrangeId,int yearId);
+	/**
+	 * 根据考生的考试科目
+	 * @param examId
+	 * @param subjects
+	 * @return
+	 */
+	List<ExamineeVo> findByExamIdAndSubjects(int examId,@Param(value="subjects")String[] subjects);
 }

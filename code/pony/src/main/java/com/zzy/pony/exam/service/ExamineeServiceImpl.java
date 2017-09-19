@@ -225,4 +225,11 @@ public class ExamineeServiceImpl implements ExamineeService {
 	public List<ExamineeVo> findVoByArrangeId(int arrangeId,int yearId) {
 		return examineeMapper.findVoByArrangeId(arrangeId,yearId);
 	}
+
+
+
+	@Override
+	public List<ExamineeVo> findByExamIdAndSubjects(int examId, String[] subjects) {
+		return examineeMapper.findByExamIdAndSubjects(examId, subjects);
+	}
 }

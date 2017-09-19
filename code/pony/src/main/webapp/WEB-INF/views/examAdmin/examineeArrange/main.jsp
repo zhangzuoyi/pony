@@ -154,32 +154,34 @@ width:200px;
             </el-col>          
 			</el-row>			
         </el-card>
-			<el-dialog title="设置考生"  v-model="setExamineeDialogFormVisible" >
+        
+		<el-dialog title="设置考生"  v-model="setExamineeDialogFormVisible" size="large">
                 <el-row>
-                    <el-select v-model="flag">
-                        <el-option :label="'按班级'" :value="true"><span style="float: left">按班级</span></el-option>
-                        <el-option :label="'按考生'" :value="false"><span style="float: left">按考生</span></el-option>
+                    <el-select v-model="flag" @change="selectModelChange">
+                        <el-option :label="'按班级'" value="a"><span style="float: left">按班级</span></el-option>
+                        <el-option :label="'按考生'" value="b"><span style="float: left">按考生</span></el-option>
+                        <el-option :label="'按科目'" value="c"><span style="float: left">按科目</span></el-option>
                     </el-select>
                 </el-row>
-                <div v-if="flag">
-            <el-row>
-			<el-col>
-			<b>年级:{{gradeName}}</b>
-			</el-col>
-			</el-row>
-			<el-row>
-			<b>班级</b>
-			</el-row>
-			<el-row>
-			<el-checkbox-group v-model="checkedClasses" >
-				<el-checkbox v-for="item in classes" :label="item.classId">{{item.name}}</el-checkbox>
-			</el-checkbox-group>
-			</el-row>
-			<el-row>
-			<el-button type="primary" size="small" @click="submitByClass">确认</el-button>
-			</el-row>
+            <div v-if="flag == 'a'">
+	            <el-row>
+				<el-col>
+				<b>年级:{{gradeName}}</b>
+				</el-col>
+				</el-row>
+				<el-row>
+				<b>班级</b>
+				</el-row>
+				<el-row>
+				<el-checkbox-group v-model="checkedClasses" >
+					<el-checkbox v-for="item in classes" :label="item.classId">{{item.name}}</el-checkbox>
+				</el-checkbox-group>
+				</el-row>
+				<el-row>
+				<el-button type="primary" size="small" @click="submitByClass">确认</el-button>
+				</el-row>
             </div>
-                <div v-if="!flag">
+            <div v-if="flag == 'b'">
 			<el-row>
 			<el-col>
 			<b>年级:{{gradeName}}</b>
@@ -187,9 +189,7 @@ width:200px;
 			</el-row>
 			<el-row>
 			<el-col>
-			<b>班级</b>
-			</el-col>
-			<el-col>
+			<b>班级:</b>
 				<el-select v-model="schoolClass" @change="getExaminee()" filterable  clearable placeholder="请选择">
 					<el-option
 							v-for="item in classes"
@@ -203,7 +203,7 @@ width:200px;
 				<el-table
 						ref="studentTable"
 						:data="tableData2"
-						height="250"
+						height="400"
 						border
 						@selection-change="handleSelectionChange2">
 					<el-table-column
@@ -216,9 +216,13 @@ width:200px;
 							>
 					</el-table-column>
 					<el-table-column
+							prop="className"
+							label="班级"
+							>
+					</el-table-column>
+					<el-table-column
 							prop="sex"
-							label="性别"
-							width="180">
+							label="性别">
 					</el-table-column>
 					<el-table-column
 							prop="studentNo"
@@ -234,8 +238,60 @@ width:200px;
 			<el-button type="primary" size="small" @click="selectStudentBySubject">按考试科目</el-button>
 			<el-button type="primary" size="small" @click="submitByStudent">确认</el-button>
 			</el-row>
-             </div>
-			</el-dialog>
+            </div>
+            <div v-if="flag == 'c'">
+			<el-row>
+			<el-col>
+			<b>年级:{{gradeName}}</b>
+			</el-col>
+			</el-row>
+			<el-row>
+			<el-col>
+			<b>学生名:</b>
+				<el-input v-model="filterText"></el-input>
+			</el-col>
+			</el-row>
+			<el-row>
+				<el-table
+						ref="studentTable2"
+						:data="tableData3"
+						height="400"
+						border
+						@selection-change="handleSelectionChange2">
+					<el-table-column
+							type="selection"
+							>
+					</el-table-column>
+					<el-table-column
+							prop="name"
+							label="姓名"
+							>
+					</el-table-column>
+					<el-table-column
+							prop="className"
+							label="班级"
+							>
+					</el-table-column>
+					<el-table-column
+							prop="sex"
+							label="性别">
+					</el-table-column>
+					<el-table-column
+							prop="studentNo"
+							label="学生号">
+					</el-table-column>
+					<el-table-column
+							prop="regNo"
+							label="考生号">
+					</el-table-column>
+				</el-table>	
+			</el-row>
+			<el-row>
+			<el-button type="primary" size="small" @click="deleteTableData3">删除</el-button>
+			<el-button type="primary" size="small" @click="submitByStudent">确认</el-button>
+			</el-row>
+            </div>
+		</el-dialog>
 
       	<el-dialog title="查看考生"  v-model="findExamineeDialogFormVisible" >
           <el-row>
@@ -263,7 +319,6 @@ width:200px;
                       :data="tableData3"
                       highlight-current-row
                       border
-                      height="250"
                       >
                   <el-table-column
                           type="index"
@@ -277,8 +332,7 @@ width:200px;
                   </el-table-column>
                   <el-table-column
                           prop="sex"
-                          label="性别"
-                          width="180">
+                          label="性别">
                   </el-table-column>
                   <el-table-column
                           prop="studentNo"
@@ -347,7 +401,8 @@ var app = new Vue({
         getExamineeUrl:"<s:url value='/examAdmin/examinee/listByClass'/>",
         findExamineeUrl:"<s:url value='/examAdmin/examinee/listPageByClassAndArrange'/>", 
         deleteUrl:"<s:url value='/examAdmin/examineeArrange/delete'/>",
-        isGenerateShowUrl:"<s:url value='/examAdmin/examinee/isGenerateShow'/>",             
+        isGenerateShowUrl:"<s:url value='/examAdmin/examinee/isGenerateShow'/>",
+        findExamineeBySubjectsUrl:"<s:url value='/examAdmin/examinee/listBySubjects'/>",
         schoolYear :null,
 		term : null,
 		examId: ${examId == null ? 'null' : examId},
@@ -379,9 +434,11 @@ var app = new Vue({
         multipleSelection2:[],
         prefixNo:null,
         bitNo:null,
-        flag:true,//按照班级或者按照考生
+        flag: 'a',//按照班级或者按照考生
         arrangeId:null,//用来记录查看考生时选择的科目
-        isGenerateShowFlag:true
+        isGenerateShowFlag:true,
+        filterText:'',
+        allStudents : []
 	}, 
 	filters: {    
     /* timeFilter : function(input){
@@ -392,7 +449,12 @@ var app = new Vue({
         return hour+":"+minutes+":"+seconds;
     } */
   }	,
+  	watch:{
+		filterText :function(val){
+			this.filterTable(val);
+		}
 	
+	},
 	mounted : function() { 
 				this.getCurrentSchoolYear();
 				this.getCurrentTerm();
@@ -403,6 +465,17 @@ var app = new Vue({
 			
 	}, 
 	methods : {
+		filterTable :function(value){
+			if(!value){
+				this.tableData3=this.allStudents;
+			}
+			this.tableData3=[];
+			for(var i in this.allStudents){
+				if(this.allStudents[i].name.indexOf(value) != -1){
+					this.tableData3.push(this.allStudents[i]);
+				}
+			}	
+		},
 			getCurrentSchoolYear	:function(){ 			
 			this.$http.get(this.schoolYearUrl).then(
 			function(response){
@@ -627,7 +700,7 @@ var app = new Vue({
                         this.checkedClasses=[];
                         this.multipleSelection=[];
                         this.setExamineeDialogFormVisible=false;
-                        this.flag=true;
+                        this.flag='a';
                         this.listByPage();
                         });
 
@@ -647,7 +720,7 @@ var app = new Vue({
               }
               var examineeIds = [];
               for(var index in this.multipleSelection2){
-              	examineeIds.push(this.multipleSelection2[index].examineeId);        
+              	examineeIds.push(this.multipleSelection2[index].examineeId);
               }
               
               this.$http.get(this.submitByStudentUrl,{params:{examineeIds:examineeIds,arrangeIds:arrangeIds}}).then(
@@ -660,8 +733,9 @@ var app = new Vue({
                         this.multipleSelection=[];
                         this.multipleSelection2=[];
                         this.setExamineeDialogFormVisible=false;
-                        this.flag=true;                        
-                        });
+                        this.flag='a';
+                        this.listByPage();
+                    });
               
 
             },
@@ -750,6 +824,36 @@ var app = new Vue({
                 	}
                 }
                 console.log(this.multipleSelection2.length);
+            },
+            selectModelChange : function(){
+            	if(this.flag == 'c'){
+            		var subjectNames = [];//选择的科目
+                    for(var index in this.multipleSelection){
+                    	subjectNames.push(this.multipleSelection[index].subjectName);
+                    }
+                    this.$http.get(this.findExamineeBySubjectsUrl,{params:{examId:this.examId,subjects : subjectNames}}).then(
+                        function(response){
+                        	this.allStudents=response.data;
+                            this.tableData3=this.allStudents;
+                            this.multipleSelection2=[];
+                    });
+            	}
+            },
+            deleteTableData3 : function(){
+            	var examineeIds = [];
+                for(var index in this.multipleSelection2){
+                	examineeIds.push(this.multipleSelection2[index].examineeId);
+                }
+                if(examineeIds.length == 0){
+                	return;
+                }
+                for(var i=this.allStudents.length-1;i>=0;i--){
+                	if(examineeIds.indexOf(this.allStudents[i].examineeId) >= 0){
+                		this.allStudents.splice(i,1);
+                		
+                	}
+                }
+                this.filterText="";
             }
             		   		  
         }	        

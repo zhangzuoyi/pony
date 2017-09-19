@@ -5,14 +5,17 @@
 <mapper namespace="com.zzy.pony.exam.mapper.ExamineeMapper">
 	<sql id="base_select">
 		select t.EXAMINEE_ID as examineeId,t.EXAM_ID as examId,t.STUDENT_ID as studentId,t.REG_NO as regNo,
-		a.`NAME` as name,a.SEX as sex,a.STUDENT_NO as studentNo from t_examinee t 
+		a.`NAME` as name,c.value as sex,a.STUDENT_NO as studentNo from t_examinee t 
 		left join t_student a on t.STUDENT_ID = a.STUDENT_ID
 		left join t_examinee_arrange b on t.examinee_id = b.examinee_id
+		left join t_common_dict c on c.dict_type='sex' and c.code=a.sex 
 	</sql>
 	<sql id="base_select2">
 		select t.EXAMINEE_ID as examineeId,t.EXAM_ID as examId,t.STUDENT_ID as studentId,t.REG_NO as regNo,
-		a.`NAME` as name,a.SEX as sex,a.STUDENT_NO as studentNo,a.exam_subjects as examSubjects from t_examinee t 
-		left join t_student a on t.STUDENT_ID = a.STUDENT_ID
+		a.`NAME` as name,c.value as sex,a.STUDENT_NO as studentNo,a.exam_subjects as examSubjects,
+		CONCAT(convert(b.SEQ,char),'班') className from t_examinee t 
+		left join t_student a on t.STUDENT_ID = a.STUDENT_ID left join t_school_class b on a.class_id=b.CLASS_ID 
+		left join t_common_dict c on c.dict_type='sex' and c.code=a.sex 
 	</sql>
 	<select id="findPageByClass" resultType="com.zzy.pony.exam.vo.ExamineeVo">
 		<include refid="base_select2"></include>
@@ -130,6 +133,12 @@ order by t.grade_rank
 	c.arrange_id = #{0} and b.year_id = #{1}
 	order by t.grade_rank
 	</select>
-
+	<select id="findByExamIdAndSubjects" resultType="com.zzy.pony.exam.vo.ExamineeVo">
+		<include refid="base_select2"></include>
+		 where t.EXAM_ID=#{0} and 
+		 <foreach item="item" index="index" collection="subjects" open="" separator="and" close="">  
+     		find_in_set(#{item}, a.exam_subjects)
+     	 </foreach>
+	</select>
 
 </mapper>
