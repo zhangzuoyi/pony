@@ -92,12 +92,7 @@ width:200px;
                     :data="tableData"
                     border
                     style="width: 100%"
-					@selection-change="handleMonitorSelectionChange"
                    >               
-                <el-table-column
-                        type="selection"
-                        width="50">
-                </el-table-column>
                 <el-table-column
 							prop="teacherName"
 							label="姓名"
@@ -186,39 +181,8 @@ var app = new Vue({
 		indexRows : [],
 		fileList : [],
         conditionVo : {},
+        tableData:[]
 		
-		getTeacherUrl:"<s:url value='/teacherAdmin/listAllVo'/>",
-		listUrl:"<s:url value='/examAdmin/monitorArrange/list'/>",
-		submitUrl:"<s:url value='/examAdmin/monitorArrange/submit'/>",
-		setCountUrl:"<s:url value='/examAdmin/monitorArrange/setCount'/>",
-		deleteUrl:"<s:url value='/examAdmin/monitorArrange/delete'/>",
-		monitorArrangeUrl:"<s:url value='/examAdmin/monitorArrange/monitorArrange'/>",
-		teachers:[],
-		usedTeachers:[],
-		filterText:'',
-		tableData:[],
-		tableData2:[],/*设置考生使用*/
-		tableData3:[],/*查看考生使用*/
-		checkedClasses:[],
-		classes:[],
-        setTeacherDialogFormVisible:false,
-        setonitorCountDialogFormVisible:false,
-        findExamineeDialogFormVisible:false,
-        generateExamineeNoDialogFormVisible:false,
-        uploadTeacherDialogFormVisible : false,
-        gradeName:null,
-        schoolClass:null,
-        schoolClass2:null,
-        multipleSelection:[],
-        teacherSelection:[],
-        monitorSelection:[],
-        prefixNo:null,
-        bitNo:null,
-        flag:true,//按照班级或者按照考生
-        arrangeId:null,//用来记录查看考生时选择的科目
-        isGenerateShowFlag:true,
-        monitorCountSet:0
-        
 	}, 
 	mounted : function() { 
 		this.getCurrentSchoolYear();
@@ -328,134 +292,12 @@ var app = new Vue({
   	              }
                 this.uploadIndexDialogFormVisible = true;
             },
-            
-			getTeachers	:function(){
-				this.$http.get(this.getTeacherUrl).then(
-				function(response){
-					this.teachers=response.data; 
-					this.usedTeachers=this.teachers;
-				},
-				function(response){}  	 			
-				);
-			},
-			handleTeacherSelectionChange: function(val) {
-            	this.teacherSelection = val;
-            },
-            handleMonitorSelectionChange: function(val){
-            	this.monitorSelection = val;
-            },
-            setTeacher: function(){
-            	if( ! this.checkExamAndGrade()){
-  					return;
-  	              }
-                this.setTeacherDialogFormVisible = true;
-             },
-            deleteMonitor: function(){
-				if(this.monitorSelection==null||this.monitorSelection.length==0){
-					this.$alert("请选择监考老师","提示",{
-						type:"warning",
-						confirmButtonText:'确认'
-					});
-					return;
-				}
-				var  ids = [];
-	            for(var index in this.monitorSelection){
-	              	ids.push(this.monitorSelection[index].id);
-	            }
-				this.$http.post(this.deleteUrl,{ids:ids},{emulateJSON:true}).then(
-                    function(response){
-                        this.$message({type:"info",message:"删除成功"});                   
-                        this.monitorSelection=[];
-                        this.list();
-                    }
-                );
+            downloadTemplate : function(){
+          	  window.location.href="<s:url value='/examAdmin/average/exportTemplate' />";
             },
             list : function(){
-            	if( ! this.checkExamAndGrade()){
-  					return;
-  	              }
-                this.$http.get(this.listUrl,{params:{examId:this.examId, gradeId : this.gradeId}}).then(
-                    function(response){
-                        this.tableData=response.data;
-                    });
-		
-            },
-            submit:function(){				
-              if(this.teacherSelection ==null||this.teacherSelection.length==0 ){
-              this.$alert("请选择老师","提示",{
-					type:"warning",
-					confirmButtonText:'确认'
-				});
-				return;
-              }
-              var teacherIds = [];
-              for(var index in this.teacherSelection){
-            	  teacherIds.push(this.teacherSelection[index].teacherId);        
-              }
-              
-              this.$http.post(this.submitUrl,{examId:this.examId, gradeId: this.gradeId, teacherIds:teacherIds},{emulateJSON:true}).then(
-                    function(response){
-                        this.$message({type:"info",message:"设置成功"});
-                        this.teacherSelection=[];
-                        this.setTeacherDialogFormVisible=false;
-                        this.list();
-                    });
-            },
-            setMonitorCount:function(){				
-                if(this.monitorSelection ==null||this.monitorSelection.length==0 ){
-	                this.$alert("请选择监考老师","提示",{
-	  					type:"warning",
-	  					confirmButtonText:'确认'
-	  				});
-	  				return;
-                }
-                if( ! this.monitorCountSet || this.monitorCountSet < 0 ){
-	                this.$alert("请输入合法的监考次数","提示",{
-	  					type:"warning",
-	  					confirmButtonText:'确认'
-	  				});
-	  				return;
-                }
-                var teacherIds = [];
-                for(var index in this.monitorSelection){
-              	  teacherIds.push(this.monitorSelection[index].teacherId);        
-                }
-                
-                this.$http.post(this.setCountUrl,{examId:this.examId,gradeId : this.gradeId, teacherIds:teacherIds,count:this.monitorCountSet},{emulateJSON:true}).then(
-                      function(response){
-                          this.$message({type:"info",message:"设置成功"});
-                          this.monitorSelection=[];
-                          this.setonitorCountDialogFormVisible=false;
-                          this.monitorCountSet=0;                        
-                          this.list();
-                      });
-              },
-              monitorArrange:function(){
-            	  if( ! this.checkExamAndGrade()){
-  					return;
-  	              }
-            	  this.$http.post(this.monitorArrangeUrl,{examId : this.examId, gradeId : this.gradeId},{emulateJSON:true}).then(
-                          function(response){
-                              this.$message({type:"info",message:"自动安排成功"});
-                          }
-                  );
-              },
-              
-              uploadTeachers : function(){
-            	  this.conditionVo.examId=this.examId;
-            	  this.conditionVo.gradeId=this.gradeId;
-            	  this.$refs.upload.submit();
-            	  this.$refs.upload.clearFiles();
-            	  this.uploadTeacherDialogFormVisible = false;
-            	  this.$message({
-						type:"info",
-						message: "导入成功"
-				  });
-            	  this.list();
-              },
-              downloadTemplate : function(){
-            	  window.location.href="<s:url value='/examAdmin/monitorArrange/exportTemplate' />";
-              }
+            	
+            }
         }	        
 });  
 </script>

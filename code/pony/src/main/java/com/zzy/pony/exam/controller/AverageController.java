@@ -1,6 +1,7 @@
 package com.zzy.pony.exam.controller;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.zzy.pony.exam.model.AverageIndex;
 import com.zzy.pony.exam.service.AverageService;
 import com.zzy.pony.exam.vo.AverageIndexRowVo;
+import com.zzy.pony.util.TemplateUtil;
 
 @Controller
 @RequestMapping(value="/examAdmin/average")
@@ -101,5 +107,17 @@ public class AverageController {
 			e.printStackTrace();
 		}
 		return "success";
+	}
+	@RequestMapping(value="exportTemplate",method = RequestMethod.GET)
+	public ResponseEntity<byte[]> exportTemplate(Model model){
+		String fileName="均量值导入模板.xlsx";
+		HttpHeaders headers = new HttpHeaders(); 
+		try {
+			headers.setContentDispositionFormData("attachment", new String(fileName.getBytes("utf-8"), "ISO8859-1"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		return new ResponseEntity<byte[]>(TemplateUtil.getContent(fileName), headers, HttpStatus.CREATED);
 	}
 }
