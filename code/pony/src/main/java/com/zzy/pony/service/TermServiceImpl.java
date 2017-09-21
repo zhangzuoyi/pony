@@ -5,6 +5,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +44,7 @@ public class TermServiceImpl implements TermService {
 		
 		dao.save(old);
 	}
-
+	@CacheEvict(value="currentTerm",allEntries=true)
 	@Override
 	public void delete(int id) {
 		dao.delete(id);
@@ -59,6 +60,7 @@ public class TermServiceImpl implements TermService {
 		}
 		return null;
 	}
+	@CacheEvict(value="currentTerm",allEntries=true)
 	@Override
 	public void setCurrent(Integer id) {
 		List<Term> list=dao.findByIsCurrent(Constants.CURRENT_FLAG_TRUE);

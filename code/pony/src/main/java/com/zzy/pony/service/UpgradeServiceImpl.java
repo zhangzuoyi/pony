@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.zzy.pony.dao.SchoolClassDao;
 import com.zzy.pony.dao.StudentDao;
+import com.zzy.pony.mapper.StudentMapper;
 import com.zzy.pony.model.Grade;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
@@ -26,6 +27,8 @@ public class UpgradeServiceImpl implements UpgradeService {
 	private SchoolClassDao scDao;
 	@Autowired
 	private StudentDao studentDao;
+	@Autowired
+	private StudentMapper studentMapper;
 
 	@Override
 	public List<UpgradeVo> preview(Integer[] gradeIds) {
@@ -68,14 +71,16 @@ public class UpgradeServiceImpl implements UpgradeService {
 		for(UpgradeVo vo: vos){
 			if (vo.getTargetGrade() == null || vo.getTargetGrade().getGradeId() == null) {// 毕业
 				for(SchoolClass old: vo.getSrcClasses()){
-					// 将原班级学生的当前班级设为空
-					List<Student> students = studentDao.findBySchoolClass(old);
+					// 不用将原班级学生的当前班级设为空
+					/*List<Student> students = studentDao.findBySchoolClass(old);
 					for (Student stu : students) {
 						stu.setSchoolClass(null);
 						//TODO 学生状态更改为已毕业
 
 						studentDao.save(stu);
-					}
+					}*/
+					//TODO 增加StudentStatusChange记录
+					studentMapper.updateStatusByClass(StudentService.STUDENT_STATUS_BY,StudentService.STUDENT_STATUS_ZD, old.getClassId());
 				}
 			} else {// 升级
 				int len = vo.getTargetClasses().size();
@@ -95,13 +100,14 @@ public class UpgradeServiceImpl implements UpgradeService {
 					scDao.save(sc);
 
 					// 将原班级学生的当前班级设为新班级
-					List<Student> students = studentDao.findBySchoolClass(old);
+					/*List<Student> students = studentDao.findBySchoolClass(old);
 					for (Student stu : students) {
 						stu.setSchoolClass(sc);
-						stu.getSchoolClasses().add(sc);
 
 						studentDao.save(stu);
-					}
+					}*/
+					//TODO 增加StudentStatusChange记录
+					studentMapper.updateClassByClass(sc.getClassId(), old.getClassId());
 				}
 			}
 			

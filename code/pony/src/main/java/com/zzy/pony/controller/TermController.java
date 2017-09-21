@@ -27,10 +27,10 @@ public class TermController {
 	@Autowired
 	private TermService service;
 	
-	/*@RequestMapping(value="main",method = RequestMethod.GET)
+	@RequestMapping(value="main",method = RequestMethod.GET)
 	public String main(Model model){
 		return "term/main";
-	}*/
+	}
 	@RequestMapping(value="list",method = RequestMethod.GET)
 	@ResponseBody
 	public List<Term> list(Model model){

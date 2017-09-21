@@ -18,5 +18,15 @@
 		where a.GRADE_ID = #{0} and a.year_id = #{1}
 		order by t.class_id,t.STUDENT_ID 
 	</select>
-	
+    <insert id="insertStudentClassRelation">
+    	insert into t_student_class_relation (student_id, class_id) 
+		SELECT #{0}, #{1} FROM dual 
+        WHERE not exists (select 1 from t_student_class_relation t where t.student_id = #{0} and t.class_id=#{1})
+    </insert>
+    <update id="updateStatusByClass">
+    	update t_student set status=#{0} where status=#{1} and class_id=#{2}
+    </update>
+    <update id="updateClassByClass">
+    	update t_student set class_id=#{0} where class_id=#{1}
+    </update>
 </mapper>

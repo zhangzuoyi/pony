@@ -5,6 +5,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +43,7 @@ public class SchoolYearServiceImpl implements SchoolYearService {
 		dao.save(old);
 	}
 
+	@CacheEvict(value="currentSchoolYear",allEntries=true)
 	@Override
 	public void delete(int id) {
 		dao.delete(id);
@@ -57,7 +59,7 @@ public class SchoolYearServiceImpl implements SchoolYearService {
 		}
 		return null;
 	}
-
+	@CacheEvict(value="currentSchoolYear",allEntries=true)
 	@Override
 	public void setCurrent(Integer id) {
 		List<SchoolYear> list=dao.findByIsCurrent(Constants.CURRENT_FLAG_TRUE);

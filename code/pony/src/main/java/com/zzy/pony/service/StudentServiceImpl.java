@@ -30,10 +30,13 @@ public class StudentServiceImpl implements StudentService {
 	private StudentMapper studentMapper;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private StudentMapper mapper;
 
 	@Override
 	public void add(Student sy) {
 		dao.save(sy);
+		mapper.insertStudentClassRelation(sy.getStudentId(), sy.getSchoolClass().getClassId());
 		addStatusChange(sy);
 		userService.addFromStudent(sy);
 	}

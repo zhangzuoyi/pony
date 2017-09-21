@@ -66,6 +66,11 @@
                         <a href="javascript:;" data-url="<s:url value='/schoolYear/main/' />"><label>学年管理</label></a>
                     </dd>
                     </shiro:hasPermission>
+                    <shiro:hasPermission name="schoolyear_admin">
+                    <dd>
+                        <a href="javascript:;" data-url="<s:url value='/term/main/' />"><label>学期管理</label></a>
+                    </dd>
+                    </shiro:hasPermission>
                     <shiro:hasPermission name="grade_admin">
                     <dd>
                         <a href="javascript:;" data-url="<s:url value='/grade/main/' />"><label>年级管理</label></a>
