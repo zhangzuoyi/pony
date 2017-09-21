@@ -61,24 +61,25 @@ public class ExamineeServiceImpl implements ExamineeService {
 	
 	@Override
 	public void generateNo(int examId, int gradeId, String prefixNo, int bitNo) {
-		// TODO Auto-generated method stub
-	 List<Examinee> examinees = new ArrayList<Examinee>();
-	 Exam exam = examService.get(examId);
-	 List<SchoolClass> schoolClasses = schoolClassService.findByGrade(gradeId);
-	 Map<Integer,String> map =  this.generateRegNo(examId, gradeId, prefixNo, bitNo);
-	 for (SchoolClass schoolClass : schoolClasses) {
-		List<Student> students = studentService.findBySchoolClass(schoolClass.getClassId());
-		for (Student student : students) {
-			Examinee examinee = new Examinee();
-			examinee.setExam(exam);
-			examinee.setStudent(student);			
-			if(map.get(student.getStudentId())!= null){
-				examinee.setRegNo(map.get(student.getStudentId()));
-			}			
-			examinees.add(examinee);
+		if(isGenerateShow(examId, gradeId)) {//先判断未产生考生号，避免重复生成
+			List<Examinee> examinees = new ArrayList<Examinee>();
+			 Exam exam = examService.get(examId);
+			 List<SchoolClass> schoolClasses = schoolClassService.findByGrade(gradeId);
+			 Map<Integer,String> map =  this.generateRegNo(examId, gradeId, prefixNo, bitNo);
+			 for (SchoolClass schoolClass : schoolClasses) {
+				List<Student> students = studentService.findBySchoolClass(schoolClass.getClassId());
+				for (Student student : students) {
+					Examinee examinee = new Examinee();
+					examinee.setExam(exam);
+					examinee.setStudent(student);			
+					if(map.get(student.getStudentId())!= null){
+						examinee.setRegNo(map.get(student.getStudentId()));
+					}			
+					examinees.add(examinee);
+				}
+			 }
+			 examineeDao.save(examinees);
 		}
-	 }
-	 examineeDao.save(examinees);
 	}
 
 

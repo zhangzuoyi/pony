@@ -671,6 +671,7 @@ var app = new Vue({
                         this.prefixNo= null;
                         this.bitNo=null;
                         this.generateExamineeNoDialogFormVisible=false;
+                        this.isGenerateShowFlag=false;
                         this.$message({type:"info",message:"生成成功"});                       
                         
                         });
