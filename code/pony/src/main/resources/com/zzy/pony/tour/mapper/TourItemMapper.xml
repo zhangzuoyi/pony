@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.tour.mapper.TourItemMapper">
+	<sql id="base_select">
+		SELECT ITEM_ID itemId,category,name FROM tour_item
+	</sql>
+	<select id="findAll" resultType="com.zzy.pony.tour.vo.TourItemVo">
+		<include refid="base_select"></include>
+	</select>
+	<select id="findCategory" resultType="java.lang.String">
+		SELECT distinct category FROM tour_item
+	</select>
+	<insert id="insertItemData">
+		insert into tour_item_data(tour_id, item_id) values(#{0}, #{1})
+	</insert>
+	<select id="findDataByTours" resultType="com.zzy.pony.tour.vo.TourItemVo">
+		select t.TOUR_ID tourId,t.ITEM_ID itemId,a.category,a.name 
+		from tour_item_data t left join tour_item a on t.ITEM_ID=a.ITEM_ID where t.tour_id in 
+		<foreach item="item" index="index" collection="tourIds" open="(" separator="," close=")">  
+   		 #{item}  
+   		</foreach> 
+	</select>
+</mapper>

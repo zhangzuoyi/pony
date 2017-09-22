@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.tour.mapper.TourMapper">
+	<sql id="base_select">
+		SELECT t.TOUR_ID tourId,t.CLASS_ID classId,t.TOUR_DATE tourDate,t.PERIOD_SEQ periodSeq,
+    t.WEEK_SEQ weekSeq,t.SUBJECT_ID subjectId,t.TEACHER_ID teacherId,t.TOUR_TEACHER_ID tourTeacherId,
+    t.description,t.CREATE_TIME createTime,t.CREATE_USER createUser,t.UPDATE_TIME updateTime,t.UPDATE_USER updateUser 
+	FROM tour t 
+	</sql>
+	<select id="findAll" resultType="com.zzy.pony.tour.vo.TourVo">
+		<include refid="base_select"></include>
+	</select>
+	<insert id="add" useGeneratedKeys="true" keyProperty="tourId" parameterType="com.zzy.pony.tour.vo.TourVo">
+		insert into tour (CLASS_ID ,TOUR_DATE ,PERIOD_SEQ ,
+	    WEEK_SEQ ,SUBJECT_ID ,TEACHER_ID ,TOUR_TEACHER_ID ,
+	    description,CREATE_TIME ,CREATE_USER ,UPDATE_TIME ,UPDATE_USER )
+	values(#{classId},#{tourDate},#{periodSeq},#{weekSeq},#{subjectId},#{teacherId},#{tourTeacherId},
+	#{description},current_timestamp(),#{createUser},current_timestamp(),#{updateUser})
+	</insert>
+	<select id="find" resultType="com.zzy.pony.tour.vo.TourVo">
+		<include refid="base_select"></include>
+		left join t_school_class a on t.class_id=a.class_id 
+		where 1=1 
+		<if test="startDate != null">
+			and t.TOUR_DATE &gt;= #{startDate}
+		</if>
+		<if test="endDate != null">
+			and t.TOUR_DATE &lt;= #{endDate}
+		</if>
+		<if test="gradeId != 0">
+			and a.grade_id = #{gradeId}
+		</if>
+		<if test="classId != 0">
+			and t.class_id = #{classId}
+		</if>
+		<if test="periodSeq != 0">
+			and t.PERIOD_SEQ = #{periodSeq}
+		</if>
+		<if test="firstRow != 0 and pageSize != 0">
+			limit #{firstRow},#{pageSize}
+		</if>
+	</select>
+	<select id="count" resultType="int">
+		select count(1) from tour t 
+		left join t_school_class a on t.class_id=a.class_id 
+		where 1=1 
+		<if test="startDate != null">
+			and t.TOUR_DATE &gt;= #{startDate}
+		</if>
+		<if test="endDate != null">
+			and t.TOUR_DATE &lt;= #{endDate}
+		</if>
+		<if test="gradeId != 0">
+			and a.grade_id = #{gradeId}
+		</if>
+		<if test="classId != 0">
+			and t.class_id = #{classId}
+		</if>
+		<if test="periodSeq != 0">
+			and t.PERIOD_SEQ = #{periodSeq}
+		</if>
+	</select>
+</mapper>
