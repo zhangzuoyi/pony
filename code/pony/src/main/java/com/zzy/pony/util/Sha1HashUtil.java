@@ -1,5 +1,6 @@
 package com.zzy.pony.util;
 
+
 import org.apache.shiro.crypto.hash.Sha1Hash;
 
 public class Sha1HashUtil {
@@ -7,4 +8,6 @@ public class Sha1HashUtil {
 		Sha1Hash hash = new Sha1Hash(psw, loginName);
 		return hash.toString();
 	}
+
+
 }

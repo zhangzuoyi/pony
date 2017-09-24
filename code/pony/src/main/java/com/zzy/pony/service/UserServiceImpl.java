@@ -185,6 +185,7 @@ public class UserServiceImpl implements UserService {
 	public void update(User user) {
 		// TODO Auto-generated method stub
 		User old = dao.findOne(user.getUserId());
+		old.setPsw(user.getPsw());
 		old.setRoles(user.getRoles());
 		old.setUpdateTime(new Date());
 		old.setUpdateUser(ShiroUtil.getLoginUser().getLoginName());

@@ -41,7 +41,7 @@
 				<li>
 
 					<input required="required"
-						   pattern="^\S{4,}$"
+						   <%--pattern="^\S{3,}$"--%>
 						   type="text"
 						   name="username"
 						   autocomplete="off"
@@ -52,7 +52,7 @@
 				<li>
 
 					<input required="required"
-						   pattern="^\S{4,}$"
+						   <%--pattern="^\S{3,}$"--%>
 						   type="password"
 						   name="password"
 						   autocomplete="off"

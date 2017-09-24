@@ -49,9 +49,12 @@
                 <%--<li class="user-nav-item">
                     <a href="#!">
                         <i class="layui-icon">&#xe612;</i>个人设置</a></li>--%>
-                <li class="user-nav-item">
+                    <li class="user-nav-item">
+                        <a href="javascript:;" data-url="<s:url value='personalInfo/main' />" id="btn-personalInfo"><i class="layui-icon">&#xe612;</i>个人资料</a></li>
+                    <li class="user-nav-item">
                     <a href="<s:url value='logout' />" id="btn-exit">
                         <i class="layui-icon">&#xe623;</i>退出</a></li>
+
             </ul>
         </div>
     </div>

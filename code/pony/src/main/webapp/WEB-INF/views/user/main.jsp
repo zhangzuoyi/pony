@@ -56,6 +56,11 @@ width:200px;
                         >
                 </el-table-column>
                 <el-table-column
+                        prop="userName"
+                        label="用户名"
+                >
+                </el-table-column>
+                <el-table-column
                 		prop="loginName"
                         label="登录名"
                         >
@@ -75,9 +80,10 @@ width:200px;
                         label="操作"
                         >
                  <template scope="scope">
-                 <el-button size="small"  @click="setRole(scope.$index,scope.row)">授权</el-button>                                             
-                 <!-- <el-button size="small" @click="handleEdit(scope.$index,scope.row)">编辑</el-button>
-                 <el-button size="small" type="danger" @click="handleDelete(scope.$index,scope.row)">删除</el-button> -->               
+                 <el-button size="small"  @click="setRole(scope.$index,scope.row)">授权</el-button>
+                 <el-button size="small"  @click="resetPsw(scope.$index,scope.row)">重置密码</el-button>
+                     <!-- <el-button size="small" @click="handleEdit(scope.$index,scope.row)">编辑</el-button>
+                     <el-button size="small" type="danger" @click="handleDelete(scope.$index,scope.row)">删除</el-button> -->
                  </template>                             
                 </el-table-column>
                 
@@ -99,37 +105,21 @@ width:200px;
 			
 
         </el-card>
-			<%-- <el-dialog  v-model="dialogFormVisible" >
-			<div slot="title" class="dialog-title">
-                    <b>{{title}}</b>
-            </div>
-			<el-form :model="user" :rules="rules" ref="ruleForm">						
-			 <el-form-item label="登录名" :label-width="formLabelWidth" prop="roleName"> 
-			 <el-input v-model="user.loginName" auto-complete="off"   required></el-input> 
+			 <el-dialog title="重置密码" v-model="dialogFormVisible" >
+			<el-form :model="psw" >
+			 <el-form-item label="密码" :label-width="formLabelWidth" >
+			 <el-input v-model="psw.firstPsw" type="password" auto-complete="off"   required></el-input>
 			 </el-form-item>
-			 <el-form-item label="密码" :label-width="formLabelWidth" prop="psw"> 
-			 <el-input v-model="user.psw" auto-complete="off"  v-if="addOrUpdate" required></el-input> 
-			 </el-form-item> 
-			 <el-form-item label="用户类型" :label-width="formLabelWidth" prop="userType"> 
-			 <el-select v-model="user.userType"     placeholder="请选择.." >
-               		 <el-option                       
-                        :label="'老师'"                   
-                        :value="'t'">
-                        <span style="float: left">老师</span>
-               		 </el-option>
-               		 <el-option                       
-                        :label="'学生'"                       
-                        :value="'s'">
-                        <span style="float: left">学生</span>
-               		 </el-option>
-           			 </el-select> 			 
-			 </el-form-item>			 
+			 <el-form-item label="确认密码" :label-width="formLabelWidth" >
+			 <el-input v-model="psw.secondPsw" type="password" auto-complete="off"   required></el-input>
+			 </el-form-item>
 		    </el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button type="primary" @click="onSubmit('ruleForm')"  >确定</el-button>
+				<el-button type="primary" @click="onSubmit()"  >确定</el-button>
 				<el-button @click="dialogFormVisible = false">取 消</el-button>				
 			</div>
-			</el-dialog> --%>
+			</el-dialog>
+
 			
 			<el-dialog title="设置角色" v-model="dialogFormVisible2" >			
 			<el-tree           
@@ -158,18 +148,20 @@ width:200px;
 		
 var app = new Vue({ 
 	el : '#app' ,
-	data : { 		
-		user:{userId:null,loginName:null,userType:null,roles:[]},
-		/* dialogFormVisible:false,
-		formLabelWidth:"120px", */
+	data : {
+        psw:{firstPsw:null,secondPsw:null},
+		user:{userId:null,loginName:null,userName:null,userType:null,roles:[]},
+        dialogFormVisible:false,
+		formLabelWidth:"120px",
 		tableData:[],
 		usersUrl:"<s:url value='/user/listPage'/>",
 		setRoleUrl:"<s:url value='/user/setRole'/>",										
 		/* deleteUrl :"<s:url value='/userAdmin/delete'/>",
 		addUrl :"<s:url value='/userAdmin/add'/>",
 		updateUrl :"<s:url value='/userAdmin/update'/>", */
-		roleTreeUrl : "<s:url value='/roleAdmin/listTree'/>",		
-		title:"",
+		roleTreeUrl : "<s:url value='/roleAdmin/listTree'/>",
+        resetPswUrl : "<s:url value='/user/resetPsw'/>",
+        title:"",
 		/* rules :{	
 		psw: [{required :true,message:"请填写密码",trigger:"blur"}],	
 		loginName: [{required :true,message:"请填写登录名",trigger:"blur"}],
@@ -186,7 +178,8 @@ var app = new Vue({
 		currentPage : 1,
 		pageSizes :[20,50,100],
 		pageSize:[20],
-		total:null
+		total:null,
+        userId : null
 	
 	
 		
@@ -265,7 +258,38 @@ var app = new Vue({
 			},
 			function(response){}  			
 			); 
-			} ,	   					
+			} ,
+        resetPsw :  function(index,row){
+            if(row.userId == null){
+                this.$message({type:"info",  message:"请选择用户"});
+                return ;
+            }
+            this.dialogFormVisible = true;
+            this.userId = row.userId;
+        },
+        onSubmit :function(){
+            if(this.psw.firstPsw == null || this.psw.secondPsw == null || this.psw.firstPsw == "" || this.psw.secondPsw == ""){
+                this.$message({type:"info",  message:"请输入密码"});
+                return ;
+            }
+            if(this.psw.firstPsw != this.psw.secondPsw){
+                this.$message({type:"info",  message:"两次密码输入不一致"});
+                return ;
+            }
+            app.$http.post(app.resetPswUrl,{userId:this.userId,psw:this.psw.firstPsw},{emulateJSON:true}).then(
+                function(response){
+                    this.$message({type:"info",  message:"重置成功"});
+                    this.dialogFormVisible = false;
+                    this.psw = {firstPsw:null,secondPsw:null};
+
+                },
+                function(response){}
+            );
+
+
+        },
+
+
 		/* handleEdit : function(index,row){
 			this.title="修改用户";
 			this.dialogFormVisible = true;

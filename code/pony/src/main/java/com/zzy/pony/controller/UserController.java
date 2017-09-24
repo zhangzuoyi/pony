@@ -2,10 +2,13 @@ package com.zzy.pony.controller;
 
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import com.zzy.pony.config.Constants;
+import com.zzy.pony.model.Role;
+import com.zzy.pony.model.User;
+import com.zzy.pony.service.RoleService;
+import com.zzy.pony.service.UserService;
+import com.zzy.pony.util.Sha1HashUtil;
+import com.zzy.pony.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,37 +17,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-import com.zzy.pony.model.Role;
-import com.zzy.pony.model.User;
-import com.zzy.pony.service.RoleService;
-import com.zzy.pony.service.UserService;
-import com.zzy.pony.vo.UserVo;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -83,6 +60,12 @@ public class UserController {
 			vo.setPsw(user.getPsw());
 			vo.setUserId(user.getUserId());
 			vo.setUserType(user.getUserType());
+			if (Constants.USER_TYPE_STUDENT.equalsIgnoreCase(user.getUserType())){
+				vo.setUserName(user.getStudent().getName());
+			}
+			if (Constants.USER_TYPE_TEACHER.equalsIgnoreCase(user.getUserType())){
+				vo.setUserName(user.getTeacher().getName());
+			}
 			List<String> roles = new ArrayList<String>();
 			if(user.getRoles() != null && user.getRoles().size()>0){
 				for (Role role : user.getRoles()) {
@@ -98,6 +81,8 @@ public class UserController {
 		
 		
 	}
+
+
 	
 	@RequestMapping(value="setRole",method = RequestMethod.POST)
 	@ResponseBody
@@ -114,6 +99,16 @@ public class UserController {
 		}
 		userService.update(user);		
 	}
+	@RequestMapping(value="resetPsw",method = RequestMethod.POST)
+	@ResponseBody
+	public void resetPsw(@RequestParam(value="userId") int userId,@RequestParam(value="psw") String psw){
+		//加密
+		User user = userService.findById(userId);
+		user.setPsw(Sha1HashUtil.hashPassword(psw,user.getLoginName()));
+		userService.update(user);
+	}
+
+
 	
 	
 	

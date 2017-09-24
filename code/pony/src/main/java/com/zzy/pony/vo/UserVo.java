@@ -17,6 +17,8 @@ public class UserVo {
 	private String teacher;
 	private Integer studentId;
 	private String student;
+
+	private String userName;
 	
 	private String[] roles;
 	
@@ -95,7 +97,12 @@ public class UserVo {
 	public void setRoles(String[] roles) {
 		this.roles = roles;
 	}
-	
-	
-	
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 }
