@@ -194,14 +194,13 @@ public class StudentAdminController {
 				String name=row.getCell(1).getStringCellValue();
 				row.getCell(2).setCellType(HSSFCell.CELL_TYPE_STRING);
 				String sex=row.getCell(2).getStringCellValue();
-				Date birthdayDate=row.getCell(3).getDateCellValue();
+				Date birthdayDate=row.getCell(3)==null ? null : row.getCell(3).getDateCellValue();
 				String birthday=null;
 				if(birthdayDate != null){
 					birthday=DateTimeUtil.dateToStr(birthdayDate);
 				}
-				String nativePlace=row.getCell(4).getStringCellValue();
-				String nation=row.getCell(5).getStringCellValue();
-				row.getCell(6).setCellType(HSSFCell.CELL_TYPE_STRING);
+				String nativePlace=cellValue(row.getCell(4));
+				String nation=cellValue(row.getCell(5));
 				String idCard=cellValue(row.getCell(6));
 				String nativeAddr=cellValue(row.getCell(7));
 				String homeAddr=cellValue(row.getCell(8));

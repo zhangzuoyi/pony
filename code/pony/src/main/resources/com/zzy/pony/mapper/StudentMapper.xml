@@ -29,4 +29,7 @@
     <update id="updateClassByClass">
     	update t_student set class_id=#{0} where class_id=#{1}
     </update>
+    <update id="setExamSubjectsByStudentNo">
+    	update t_student set exam_subjects=#{0} where student_no=#{1}
+    </update>
 </mapper>

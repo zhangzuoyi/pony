@@ -14,4 +14,5 @@ public interface StudentMapper {
 	 */
 	void updateStatusByClass(String tostatus, String fromstatus, int classId);
 	void updateClassByClass(int targetClassId, int srcClassId);
+	void setExamSubjectsByStudentNo(String examSubjects, String studentNo);
 }
