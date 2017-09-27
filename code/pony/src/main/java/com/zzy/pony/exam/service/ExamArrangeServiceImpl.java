@@ -3,12 +3,10 @@ package com.zzy.pony.exam.service;
 
 import java.util.*;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import com.zzy.pony.exam.mapper.ExamArrangeMapper;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.service.SubjectService;
 
-import org.apache.commons.collections.iterators.ArrayListIterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

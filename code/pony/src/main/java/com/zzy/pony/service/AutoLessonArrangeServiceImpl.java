@@ -12,9 +12,6 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 
-import antlr.LexerSharedInputState;
-import org.activiti.rest.service.api.engine.variable.IntegerRestVariableConverter;
-import org.apache.cxf.ws.addressing.MAPAggregator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,6 +3,7 @@ package com.zzy.pony.exam.service;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.zzy.pony.exam.model.Examinee;
 import com.zzy.pony.exam.vo.ExamineeVo;
@@ -13,6 +14,7 @@ import com.zzy.pony.exam.vo.ExamineeVo;
 public interface ExamineeService {
 	
 	void generateNo(int examId,int gradeId,String prefixNo,int bitNo);
+	void generateNoByFile(int examId,int gradeId,String prefixNo,int bitNo,MultipartFile file);
 	Page<ExamineeVo> findPageByClass(int currentPage,int pageSize,int examId,int classId);
 	List<ExamineeVo> findByClass(int examId,int classId);
 	Page<ExamineeVo> findPageByClassAndArrange(int currentPage,int pageSize,int examId,int classId,int arrangeId);

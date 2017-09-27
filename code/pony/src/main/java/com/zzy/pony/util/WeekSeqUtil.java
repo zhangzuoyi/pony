@@ -163,7 +163,7 @@ public class WeekSeqUtil {
 		}				
 		//优先根据老师之前的安排就近选取,如果preAlreadyTeacherList == alreadyTeacherList 表明是第一次排，不需要获取最近
 		if (alreadyTeacherList != null && preAlreadyTeacherList.size() != alreadyTeacherList.size() ) {
-			result = getNext(week,list,alreadyTeacherList);
+			result = getNext(week,list,alreadyTeacherAllList);
 		}else {
 			if (type == Constants.SUBJECT_SIGNIFICANT) {
 				result = getSigWeekSeq(week, classAlreadySet);
@@ -179,13 +179,13 @@ public class WeekSeqUtil {
 		
 	}
 	
-	public static int getNext(int week, List<Integer> list, List<Integer> alreadyTeacherList) {
+	public static int getNext(int week, List<Integer> list, List<Integer> alreadyTeacherAllList) {
 		
 		int result = 0;
 		int min = 0;
 		int max = 0;
 		int i = 0;
-		for (Integer integer : alreadyTeacherList) {						
+		for (Integer integer : alreadyTeacherAllList) {						
 			if (getWeek(integer) == week) {
 				if (i == 0) {
 					max = integer;

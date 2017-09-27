@@ -375,6 +375,25 @@ width:200px;
           <el-input-number v-model="bitNo"></el-input-number>          
           </el-col>      
           </el-row>
+          <el-row>
+          <el-col :span="4">
+          <b>按附件成绩生成:</b>
+          </el-col>
+          <el-col :span="8">
+          <el-upload					
+  			 ref="upload" 	
+  			 name="fileUpload" 
+  			 accept=".xls,.xlsx"	
+  			:before-upload="beforeUpload"			
+  			:on-remove="handleRemove"
+  			:file-list="fileList"
+  			:auto-upload="false"
+  			>
+  			<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+  			<el-button style="margin-left:10px;" size="small" type="primary" @click="clearFiles">清空文件</el-button>
+			</el-upload>
+			</el-col>        
+          </el-row>
           <div slot="footer" class="dialog-footer">
 				<el-button type="primary" @click="onSubmitGenerateNo()"  >确定</el-button>
 				<el-button @click="generateExamineeNoDialogFormVisible = false">取 消</el-button>				
@@ -438,7 +457,9 @@ var app = new Vue({
         arrangeId:null,//用来记录查看考生时选择的科目
         isGenerateShowFlag:true,
         filterText:'',
-        allStudents : []
+        allStudents : [],
+		fileList:[]
+
 	}, 
 	filters: {    
     /* timeFilter : function(input){
@@ -465,6 +486,12 @@ var app = new Vue({
 			
 	}, 
 	methods : {
+		handleRemove : function(file, fileList) {
+            console.log(file, fileList);
+         },
+         clearFiles : function(){
+             this.$refs.upload.clearFiles();
+      },
 		filterTable :function(value){
 			if(!value){
 				this.tableData3=this.allStudents;
@@ -631,6 +658,40 @@ var app = new Vue({
                         });
 		
             },
+            beforeUpload : function(file){
+            	if(this.prefixNo == null || this.examId==''){
+                  	this.$alert("请选择前缀","提示",{
+    					type:"warning",
+    					confirmButtonText:'确认'
+    				});
+    				return;
+                  }
+                  if(this.bitNo == null || this.examId==''){
+                  	this.$alert("请选择位数","提示",{
+    					type:"warning",
+    					confirmButtonText:'确认'
+    				});
+    				return;
+                  }	
+                  var formData = new FormData();
+                  formData.append('fileUpload',file);
+                  formData.append('prefixNo',this.prefixNo);
+                  formData.append('bitNo',this.bitNo);
+                  formData.append('examId',this.examId);
+                  formData.append('gradeId',this.gradeId);                
+                  this.$http.post(this.generateNoUrl,formData).then(
+                          function(response){                          
+                              this.prefixNo= null;
+                              this.bitNo=null;
+                              this.generateExamineeNoDialogFormVisible=false;
+                              this.isGenerateShowFlag=false;
+                              this.clearFiles();
+                              this.$message({type:"info",message:"生成成功"});                       
+                              
+                              });
+                  return true;           
+            },
+            
             generateExamineeNo :function(){
             if(this.examId == null || this.examId==''){
               	this.$alert("请选择考试","提示",{
@@ -648,35 +709,8 @@ var app = new Vue({
               }
 				this.generateExamineeNoDialogFormVisible = true;
             },
-            onSubmitGenerateNo : function(){
-            
-            if(this.prefixNo == null || this.examId==''){
-              	this.$alert("请选择前缀","提示",{
-					type:"warning",
-					confirmButtonText:'确认'
-				});
-				return;
-              }
-              if(this.bitNo == null || this.examId==''){
-              	this.$alert("请选择位数","提示",{
-					type:"warning",
-					confirmButtonText:'确认'
-				});
-				return;
-              }
-              this.$http.get(this.generateNoUrl,{params:{examId:this.examId,gradeId:this.gradeId,prefixNo:this.prefixNo,bitNo:this.bitNo}}).then(
-                    function(response){
-                        //this.examId = null;
-                        //this.gradeId= null;
-                        this.prefixNo= null;
-                        this.bitNo=null;
-                        this.generateExamineeNoDialogFormVisible=false;
-                        this.isGenerateShowFlag=false;
-                        this.$message({type:"info",message:"生成成功"});                       
-                        
-                        });
-              
-            
+            onSubmitGenerateNo : function(){                      
+            	this.$refs.upload.submit();                     
             },
             submitByClass:function(){
 				

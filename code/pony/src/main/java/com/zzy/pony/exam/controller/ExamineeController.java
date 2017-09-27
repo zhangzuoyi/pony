@@ -2,6 +2,8 @@ package com.zzy.pony.exam.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -9,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.zzy.pony.exam.service.ExamineeService;
 import com.zzy.pony.exam.vo.ExamineeVo;
@@ -24,10 +28,23 @@ public class ExamineeController {
 	private ExamineeService examineeService;
 
 	
-	@RequestMapping(value="generateNo",method=RequestMethod.GET)
+	@RequestMapping(value="generateNo",method=RequestMethod.POST)
 	@ResponseBody
-	public void generateNo(@RequestParam(value="examId") int examId,@RequestParam(value="gradeId") int gradeId,@RequestParam(value="prefixNo") String prefixNo,@RequestParam(value="bitNo") int bitNo){
-		examineeService.generateNo(examId, gradeId, prefixNo, bitNo);
+	public void generateNo(MultipartFile fileUpload,HttpServletRequest request,
+			@RequestParam(value="examId") int examId,@RequestParam(value="gradeId") int gradeId,
+			@RequestParam(value="prefixNo") String prefixNo,@RequestParam(value="bitNo") int bitNo){
+		MultipartHttpServletRequest multipartRequest=(MultipartHttpServletRequest)request;
+		MultipartFile file = multipartRequest.getFile("fileUpload");
+		//按照附件excel中的总成绩排名生成
+		if (file != null) {
+			
+			examineeService.generateNoByFile(examId, gradeId, prefixNo, bitNo, file);
+			
+		}else {
+			examineeService.generateNo(examId, gradeId, prefixNo, bitNo);
+		}
+		
+		
 	}
 	@RequestMapping(value="listPageByClass",method=RequestMethod.GET)
 	@ResponseBody
