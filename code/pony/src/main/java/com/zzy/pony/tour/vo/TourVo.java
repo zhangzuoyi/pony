@@ -11,6 +11,8 @@ public class TourVo implements Serializable {
 	private long tourId;
 
 	private int classId;
+	private int classSeq;
+	private String gradeName;
 
 	private Date createTime;
 
@@ -41,6 +43,9 @@ public class TourVo implements Serializable {
 	public TourVo() {
 	}
 
+	public String getClassName(){
+		return gradeName+"("+classSeq+")";
+	}
 	public long getTourId() {
 		return this.tourId;
 	}
@@ -159,6 +164,22 @@ public class TourVo implements Serializable {
 
 	public void setItemSummary(String itemSummary) {
 		this.itemSummary = itemSummary;
+	}
+
+	public int getClassSeq() {
+		return classSeq;
+	}
+
+	public void setClassSeq(int classSeq) {
+		this.classSeq = classSeq;
+	}
+
+	public String getGradeName() {
+		return gradeName;
+	}
+
+	public void setGradeName(String gradeName) {
+		this.gradeName = gradeName;
 	}
 
 }

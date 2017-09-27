@@ -38,48 +38,40 @@ width:200px;
               </el-col>
               </el-row>
               <el-row>                            
-               <%-- <el-col :span="1" >
-                    <b>学年:</b>                                    
+                <el-col :span="3" >
+                    <b>开始日期:</b>
+                    <el-date-picker
+	                    v-model="condition.startDate"
+	                    type="date"
+	                    placeholder="选择日期">
+	            	</el-date-picker>
             	</el-col> 
-               <el-col  :span="3">
-               		{{schoolYear.startYear}}——{{schoolYear.endYear}}
-               </el-col>
-               <el-col :span="1" >
-                    <b>学期:</b>
+            	<el-col :span="3" >
+                    <b>结束日期:</b>
+                    <el-date-picker
+	                    v-model="condition.endDate"
+	                    type="date"
+	                    placeholder="选择日期">
+	            	</el-date-picker>
             	</el-col> 
-               <el-col  :span="3">
-               		{{term.name}}
-               </el-col>
-             	<el-col :span="1" >
-                    <b>考试:</b>                                    
+            	<el-col :span="3" >
+                    <b>年级:</b>
+                    <el-select v-model="condition.gradeId" placeholder="请选择" @change="findConditionClasses">
+	                    <el-option v-for="x in grades" :label="x.name" :value="x.gradeId"></el-option>
+	                </el-select>
             	</el-col> 
-           		 <el-col :span="5" >
-            		<div class="grid-content bg-purple">                                     
-					<el-select v-model="examId" filterable clearable placeholder="请选择..">
-               		 <el-option
-                        v-for="exam in exams" 
-                        :label="exam.name"                      
-                        :value="exam.examId">
-                        <span style="float: left">{{exam.name}}</span>
-               		 </el-option>
-           			 </el-select>				
-                    </div>
-            	</el-col>
-            	<el-col :span="1" >
-                    <b>年级:</b>                                    
+            	<el-col :span="3" >
+                    <b>班级:</b>
+                    <el-select v-model="condition.classId" placeholder="请选择" >
+	                    <el-option v-for="x in conditionClasses" :label="x.name" :value="x.classId"></el-option>
+	                </el-select>
             	</el-col> 
-            	<el-col :span="5" >
-            	<div class="grid-content bg-purple">                                     
-					<el-select v-model="gradeId" filterable placeholder="请选择..">
-               		 <el-option
-                        v-for="grade in grades" 
-                        :label="grade.name"                      
-                        :value="grade.gradeId">
-                        <span style="float: left">{{grade.name}}</span>
-               		 </el-option>
-           			 </el-select>				
-                    </div>        
-            	</el-col> --%>
+            	<el-col :span="3" >
+                    <b>节次:</b>
+                    <el-select v-model="condition.periodSeq" placeholder="请选择" >
+	                    <el-option v-for="x in periods" :label="x.seq" :value="x.seq"></el-option>
+	                </el-select>
+            	</el-col> 
             	<el-col :span="4" >
                		<el-button type="primary"  @click="list">查询</el-button>
                		<el-button type="primary"  @click="showAdd">新增</el-button>
@@ -92,22 +84,25 @@ width:200px;
                     border
                     style="width: 100%">               
                 <el-table-column
-							prop="teacherName"
-							label="姓名"
-							>
+						prop="className"
+						label="班级"
+						>
 				</el-table-column>
 				<el-table-column
-						prop="subjectName"
-						label="任教科目"
-						width="180">
+						prop="periodSeq"
+						label="节次">
 				</el-table-column>
 				<el-table-column
-						prop="teacherNo"
-						label="编号">
+						prop="tourDate"
+						label="日期">
 				</el-table-column>
 				<el-table-column
-						prop="monitorCount"
-						label="监考次数">
+						prop="itemSummary"
+						label="巡课情况">
+				</el-table-column>
+				<el-table-column
+						prop="description"
+						label="其它情况">
 				</el-table-column>
             </el-table>
         </el-card>
@@ -162,6 +157,7 @@ var app = new Vue({
 		periodsUrl:"<s:url value='/lessonPeriod/findBySchoolYearAndTerm'/>",
 		tourCategoriesUrl:"<s:url value='/tour/categories'/>",
 		addUrl:"<s:url value='/tour/add'/>",
+		findPageUrl:"<s:url value='/tour/findPage'/>",
 		formLabelWidth:"120px",
 		tour: {tourDate:null, classId:null, periodSeq:null, description:null},
 		periods : [],
@@ -170,7 +166,9 @@ var app = new Vue({
 		classes : [],
 		dialogFormVisible : false,
 		categories : [],
-		tableData : []
+		tableData : [],
+		condition : {},
+		conditionClasses : []
 	}, 
 	mounted : function() { 
 		this.findGrades();
@@ -190,7 +188,15 @@ var app = new Vue({
 		findClasses : function(){
 			this.$http.get(this.findClassesUrl, {params:{gradeId : this.gradeId}}).then(
 				function(response){
-					this.grades=response.data;
+					this.classes=response.data;
+				},
+				function(response){}
+			);
+		},
+		findConditionClasses : function(){
+			this.$http.get(this.findClassesUrl, {params:{gradeId : this.condition.gradeId}}).then(
+				function(response){
+					this.conditionClasses=response.data;
 				},
 				function(response){}
 			);

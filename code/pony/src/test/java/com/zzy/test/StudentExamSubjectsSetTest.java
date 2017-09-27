@@ -25,12 +25,14 @@ public class StudentExamSubjectsSetTest {
 	
 	@Test
 	public void testSet() throws Exception{
-		Workbook wb=WorkbookFactory.create(new FileInputStream("D:\\教育软件\\平桥中学\\2015入学高三学生信息 - 副本.xls"));
+//		Workbook wb=WorkbookFactory.create(new FileInputStream("D:\\教育软件\\平桥中学\\2015入学高三学生信息 - 副本.xls"));
+		Workbook wb=WorkbookFactory.create(new FileInputStream("D:\\教育软件\\平桥中学\\2016入学高二选课名单 - 副本.xlsx"));
 		Sheet sheet=wb.getSheetAt(0);
-		String[] subjects=new String[8];
+//		String[] subjects=new String[8];
+		String[] subjects=new String[7];
 		Row titleRow=sheet.getRow(0);
 		for(int i=0;i<subjects.length;i++){
-			subjects[i]=titleRow.getCell(i+3).getStringCellValue();
+			subjects[i]=titleRow.getCell(i+9).getStringCellValue();
 		}
 		int i=1;
 		while(true){
@@ -46,13 +48,15 @@ public class StudentExamSubjectsSetTest {
 				break;
 			}
 			StringBuilder sb=new StringBuilder();
-			for(int k=3;k<3+subjects.length;k++){
+			for(int k=9;k<9+subjects.length;k++){
 				String selected=row.getCell(k)==null ? null : row.getCell(k).getStringCellValue();
 				if("选考".equals(selected)){
-					sb.append(getSubject(subjects[k-3]));
+					sb.append(getSubject(subjects[k-9]));
 				}
 			}
-			mapper.setExamSubjectsByStudentNo(sb.toString(), studentNo);;
+			String subjectsStr=sb.toString();
+			subjectsStr=subjectsStr.substring(1);//包括语数英的不要
+			mapper.setExamSubjectsByStudentNo(subjectsStr, studentNo);;
 			i++;
 		}
 	}

@@ -758,7 +758,7 @@ var app = new Vue({
               	examineeIds.push(this.multipleSelection2[index].examineeId);
               }
               
-              this.$http.get(this.submitByStudentUrl,{params:{examineeIds:examineeIds,arrangeIds:arrangeIds}}).then(
+              this.$http.post(this.submitByStudentUrl,{examineeIds:examineeIds,arrangeIds:arrangeIds},{emulateJSON:true}).then(
                     function(response){
                         this.$message({type:"info",message:"设置成功"});                   
                         //this.examId = null;

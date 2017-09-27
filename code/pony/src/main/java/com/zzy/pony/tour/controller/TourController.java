@@ -1,5 +1,6 @@
 package com.zzy.pony.tour.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.tour.service.TourService;
 import com.zzy.pony.tour.vo.TourCategoryVo;
 import com.zzy.pony.tour.vo.TourConditionVo;
@@ -34,6 +36,10 @@ public class TourController {
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody
 	public void add(@RequestBody TourVo tour,Model model) {
+		tour.setCreateTime(new Date());
+		tour.setCreateUser(ShiroUtil.getLoginName());
+		tour.setUpdateTime(new Date());
+		tour.setUpdateUser(ShiroUtil.getLoginName());
 		service.add(tour);
 	}
 	@RequestMapping(value="findPage",method = RequestMethod.POST)

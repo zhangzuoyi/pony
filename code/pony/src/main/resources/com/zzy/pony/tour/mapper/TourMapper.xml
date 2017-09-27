@@ -4,10 +4,11 @@
 
 <mapper namespace="com.zzy.pony.tour.mapper.TourMapper">
 	<sql id="base_select">
-		SELECT t.TOUR_ID tourId,t.CLASS_ID classId,t.TOUR_DATE tourDate,t.PERIOD_SEQ periodSeq,
+		SELECT t.TOUR_ID tourId,t.CLASS_ID classId,a.seq classSeq,b.name gradeName,t.TOUR_DATE tourDate,t.PERIOD_SEQ periodSeq,
     t.WEEK_SEQ weekSeq,t.SUBJECT_ID subjectId,t.TEACHER_ID teacherId,t.TOUR_TEACHER_ID tourTeacherId,
     t.description,t.CREATE_TIME createTime,t.CREATE_USER createUser,t.UPDATE_TIME updateTime,t.UPDATE_USER updateUser 
-	FROM tour t 
+	FROM tour t left join t_school_class a on t.class_id=a.class_id 
+	left join t_grade b on a.grade_id=b.grade_id 
 	</sql>
 	<select id="findAll" resultType="com.zzy.pony.tour.vo.TourVo">
 		<include refid="base_select"></include>
@@ -21,7 +22,6 @@
 	</insert>
 	<select id="find" resultType="com.zzy.pony.tour.vo.TourVo">
 		<include refid="base_select"></include>
-		left join t_school_class a on t.class_id=a.class_id 
 		where 1=1 
 		<if test="startDate != null">
 			and t.TOUR_DATE &gt;= #{startDate}

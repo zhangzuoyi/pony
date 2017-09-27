@@ -38,7 +38,7 @@ public class ExamineeArrangeController {
 		examineeArrangeService.submitByClass(examId, classIds, arrangeIds);
 	}
 	
-	@RequestMapping(value="submitByStudent",method=RequestMethod.GET)
+	@RequestMapping(value="submitByStudent",method=RequestMethod.POST)
 	@ResponseBody
 	public void submitByStudent(@RequestParam(value="examineeIds[]") int[] examineeIds,@RequestParam(value="arrangeIds[]") int[] arrangeIds){
 		examineeArrangeService.submitByStudent(examineeIds, arrangeIds);		
