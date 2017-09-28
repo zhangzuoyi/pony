@@ -246,13 +246,13 @@ var app = new Vue({
 				});
 				return;
               }
-             if(this.classId == null || this.classId == ""){
+             /* if(this.classId == null || this.classId == ""){
               	this.$alert("请选择班级","提示",{
 					type:"warning",
 					confirmButtonText:'确认'
 				});
 				return;
-              }
+              } */
 					var exportParams = {
 										examId : this.examId,
 										gradeId :this.gradeId
