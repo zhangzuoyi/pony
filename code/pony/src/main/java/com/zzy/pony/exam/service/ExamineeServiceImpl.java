@@ -62,7 +62,8 @@ public class ExamineeServiceImpl implements ExamineeService {
 		if (isGenerateShow(examId, gradeId)) {// 先判断未产生考生号，避免重复生成
 			List<Examinee> examinees = new ArrayList<Examinee>();
 			Exam exam = examService.get(examId);
-			List<SchoolClass> schoolClasses = schoolClassService.findByGrade(gradeId);
+			SchoolYear year = schoolYearService.getCurrent();
+			List<SchoolClass> schoolClasses = schoolClassService.findByYearAndGradeOrderBySeq(year.getYearId(), gradeId);
 			Map<Integer, String> map = this.generateRegNo(examId, gradeId, prefixNo, bitNo);
 			for (SchoolClass schoolClass : schoolClasses) {
 				List<Student> students = studentService.findBySchoolClass(schoolClass.getClassId());
@@ -88,11 +89,13 @@ public class ExamineeServiceImpl implements ExamineeService {
 			// key 行序 value map(key 列序 value 值)
 			Map<Integer, Map<Integer, Object>> map = ReadExcelUtils.readExcelContent(wb);
 			Map<String, String> sortMap = sortByMap(map, prefixNo, bitNo);
+			int count = sortMap.size();
 			// map按照总成绩排序
 			if (isGenerateShow(examId, gradeId)) {// 先判断未产生考生号，避免重复生成
 				List<Examinee> examinees = new ArrayList<Examinee>();
 				Exam exam = examService.get(examId);
-				List<SchoolClass> schoolClasses = schoolClassService.findByGrade(gradeId);
+				SchoolYear year = schoolYearService.getCurrent();
+				List<SchoolClass> schoolClasses = schoolClassService.findByYearAndGradeOrderBySeq(year.getYearId(), gradeId);
 				for (SchoolClass schoolClass : schoolClasses) {
 					List<Student> students = studentService.findBySchoolClass(schoolClass.getClassId());
 					for (Student student : students) {
@@ -101,6 +104,9 @@ public class ExamineeServiceImpl implements ExamineeService {
 						examinee.setStudent(student);
 						if (sortMap.get(student.getStudentNo()) != null) {
 							examinee.setRegNo(sortMap.get(student.getStudentNo()));
+						}else {
+							examinee.setRegNo(prefixNo + String.format("%0" + bitNo + "d", count+1));
+							count ++;
 						}
 						examinees.add(examinee);
 					}
