@@ -1,9 +1,12 @@
 package com.zzy.pony.exam.service;
 
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -193,7 +196,8 @@ public class ExamineeServiceImpl implements ExamineeService {
 	@Override
 	public boolean isGenerateShow(int examId, int gradeId) {
 		// TODO Auto-generated method stub
-		List<SchoolClass> schoolClasses = schoolClassService.findByGrade(gradeId);
+		SchoolYear year = schoolYearService.getCurrent();
+		List<SchoolClass> schoolClasses = schoolClassService.findByYearAndGradeOrderBySeq(year.getYearId(), gradeId);
 		for (SchoolClass schoolClass : schoolClasses) {
 			List<Examinee> examinees = examineeMapper.findByExamIdAndClassId(examId, schoolClass.getClassId());
 			if (examinees != null && examinees.size() > 0) {
@@ -252,15 +256,16 @@ public class ExamineeServiceImpl implements ExamineeService {
 		return examineeMapper.findByExamIdAndSubjects(examId, subjects);
 	}
 
-	private Map<String, String> sortByMap(Map<Integer, Map<Integer,Object>> map,String prefixNo, int bitNo){
-		Map<String, String> result = new HashMap<String, String>();
+	private Map<String, String> sortByMap(Map<Integer, Map<Integer,Object>> map,String prefixNo, int bitNo) throws NumberFormatException, ParseException{
+		Map<String, String> result = new LinkedHashMap<String, String>();
 		Map<String, Float> unsortMap = new HashMap<String, Float>();
-		
+		DecimalFormat df = new DecimalFormat("0");
 		for (int i = 1; i <= map.size(); i++) {  
             if (map.get(i).get(2) == null || map.get(i).get(2) =="") {
-            	unsortMap.put(map.get(i).get(0).toString(), 0f);
+            	//double-->int
+            	unsortMap.put(df.parse(map.get(i).get(0).toString()).intValue()+"" , 0f);
 			}else {
-				unsortMap.put(map.get(i).get(0).toString(), Float.valueOf((map.get(i).get(2).toString())));  	
+				unsortMap.put(df.parse(map.get(i).get(0).toString()).intValue()+"", Float.valueOf((map.get(i).get(2).toString())));  	
 			}
         } 			
 		//map进行排序

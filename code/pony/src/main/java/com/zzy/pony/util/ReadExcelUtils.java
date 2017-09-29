@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public class ReadExcelUtils {
 	private static Logger logger = Logger.getLogger(ReadExcelUtils.class);	
+	private static DecimalFormat  df = new DecimalFormat("0");             //数字格式，防止长数字成为科学计数法或浮点型
 	
 	public static Workbook ReadExcelByFile(MultipartFile file) {  
         if(file==null){  

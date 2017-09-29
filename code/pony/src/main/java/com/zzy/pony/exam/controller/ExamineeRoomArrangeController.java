@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
+import com.zzy.pony.config.Constants;
 import com.zzy.pony.exam.model.ExamRoom;
 import com.zzy.pony.exam.service.ExamRoomService;
 import com.zzy.pony.exam.service.ExamineeRoomArrangeService;
@@ -77,7 +78,7 @@ public class ExamineeRoomArrangeController {
 	public String findExamineeRoomArrangeByClassId(@RequestParam(value="examId") int examId,@RequestParam(value="gradeId") int gradeId,
 			@RequestParam(value="classId") int classId
 			){					
-		return examineeRoomArrangeService.findExamineeRoomArrangeByClassId(classId,gradeId, examId);
+		return examineeRoomArrangeService.findExamineeRoomArrangeByClassId(classId,gradeId, examId,Constants.SELECT);
 	}
 	
 	@RequestMapping(value="findExamineeRoomArrangeByRoomId",method=RequestMethod.GET)
@@ -85,7 +86,7 @@ public class ExamineeRoomArrangeController {
 	public String findExamineeRoomArrangeByRoomId(@RequestParam(value="examId") int examId,@RequestParam(value="gradeId") int gradeId,
 			@RequestParam(value="roomId") String roomId
 			){					
-		return examineeRoomArrangeService.findExamineeRoomArrangeByRoomId(roomId,gradeId, examId);
+		return examineeRoomArrangeService.findExamineeRoomArrangeByRoomId(roomId,gradeId, examId,Constants.SELECT);
 	}
 	@SuppressWarnings("deprecation")
 	@RequestMapping(value="exportByClassId",method = RequestMethod.GET)	 
@@ -102,40 +103,46 @@ public class ExamineeRoomArrangeController {
 							
 		try{  
             HSSFWorkbook workbook = new HSSFWorkbook();                     // 创建工作簿对象  
-    		HSSFSheet sheet = workbook.createSheet(title);                  // 创建工作表    
-    		int space = 0;
-    		int columnLength= 0;
+    		HSSFSheet sheet = workbook.createSheet(title);                  // 创建工作表   
+    		List<Map<String, Object>> headList = new ArrayList<Map<String,Object>>();
+    		List<Map<String, Object>> datas = new ArrayList<Map<String,Object>>();
+    		
+    		
 
             
             
             for (SchoolClass schoolClass : schoolClasses) {				
-            	String gsonString = examineeRoomArrangeService.findExamineeRoomArrangeByClassId(schoolClass.getClassId(),gradeId, examId);
+            	String gsonString = examineeRoomArrangeService.findExamineeRoomArrangeByClassId(schoolClass.getClassId(),gradeId, examId,Constants.EXPORT);
         		Gson gson = new Gson();
         		GsonVo gsonVo = gson.fromJson(gsonString, GsonVo.class);
-        		List<Map<String, Object>> headList = gsonVo.getTitle();
-        		List<Map<String, Object>> datas = gsonVo.getRows();
-        		columnLength = headList.size();
+        		datas.addAll(gsonVo.getRows()) ;  
+        		if (headList ==null || headList.size()<=0) {
+        			headList.addAll(gsonVo.getTitle());
+				}
+        		
+            }
+        		
+        		int columnLength = headList.size();
         		//HSSFSheet sheet = workbook.createSheet(schoolClass.getName());                  // 创建工作表               
                 //sheet样式定义【getColumnTopStyle()/getStyle()均为自定义方法 - 在下面  - 可扩展】  
                 HSSFCellStyle columnTopStyle = this.getColumnTopStyle(workbook);//获取列头样式对象  
                 HSSFCellStyle style = this.getStyle(workbook);                  //单元格样式对象  
                 HSSFRow row = null;  
                 HSSFCell cell = null; 
-                for (int i = space; i < space+2; i++) {
+                for (int i = 0; i < 2; i++) {
                 	row = sheet.createRow(i);
                 	for (int j = 0; j < columnLength; j++) {
                 		cell = row.createCell(j);  
                         cell.setCellStyle(columnTopStyle);  	
     				}
     			}    
-            	String innerTitle = exam.getName()+"("+schoolClass.getName()+")"+"考场安排表";
 
                 // 产生表格标题行  
-                HSSFRow titleRow = sheet.getRow(space); 
+                HSSFRow titleRow = sheet.getRow(0); 
                 HSSFCell titleCell = titleRow.getCell(0);                                                                     
-                sheet.addMergedRegion(new Region(space, (short)0,space+1, (short)(columnLength-1)));    
-                titleCell.setCellValue(innerTitle);                                                                                   
-                HSSFRow headRow = sheet.createRow(space+2);          
+                sheet.addMergedRegion(new Region(0, (short)0,1, (short)(columnLength-1)));    
+                titleCell.setCellValue(title);                                                                                   
+                HSSFRow headRow = sheet.createRow(2);          
                 int m = 0;
                 String[] keys = new String[headList.size()];
                 for (Map<String, Object> head : headList) {
@@ -160,7 +167,7 @@ public class ExamineeRoomArrangeController {
                 //将查询出的数据设置到sheet对应的单元格中
                 for(int i=0;i<dataList.size();i++){
                     Object[] obj = dataList.get(i);//遍历每个对象
-                    HSSFRow dataRow = sheet.createRow(space+i+3);//创建所需的行数
+                    HSSFRow dataRow = sheet.createRow(i+3);//创建所需的行数
                     for(int j=0; j<obj.length; j++){
                         HSSFCell  dataCell = null;   //设置单元格的数据类型
                         dataCell = dataRow.createCell(j,HSSFCell.CELL_TYPE_STRING);
@@ -176,9 +183,8 @@ public class ExamineeRoomArrangeController {
                         dataCell.setCellStyle(style);                                   //设置单元格样式
                     }
                 }                                    
-                space = space + dataList.size() + 5;
           	
-			}
+			
             
           //让列宽随着导出的列长自动适应  
             for (int colNum = 0; colNum < columnLength; colNum++) {
@@ -246,16 +252,20 @@ public class ExamineeRoomArrangeController {
 		try{  
             HSSFWorkbook workbook = new HSSFWorkbook();                     // 创建工作簿对象
     		HSSFSheet sheet = workbook.createSheet(title);                  // 创建工作表
-    		int space = 0;
-    		int columnLength= 0;
+    		List<Map<String, Object>> headList = new ArrayList<Map<String,Object>>();
+    		List<Map<String, Object>> datas = new ArrayList<Map<String,Object>>();
             
             for (ExamRoom  examRoom : examRooms) {
-            	String gsonString = examineeRoomArrangeService.findExamineeRoomArrangeByRoomId(examRoom.getName(),gradeId, examId);
+            	String gsonString = examineeRoomArrangeService.findExamineeRoomArrangeByRoomId(examRoom.getName(),gradeId, examId,Constants.EXPORT);
         		Gson gson = new Gson();
         		GsonVo gsonVo = gson.fromJson(gsonString, GsonVo.class);
-        		List<Map<String, Object>> headList = gsonVo.getTitle();
-        		List<Map<String, Object>> datas = gsonVo.getRows();
-        		columnLength = headList.size();
+        		datas.addAll(gsonVo.getRows()) ;  
+        		if (headList ==null || headList.size()<=0) {
+        			headList.addAll(gsonVo.getTitle());
+				}
+            }	
+            
+        		int columnLength = headList.size();
         		//HSSFSheet sheet = workbook.createSheet(examRoom.getName());                  // 创建工作表
         		//sheet样式定义【getColumnTopStyle()/getStyle()均为自定义方法 - 在下面  - 可扩展】  
                 HSSFCellStyle columnTopStyle = this.getColumnTopStyle(workbook);//获取列头样式对象  
@@ -263,23 +273,23 @@ public class ExamineeRoomArrangeController {
                 HSSFRow row = null;  
                 HSSFCell cell = null; 
                             
-                for (int i = space; i < space+2; i++) {
+                for (int i = 0; i < 2; i++) {
                 	row = sheet.createRow(i);
                 	for (int j = 0; j < columnLength; j++) {
                 		cell = row.createCell(j);  
                         cell.setCellStyle(columnTopStyle);  	
     				}
     			}          
-            	String innerTitle = exam.getName()+"("+examRoom.getName()+")"+"考场安排表";
+            	
 
                 // 产生表格标题行  
-                HSSFRow titleRow = sheet.getRow(space); 
+                HSSFRow titleRow = sheet.getRow(0); 
                 HSSFCell titleCell = titleRow.getCell(0);                                                      
                 
-                sheet.addMergedRegion(new Region(space, (short)0,space+1, (short)(columnLength-1)));    
-                titleCell.setCellValue(innerTitle);               
+                sheet.addMergedRegion(new Region(0, (short)0,1, (short)(columnLength-1)));    
+                titleCell.setCellValue(title);               
                                                                       
-                HSSFRow headRow = sheet.createRow(space+2);          
+                HSSFRow headRow = sheet.createRow(2);          
                 int m = 0;
                 String[] keys = new String[headList.size()];
                 for (Map<String, Object> head : headList) {
@@ -306,7 +316,7 @@ public class ExamineeRoomArrangeController {
                 for(int i=0;i<dataList.size();i++){
 
                     Object[] obj = dataList.get(i);//遍历每个对象
-                    HSSFRow dataRow = sheet.createRow(space+i+3);//创建所需的行数
+                    HSSFRow dataRow = sheet.createRow(i+3);//创建所需的行数
 
                     for(int j=0; j<obj.length; j++){
                         HSSFCell  dataCell = null;   //设置单元格的数据类型
@@ -323,11 +333,7 @@ public class ExamineeRoomArrangeController {
                         dataCell.setCellStyle(style);                                   //设置单元格样式
                     }
                 }     
-                
-                space = space + dataList.size() + 5;
-               
-            	
-			} 
+ 		 
             //让列宽随着导出的列长自动适应  
             for (int colNum = 0; colNum < columnLength; colNum++) {
                 int columnWidth = sheet.getColumnWidth(colNum) / 256;

@@ -151,7 +151,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 	
 	@Override
 	public String findExamineeRoomArrangeByClassId(
-			int classId,int gradeId,int examId) {
+			int classId,int gradeId,int examId,String type) {
 		// TODO Auto-generated method stub
 		
 		StringBuilder result = new StringBuilder();
@@ -222,7 +222,12 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 				}														
 			}else{
 				Map<String, Object> innerMap = new HashMap<String, Object>();
-				innerMap.put("regNo", vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));
+				if (Constants.SELECT.equalsIgnoreCase(type)) {
+					innerMap.put("regNo", vo.getRegNo());
+				}
+				if (Constants.EXPORT.equalsIgnoreCase(type)) {
+					innerMap.put("regNo", vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));
+				}
 				innerMap.put("studentName", vo.getStudentName());
 				innerMap.put("className", vo.getClassName());
 				innerMap.put("studentNo", vo.getStudentNo()); 
@@ -311,7 +316,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 	}
 
 	@Override
-	public String findExamineeRoomArrangeByRoomId(String roomId,int gradeId,int examId) {
+	public String findExamineeRoomArrangeByRoomId(String roomId,int gradeId,int examId,String type) {
 		// TODO Auto-generated method stub
 		StringBuilder result = new StringBuilder();
 		String[] arrangeStrings = {"colOne","colTwo","colThree","colFour","colFive","colSix","colSeven","colEight","colNine","colTen","colEleven","colTwelve"};
@@ -366,17 +371,35 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 				Map<String, Object> innerMap = map.get(vo.getSeq());
 				if (vo.getGroupId() == 0) {
 					innerMap.put(arrangeHeadMap.get(vo.getArrangeId()), vo.getStudentName());
-					innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));
+					
+					if (Constants.SELECT.equalsIgnoreCase(type)) {
+						innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo());
+					}
+					if (Constants.EXPORT.equalsIgnoreCase(type)) {
+						innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));
+					}
+					
 				}else {
 					if (innerMap.containsKey(groupHeadMap.get(vo.getGroupId()))
 							&&(!innerMap.get(groupHeadMap.get(vo.getGroupId())).toString().equalsIgnoreCase(vo.getStudentName()) 
 							||!innerMap.get(groupSeqHeadMap.get(vo.getGroupId())).toString().equalsIgnoreCase(vo.getRegNo()))
 							 ) {
 						innerMap.put(groupHeadMap.get(vo.getGroupId()),innerMap.get(groupHeadMap.get(vo.getGroupId()))+";"+vo.getStudentName() );
-						innerMap.put(groupSeqHeadMap.get(vo.getGroupId()),innerMap.get(groupSeqHeadMap.get(vo.getGroupId()))+";"+vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));
+						
+						if (Constants.SELECT.equalsIgnoreCase(type)) {
+							innerMap.put(groupSeqHeadMap.get(vo.getGroupId()),innerMap.get(groupSeqHeadMap.get(vo.getGroupId()))+";"+vo.getRegNo());
+						}
+						if (Constants.EXPORT.equalsIgnoreCase(type)) {
+							innerMap.put(groupSeqHeadMap.get(vo.getGroupId()),innerMap.get(groupSeqHeadMap.get(vo.getGroupId()))+";"+vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));
+						}
 					}else {
 						innerMap.put(groupHeadMap.get(vo.getGroupId()), vo.getStudentName());
-						innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));
+						if (Constants.SELECT.equalsIgnoreCase(type)) {
+							innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo());
+						}
+						if (Constants.EXPORT.equalsIgnoreCase(type)) {
+							innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));
+						}
 					}
 				}								
 			}else {
@@ -384,10 +407,22 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 				innerMap.put("roomName", vo.getRoomName());
 				if(vo.getGroupId() == 0){
 				innerMap.put(arrangeHeadMap.get(vo.getArrangeId()), vo.getStudentName());
-				innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));
+				if (Constants.SELECT.equalsIgnoreCase(type)) {
+					innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo());
+				}
+				if (Constants.EXPORT.equalsIgnoreCase(type)) {
+					innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));
+				}
+				
 				}else {
 				innerMap.put(groupHeadMap.get(vo.getGroupId()), vo.getStudentName());
-				innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));	
+				if (Constants.SELECT.equalsIgnoreCase(type)) {
+					innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo());	
+				}
+				if (Constants.EXPORT.equalsIgnoreCase(type)) {
+					innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));	
+				}
+				
 				}
 				map.put(vo.getSeq(), innerMap);
 			}
