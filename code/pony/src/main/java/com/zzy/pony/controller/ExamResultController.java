@@ -197,7 +197,7 @@ public class ExamResultController {
 				ExamineeVo examinee=getExamineeVo(examinees, regNo);
 				if(examinee != null) {
 					for(int j=0;j<subjectSize;j++) {
-						ExamResultVo vo=getExamResultVo(examinee,row.getCell(j),subjects.get(j),examId);
+						ExamResultVo vo=getExamResultVo(examinee,row.getCell(subjectIndexes.get(j)),subjects.get(j),examId);
 						if(vo != null) {
 							resultList.add(vo);
 						}
@@ -217,7 +217,7 @@ public class ExamResultController {
 	private ExamResultVo getExamResultVo(ExamineeVo examinee, Cell cell, Subject subject, Integer examId) {
 		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 		String score=cell.getStringCellValue();
-		if(StringUtils.isNoneBlank(score)) {
+		if(StringUtils.isNotBlank(score)) {
 			ExamResultVo vo=new ExamResultVo();
 			vo.setExamId(examId);
 			vo.setScore(Float.valueOf(score));
