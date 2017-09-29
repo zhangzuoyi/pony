@@ -88,6 +88,18 @@ width:200px;
               </el-row>             
             </div>                      			
         </el-card>
+        <el-dialog     close-on-click-modal="false" close-on-press-escape="false" v-model="dialogFormVisible" >			
+				
+				 <el-table 
+				    v-loading="loading" 
+				    element-loading-text="自动安排中..."            	 		                
+                    border
+                    style="width: 100%"
+                    empty-text=""
+                    >                            
+                  </el-table>         
+				
+		</el-dialog>
         
         <%-- <el-row style="margin-top:10px;">
         	<el-col :span="1" >
@@ -229,7 +241,10 @@ var app = new Vue({
 		classId : null,
 		roomId : null,
 		examId2 : null,
-		tableData:[]
+		tableData:[],
+		dialogFormVisible: false,
+		loading:false
+
 	
 	}, 
 	filters: {    
@@ -309,8 +324,10 @@ var app = new Vue({
 				});
 				return;
               }
+              app.dialogFormVisible=true;   app.loading = true;
               this.$http.get(this.autoExamineeRoomArrangeUrl,{params:{examId:this.examId,gradeId:this.gradeId}}).then(
                     function(response){
+                    	app.dialogFormVisible=false;   app.loading = false;
                            this.examId = null;
                            this.gradeId = null;
                            this.$message({type:"info",message:"操作成功"});                    
