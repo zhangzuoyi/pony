@@ -30,7 +30,7 @@ public class ExamineeController {
 	
 	@RequestMapping(value="generateNo",method=RequestMethod.POST)
 	@ResponseBody
-	public void generateNo(MultipartFile fileUpload,HttpServletRequest request,
+	public String generateNo(MultipartFile fileUpload,HttpServletRequest request,
 			@RequestParam(value="examId") int examId,@RequestParam(value="gradeId") int gradeId,
 			@RequestParam(value="prefixNo") String prefixNo,@RequestParam(value="bitNo") int bitNo){
 		MultipartHttpServletRequest multipartRequest=(MultipartHttpServletRequest)request;
@@ -43,6 +43,7 @@ public class ExamineeController {
 		}else {
 			examineeService.generateNo(examId, gradeId, prefixNo, bitNo);
 		}
+		return "0";
 		
 		
 	}
