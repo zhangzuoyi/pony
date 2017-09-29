@@ -25,6 +25,9 @@
 .el-input {
 width:200px;
 }
+.time .el-input{
+width:100px;
+}
 </style>
 </head>
 <body>
@@ -192,13 +195,49 @@ width:200px;
 			
 			<el-dialog title="设置时间"  v-model="examTimeDialogFormVisible" >		
 			<el-row>
-			<el-col :span="12" :offset="6">
-			<el-time-picker
+			<el-col :span="6" :offset="5">
+			<!-- <el-time-picker
                     is-range
                     v-model="examTime"
                     placeholder="选择时间范围"
                     :picker-options="{format:'HH:mm'}">
-            </el-time-picker>
+            </el-time-picker> -->
+            <el-select v-model="startHour" class="time" clearable>
+            	<el-option
+            			v-for="item in hours"
+            			:key="item.value"
+            			:label="item.label"
+						:value="item.value"
+            			></el-option>
+            </el-select>&nbsp;:&nbsp;
+            <el-select v-model="startMinute" class="time" clearable >
+            	<el-option
+            			v-for="item in minutes"
+            			:key="item.value"
+            			:label="item.label"
+						:value="item.value"
+            			></el-option>
+            </el-select>
+            </el-col>
+            <el-col :span="2">~~
+            </el-col>
+            <el-col :span="6" >          
+            <el-select v-model="endHour" class="time" clearable>
+            	<el-option
+            			v-for="item in hours"
+            			:key="item.value"
+            			:label="item.label"
+						:value="item.value"
+            			></el-option>
+            </el-select>&nbsp;:&nbsp;
+            <el-select v-model="endMinute" class="time" clearable >
+            	<el-option
+            			v-for="item in minutes"
+            			:key="item.value"
+            			:label="item.label"
+						:value="item.value"
+            			></el-option>
+            </el-select>
             </el-col>
             </el-row>
 			<div slot="footer" class="dialog-footer">
@@ -286,7 +325,13 @@ var app = new Vue({
 		examGroupDialogFormVisible:false,
 		examDate :null,
 		groupName:null,
-		multipleSelection:[]
+		multipleSelection:[],
+		hours : [],
+		minutes:[],
+		startHour:"",
+		startMinute:"",
+		endHour:"",
+		endMinute:""
 		
 	
 		
@@ -302,6 +347,7 @@ var app = new Vue({
   }	,
 	
 	mounted : function() { 
+				this.initHourAndMinute();
 				this.getCurrentSchoolYear();
 				this.getCurrentTerm();
 				this.getExams();
@@ -313,6 +359,24 @@ var app = new Vue({
 			
 	}, 
 	methods : {
+			initHourAndMinute : function(){
+				for(var i=0 ;i<24;i++){
+					if(i<10){
+						this.hours.push({label:"0"+i,value:"0"+i});
+					}else{
+						this.hours.push({label:i,value:i});
+					}
+					
+				}
+				for(var i=0 ;i<60;i++){
+					if(i<10){
+						this.minutes.push({label:"0"+i,value:"0"+i});
+					}else{
+						this.minutes.push({label:i,value:i});
+					}
+				}
+				
+			},
 			getCurrentSchoolYear	:function(){ 			
 			this.$http.get(this.schoolYearUrl).then(
 			function(response){
@@ -516,7 +580,7 @@ var app = new Vue({
                 );                          
             }	,
             onSubmitExamTime : function(){
-              if(this.examTime == null || this.examTime==''){
+              if(this.startHour == null || this.startHour==''||this.startMinute == null || this.startMinute==''||this.endHour == null || this.endHour==''||this.endMinute == null || this.endMinute==''){
               	this.$alert("请选择时间","提示",{
 					type:"warning",
 					confirmButtonText:'确认'
@@ -533,10 +597,11 @@ var app = new Vue({
               var examDate = year+"-"+month+"-"+day; */
               //var startTime = this.examTime[0].getHours()+":"+this.examTime[0].getMinutes()+":"+this.examTime[0].getSeconds();
               //var endTime = this.examTime[1].getHours()+":"+this.examTime[1].getMinutes()+":"+this.examTime[1].getSeconds();
-              var startTime = this.examTime[0].getHours()+":"+this.examTime[0].getMinutes();
-              var endTime = this.examTime[1].getHours()+":"+this.examTime[1].getMinutes();
-               
-             
+              //var startTime = this.examTime[0].getHours()+":"+this.examTime[0].getMinutes();
+              //var endTime = this.examTime[1].getHours()+":"+this.examTime[1].getMinutes();
+              var startTime = this.startHour+":"+this.startMinute;
+              var endTime = this.endHour+":"+this.endMinute;
+                       
               this.$http.get(this.addExamTimeUrl,{params:{examArranges:examArranges,startTime:startTime,endTime:endTime}}).then(
                     function(response){
                           this.$message({type:"info",message:"更新成功"});                        
@@ -545,6 +610,10 @@ var app = new Vue({
                           this.$refs.multipleTable.clearSelection();                     
                           this.examTimeDialogFormVisible = false;
                           this.examTime = [];
+                          this.startHour="";
+                          this.startMinute="";
+                          this.endHour="";
+                          this.endMinute="";
                     },
                     function(response){}
                 );                         
