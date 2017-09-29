@@ -29,4 +29,11 @@
 		select t.EXAM_ID as examId,t.STUDENT_ID as studentId,SUM(t.SCORE) as totalScore 
 		from t_exam_result t WHERE t.EXAM_ID = #{0} group by t.EXAM_ID,t.STUDENT_ID ;
 	</select>
+	<delete id="deleteByExam">
+		delete from t_exam_result where exam_id=#{0}
+	</delete>
+	<insert id="insert">
+		insert into t_exam_result(exam_id,student_id,score,create_time,create_user,update_time,update_user,subject_id) 
+		values(#{0},#{1},#{2},current_timestamp(),#{4},current_timestamp(),#{4},#{3})
+	</insert>
 </mapper>

@@ -30,4 +30,5 @@ public interface ExamineeMapper {
 	 * @return
 	 */
 	List<ExamineeVo> findByExamIdAndSubjects(int examId,@Param(value="subjects")String[] subjects);
+	List<ExamineeVo> findByExam(int examId);
 }

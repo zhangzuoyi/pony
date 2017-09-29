@@ -65,10 +65,13 @@ public class TourServiceImpl implements TourService {
 		for(int i=0;i<tourIds.length;i++) {
 			tourIds[i]=list.get(i).getTourId();
 		}
-		List<TourItemVo> items=itemMapper.findDataByTours(tourIds);
-		for(TourVo vo: list) {
-			setItemSummary(vo, items);
+		if(tourIds.length>0) {
+			List<TourItemVo> items=itemMapper.findDataByTours(tourIds);
+			for(TourVo vo: list) {
+				setItemSummary(vo, items);
+			}
 		}
+		
 		Pageable pageable = new PageRequest(condition.getCurrentPage(), condition.getPageSize());
 		Page<TourVo> result = new PageImpl<TourVo>(list, pageable, total);
 		return result;

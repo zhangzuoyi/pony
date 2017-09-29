@@ -1,11 +1,10 @@
 package com.zzy.pony.controller;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +18,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -43,6 +41,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
+import com.zzy.pony.exam.service.ExamineeService;
+import com.zzy.pony.exam.vo.ExamineeVo;
 import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.Student;
@@ -77,6 +77,8 @@ public class ExamResultController {
 	private SchoolYearService yearService;
 	@Autowired
 	private TermService termService;
+	@Autowired
+	private ExamineeService examineeService;
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
 	public String main(Model model){
@@ -107,7 +109,7 @@ public class ExamResultController {
 	}
 	@RequestMapping(value="upload",method = RequestMethod.POST)
 	@ResponseBody
-	public String add(@RequestParam(value="examId") Integer examId, @RequestParam(value="classId") Integer classId, 
+	public String upload(@RequestParam(value="examId") Integer examId, @RequestParam(value="classId") Integer classId, 
 			@RequestParam(value="subjectId") Integer subjectId, @RequestParam(value="file") MultipartFile file, Model model){
 		List<Student> students=studentService.findBySchoolClass(classId);
 		Map<Student, Float> studentScores=new HashMap<Student, Float>();
@@ -143,6 +145,95 @@ public class ExamResultController {
 			e.printStackTrace();
 		}
 		return "success";
+	}
+	/**
+	 * 导入列分别为考生号，班级，姓名，各科目成绩，总分
+	 * @param examId
+	 * @param file
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value="uploadAll",method = RequestMethod.POST)
+	@ResponseBody
+	public String uploadAll(@RequestParam(value="examId") Integer examId, @RequestParam(value="file") MultipartFile file, Model model){
+		try {
+			Workbook wb=WorkbookFactory.create(file.getInputStream());
+			Sheet sheet=wb.getSheetAt(0);
+			//从第一行取得科目
+			List<Integer> subjectIndexes=new ArrayList<Integer>();
+			List<Subject> subjects=new ArrayList<Subject>();
+			Row titleRow=sheet.getRow(0);
+			int k=3;
+			while(true) {
+				Cell cell=titleRow.getCell(k);
+				if(cell == null || StringUtils.isBlank(cell.getStringCellValue())) {
+					break;
+				}
+				Subject subject=subjectService.findByName(cell.getStringCellValue());
+				if(subject != null) {
+					subjectIndexes.add(k);
+					subjects.add(subject);
+				}
+				k++;
+			}
+			int subjectSize=subjects.size();
+			//取得考试所有考生
+			List<ExamineeVo> examinees=examineeService.findByExam(examId);
+			//遍历内容，生成ExamResultVo列表
+			List<ExamResultVo> resultList=new ArrayList<ExamResultVo>();
+			int i=1;
+			while(true){
+				Row row=sheet.getRow(i);
+				if(row == null){
+					break;
+				}
+				Cell cell=row.getCell(0);
+				cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+				String regNo=cell.getStringCellValue();
+				System.out.println(regNo);
+				if(StringUtils.isBlank(regNo)){
+					break;
+				}
+				ExamineeVo examinee=getExamineeVo(examinees, regNo);
+				if(examinee != null) {
+					for(int j=0;j<subjectSize;j++) {
+						ExamResultVo vo=getExamResultVo(examinee,row.getCell(j),subjects.get(j),examId);
+						if(vo != null) {
+							resultList.add(vo);
+						}
+					}
+				}
+				i++;
+			}
+			//保存ExamResultVo列表
+			service.uploadAll(examId, resultList, ShiroUtil.getLoginName());
+		} catch (InvalidFormatException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "success";
+	}
+	private ExamResultVo getExamResultVo(ExamineeVo examinee, Cell cell, Subject subject, Integer examId) {
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		String score=cell.getStringCellValue();
+		if(StringUtils.isNoneBlank(score)) {
+			ExamResultVo vo=new ExamResultVo();
+			vo.setExamId(examId);
+			vo.setScore(Float.valueOf(score));
+			vo.setStudentId(examinee.getStudentId());
+			vo.setSubjectId(subject.getSubjectId());
+			return vo;
+		}
+		return null;
+	}
+	private ExamineeVo getExamineeVo(List<ExamineeVo> examinees, String regNo) {
+		for(ExamineeVo vo: examinees) {
+			if(regNo.equals(vo.getRegNo())) {
+				return vo;
+			}
+		}
+		return null;
 	}
 	
 	@RequestMapping(value = "export", method = RequestMethod.GET)

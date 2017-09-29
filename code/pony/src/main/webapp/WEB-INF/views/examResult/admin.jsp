@@ -23,6 +23,7 @@
             <a href="#" class="easyui-linkbutton" iconCls="icon-save" onclick="saveResult()" plain="true">保存</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="openUpload()" plain="true">导入</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="exportTemplate()" plain="true">导出模板</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="openUploadAll()" plain="true">导入全部</a>
         </div>
         <div class="my-toolbar-search">
         	<input type="hidden" id="examId" value="${vo.examId }" />
@@ -81,6 +82,20 @@
 </div>
 <div id="my-dialog-3" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save',title:'成绩分析'" style="width:800px; padding:10px;">
 	<div id="main" style="width: 600px;height:400px;"></div>
+</div>
+<div id="my-dialog-4" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:400px; padding:10px;">
+	<form id="my-form-4" method="post" enctype="multipart/form-data">
+        <table>
+            <tr>
+                <td width="60" align="right">考试:</td>
+                <td><input type="hidden" name="examId" value="${vo.examId }" /><input type="text" name="examName" class="my-text" value="${vo.name }" readonly="readonly" /></td>
+            </tr>
+            <tr>
+                <td width="60" align="right">文件:</td>
+                <td><input type="file" name="file" /></td>
+            </tr>
+        </table>
+    </form>
 </div>
 <!-- End of easyui-dialog -->
 <script type="text/javascript" src="<s:url value='/static/easyui/datagrid-cellediting.js' />"></script>
@@ -159,9 +174,6 @@
         // 使用刚指定的配置项和数据显示图表。
         myChart.setOption(option);
 	});
-	/**
-	* Name 添加记录
-	*/
 	function upload(){
 		$('#my-form-2').form('submit', {
 			url:"<s:url value='/examResult/upload' />",
@@ -178,10 +190,22 @@
 			}
 		});
 	}
+	function uploadAll(){
+		$('#my-form-4').form('submit', {
+			url:"<s:url value='/examResult/uploadAll' />",
+			success:function(data){
+				if(data){
+					$.messager.alert('信息提示','提交成功！','info');
+					$('#my-dialog-4').dialog('close');
+				}
+				else
+				{
+					$.messager.alert('信息提示','提交失败！','info');
+				}
+			}
+		});
+	}
 	
-	/**
-	* Name 修改记录
-	*/
 	function edit(){
 		$('#my-form-2').form('submit', {
 			url:"<s:url value='/grade/edit' />",
@@ -223,6 +247,25 @@
 		});
 	}
 	
+	function openUploadAll(){
+		$("input[name='file']").val("");
+		$('#my-dialog-4').dialog({
+			closed: false,
+			modal:true,
+            title: "上传成绩",
+            buttons: [{
+                text: '确定',
+                iconCls: 'icon-ok',
+                handler: uploadAll
+            }, {
+                text: '取消',
+                iconCls: 'icon-cancel',
+                handler: function () {
+                    $('#my-dialog-4').dialog('close');
+                }
+            }]
+        });
+	}
 	function openUpload(){
 		//$('#my-form-2').form('clear');
 		$("input[name='file']").val("");

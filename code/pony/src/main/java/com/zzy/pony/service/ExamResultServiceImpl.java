@@ -148,6 +148,18 @@ public class ExamResultServiceImpl implements ExamResultService {
 		}
 		return result;
 	}
+
+	@Override
+	public void uploadAll(Integer examId, List<ExamResultVo> resultList, String loginName) {
+		//先删除此考试所有结果
+		mapper.deleteByExam(examId);
+		//插入结果
+		for(ExamResultVo vo: resultList) {
+			mapper.insert(examId, vo.getStudentId(), vo.getScore(), vo.getSubjectId(), loginName);
+		}
+		//生成排名 TODO
+		
+	}
 }
 
 

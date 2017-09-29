@@ -11,4 +11,6 @@ public interface ExamResultMapper {
 	List<Integer> findSubjectByExam(int examId); 
 	List<ExamResultVo> findExamReuslt(Integer examId, Integer studentId, Integer subjectId);
 	List<Map<String, Object>> findTotalScoreByExam(int examId);
+	void deleteByExam(int examId);
+	void insert(Integer examId,Integer studentId,Float score, Integer subjectId, String loginName);
 }

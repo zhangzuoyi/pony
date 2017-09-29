@@ -38,37 +38,49 @@ width:200px;
               </el-col>
               </el-row>
               <el-row>                            
-                <el-col :span="3" >
+                <el-col :span="1" >
                     <b>开始日期:</b>
+            	</el-col> 
+            	<el-col :span="2" >
                     <el-date-picker
 	                    v-model="condition.startDate"
 	                    type="date"
+	                    style="width:120px;"
 	                    placeholder="选择日期">
 	            	</el-date-picker>
             	</el-col> 
-            	<el-col :span="3" >
+            	<el-col :span="1" >
                     <b>结束日期:</b>
+            	</el-col> 
+            	<el-col :span="2" >
                     <el-date-picker
 	                    v-model="condition.endDate"
 	                    type="date"
+	                    style="width:120px;"
 	                    placeholder="选择日期">
 	            	</el-date-picker>
             	</el-col> 
-            	<el-col :span="3" >
+            	<el-col :span="1" >
                     <b>年级:</b>
-                    <el-select v-model="condition.gradeId" placeholder="请选择" @change="findConditionClasses">
+            	</el-col> 
+            	<el-col :span="2" >
+                    <el-select v-model="condition.gradeId" placeholder="请选择" @change="findConditionClasses" style="width:120px;">
 	                    <el-option v-for="x in grades" :label="x.name" :value="x.gradeId"></el-option>
 	                </el-select>
             	</el-col> 
-            	<el-col :span="3" >
+            	<el-col :span="1" >
                     <b>班级:</b>
-                    <el-select v-model="condition.classId" placeholder="请选择" >
+            	</el-col> 
+            	<el-col :span="2" >
+                    <el-select v-model="condition.classId" placeholder="请选择" style="width:120px;">
 	                    <el-option v-for="x in conditionClasses" :label="x.name" :value="x.classId"></el-option>
 	                </el-select>
             	</el-col> 
-            	<el-col :span="3" >
+            	<el-col :span="1" >
                     <b>节次:</b>
-                    <el-select v-model="condition.periodSeq" placeholder="请选择" >
+            	</el-col> 
+            	<el-col :span="3" >
+                    <el-select v-model="condition.periodSeq" placeholder="请选择" style="width:120px;">
 	                    <el-option v-for="x in periods" :label="x.seq" :value="x.seq"></el-option>
 	                </el-select>
             	</el-col> 
@@ -105,6 +117,14 @@ width:200px;
 						label="其它情况">
 				</el-table-column>
             </el-table>
+            <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-sizes="pageSizes"
+                :page-size="pageSize"
+                layout="total,sizes,prev,pager,next,jumper"
+                :total="total"></el-pagination>
         </el-card>
 		</div>
 		<el-dialog  v-model="dialogFormVisible" >
@@ -167,8 +187,12 @@ var app = new Vue({
 		dialogFormVisible : false,
 		categories : [],
 		tableData : [],
-		condition : {},
-		conditionClasses : []
+		condition : {startDate : null, endDate: null,gradeId : null, classId :null, periodSeq : null},
+		conditionClasses : [],
+		pageSizes :[20,50,100],
+		currentPage : 1,
+		pageSize:20,
+		total:null
 	}, 
 	mounted : function() { 
 		this.findGrades();
@@ -234,7 +258,23 @@ var app = new Vue({
 			);
 		},
 		list : function(){
-			
+			this.condition.pageSize=this.pageSize;
+			this.condition.currentPage=this.currentPage;
+			this.$http.post(this.findPageUrl, this.condition).then(
+                function(response){
+                    this.tableData=response.data.content;
+                    this.total = response.data.totalElements;
+            	}
+            );
+		},
+		handleSizeChange :function(val){
+			this.currentPage = 1;
+			this.pageSize = val;
+			this.list();
+		},
+		handleCurrentChange: function(val){
+			this.currentPage = val;
+			this.list();
 		}
     }	        
 });  

@@ -140,5 +140,9 @@ order by t.grade_rank
      		find_in_set(#{item}, a.exam_subjects)
      	 </foreach>
 	</select>
+	<select id="findByExam" resultType="com.zzy.pony.exam.vo.ExamineeVo">
+		<include refid="base_select2"></include>
+		 where t.EXAM_ID=#{0} 
+	</select>
 
 </mapper>
