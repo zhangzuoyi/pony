@@ -280,5 +280,8 @@ public class ExamineeServiceImpl implements ExamineeService {
         }		
 	return result;
 }
-
+	@Override
+	public List<ExamineeVo> findByExam(int examId) {
+		return examineeMapper.findByExam(examId);
+	}
 }

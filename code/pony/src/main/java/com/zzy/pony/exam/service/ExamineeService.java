@@ -27,5 +27,5 @@ public interface ExamineeService {
 	Examinee findByExamAndStudent(int examId,int studentId);
 	List<ExamineeVo> findVoByArrangeId(int arrangeId,int yearId);
 	List<ExamineeVo> findByExamIdAndSubjects(int examId,String[] subjects);
-	
+	List<ExamineeVo> findByExam(int examId);
 }
