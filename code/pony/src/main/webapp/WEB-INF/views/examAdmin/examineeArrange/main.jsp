@@ -380,7 +380,8 @@ width:200px;
           <b>按附件成绩生成:</b>
           </el-col>
           <el-col :span="8">
-          <el-upload					
+          <el-upload
+          	 action="<s:url value='/examAdmin/examinee/fileUpload'/>"					
   			 ref="upload" 	
   			 name="fileUpload" 
   			 accept=".xls,.xlsx"	
@@ -395,7 +396,7 @@ width:200px;
 			</el-col>        
           </el-row>
           <div slot="footer" class="dialog-footer">
-				<el-button type="primary" @click="onSubmitGenerateNo()"  >确定</el-button>
+				<el-button type="primary" @click="onSubmitGenerateNo()" :disabled="generateNoFlag"  >确定</el-button>
 				<el-button @click="generateExamineeNoDialogFormVisible = false">取 消</el-button>				
 			</div>
           </el-dialog>
@@ -415,6 +416,7 @@ var app = new Vue({
 		schoolClassesUrl:"<s:url value='/schoolClass/findByGrade'/>",
 		gradeUrl:"<s:url value='/grade/get'/>",
 		generateNoUrl:"<s:url value='/examAdmin/examinee/generateNo'/>",
+		fileUploadUrl:"<s:url value='/examAdmin/examinee/fileUpload'/>",
         submitByClassUrl:"<s:url value='/examAdmin/examineeArrange/submitByClass'/>",
         submitByStudentUrl:"<s:url value='/examAdmin/examineeArrange/submitByStudent'/>",
         getExamineeUrl:"<s:url value='/examAdmin/examinee/listByClass'/>",
@@ -458,7 +460,8 @@ var app = new Vue({
         isGenerateShowFlag:true,
         filterText:'',
         allStudents : [],
-		fileList:[]
+		fileList:[],
+		generateNoFlag: false
 
 	}, 
 	filters: {    
@@ -673,6 +676,7 @@ var app = new Vue({
     				});
     				return;
                   }	
+                  this.generateNoFlag = true;
                   var formData = new FormData();
                   formData.append('fileUpload',file);
                   formData.append('prefixNo',this.prefixNo);
@@ -680,7 +684,8 @@ var app = new Vue({
                   formData.append('examId',this.examId);
                   formData.append('gradeId',this.gradeId);                
                   this.$http.post(this.generateNoUrl,formData).then(
-                          function(response){                          
+                          function(response){ 
+                              this.generateNoFlag = false;
                               this.prefixNo= null;
                               this.bitNo=null;
                               this.generateExamineeNoDialogFormVisible=false;

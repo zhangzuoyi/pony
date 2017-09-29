@@ -28,6 +28,16 @@ public class ExamineeController {
 	private ExamineeService examineeService;
 
 	
+	/**
+	 * @return 解决fileUpload问题，返回空即可
+	 */
+	@RequestMapping(value="fileUpload",method=RequestMethod.POST)
+	@ResponseBody
+	public String fileUpload(){		
+		return "0";				
+	}
+	
+	
 	@RequestMapping(value="generateNo",method=RequestMethod.POST)
 	@ResponseBody
 	public String generateNo(MultipartFile fileUpload,HttpServletRequest request,
