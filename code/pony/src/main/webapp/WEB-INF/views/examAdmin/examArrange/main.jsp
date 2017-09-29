@@ -195,7 +195,7 @@ width:100px;
 			
 			<el-dialog title="设置时间"  v-model="examTimeDialogFormVisible" >		
 			<el-row>
-			<el-col :span="6" :offset="5">
+			<el-col :span="8" :offset="4">
 			<!-- <el-time-picker
                     is-range
                     v-model="examTime"
@@ -221,7 +221,7 @@ width:100px;
             </el-col>
             <el-col :span="2">~~
             </el-col>
-            <el-col :span="6" >          
+            <el-col :span="8" >          
             <el-select v-model="endHour" class="time" clearable>
             	<el-option
             			v-for="item in hours"

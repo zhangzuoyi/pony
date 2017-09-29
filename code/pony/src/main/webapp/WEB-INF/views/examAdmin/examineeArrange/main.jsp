@@ -689,7 +689,7 @@ var app = new Vue({
                               this.$message({type:"info",message:"生成成功"});                       
                               
                               });
-                  return true;           
+                  return false;           
             },
             
             generateExamineeNo :function(){
