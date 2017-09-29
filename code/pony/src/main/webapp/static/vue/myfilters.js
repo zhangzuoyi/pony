@@ -11,3 +11,7 @@ Vue.filter('time', function (value, formatString) {
     formatString = formatString || 'HH:mm:ss';
     return moment(value).format(formatString);
 });
+Vue.filter('hhmm', function (value, formatString) {
+    formatString = formatString || 'HH:mm';
+    return moment(value).format(formatString);
+});

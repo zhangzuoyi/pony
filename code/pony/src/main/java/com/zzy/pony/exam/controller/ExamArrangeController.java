@@ -78,11 +78,11 @@ public class ExamArrangeController {
 			ExamArrangeVo vo = new ExamArrangeVo();
 			vo.setArrangeId(ea.getArrangeId());
 			if (ea.getEndTime()!= null) {
-				vo.setEndTime(ea.getEndTime().getHours() + ":" + String.format("%02d", ea.getEndTime().getMinutes()) + ":" + String.format("%02d", ea.getEndTime().getSeconds()));
+				vo.setEndTime(ea.getEndTime().getHours() + ":" + String.format("%02d", ea.getEndTime().getMinutes()) );//+ ":" + String.format("%02d", ea.getEndTime().getSeconds())
 			}
 			vo.setExamDate(ea.getExamDate());
 			if (ea.getStartTime()!=null) {
-				vo.setStartTime(ea.getStartTime().getHours() + ":" + String.format("%02d", ea.getStartTime().getMinutes()) + ":" + String.format("%02d", ea.getStartTime().getSeconds()));
+				vo.setStartTime(ea.getStartTime().getHours() + ":" + String.format("%02d", ea.getStartTime().getMinutes()) );//+ ":" + String.format("%02d", ea.getStartTime().getSeconds())
 			}
 			if (ea.getExam()!= null){
                 vo.setExamId(ea.getExam().getExamId());

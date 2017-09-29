@@ -15,6 +15,7 @@ public class ExamMonitorVo {
 	//自动安排考场时的属性
 	private int countLeft;//剩余的监考次数
 	private List<String> timeAllocated;//已安排的时段，日期(yyyy-MM-dd)+空格+开始时间(HH:mm)
+	private List<String> roomAllocated;//已经安排的考场，要求不重复监考同一考场
 	
 	public void init(){
 		if(monitorCount != null){
@@ -77,6 +78,15 @@ public class ExamMonitorVo {
 	}
 	public void setTimeAllocated(List<String> timeAllocated) {
 		this.timeAllocated = timeAllocated;
+	}
+	public List<String> getRoomAllocated() {
+		if(roomAllocated == null) {
+			roomAllocated=new ArrayList<String>();
+		}
+		return roomAllocated;
+	}
+	public void setRoomAllocated(List<String> roomAllocated) {
+		this.roomAllocated = roomAllocated;
 	}
 	
 }

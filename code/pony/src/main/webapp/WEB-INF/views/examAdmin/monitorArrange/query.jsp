@@ -22,7 +22,7 @@
 <script type="text/javascript" src="<s:url value='/static/vue/vue-validator.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/elementUI/index.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/js/moment.min.js' />"></script>
-<script type="text/javascript" src="<s:url value='/static/vue/myfilters.js' />"></script>
+<script type="text/javascript" src="<s:url value='/static/vue/myfilters.js' />?20170929"></script>
 <style type="text/css">
 .el-input {
 width:200px;
@@ -120,13 +120,13 @@ width:200px;
 						prop="startTime"
 						label="开始时间"
 						width="180">
-						<div>{{row.startTime | time}}</div>
+						<div>{{row.startTime | hhmm}}</div>
 				</el-table-column>
 				<el-table-column
 						inline-template
 						prop="endTime"
 						label="结束时间">
-						<div>{{row.endTime | time}}</div>
+						<div>{{row.endTime | hhmm}}</div>
 				</el-table-column>
 				<el-table-column
 						prop="gradeName"

@@ -15,7 +15,7 @@
 	<select id="findByExam" resultType="com.zzy.pony.exam.vo.ExamRoomAllocateVo">
 		<include refid="base_select"></include>
 		where a.exam_id=#{0} and a.grade_id=#{1} 
-		order by a.exam_date,a.start_time,a.grade_id,t.room_seq
+		order by a.grade_id,t.room_seq,a.exam_date,a.start_time
 	</select>
 	<update id="setMonitorEmpty">
 		update t_exam_room_allocate t set t.teacher_id=null where t.arrange_id in 
