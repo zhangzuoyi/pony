@@ -260,7 +260,7 @@ width:200px;
 		addExam:function(){
 			this.title="新增考试";
 			this.dialogFormVisible = true;
-			this.exam = {examId:null,name:null,examDate:null,schoolYear:this.schoolYear,term:this.term,type:{}};
+			this.exam = {examId:null,name:null,examDate:null,schoolYear:this.schoolYear,term:this.term,type:{typeId: null}};
 		},		
 		onSubmit :function(formName){
 			if(this.exam.examId == null ){
