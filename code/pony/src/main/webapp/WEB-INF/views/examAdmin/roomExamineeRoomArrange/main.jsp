@@ -254,13 +254,13 @@ var app = new Vue({
 				});
 				return;
               }
-             if(this.roomId == null || this.roomId == ""){
+             /* if(this.roomId == null || this.roomId == ""){
               	this.$alert("请选择考场","提示",{
 					type:"warning",
 					confirmButtonText:'确认'
 				});
 				return;
-              }
+              } */
 					var exportParams = {
 										examId : this.examId,
 										gradeId:this.gradeId

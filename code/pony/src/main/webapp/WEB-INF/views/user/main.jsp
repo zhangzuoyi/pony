@@ -89,7 +89,7 @@ width:200px;
                 
             </el-table>
             <el-row>
-            <el-col :offset="18" :span="6">
+            <el-col :offset="10" :span="14">
             <el-pagination
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"

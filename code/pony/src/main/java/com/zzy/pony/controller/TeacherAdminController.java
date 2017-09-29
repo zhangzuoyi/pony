@@ -186,10 +186,9 @@ public class TeacherAdminController {
 				}
 				String name=cellValue(row.getCell(1));
 				String sexValue=cellValue(row.getCell(2));
-				Date birthdayDate=row.getCell(3).getDateCellValue();
 				String birthday=null;
-				if(birthdayDate != null){
-					birthday=DateTimeUtil.dateToStr(birthdayDate);
+				if(row.getCell(3) != null && row.getCell(3).getDateCellValue() != null){
+					birthday=DateTimeUtil.dateToStr(row.getCell(3).getDateCellValue());
 				}
 				String nativePlace=cellValue(row.getCell(4));
 				String nation=cellValue(row.getCell(5));
@@ -199,7 +198,7 @@ public class TeacherAdminController {
 				String zipcode=cellValue(row.getCell(9));
 				String phone=cellValue(row.getCell(10));
 				String email=cellValue(row.getCell(11));
-				Date graduateDate=row.getCell(12).getDateCellValue();
+				Date graduateDate=row.getCell(12)==null ? null : row.getCell(12).getDateCellValue();
 				String graduateSchool=cellValue(row.getCell(13));
 				String degree=cellValue(row.getCell(14));
 				String major=cellValue(row.getCell(15));
