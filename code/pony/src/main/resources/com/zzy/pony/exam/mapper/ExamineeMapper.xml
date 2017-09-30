@@ -131,7 +131,7 @@ order by t.grade_rank
 	left join t_examinee_arrange c on t.examinee_id = c.examinee_id
 	where
 	c.arrange_id = #{0} and b.year_id = #{1}
-	order by t.grade_rank
+	order by t.reg_no
 	</select>
 	<select id="findByExamIdAndSubjects" resultType="com.zzy.pony.exam.vo.ExamineeVo">
 		<include refid="base_select2"></include>
