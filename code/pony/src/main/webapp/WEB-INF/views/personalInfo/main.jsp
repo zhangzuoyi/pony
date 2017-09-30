@@ -54,7 +54,10 @@ width:200px;
 
         </el-card>
 			 <el-dialog title="重置密码" v-model="dialogFormVisible" >
-			<el-form :model="psw" >
+			 <el-form :model="psw" >		 
+			 <el-form-item label="初始密码" :label-width="formLabelWidth" >
+			 <el-input v-model="psw.initPsw" type="password" auto-complete="off"   required></el-input>
+			 </el-form-item>
 			 <el-form-item label="密码" :label-width="formLabelWidth" >
 			 <el-input v-model="psw.firstPsw" type="password" auto-complete="off"   required></el-input>
 			 </el-form-item>
@@ -82,7 +85,7 @@ width:200px;
 var app = new Vue({ 
 	el : '#app' ,
 	data : {
-        psw:{firstPsw:null,secondPsw:null},
+        psw:{initPsw:null,firstPsw:null,secondPsw:null},
 		user:{userId:null,loginName:null,userName:null,userType:null,roles:[]},
         dialogFormVisible:false,
 		formLabelWidth:"120px",
@@ -122,6 +125,10 @@ var app = new Vue({
             this.userId = userId;
         },
         onSubmit :function(){
+        	if(this.psw.initPsw == null || this.psw.init == "" ){
+                this.$message({type:"info",  message:"请输入原始密码"});
+                return ;
+            }
             if(this.psw.firstPsw == null || this.psw.secondPsw == null || this.psw.firstPsw == "" || this.psw.secondPsw == ""){
                 this.$message({type:"info",  message:"请输入密码"});
                 return ;
@@ -130,11 +137,16 @@ var app = new Vue({
                 this.$message({type:"info",  message:"两次密码输入不一致"});
                 return ;
             }
-            app.$http.post(app.resetPswUrl,{userId:this.userId,psw:this.psw.firstPsw},{emulateJSON:true}).then(
+            app.$http.post(app.resetPswUrl,{userId:this.userId,initPsw:this.psw.initPsw,psw:this.psw.firstPsw},{emulateJSON:true}).then(
                 function(response){
-                    this.$message({type:"info",  message:"重置成功"});
+                	if(response.data.result == "fail"){
+	                    this.$message({type:"info",  message:"重置失败,原始密码不正确!"});
+                	}
+					if(response.data.result == "success"){
+	                    this.$message({type:"info",  message:"重置成功"});
+                	}               	
                     this.dialogFormVisible = false;
-                    this.psw = {firstPsw:null,secondPsw:null};
+                    this.psw = {initPsw:null,firstPsw:null,secondPsw:null};
                 },
                 function(response){}
             );

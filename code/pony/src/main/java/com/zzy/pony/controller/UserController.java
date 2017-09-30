@@ -20,6 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -101,11 +102,19 @@ public class UserController {
 	}
 	@RequestMapping(value="resetPsw",method = RequestMethod.POST)
 	@ResponseBody
-	public void resetPsw(@RequestParam(value="userId") int userId,@RequestParam(value="psw") String psw){
-		//加密
+	public Map<String, String> resetPsw(@RequestParam(value="userId") int userId,@RequestParam(value="initPsw") String initPsw,@RequestParam(value="psw") String psw){
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("result", "success");
 		User user = userService.findById(userId);
+		//校验原始密码是否以一致
+		if (!Sha1HashUtil.hashPassword(initPsw, user.getLoginName()).equalsIgnoreCase(user.getPsw())) {
+			map.put("result", "fail");
+		}		
+		//加密
 		user.setPsw(Sha1HashUtil.hashPassword(psw,user.getLoginName()));
 		userService.update(user);
+		return map;
+		
 	}
 
 
