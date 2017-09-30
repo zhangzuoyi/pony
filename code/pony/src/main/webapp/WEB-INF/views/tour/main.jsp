@@ -25,6 +25,9 @@
 .el-input {
 width:200px;
 }
+.myselect .el-input{
+width:100px;
+}
 </style>
 </head>
 <body>
@@ -64,7 +67,7 @@ width:200px;
                     <b>年级:</b>
             	</el-col> 
             	<el-col :span="2" >
-                    <el-select v-model="condition.gradeId" placeholder="请选择" @change="findConditionClasses" style="width:120px;">
+                    <el-select v-model="condition.gradeId" placeholder="请选择" @change="findConditionClasses" class="myselect">
 	                    <el-option v-for="x in grades" :label="x.name" :value="x.gradeId"></el-option>
 	                </el-select>
             	</el-col> 
@@ -72,7 +75,7 @@ width:200px;
                     <b>班级:</b>
             	</el-col> 
             	<el-col :span="2" >
-                    <el-select v-model="condition.classId" placeholder="请选择" style="width:120px;">
+                    <el-select v-model="condition.classId" placeholder="请选择" class="myselect">
 	                    <el-option v-for="x in conditionClasses" :label="x.name" :value="x.classId"></el-option>
 	                </el-select>
             	</el-col> 
@@ -80,7 +83,7 @@ width:200px;
                     <b>节次:</b>
             	</el-col> 
             	<el-col :span="3" >
-                    <el-select v-model="condition.periodSeq" placeholder="请选择" style="width:120px;">
+                    <el-select v-model="condition.periodSeq" placeholder="请选择" class="myselect">
 	                    <el-option v-for="x in periods" :label="x.seq" :value="x.seq"></el-option>
 	                </el-select>
             	</el-col> 
@@ -262,6 +265,7 @@ var app = new Vue({
 			this.condition.currentPage=this.currentPage;
 			this.$http.post(this.findPageUrl, this.condition).then(
                 function(response){
+                	console.log(response.data.content.length);
                     this.tableData=response.data.content;
                     this.total = response.data.totalElements;
             	}

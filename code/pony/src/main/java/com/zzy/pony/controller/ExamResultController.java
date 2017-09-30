@@ -155,7 +155,7 @@ public class ExamResultController {
 	 */
 	@RequestMapping(value="uploadAll",method = RequestMethod.POST)
 	@ResponseBody
-	public String uploadAll(@RequestParam(value="examId") Integer examId, @RequestParam(value="file") MultipartFile file, Model model){
+	public String uploadAll(@RequestParam(value="examId") final Integer examId, @RequestParam(value="file") MultipartFile file, Model model){
 		try {
 			Workbook wb=WorkbookFactory.create(file.getInputStream());
 			Sheet sheet=wb.getSheetAt(0);
@@ -180,7 +180,7 @@ public class ExamResultController {
 			//取得考试所有考生
 			List<ExamineeVo> examinees=examineeService.findByExam(examId);
 			//遍历内容，生成ExamResultVo列表
-			List<ExamResultVo> resultList=new ArrayList<ExamResultVo>();
+			final List<ExamResultVo> resultList=new ArrayList<ExamResultVo>();
 			int i=1;
 			while(true){
 				Row row=sheet.getRow(i);
@@ -206,7 +206,15 @@ public class ExamResultController {
 				i++;
 			}
 			//保存ExamResultVo列表
-			service.uploadAll(examId, resultList, ShiroUtil.getLoginName());
+			Thread t=new Thread(new Runnable() {//用线程防止前台超时重复提交
+
+				@Override
+				public void run() {
+					service.uploadAll(examId, resultList, ShiroUtil.getLoginName());
+				}
+				
+			});
+			t.start();
 		} catch (InvalidFormatException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

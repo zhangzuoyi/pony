@@ -190,12 +190,12 @@
 			}
 		});
 	}
-	function uploadAll(){
+	function uploadAll(){//会出现超时重复提交问题
 		$('#my-form-4').form('submit', {
 			url:"<s:url value='/examResult/uploadAll' />",
 			success:function(data){
 				if(data){
-					$.messager.alert('信息提示','提交成功！','info');
+					$.messager.alert('信息提示','正在后台导入，请稍后查看！','info');
 					$('#my-dialog-4').dialog('close');
 				}
 				else
@@ -204,6 +204,21 @@
 				}
 			}
 		});
+		/* var form = new FormData(document.getElementById("my-form-4"));
+	     $.ajax({
+	         url:"<s:url value='/examResult/uploadAll' />",
+	         type:"post",
+	         data:form,
+	         processData:false,
+	         contentType:false,
+	         success:function(data){
+	        	 $.messager.alert('信息提示','正在后台导入，请稍后查看','info');
+				 $('#my-dialog-4').dialog('close');
+	         },
+	         error:function(e){
+	        	 $.messager.alert('信息提示','提交失败！','info');
+	         }
+	     });  */
 	}
 	
 	function edit(){

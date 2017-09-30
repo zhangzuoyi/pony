@@ -61,7 +61,7 @@ public class ExamineeServiceImpl implements ExamineeService {
 	private StudentComprehensiveTrackService studentComprehensiveTrackService;
 
 	@Override
-	public void generateNo(int examId, int gradeId, String prefixNo, int bitNo) {
+	public synchronized void generateNo(int examId, int gradeId, String prefixNo, int bitNo) {
 		if (isGenerateShow(examId, gradeId)) {// 先判断未产生考生号，避免重复生成
 			List<Examinee> examinees = new ArrayList<Examinee>();
 			Exam exam = examService.get(examId);
@@ -85,7 +85,7 @@ public class ExamineeServiceImpl implements ExamineeService {
 	}
 
 	@Override
-	public void generateNoByFile(int examId, int gradeId, String prefixNo, int bitNo, MultipartFile file) {
+	public synchronized void generateNoByFile(int examId, int gradeId, String prefixNo, int bitNo, MultipartFile file) {
 		// TODO Auto-generated method stub
 		Workbook wb = ReadExcelUtils.ReadExcelByFile(file);
 		try {
