@@ -322,8 +322,11 @@ public class StudentComprehensiveTrackServiceImpl implements StudentComprehensiv
 			for (Student student : students) {//年级所有学生
 				
 					if (unsortMap.containsKey(student.getStudentId())) {						
-						map.put(student.getStudentId(),Float.valueOf(unsortMap.get(student.getStudentId()).get("sum")+""));
-						
+						map.put(student.getStudentId(),Float.valueOf(unsortMap.get(student.getStudentId()).get("sum")+""));					
+					}
+					//如果没有成绩，则置0
+					else {
+						map.put(student.getStudentId(), 0f);
 					}			
 			}
 			

@@ -264,7 +264,9 @@ public class ExamineeServiceImpl implements ExamineeService {
             if (map.get(i).get(2) == null || map.get(i).get(2) =="") {
             	//double-->int
             	unsortMap.put(df.parse(map.get(i).get(0).toString()).intValue()+"" , 0f);
-			}else {
+			}
+           
+            else {
 				unsortMap.put(df.parse(map.get(i).get(0).toString()).intValue()+"", Float.valueOf((map.get(i).get(2).toString())));  	
 			}
         } 			
