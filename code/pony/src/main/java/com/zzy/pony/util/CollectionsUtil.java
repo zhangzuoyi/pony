@@ -1,5 +1,6 @@
 package com.zzy.pony.util;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,5 +30,18 @@ public class CollectionsUtil {
 	            Collections.swap(list, i, i - 1);
 	        }
 	    }
+	}
+	
+	public static void main(String[] args) {
+		List<Integer> list = new ArrayList<Integer>();
+		for (int i = 1; i <= 50; i++) {
+			list.add(i);
+		}
+		//swap(list, 1, 30);
+		Collections.swap(list, 1, 30);
+		for (int i = 1;i<=50;i++) {
+			System.out.println(list.get(i-1));
+		}
+				
 	}
 }

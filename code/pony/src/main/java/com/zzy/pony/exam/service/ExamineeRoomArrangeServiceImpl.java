@@ -572,7 +572,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 					j++;
 				}
 				if((j+2)<examinees.size())
-					CollectionsUtil.swap(examinees, i+1, j+2);
+					CollectionsUtil.swap(examinees, j+2, i+1);
 			}						
 		}				
 	}
