@@ -99,7 +99,7 @@ public class ComprehensiveRankController {
 				public Boolean call() throws Exception {
 					// TODO Auto-generated method stub
 					comprehensiveRankService.rankExaminee(cv);
-					comprehensiveRankService.rankExamReult(cv);				
+					comprehensiveRankService.rankExamResult(cv);				
 					return null;
 				}
 				
@@ -107,7 +107,7 @@ public class ComprehensiveRankController {
 		executor.execute(future);
 		
 		try {
-			future.get(5, TimeUnit.MINUTES);
+			future.get(8, TimeUnit.MINUTES);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

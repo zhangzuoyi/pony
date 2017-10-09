@@ -91,7 +91,14 @@ public class AverageController {
 				}
 				List<Float> values=new ArrayList<Float>();
 				for(int j=0;j<subjectsLen;j++) {
-					float value=(float)row.getCell(j+1).getNumericCellValue();
+					float value = 0f;
+					if (row.getCell(j+1).getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+						 value=(float)row.getCell(j+1).getNumericCellValue();
+
+					}else {
+						 value=Float.valueOf(row.getCell(j+1).getStringCellValue());
+					}
+					//row.getCell(j+1).setCellType(HSSFCell.CELL_TYPE_NUMERIC);
 					values.add(value);
 				}
 				list.add(values);

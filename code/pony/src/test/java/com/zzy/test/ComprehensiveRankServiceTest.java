@@ -22,16 +22,16 @@ public class ComprehensiveRankServiceTest {
 	public void testRankExamResult(){
 			
 		ConditionVo cv = new ConditionVo();
-		cv.setExamId(2);
+		cv.setExamId(26);
 		cv.setGradeId(1);
-		comprehensiveRankService.rankExamReult(cv);
+		comprehensiveRankService.rankExamResult(cv);
 	}
 	
 	@Test
 	public void testRankExaminee(){
 			
 		ConditionVo cv = new ConditionVo();
-		cv.setExamId(2);
+		cv.setExamId(26);
 		cv.setGradeId(1);
 		comprehensiveRankService.rankExaminee(cv);
 	}

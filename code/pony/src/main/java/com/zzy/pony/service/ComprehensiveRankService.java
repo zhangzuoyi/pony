@@ -14,7 +14,7 @@ public interface ComprehensiveRankService {
 	* @author  wangchao262
 	* @date  2017年8月24日 上午9:59:08
 	*/
-	void rankExamReult(ConditionVo cv);
+	void rankExamResult(ConditionVo cv);
 	/*** 
 	* <p>Description: 整体排名</p>
 	* @author  wangchao262

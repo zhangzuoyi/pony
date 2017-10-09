@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.exam.mapper.AverageIndexMapper">
+	<sql id="Base_Column_List">
+	 id as id,
+	 exam_id as examId,
+	 grade_id as gradeId,
+	 subject_id as subjectId,
+	 section as section,
+	 index_value as indexValue	
+	</sql>	
+	<select id="findByExamAndGradeAndSubject" resultType="com.zzy.pony.exam.vo.AverageIndexVo">
+		select 
+		<include refid="Base_Column_List"/>
+		  from average_index t
+		where t.exam_id = #{0} and t.grade_id =#{1} and t.subject_id = #{2}
+		order by t.section	
+	</select>
+	
+</mapper>

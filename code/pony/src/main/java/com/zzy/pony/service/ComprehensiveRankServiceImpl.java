@@ -60,7 +60,7 @@ public class ComprehensiveRankServiceImpl implements ComprehensiveRankService {
 	
 	
 	@Override
-	public void rankExamReult(ConditionVo cv) {
+	public void rankExamResult(ConditionVo cv) {
 		// TODO Auto-generated method stub
 		List<Integer> subjectIds = examResultMapper.findSubjectByExam(cv.getExamId());
 		Exam exam = examService.get(cv.getExamId());	
@@ -132,7 +132,7 @@ public class ComprehensiveRankServiceImpl implements ComprehensiveRankService {
 		for (int i = 0; i < list.size(); i++) {
 			if (unsortMap.containsKey(list.get(i).getKey()) && i != 0) {
 				//新增相同处理逻辑
-				if (unsortMap.get(list.get(i).getKey()).get("sum") == list.get(i-1).getValue() ) {
+				if (unsortMap.get(list.get(i).getKey()).get("sum").equals(list.get(i-1).getValue()) ) {
 					unsortMap.get(list.get(i).getKey()).put("gradeRank", unsortMap.get(list.get(i-1).getKey()).get("gradeRank"));															
 				}else {
 					unsortMap.get(list.get(i).getKey()).put("gradeRank", (float)(i+1));												
@@ -141,47 +141,49 @@ public class ComprehensiveRankServiceImpl implements ComprehensiveRankService {
 			}else {
 				unsortMap.get(list.get(i).getKey()).put("gradeRank", (float)(i+1));	
 			}
-		}		
-		//班级排名
-		List<SchoolClass> schoolClasses = schoolClassService.findByGrade(gradeId);
-		for (SchoolClass schoolClass : schoolClasses) {
-			List<Student> students = studentService.findBySchoolClass(schoolClass.getClassId());
-			map.clear();
-			for (Student student : students) {
-				if (unsortMap.containsKey(student.getStudentId())) {
-					map.put(student.getStudentId(), unsortMap.get(student.getStudentId()).get("sum"));
-				}
-			}
-			List<Map.Entry<Integer, Float>> classList = new ArrayList<Map.Entry<Integer,Float>>(map.entrySet());
-			
-			Collections.sort(classList, new Comparator<Map.Entry<Integer, Float>>() {
-
-				@Override
-				public int compare(Map.Entry<Integer, Float> o1,
-						Map.Entry<Integer, Float> o2) {
-					// TODO Auto-generated method stub
-					return o2.getValue().compareTo(o1.getValue());
-				}				
-			});
-			for (int i = 0; i < classList.size(); i++) {
-				if (unsortMap.containsKey(classList.get(i).getKey()) && i != 0) {
-					//新增相同处理逻辑
-					if (unsortMap.get(classList.get(i).getKey()).get("sum") == classList.get(i-1).getValue() ) {
-						unsortMap.get(classList.get(i).getKey()).put("classRank", unsortMap.get(classList.get(i-1).getKey()).get("classRank"));															
-					}else {
-						unsortMap.get(classList.get(i).getKey()).put("classRank", (float)(i+1));												
-					}	
-	    				
-				}else {
-					unsortMap.get(classList.get(i).getKey()).put("classRank", (float)(i+1));	
-				}
-			}
-			
-			
 		}
-		
-		return unsortMap;
+		//班级排名
+				List<SchoolClass> schoolClasses = schoolClassService.findByGrade(gradeId);
+				for (SchoolClass schoolClass : schoolClasses) {
+					List<Student> students = studentService.findBySchoolClass(schoolClass.getClassId());
+					map.clear();
+					for (Student student : students) {
+						if (unsortMap.containsKey(student.getStudentId())) {
+							map.put(student.getStudentId(), unsortMap.get(student.getStudentId()).get("sum"));
+						}
+					}
+					List<Map.Entry<Integer, Float>> classList = new ArrayList<Map.Entry<Integer,Float>>(map.entrySet());
+					
+					Collections.sort(classList, new Comparator<Map.Entry<Integer, Float>>() {
+
+						@Override
+						public int compare(Map.Entry<Integer, Float> o1,
+								Map.Entry<Integer, Float> o2) {
+							// TODO Auto-generated method stub
+							return o2.getValue().compareTo(o1.getValue());
+						}				
+					});
+					for (int i = 0; i < classList.size(); i++) {
+						if (unsortMap.containsKey(classList.get(i).getKey()) && i != 0) {
+							//新增相同处理逻辑
+							if (unsortMap.get(classList.get(i).getKey()).get("sum").equals(classList.get(i-1).getValue())   ) {
+								unsortMap.get(classList.get(i).getKey()).put("classRank", unsortMap.get(classList.get(i-1).getKey()).get("classRank"));															
+							}else {
+								unsortMap.get(classList.get(i).getKey()).put("classRank", (float)(i+1));												
+							}	
+			    				
+						}else {
+							unsortMap.get(classList.get(i).getKey()).put("classRank", (float)(i+1));	
+						}
+					}
+					
+					
+				}
+				
+				return unsortMap;
+
 	}
+	
 
 	@Override
 	public List<Map<String, Object>> findRankByExam(int examId,int yearId,int gradeId) {

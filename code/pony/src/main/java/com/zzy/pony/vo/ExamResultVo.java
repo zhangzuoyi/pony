@@ -10,6 +10,10 @@ public class ExamResultVo {
 	private Integer examId;
 	private String examName;
 	private Float score;
+	private int classRank;
+	private int gradeRank;
+	private int classId;
+	private int classSeq;
 	
 	public Integer getStudentId() {
 		return studentId;
@@ -65,6 +69,31 @@ public class ExamResultVo {
 	public void setSubjectId(Integer subjectId) {
 		this.subjectId = subjectId;
 	}
+	public int getClassRank() {
+		return classRank;
+	}
+	public void setClassRank(int classRank) {
+		this.classRank = classRank;
+	}
+	public int getGradeRank() {
+		return gradeRank;
+	}
+	public void setGradeRank(int gradeRank) {
+		this.gradeRank = gradeRank;
+	}
+	public int getClassId() {
+		return classId;
+	}
+	public void setClassId(int classId) {
+		this.classId = classId;
+	}
+	public int getClassSeq() {
+		return classSeq;
+	}
+	public void setClassSeq(int classSeq) {
+		this.classSeq = classSeq;
+	}
+	
 	
 	
 }

@@ -10,4 +10,10 @@ public interface AverageService {
 	List<AverageIndexRowVo> findIndexRowVo(Integer examId, Integer gradeId);
 	void saveIndexList(Integer examId, Integer gradeId, List<AverageIndex> indexList);
 	void uploadIndexList(Integer examId, Integer gradeId, List<String> subjectList, List<List<Float>> valueList);
+	/**
+	 * @param examId
+	 * @param gradeId
+	 * 计算档数，累数
+	 */
+	void calculateAverage(int examId,int gradeId);
 }

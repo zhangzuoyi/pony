@@ -4,36 +4,53 @@
 
 <mapper namespace="com.zzy.pony.mapper.ExamResultMapper">
 	<sql id="base_select">
-		select s.STUDENT_ID studentId,s.STUDENT_NO studentNo,s.NAME studentName,r.RESULT_ID resultId,
-		r.SCORE,e.EXAM_ID examId,e.NAME examName,sub.NAME subjectName from t_student s 
-		left join t_exam_result r on s.STUDENT_ID=r.STUDENT_ID 
+		select s.STUDENT_ID studentId,s.STUDENT_NO studentNo,s.NAME
+		studentName,r.RESULT_ID resultId,
+		r.SCORE,e.EXAM_ID examId,e.NAME
+		examName,sub.NAME subjectName from t_student s
+		left join t_exam_result r on s.STUDENT_ID=r.STUDENT_ID
 		left join t_exam e on r.EXAM_ID=e.EXAM_ID
-		left join t_subject sub on r.SUBJECT_ID=sub.SUBJECT_ID
+		left join t_subject sub on
+		r.SUBJECT_ID=sub.SUBJECT_ID
 	</sql>
 	<select id="find" resultType="com.zzy.pony.vo.ExamResultVo">
 		<include refid="base_select"></include>
-		 where s.class_id=#{1} and e.EXAM_ID=#{0} and r.subject_id=#{2}
+		where s.class_id=#{1} and e.EXAM_ID=#{0} and r.subject_id=#{2}
 	</select>
 	<select id="findByStudent" resultType="com.zzy.pony.vo.ExamResultVo">
 		<include refid="base_select"></include>
-		 where s.STUDENT_ID=#{0}
+		where s.STUDENT_ID=#{0}
 	</select>
 	<select id="findSubjectByExam" resultType="int">
-		select distinct subject_id from t_exam_result where exam_id = #{0}
+		select distinct
+		subject_id from t_exam_result where exam_id = #{0}
 	</select>
 	<select id="findExamReuslt" resultType="com.zzy.pony.vo.ExamResultVo">
 		<include refid="base_select"></include>
-		 where s.student_id=#{1} and e.EXAM_ID=#{0} and r.subject_id=#{2}
+		where s.student_id=#{1} and e.EXAM_ID=#{0} and r.subject_id=#{2}
 	</select>
 	<select id="findTotalScoreByExam" resultType="java.util.HashMap">
-		select t.EXAM_ID as examId,t.STUDENT_ID as studentId,SUM(t.SCORE) as totalScore 
-		from t_exam_result t WHERE t.EXAM_ID = #{0} group by t.EXAM_ID,t.STUDENT_ID ;
+		select t.EXAM_ID as
+		examId,t.STUDENT_ID as studentId,SUM(t.SCORE) as totalScore
+		from t_exam_result t WHERE t.EXAM_ID = #{0} group by
+		t.EXAM_ID,t.STUDENT_ID ;
 	</select>
 	<delete id="deleteByExam">
 		delete from t_exam_result where exam_id=#{0}
 	</delete>
 	<insert id="insert">
-		insert into t_exam_result(exam_id,student_id,score,create_time,create_user,update_time,update_user,subject_id) 
+		insert into
+		t_exam_result(exam_id,student_id,score,create_time,create_user,update_time,update_user,subject_id)
 		values(#{0},#{1},#{2},current_timestamp(),#{4},current_timestamp(),#{4},#{3})
 	</insert>
+	<select id="findByExamAndGradeAndSubject" resultType="com.zzy.pony.vo.ExamResultVo">
+		select t.result_id as resultId,t.exam_id as examId,t.student_id as studentId,t.score as score,
+		t.subject_id as subjectId,t.class_rank as classRank,t.grade_rank as gradeRank,				
+		a.CLASS_ID as classId,b.SEQ as classSeq from t_exam_result t left join t_student a on
+		t.STUDENT_ID = a.student_id
+		left join t_school_class b on a.CLASS_ID = b.CLASS_ID
+		where EXAM_ID = #{0} and SUBJECT_ID = #{2} and b.GRADE_ID = #{1} order by
+		GRADE_RANK;
+
+	</select>
 </mapper>
