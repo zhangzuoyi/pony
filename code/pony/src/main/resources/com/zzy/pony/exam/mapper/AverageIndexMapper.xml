@@ -16,7 +16,7 @@
 		<include refid="Base_Column_List"/>
 		  from average_index t
 		where t.exam_id = #{0} and t.grade_id =#{1} and t.subject_id = #{2}
-		order by t.section	
+		order by t.id	
 	</select>
 	
 </mapper>
