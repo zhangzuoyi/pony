@@ -10,12 +10,15 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.dao.UserDao;
+import com.zzy.pony.mapper.RoleMapper;
 import com.zzy.pony.mapper.UserMapper;
 import com.zzy.pony.model.Resource;
 import com.zzy.pony.model.Role;
@@ -37,6 +40,8 @@ public class UserServiceImpl implements UserService {
 	private TeacherService teacherService;
 	@Autowired
 	private StudentService studentService;
+	@Autowired
+	private RoleMapper roleMapper;
 
 	@Override
 	public User findByLoginName(String loginName) {
@@ -223,6 +228,19 @@ public class UserServiceImpl implements UserService {
 				result.add(res.getResKey());
 			}
 		}
+		return result;
+	}
+
+	@Override
+	public Page<UserVo> findPage(int currentPage, int pageSize, String userType, String userName) {
+		List<UserVo> list=mapper.findPage(currentPage*pageSize, pageSize, userType, userName);
+		for(UserVo vo: list) {
+			List<String> roles=roleMapper.findRoleCodeByUser(vo.getUserId());
+			vo.setRoles(roles.toArray(new String[0]));
+		}
+		int count=mapper.findCount(userType, userName);
+		Pageable pageable = new PageRequest(currentPage, pageSize);
+		Page<UserVo> result = new PageImpl<UserVo>(list, pageable, count);
 		return result;
 	}
 	

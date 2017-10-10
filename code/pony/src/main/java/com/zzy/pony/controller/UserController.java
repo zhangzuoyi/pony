@@ -49,37 +49,39 @@ public class UserController {
 	}
 	@RequestMapping(value="listPage",method = RequestMethod.GET)
 	@ResponseBody
-	public Page<UserVo> listPage(@RequestParam(value="currentPage",defaultValue="0") int currentPage,@RequestParam(value="pageSize",defaultValue="20") int pageSize){		
-		Pageable pageable=new PageRequest(currentPage, pageSize,Direction.ASC,"userId");
-		Page<UserVo> result=null;		
-		Page<User> userPage = userService.findAll(pageable);
-		List<UserVo> content = new ArrayList<UserVo>();
-		for (User user : userPage) {
-			UserVo vo = new UserVo();
-			vo.setLastLoginTime(user.getLastLoginTime());
-			vo.setLoginName(user.getLoginName());
-			vo.setPsw(user.getPsw());
-			vo.setUserId(user.getUserId());
-			vo.setUserType(user.getUserType());
-			if (Constants.USER_TYPE_STUDENT.equalsIgnoreCase(user.getUserType())){
-				vo.setUserName(user.getStudent().getName());
-			}
-			if (Constants.USER_TYPE_TEACHER.equalsIgnoreCase(user.getUserType())){
-				vo.setUserName(user.getTeacher().getName());
-			}
-			List<String> roles = new ArrayList<String>();
-			if(user.getRoles() != null && user.getRoles().size()>0){
-				for (Role role : user.getRoles()) {
-					roles.add(role.getRoleCode());
-				}
-			}
-			vo.setRoles(roles.toArray(new String[0]));
-			content.add(vo);
-			
-		}
-		result = new PageImpl<UserVo>(content, pageable, userPage.getTotalElements());					
-		return result;
+	public Page<UserVo> listPage(@RequestParam(value="currentPage",defaultValue="0") int currentPage,@RequestParam(value="pageSize",defaultValue="20") int pageSize,
+			@RequestParam(value="userType",defaultValue="") String userType,@RequestParam(value="userName",defaultValue="") String userName){		
+//		Pageable pageable=new PageRequest(currentPage, pageSize,Direction.ASC,"userId");
+//		Page<UserVo> result=null;		
+//		Page<User> userPage = userService.findAll(pageable);
+//		List<UserVo> content = new ArrayList<UserVo>();
+//		for (User user : userPage) {
+//			UserVo vo = new UserVo();
+//			vo.setLastLoginTime(user.getLastLoginTime());
+//			vo.setLoginName(user.getLoginName());
+//			vo.setPsw(user.getPsw());
+//			vo.setUserId(user.getUserId());
+//			vo.setUserType(user.getUserType());
+//			if (Constants.USER_TYPE_STUDENT.equalsIgnoreCase(user.getUserType())){
+//				vo.setUserName(user.getStudent().getName());
+//			}
+//			if (Constants.USER_TYPE_TEACHER.equalsIgnoreCase(user.getUserType())){
+//				vo.setUserName(user.getTeacher().getName());
+//			}
+//			List<String> roles = new ArrayList<String>();
+//			if(user.getRoles() != null && user.getRoles().size()>0){
+//				for (Role role : user.getRoles()) {
+//					roles.add(role.getRoleCode());
+//				}
+//			}
+//			vo.setRoles(roles.toArray(new String[0]));
+//			content.add(vo);
+//			
+//		}
+//		result = new PageImpl<UserVo>(content, pageable, userPage.getTotalElements());					
+//		return result;
 		
+		return userService.findPage(currentPage, pageSize, userType, userName);
 		
 	}
 

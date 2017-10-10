@@ -37,11 +37,26 @@ width:200px;
               <b>用户管理</b>
               </el-col>
               </el-row>
-              <!-- <el-row>                            
-               <el-col :offset="20" :span="4">
-               <el-button type="primary" @click="addUser">新增用户</el-button>
-               </el-col>             
-              </el-row> -->
+              <el-row>                            
+            	<el-col :span="2" >
+                    <b>用户类型:</b>
+            	</el-col> 
+            	<el-col :span="4" >
+                    <el-select v-model="userType" placeholder="请选择" clearable>
+	                    <el-option v-for="x in userTypes" :label="x.name" :value="x.type"></el-option>
+	                </el-select>
+            	</el-col> 
+            	<el-col :span="2" >
+                    <b>姓名:</b>
+            	</el-col> 
+            	<el-col :span="4" >
+                    <el-input v-model="userName" />
+            	</el-col> 
+            	<el-col :span="4" >
+               		<el-button type="primary"  @click="search">查询</el-button>
+               		<!-- <el-button type="primary"  @click="showAdd">新增</el-button> -->
+              	</el-col>                           
+              </el-row>
             </div>
             <el-table
                     :data="tableData"
@@ -56,7 +71,7 @@ width:200px;
                         >
                 </el-table-column>
                 <el-table-column
-                        prop="userName"
+                        prop="showName"
                         label="用户名"
                 >
                 </el-table-column>
@@ -179,9 +194,10 @@ var app = new Vue({
 		pageSizes :[20,50,100],
 		pageSize:[20],
 		total:null,
-        userId : null
-	
-	
+        userId : null,
+        userType : null,
+		userTypes : [{type:"t",name:"老师"},{type:"s",name:"学生"}],
+		userName : null
 		
 	}, 
 	filters: {    
@@ -250,14 +266,13 @@ var app = new Vue({
 			); 
 			} ,
 			getUsers : function(){
-			this.$http.get(this.usersUrl,{params:{currentPage:this.currentPage-1,pageSize:this.pageSize}}).then(
-			function(response){
-			this.tableData=response.data.content;
-			this.total = response.data.totalElements;
-			
-			},
-			function(response){}  			
-			); 
+			this.$http.get(this.usersUrl,{params:{currentPage:this.currentPage-1,pageSize:this.pageSize,userType: this.userType, userName: this.userName}}).then(
+				function(response){
+					this.tableData=response.data.content;
+					this.total = response.data.totalElements;
+				},
+				function(response){}  			
+				); 
 			} ,
         resetPsw :  function(index,row){
             if(row.userId == null){
@@ -288,6 +303,10 @@ var app = new Vue({
 
 
         },
+        search : function(){
+        	this.currentPage=1;
+        	this.getUsers();
+        }
 
 
 		/* handleEdit : function(index,row){

@@ -36,5 +36,5 @@ public interface UserService {
 	 * @return
 	 */
 	Set<String> findResourceNames(Integer userId);
-
+	Page<UserVo> findPage(int currentPage,int pageSize,String userType,String userName);
 }
