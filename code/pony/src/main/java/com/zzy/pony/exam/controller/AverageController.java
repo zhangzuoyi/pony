@@ -1,12 +1,26 @@
 package com.zzy.pony.exam.controller;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.Region;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -27,16 +41,40 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.google.gson.Gson;
+import com.zzy.pony.config.Constants;
+import com.zzy.pony.exam.mapper.AverageIndexMapper;
 import com.zzy.pony.exam.model.AverageIndex;
 import com.zzy.pony.exam.service.AverageService;
 import com.zzy.pony.exam.vo.AverageIndexRowVo;
+import com.zzy.pony.exam.vo.AverageIndexVo;
+import com.zzy.pony.model.Exam;
+import com.zzy.pony.model.SchoolClass;
+import com.zzy.pony.model.SchoolYear;
+import com.zzy.pony.model.Subject;
+import com.zzy.pony.service.ExamService;
+import com.zzy.pony.service.SchoolClassService;
+import com.zzy.pony.service.SchoolYearService;
+import com.zzy.pony.service.SubjectService;
+import com.zzy.pony.util.DateTimeUtil;
 import com.zzy.pony.util.TemplateUtil;
+import com.zzy.pony.vo.GsonVo;
 
 @Controller
 @RequestMapping(value="/examAdmin/average")
 public class AverageController {
 	@Autowired
 	private AverageService service;
+	@Autowired
+	private ExamService examService;
+	@Autowired
+	private SchoolClassService schoolClassService;
+	@Autowired
+	private SchoolYearService yearService;
+	@Autowired
+	private AverageIndexMapper averageIndexMapper;
+	@Autowired
+	private SubjectService subjectService;
 	
 	@RequestMapping(value="main",method=RequestMethod.GET)
 	public String main(Model model){
@@ -127,4 +165,107 @@ public class AverageController {
 		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 		return new ResponseEntity<byte[]>(TemplateUtil.getContent(fileName), headers, HttpStatus.CREATED);
 	}
+	@SuppressWarnings("deprecation")
+	@RequestMapping(value="exportAverage",method = RequestMethod.GET)	 
+    public void exportByClassId(HttpServletRequest request,HttpServletResponse response) throws Exception{  
+        
+		int examId = Integer.valueOf(request.getParameter("examId"));
+        int gradeId = Integer.valueOf(request.getParameter("gradeId"));
+        Exam exam = examService.get(examId);
+        String title = exam.getName()+ "均量值统计";
+        SchoolYear year = yearService.getCurrent();
+        List<SchoolClass> schoolClasses = schoolClassService.findByYearAndGradeOrderBySeq(year.getYearId(), gradeId);
+        Map<Integer,Map<String, Map<String, BigDecimal>>> dataMap = service.calculateAverage(examId, gradeId);
+				
+		try{  
+            HSSFWorkbook workbook = new HSSFWorkbook();                     // 创建工作簿对象  
+    		HSSFSheet sheet = workbook.createSheet(title);                  // 创建工作表   
+    		List<Map<String, Object>> headList = new ArrayList<Map<String,Object>>();
+    		List<Map<String, Object>> datas = new ArrayList<Map<String,Object>>();
+
+    		int range = 0 ;
+    		for (Integer	 subjectId : dataMap.keySet()) {
+    			Map<String, Map<String, BigDecimal>> innerMap = dataMap.get(subjectId);
+        		Subject subject = subjectService.get(subjectId);
+    			List<AverageIndexVo> averageIndexVos = averageIndexMapper.findByExamAndGradeAndSubject(examId, gradeId,subject.getSubjectId());
+    			// 产生表格标题行  
+                HSSFRow titleRow = sheet.createRow(range); 
+                HSSFCell titleCell = titleRow.createCell(0);                                                                     
+                sheet.addMergedRegion(new Region(range, (short)0,range, (short)(1)));    
+                titleCell.setCellValue(subject.getName()); 
+                HSSFRow headRow = sheet.createRow(range+1);
+                headRow.createCell(0).setCellValue("段名");
+                headRow.createCell(1).setCellValue("各档指标");
+            	int classSize = 1; 
+                for (SchoolClass schoolClass : schoolClasses) {
+                	HSSFCell classSeqCell = titleRow.createCell(classSize*2);
+                	classSeqCell.setCellValue(schoolClass.getSeq());                	
+                	headRow.createCell(classSize*2).setCellValue("档数");
+                	headRow.createCell(classSize*2+1).setCellValue("累数");
+                	classSize++;
+				}
+				int index = 0;
+                for (String section : innerMap.keySet()) {
+                	HSSFRow dataRow = sheet.createRow(range+index+2);
+					dataRow.createCell(0).setCellValue(section);
+					dataRow.createCell(1).setCellValue(String.valueOf(averageIndexVos.get(index).getIndexValue()));
+					for (int j=1;j<=schoolClasses.size();j++) {
+						dataRow.createCell(j*2).setCellValue(innerMap.get(section).get("level"+j).toString());
+						dataRow.createCell(j*2+1).setCellValue(innerMap.get(section).get("levelSum"+j).toString());
+					}					
+					index++;
+				}
+                range += 25;
+    		}
+          //让列宽随着导出的列长自动适应  
+            for (int colNum = 0; colNum < 30; colNum++) {
+                int columnWidth = sheet.getColumnWidth(colNum) / 256;
+                for (int rowNum = 3; rowNum < sheet.getLastRowNum(); rowNum++) {
+                    HSSFRow currentRow;  
+                    //当前行未被使用过  
+                    if (sheet.getRow(rowNum) == null) {
+                        currentRow = sheet.createRow(rowNum);
+                    } else {  
+                        currentRow = sheet.getRow(rowNum);
+                    }  
+                    if (currentRow.getCell(colNum) != null&&!"".equals(currentRow.getCell(colNum))) {  
+                        HSSFCell currentCell = currentRow.getCell(colNum);  
+                        if (currentCell.getCellType() == HSSFCell.CELL_TYPE_STRING) {  
+                            int length = currentCell.getStringCellValue().getBytes().length;  
+                            if (columnWidth < length) {  
+                                columnWidth = length;  
+                            }  
+                        }  
+                    }  
+                }                 
+                sheet.setColumnWidth(colNum, (columnWidth+4) * 256);
+            }
+            
+                                  
+            if(workbook !=null){  
+                try  
+                {
+                	String fileName = new String(title.getBytes("utf-8"), "ISO8859-1")+DateTimeUtil.dateToStr(new Date()) + ".xls" ;
+                  //  String fileName = "Excel-" + String.valueOf(System.currentTimeMillis()).substring(4, 13) + ".xls";  
+                    String headStr = "attachment; filename=\"" + fileName + "\"";  
+                  //  response = getResponse();  
+                    response.setContentType("APPLICATION/OCTET-STREAM");  
+                    response.setHeader("Content-Disposition", headStr);  
+                    OutputStream out = response.getOutputStream();  
+                    workbook.write(out);  
+                }  
+                catch (IOException e)  
+                {  
+                    e.printStackTrace();  
+                }  
+            }  
+  
+        }catch(Exception e){  
+            e.printStackTrace();  
+        }  
+          
+    }
+	
+	
+	
 }

@@ -84,6 +84,8 @@ width:200px;
                		<el-button type="primary"  @click="list">查询</el-button>
                		<el-button type="primary"  @click="setAverageIndex">设置均量值指标</el-button>
                		<el-button type="primary"  @click="openUploadIndex">导入指标</el-button>
+               		<el-button type="primary"  @click="exportAverage">导出</el-button>
+               		
               	</el-col>                           
               </el-row>
             </div>
@@ -297,7 +299,31 @@ var app = new Vue({
             },
             list : function(){
             	
-            }
+            },
+            exportAverage : function(){
+   			 if(this.examId == null || this.examId == ""){
+                 	this.$alert("请选择考试","提示",{
+   					type:"warning",
+   					confirmButtonText:'确认'
+   				});
+   				return;
+                 }			
+   			if(this.gradeId == null || this.gradeId == ""){
+                 	this.$alert("请选择年级","提示",{
+   					type:"warning",
+   					confirmButtonText:'确认'
+   				});
+   				return;
+                 }              
+   					var exportParams = {
+   										examId : this.examId,
+   										gradeId:this.gradeId
+   								};
+   					var url = "<s:url value='/examAdmin/average/exportAverage?'/>"+jQuery.param(exportParams);
+   					/*  window.location.href = encodeURI(encodeURI(url));*/
+   				    window.open(encodeURI(encodeURI(url)));	
+   			}	
+            
         }	        
 });  
 </script>

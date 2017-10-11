@@ -1,6 +1,8 @@
 package com.zzy.pony.exam.service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import com.zzy.pony.exam.model.AverageIndex;
 import com.zzy.pony.exam.vo.AverageIndexRowVo;
@@ -15,5 +17,5 @@ public interface AverageService {
 	 * @param gradeId
 	 * 计算档数，累数
 	 */
-	void calculateAverage(int examId,int gradeId);
+	Map<Integer,Map<String, Map<String, BigDecimal>>> calculateAverage(int examId,int gradeId);
 }
