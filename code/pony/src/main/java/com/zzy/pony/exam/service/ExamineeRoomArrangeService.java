@@ -15,6 +15,8 @@ public interface ExamineeRoomArrangeService {
 	void deleteAll();
 	String findExamineeRoomArrangeByClassId(int classId,int gradeId,int examId,String type);//type  select 查询  export 导出
 	String findExamineeRoomArrangeByRoomId(String roomId,int gradeId,int examId,String type);
+	String findExamineeRoomArrangeBySubjectId(int subjectId,int gradeId,int examId,String type);
+
 	
 
 	

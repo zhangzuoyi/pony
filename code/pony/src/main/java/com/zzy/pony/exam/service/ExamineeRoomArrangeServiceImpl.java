@@ -246,8 +246,14 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		}					
 		List<Map<String, Object>> headList = new ArrayList<Map<String,Object>>();
 		Map<String, Object> regNoMap = new HashMap<String, Object>();
-		regNoMap.put("prop", "regNo");
-		regNoMap.put("label", "准考证号");
+		if (Constants.SELECT.equalsIgnoreCase(type)) {
+			regNoMap.put("prop", "regNo");
+			regNoMap.put("label", "准考证号");
+		}
+		if (Constants.EXPORT.equalsIgnoreCase(type)) {
+			regNoMap.put("prop", "regNo");
+			regNoMap.put("label", "后四位");
+		}		
 		Map<String, Object> studentNameMap = new HashMap<String, Object>();
 		studentNameMap.put("prop", "studentName");
 		studentNameMap.put("label", "姓名");
@@ -268,7 +274,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 			headMap.put("label", arrangeMap.get(arrangeId));
 			Map<String, Object> headSeqMap = new HashMap<String, Object>();
 			headSeqMap.put("prop", arrangeSeqHeadMap.get(arrangeId));
-			headSeqMap.put("label", "序号");
+			headSeqMap.put("label", "座号");
 			headList.add(headMap);
 			headList.add(headSeqMap);
 		} 
@@ -286,7 +292,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 			headMap.put("label", groupMap.get(arrangeId));
 			Map<String, Object> headSeqMap = new HashMap<String, Object>();
 			headSeqMap.put("prop", groupSeqHeadMap.get(arrangeId));
-			headSeqMap.put("label", "序号");
+			headSeqMap.put("label", "座号");
 			headList.add(headMap);
 			headList.add(headSeqMap);
 
@@ -442,7 +448,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		roomNameMap.put("label", "考场");
 		Map<String, Object> seqMap = new HashMap<String, Object>();
 		seqMap.put("prop", "seq");
-		seqMap.put("label", "座位号");	
+		seqMap.put("label", "座号");	
 		headList.add(roomNameMap);
 		headList.add(seqMap);		
 		for (Integer arrangeId : arrangeHeadMap.keySet()) {
@@ -451,8 +457,14 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 			headMap.put("prop", arrangeHeadMap.get(arrangeId));
 			headMap.put("label", arrangeMap.get(arrangeId));
 			Map<String, Object> headSeqMap = new HashMap<String, Object>();
-			headSeqMap.put("prop", arrangeSeqHeadMap.get(arrangeId));
-			headSeqMap.put("label", "准考证号");
+			if (Constants.SELECT.equalsIgnoreCase(type)) {
+				headSeqMap.put("prop", arrangeSeqHeadMap.get(arrangeId));
+				headSeqMap.put("label", "准考证号");
+			}
+			if (Constants.EXPORT.equalsIgnoreCase(type)) {
+				headSeqMap.put("prop", arrangeSeqHeadMap.get(arrangeId));
+				headSeqMap.put("label", "后四位");
+			}						
 			headList.add(headMap);
 			headList.add(headSeqMap);
 
@@ -470,8 +482,14 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 			headMap.put("prop", groupHeadMap.get(arrangeId));
 			headMap.put("label", groupMap.get(arrangeId));
 			Map<String, Object> headSeqMap = new HashMap<String, Object>();
-			headSeqMap.put("prop", groupSeqHeadMap.get(arrangeId));
-			headSeqMap.put("label", "准考证号");
+			if (Constants.SELECT.equalsIgnoreCase(type)) {
+				headSeqMap.put("prop", groupSeqHeadMap.get(arrangeId));
+				headSeqMap.put("label", "准考证号");
+			}
+			if (Constants.EXPORT.equalsIgnoreCase(type)) {
+				headSeqMap.put("prop", groupSeqHeadMap.get(arrangeId));
+				headSeqMap.put("label", "后四位");
+			}			
 			headList.add(headMap);
 			headList.add(headSeqMap);
 
@@ -484,6 +502,197 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 			headList.add(headMap);		
 		} */
 		
+		GsonBuilder gb = new GsonBuilder();
+		Gson gson = gb.create();
+		String data = gson.toJson(dataList);
+		Gson gson2 = gb.create();
+		String head= gson2.toJson(headList);		
+		result.append("{\"total\"");
+		result.append(":");
+		result.append(dataList.size());
+		result.append(",\"rows\":");
+		result.append(data);
+		result.append(",\"title\":");
+		result.append(head);		
+		result.append("}");		
+		return result.toString();
+	}
+	
+	@Override
+	public String findExamineeRoomArrangeBySubjectId(int subjectId,int gradeId,int examId,String type) {
+		// TODO Auto-generated method stub
+		StringBuilder result = new StringBuilder();
+		String[] arrangeStrings = {"colOne","colTwo","colThree","colFour","colFive","colSix","colSeven","colEight","colNine","colTen","colEleven","colTwelve"};
+		String[] groupStrings = {"columnOne","columnTwo","columnThree","columnFour","columnFive","columnSix","columnSeven","columnEight","columnNine","columnTen","columnEleven","columnTwelve"};
+		String[] arrangeSeqStrings = {"colSeqOne","colSeqTwo","colSeqThree","colSeqFour","colSeqFive","colSeqSix","colSeqSeven","colSeqEight","colSeqNine","colSeqTen","colSeqEleven","colSeqTwelve"};
+		String[] groupSeqStrings = {"columnSeqOne","columnSeqTwo","columnSeqThree","columnSeqFour","columnSeqFive","columnSeqSix","columnSeqSeven","columnSeqEight","columnSeqNine","columnSeqTen","columnSeqEleven","columnSeqTwelve"};
+
+		ExamArrangeVo examArrange = examArrangeService.findVoByExamAndGradeAndSubject(examId, gradeId, subjectId);
+		Map<Integer , String> arrangeMap = new HashMap<Integer, String>();//不在组内
+		Map<Integer, String> groupMap = new HashMap<Integer, String>();//在组内
+		Map<Integer, String> arrangeHeadMap = new HashMap<Integer, String>();
+		Map<Integer, String> groupHeadMap = new HashMap<Integer, String>();
+		Map<Integer, String> arrangeSeqHeadMap = new HashMap<Integer, String>();
+		Map<Integer, String> groupSeqHeadMap = new HashMap<Integer, String>();
+		
+			if (examArrange.getGroupId() == 0) {
+				arrangeMap.put(examArrange.getArrangeId(), examArrange.getSubjectName());
+			}else{
+				if (groupMap.get(examArrange.getGroupId()) != null) {
+					groupMap.put(examArrange.getGroupId(), groupMap.get(examArrange.getGroupId())+examArrange.getSubjectName());
+				}else{
+					groupMap.put(examArrange.getGroupId(), examArrange.getSubjectName());
+				}								
+			}							
+		
+		int i=0;
+		for (Integer key : arrangeMap.keySet()) {
+			arrangeHeadMap.put(key,arrangeStrings[i]);
+			i++;
+		}
+		int j=0;
+		for (Integer key : groupMap.keySet()) {
+			groupHeadMap.put(key,groupStrings[j]);
+			j++;
+		}
+		int m=0;
+		for (Integer key : arrangeMap.keySet()) {
+			arrangeSeqHeadMap.put(key,arrangeSeqStrings[m]);
+			m++;
+		}
+		int n=0;
+		for (Integer key : groupMap.keySet()) {
+			groupSeqHeadMap.put(key,groupSeqStrings[n]);
+			n++;
+		}
+		List<ExamineeRoomArrangeVo> examineeRoomArrangeVos =  examineeRoomArrangeMapper.findExamineeRoomArrangeBySubjectId(subjectId, examId);		
+		List<Map<String, Object>> dataList = new ArrayList<Map<String,Object>>();
+		Map<String, Map<String, Object>> map = new LinkedHashMap<String, Map<String,Object>>();//key:roomId+seq  有序 
+		for (ExamineeRoomArrangeVo vo : examineeRoomArrangeVos) {
+			if (map.containsKey(vo.getRoomId()+"#"+vo.getSeq())) {
+				Map<String, Object> innerMap = map.get(vo.getRoomId()+"#"+vo.getSeq());
+				if (vo.getGroupId() == 0) {
+					innerMap.put(arrangeHeadMap.get(vo.getArrangeId()), vo.getStudentName());					
+					if (Constants.SELECT.equalsIgnoreCase(type)) {
+						innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo());
+					}
+					if (Constants.EXPORT.equalsIgnoreCase(type)) {
+						innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));
+					}
+					
+				}else {
+					if (innerMap.containsKey(groupHeadMap.get(vo.getGroupId()))
+							&&(!innerMap.get(groupHeadMap.get(vo.getGroupId())).toString().equalsIgnoreCase(vo.getStudentName()) 
+							||!innerMap.get(groupSeqHeadMap.get(vo.getGroupId())).toString().equalsIgnoreCase(vo.getRegNo()))
+							 ) {
+						innerMap.put(groupHeadMap.get(vo.getGroupId()),innerMap.get(groupHeadMap.get(vo.getGroupId()))+";"+vo.getStudentName() );
+						
+						if (Constants.SELECT.equalsIgnoreCase(type)) {
+							innerMap.put(groupSeqHeadMap.get(vo.getGroupId()),innerMap.get(groupSeqHeadMap.get(vo.getGroupId()))+";"+vo.getRegNo());
+						}
+						if (Constants.EXPORT.equalsIgnoreCase(type)) {
+							innerMap.put(groupSeqHeadMap.get(vo.getGroupId()),innerMap.get(groupSeqHeadMap.get(vo.getGroupId()))+";"+vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));
+						}
+					}else {
+						innerMap.put(groupHeadMap.get(vo.getGroupId()), vo.getStudentName());
+						if (Constants.SELECT.equalsIgnoreCase(type)) {
+							innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo());
+						}
+						if (Constants.EXPORT.equalsIgnoreCase(type)) {
+							innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));
+						}
+					}
+				}								
+			}else {
+				Map<String, Object> innerMap = new HashMap<String, Object>();
+				innerMap.put("studentNo", vo.getStudentNo());
+				if(vo.getGroupId() == 0){
+				innerMap.put(arrangeHeadMap.get(vo.getArrangeId()), vo.getStudentName());
+				if (Constants.SELECT.equalsIgnoreCase(type)) {
+					innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo());
+				}
+				if (Constants.EXPORT.equalsIgnoreCase(type)) {
+					innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));
+				}
+				
+				}else {
+				innerMap.put(groupHeadMap.get(vo.getGroupId()), vo.getStudentName());
+				if (Constants.SELECT.equalsIgnoreCase(type)) {
+					innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo());	
+				}
+				if (Constants.EXPORT.equalsIgnoreCase(type)) {
+					innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));	
+				}				
+				}
+				innerMap.put("className", vo.getClassName());
+				innerMap.put("roomName", vo.getRoomName());
+
+				map.put(vo.getRoomId()+"#"+vo.getSeq(), innerMap);
+			}
+															
+		}		
+			
+		for (String seq : map.keySet()) {
+			Map<String, Object> innerMap = new HashMap<String, Object>();
+			innerMap.put("seq", seq.substring(seq.indexOf("#")+1));
+			innerMap.putAll(map.get(seq));
+			dataList.add(innerMap);
+		}
+		
+		List<Map<String, Object>> headList = new ArrayList<Map<String,Object>>();
+		Map<String, Object> studentNoMap = new HashMap<String, Object>();
+		studentNoMap.put("prop", "studentNo");
+		studentNoMap.put("label", "学号");
+		headList.add(studentNoMap);
+		for (Integer arrangeId : arrangeHeadMap.keySet()) {
+			  arrangeHeadMap.get(arrangeId);
+			Map<String, Object> headMap = new HashMap<String, Object>();
+			headMap.put("prop", arrangeHeadMap.get(arrangeId));
+			headMap.put("label", "姓名");
+			Map<String, Object> headSeqMap = new HashMap<String, Object>();
+			if (Constants.SELECT.equalsIgnoreCase(type)) {
+				headSeqMap.put("prop", arrangeSeqHeadMap.get(arrangeId));
+				headSeqMap.put("label", "准考证号");
+			}
+			if (Constants.EXPORT.equalsIgnoreCase(type)) {
+				headSeqMap.put("prop", arrangeSeqHeadMap.get(arrangeId));
+				headSeqMap.put("label", "后四位");
+			}	
+			headList.add(headSeqMap);
+			headList.add(headMap);
+
+		} 		
+		for (Integer arrangeId : groupHeadMap.keySet()) {
+			  arrangeHeadMap.get(arrangeId);
+			Map<String, Object> headMap = new HashMap<String, Object>();
+			headMap.put("prop", groupHeadMap.get(arrangeId));
+			headMap.put("label", "姓名");
+			Map<String, Object> headSeqMap = new HashMap<String, Object>();
+			if (Constants.SELECT.equalsIgnoreCase(type)) {
+				headSeqMap.put("prop", groupSeqHeadMap.get(arrangeId));
+				headSeqMap.put("label", "准考证号");
+			}
+			if (Constants.EXPORT.equalsIgnoreCase(type)) {
+				headSeqMap.put("prop", groupSeqHeadMap.get(arrangeId));
+				headSeqMap.put("label", "后四位");
+			}	
+			headList.add(headSeqMap);
+			headList.add(headMap);
+
+		} 
+		
+		Map<String, Object> classMap = new HashMap<String, Object>();
+		classMap.put("prop", "className");
+		classMap.put("label", "班级");				
+		Map<String, Object> roomNameMap = new HashMap<String, Object>();
+		roomNameMap.put("prop", "roomName");
+		roomNameMap.put("label", "考场");
+		Map<String, Object> seqMap = new HashMap<String, Object>();
+		seqMap.put("prop", "seq");
+		seqMap.put("label", "座号");	
+		headList.add(classMap);
+		headList.add(roomNameMap);
+		headList.add(seqMap);								
 		GsonBuilder gb = new GsonBuilder();
 		Gson gson = gb.create();
 		String data = gson.toJson(dataList);

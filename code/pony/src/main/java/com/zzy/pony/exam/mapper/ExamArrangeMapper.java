@@ -11,6 +11,7 @@ public interface ExamArrangeMapper {
 	void  addExamArrange(int examId,int gradeId,int subjectId);
 	void  updateExamDate(Map<String,Object> map );
 	void  updateExamTime(Map<String,Object> map );
+	ExamArrangeVo findVoByExamAndGradeAndSubject(int examId,int gradeId,int subjectId);
 	List<ExamArrangeVo> findByExamAndGrade(int examId,int gradeId);	
 	List<ExamArrangeVo> findByExamAndGradeAndGroupIsNull(int examId,int gradeId);	
 

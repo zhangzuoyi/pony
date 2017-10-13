@@ -199,6 +199,9 @@
                         <a href="javascript:;" data-url="<s:url value='/examAdmin/roomExamineeRoomArrange/main/' />"><label>考场考生安排</label></a>
                     </dd>
                     <dd>
+                        <a href="javascript:;" data-url="<s:url value='/examAdmin/subjectExamineeRoomArrange/main/' />"><label>科目考生安排</label></a>
+                    </dd>
+                    <dd>
                         <a href="javascript:;" data-url="<s:url value='/examAdmin/monitorArrange/main/' />"><label>监考设置</label></a>
                     </dd>
                     <dd>

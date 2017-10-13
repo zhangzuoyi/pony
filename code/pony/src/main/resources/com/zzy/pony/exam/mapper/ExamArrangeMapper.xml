@@ -26,6 +26,13 @@
 			#{item}
 		</foreach>
 	</update>
+	<select id="findVoByExamAndGradeAndSubject" resultType="com.zzy.pony.exam.vo.ExamArrangeVo">
+		select t.arrange_id as arrangeId,t.exam_id as examId,t.grade_id as gradeId,
+		t.subject_id as subjectId,t.group_id as groupId ,t.exam_date as examDate,
+		t.start_time as startTime,t.end_time as endTime,a.`NAME` as subjectName  from t_exam_arrange t
+		left join t_subject a on t.SUBJECT_ID = a.SUBJECT_ID
+		where t.exam_id = #{0} and t.grade_id =#{1} and t.subject_id =#{2}
+	</select>
 	<select id="findByExamAndGrade" resultType="com.zzy.pony.exam.vo.ExamArrangeVo">
 		select t.arrange_id as arrangeId,t.exam_id as examId,t.grade_id as gradeId,
 		t.subject_id as subjectId,t.group_id as groupId ,t.exam_date as examDate,

@@ -23,6 +23,7 @@ public interface ExamArrangeService {
 	void addGroup(int[] examArranges,String groupName,String gradeId,String examId);
 	void delete(int arrangeId);
 	ExamArrange findByExamAndGradeAndSubject(int examId,int gradeId,int subjectId);
+	ExamArrangeVo findVoByExamAndGradeAndSubject(int examId,int gradeId,int subjectId);
 	List<ExamArrange> findByExam(int examId);
 	List<ExamArrangeVo> findVoByExamAndGradeAndGroupIsNull(int examId,int gradeId);
 	List<ExamArrangeVo> findVoByExamAndGrade(int examId,int gradeId);

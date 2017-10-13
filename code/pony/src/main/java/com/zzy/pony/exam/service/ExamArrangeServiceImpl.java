@@ -181,7 +181,14 @@ public class ExamArrangeServiceImpl implements ExamArrangeService {
 		Exam exam = examService.get(examId);		
 		return examArrangeDao.findByExam(exam);
 	}
+	
+	
 
+	@Override
+	public ExamArrangeVo findVoByExamAndGradeAndSubject(int examId, int gradeId, int subjectId) {
+		// TODO Auto-generated method stub
+		return examArrangeMapper.findVoByExamAndGradeAndSubject(examId, gradeId, subjectId);
+	}
 	@Override
 	public List<ExamArrangeVo> findVoByExamAndGrade(int examId, int gradeId) {
 		// TODO Auto-generated method stub		
