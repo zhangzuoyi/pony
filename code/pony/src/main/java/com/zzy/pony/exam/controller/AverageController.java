@@ -196,6 +196,7 @@ public class AverageController {
                 HSSFRow headRow = sheet.createRow(range+1);
                 headRow.createCell(0).setCellValue("段名");
                 headRow.createCell(1).setCellValue("各档指标");
+                int colNums = 2;
             	int classSize = 1; 
                 for (SchoolClass schoolClass : schoolClasses) {
                 	HSSFCell classSeqCell = titleRow.createCell(classSize*2);
@@ -203,7 +204,11 @@ public class AverageController {
                 	headRow.createCell(classSize*2).setCellValue("档数");
                 	headRow.createCell(classSize*2+1).setCellValue("累数");
                 	classSize++;
+                	colNums +=2;
 				}
+                titleRow.createCell(colNums).setCellValue("全部");
+                headRow.createCell(colNums).setCellValue("档数");
+                headRow.createCell(colNums+1).setCellValue("累数");                                
 				int index = 0;
                 for (String section : innerMap.keySet()) {
                 	HSSFRow dataRow = sheet.createRow(range+index+2);
@@ -211,8 +216,10 @@ public class AverageController {
 					dataRow.createCell(1).setCellValue(String.valueOf(averageIndexVos.get(index).getIndexValue()));
 					for (int j=1;j<=schoolClasses.size();j++) {
 						dataRow.createCell(j*2).setCellValue(innerMap.get(section).get("level"+j).toString());
-						dataRow.createCell(j*2+1).setCellValue(innerMap.get(section).get("levelSum"+j).toString());
-					}					
+						dataRow.createCell(j*2+1).setCellValue(innerMap.get(section).get("levelSum"+j).toString());						
+					}
+					dataRow.createCell(schoolClasses.size()*2+2).setCellValue(innerMap.get(section).get("allLevel").toString());
+					dataRow.createCell(schoolClasses.size()*2+3).setCellValue(innerMap.get(section).get("allLevelSum").toString());
 					index++;
 				}
                 range += 25;

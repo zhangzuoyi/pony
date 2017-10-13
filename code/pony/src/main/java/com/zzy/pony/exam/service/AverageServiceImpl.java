@@ -455,14 +455,24 @@ public class AverageServiceImpl implements AverageService {
 			Map<String, BigDecimal> innerMap = map.get(key);
 			int size = innerMap.size();
 				//1 --> 22
+				BigDecimal allLevel = new BigDecimal("0");
+				BigDecimal allLevelSum = new BigDecimal("0");
 				for(int j = 1 ;j<=size;j++) {
 					//1--> 11
 					BigDecimal sum = new BigDecimal("0");
 					for(int m=1;m<=i;m++) {
-						sum = sum.add(map.get("A"+m).get("level"+j));
+						sum = sum.add(map.get("A"+m).get("level"+j));												
 					}
-					innerMap.put("levelSum"+j, sum);
-				}			
+					innerMap.put("levelSum"+j, sum);					
+					allLevel = allLevel.add(map.get("A"+i).get("level"+j));					
+				}
+				
+				innerMap.put("allLevel", allLevel);
+				if (i==1) {
+					innerMap.put("allLevelSum", allLevel);
+				}else {
+					innerMap.put("allLevelSum", map.get("A"+(i-1)).get("allLevelSum").add(allLevel));
+				}
 		}				
 	}
 
