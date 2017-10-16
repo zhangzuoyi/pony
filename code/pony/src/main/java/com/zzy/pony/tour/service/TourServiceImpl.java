@@ -46,11 +46,11 @@ public class TourServiceImpl implements TourService {
 
 	@Override
 	public void add(TourVo tour) {
-		long tourId=mapper.add(tour);
+		mapper.add(tour);
 		for(TourCategoryVo cvo: tour.getCategories()) {
 			for(TourItemVo item: cvo.getItems()) {
 				if(item.isCheck()) {
-					itemMapper.insertItemData(tourId, item.getItemId());
+					itemMapper.insertItemData(tour.getTourId(), item.getItemId());
 				}
 			}
 		}
@@ -58,7 +58,7 @@ public class TourServiceImpl implements TourService {
 
 	@Override
 	public Page<TourVo> findPage(TourConditionVo condition) {
-		condition.setFirstRow(condition.getCurrentPage()*condition.getPageSize());
+		condition.setFirstRow( (condition.getCurrentPage()-1)*condition.getPageSize());
 		List<TourVo> list=mapper.find(condition);
 		int total=mapper.count(condition);
 		long[] tourIds=new long[list.size()];
@@ -72,7 +72,7 @@ public class TourServiceImpl implements TourService {
 			}
 		}
 		
-		Pageable pageable = new PageRequest(condition.getCurrentPage(), condition.getPageSize());
+		Pageable pageable = new PageRequest(condition.getCurrentPage()-1, condition.getPageSize());
 		Page<TourVo> result = new PageImpl<TourVo>(list, pageable, total);
 		return result;
 	}

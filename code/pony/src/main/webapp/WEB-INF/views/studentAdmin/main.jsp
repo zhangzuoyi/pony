@@ -75,8 +75,7 @@
 <!-- Begin of easyui-dialog -->
 <div id="my-dialog-2" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:800px; padding:10px;">
 	<form id="my-form-2" method="post">
-		<!-- <input type="hidden" name="studentId" /> -->
-		<input type="hidden" name="studentIds" />
+		<input type="hidden" name="studentId" />
         <table>
             <tr>
                 <td width="60" align="right">学号:</td>
@@ -182,13 +181,16 @@
 </div>
 <div id="my-dialog-4" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:800px; padding:10px;">
 	<form id="my-form-4" method="post">
-		<input type="hidden" name="studentId" />
+		<!-- <input type="hidden" name="studentId" /> -->
+		<input type="hidden" name="studentIds" />
         <table>
             <tr>
                 <td width="60" align="right">学号:</td>
-                <td><input type="text" name="studentNo" readonly="readonly" class="my-text" /></td>
+                <td colspan="3"><input type="text" name="studentNo" readonly="readonly" class="my-text" style="width:400px;" /></td>
+            </tr>
+            <tr>
                 <td width="60" align="right">姓名:</td>
-                <td><input type="text" name="name" readonly="readonly" class="my-text" /></td>
+                <td colspan="3"><input type="text" name="name" readonly="readonly" class="my-text" style="width:400px;" /></td>
             </tr>
             <tr>
                 <td width="60" align="right">变动类型:</td>

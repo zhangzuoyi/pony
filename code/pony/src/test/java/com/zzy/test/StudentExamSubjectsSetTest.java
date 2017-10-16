@@ -26,13 +26,14 @@ public class StudentExamSubjectsSetTest {
 	@Test
 	public void testSet() throws Exception{
 //		Workbook wb=WorkbookFactory.create(new FileInputStream("D:\\教育软件\\平桥中学\\2015入学高三学生信息 - 副本.xls"));
-		Workbook wb=WorkbookFactory.create(new FileInputStream("D:\\教育软件\\平桥中学\\2016入学高二选课名单 - 副本.xlsx"));
+		Workbook wb=WorkbookFactory.create(new FileInputStream("D:\\教育软件\\平桥中学\\学生导入\\2017学年第一学期高二名单.xls"));
 		Sheet sheet=wb.getSheetAt(0);
+		int subjectStart=5;//学科开始的列
 //		String[] subjects=new String[8];
 		String[] subjects=new String[7];
 		Row titleRow=sheet.getRow(0);
 		for(int i=0;i<subjects.length;i++){
-			subjects[i]=titleRow.getCell(i+9).getStringCellValue();
+			subjects[i]=titleRow.getCell(i+subjectStart).getStringCellValue();
 		}
 		int i=1;
 		while(true){
@@ -40,7 +41,7 @@ public class StudentExamSubjectsSetTest {
 			if(row == null){
 				break;
 			}
-			Cell cell=row.getCell(0);
+			Cell cell=row.getCell(1);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
 			String studentNo=cell.getStringCellValue();
 			System.out.println(studentNo);
@@ -48,15 +49,15 @@ public class StudentExamSubjectsSetTest {
 				break;
 			}
 			StringBuilder sb=new StringBuilder();
-			for(int k=9;k<9+subjects.length;k++){
+			for(int k=subjectStart;k<subjectStart+subjects.length;k++){
 				String selected=row.getCell(k)==null ? null : row.getCell(k).getStringCellValue();
 				if("选考".equals(selected)){
-					sb.append(getSubject(subjects[k-9]));
+					sb.append(getSubject(subjects[k-subjectStart]));
 				}
 			}
 			String subjectsStr=sb.toString();
-			subjectsStr=subjectsStr.substring(1);//包括语数英的不要
-			mapper.setExamSubjectsByStudentNo(subjectsStr, studentNo);;
+			subjectsStr=subjectsStr.substring(1);//包括语数英的不要执行
+			mapper.setExamSubjectsByStudentNo(subjectsStr, studentNo);
 			i++;
 		}
 	}

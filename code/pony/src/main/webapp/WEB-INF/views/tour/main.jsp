@@ -21,6 +21,8 @@
 <script type="text/javascript" src="<s:url value='/static/vue/vue-resource.min.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/vue/vue-validator.js' />"></script>
 <script type="text/javascript" src="<s:url value='/static/elementUI/index.js' />"></script>
+<script type="text/javascript" src="<s:url value='/static/js/moment.min.js' />"></script>
+<script type="text/javascript" src="<s:url value='/static/vue/myfilters.js' />"></script>
 <style type="text/css">
 .el-input {
 width:200px;
@@ -44,7 +46,7 @@ width:100px;
                 <el-col :span="1" >
                     <b>开始日期:</b>
             	</el-col> 
-            	<el-col :span="2" >
+            	<el-col :span="3" >
                     <el-date-picker
 	                    v-model="condition.startDate"
 	                    type="date"
@@ -55,7 +57,7 @@ width:100px;
             	<el-col :span="1" >
                     <b>结束日期:</b>
             	</el-col> 
-            	<el-col :span="2" >
+            	<el-col :span="3" >
                     <el-date-picker
 	                    v-model="condition.endDate"
 	                    type="date"
@@ -108,8 +110,9 @@ width:100px;
 						label="节次">
 				</el-table-column>
 				<el-table-column
-						prop="tourDate"
+						inline-template
 						label="日期">
+						<div>{{row.tourDate | date}}</div>
 				</el-table-column>
 				<el-table-column
 						prop="itemSummary"
