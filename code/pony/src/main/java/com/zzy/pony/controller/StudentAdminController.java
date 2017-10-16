@@ -42,7 +42,6 @@ import com.zzy.pony.config.Constants;
 import com.zzy.pony.model.CommonDict;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.Student;
-import com.zzy.pony.model.StudentStatusChange;
 import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.service.DictService;
 import com.zzy.pony.service.SchoolClassService;
@@ -50,6 +49,7 @@ import com.zzy.pony.service.StudentService;
 import com.zzy.pony.service.SubjectService;
 import com.zzy.pony.util.DateTimeUtil;
 import com.zzy.pony.util.TemplateUtil;
+import com.zzy.pony.vo.StudentStatusChangeVo;
 
 @Controller
 @RequestMapping(value = "/studentAdmin")
@@ -255,7 +255,7 @@ public class StudentAdminController {
 	
 	@RequestMapping(value="changeStatus",method = RequestMethod.POST)
 	@ResponseBody
-	public String changeStatus(StudentStatusChange sc, Model model){
+	public String changeStatus(StudentStatusChangeVo sc, Model model){
 		sc.setCreateTime(new Date());
 		sc.setCreateUser(ShiroUtil.getLoginUser().getLoginName());
 		service.changeStatus(sc);

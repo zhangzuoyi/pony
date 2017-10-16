@@ -30,6 +30,8 @@
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit" onclick="openSetSubjects()" plain="true">设置考试科目</a>
         </div>
         <div id="mm2" style="width:100px;">
+        	<div onclick="openChangeStatus('在读')">在读</div>
+        	<div onclick="openChangeStatus('不参评')">不参评</div>
 	        <div onclick="openChangeStatus('开除')">开除</div>
 	        <div onclick="openChangeStatus('辍学')">辍学</div>
 	        <div onclick="openChangeStatus('退学')">退学</div>
@@ -73,7 +75,8 @@
 <!-- Begin of easyui-dialog -->
 <div id="my-dialog-2" class="easyui-dialog" data-options="closed:true,iconCls:'icon-save'" style="width:800px; padding:10px;">
 	<form id="my-form-2" method="post">
-		<input type="hidden" name="studentId" />
+		<!-- <input type="hidden" name="studentId" /> -->
+		<input type="hidden" name="studentIds" />
         <table>
             <tr>
                 <td width="60" align="right">学号:</td>
@@ -424,11 +427,24 @@
 		});
 	}
 	function openChangeStatus(ct){
-		var item = $('#my-datagrid-2').datagrid('getSelected');
+		//var item = $('#my-datagrid-2').datagrid('getSelected');
+		var rows = $('#my-datagrid-2').datagrid('getSelections');
+		var studentIds=[];
+		var studentNos=[];
+		var studentNames=[];
+		for(var i=0; i<rows.length; i++){
+            var row = rows[i];
+            studentIds.push(row.studentId);
+            studentNos.push(row.studentNo);
+            studentNames.push(row.name);
+        }
 		$('#my-form-4').form('clear');
-		$('#my-form-4').find("input[name='studentId']").val(item.studentId);
-		$('#my-form-4').find("input[name='studentNo']").val(item.studentNo);
-		$('#my-form-4').find("input[name='name']").val(item.name);
+		//$('#my-form-4').find("input[name='studentId']").val(item.studentId);
+		//$('#my-form-4').find("input[name='studentNo']").val(item.studentNo);
+		//$('#my-form-4').find("input[name='name']").val(item.name);
+		$('#my-form-4').find("input[name='studentIds']").val(studentIds.join());
+		$('#my-form-4').find("input[name='studentNo']").val(studentNos.join());
+		$('#my-form-4').find("input[name='name']").val(studentNames.join());
 		$('#my-form-4').find("input[name='changeType']").val(ct);
 		$('#my-dialog-4').dialog({
 			closed: false,
@@ -491,7 +507,7 @@
 		return entranceTypes[rec.entranceType];
 	}
 
-	var statusList={'0':'在读','1':'毕业','2':'开除','3':'退学','4':'辍学','5':'肄业','6':'转出','7':'借出','8':'休学','9':'死亡'};
+	var statusList={'0':'在读','1':'毕业','2':'开除','3':'退学','4':'辍学','5':'肄业','6':'转出','7':'借出','8':'休学','9':'死亡','10':'不参评'};
 	function statusFormat(value,rec){
 		
 		return statusList[rec.status];

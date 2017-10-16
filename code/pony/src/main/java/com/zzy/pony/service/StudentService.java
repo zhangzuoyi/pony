@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.zzy.pony.model.Student;
 import com.zzy.pony.model.StudentStatusChange;
+import com.zzy.pony.vo.StudentStatusChangeVo;
 
 public interface StudentService {
 	String STUDENT_TYPE_TZ="0";//统招
@@ -19,6 +20,7 @@ public interface StudentService {
 	String STUDENT_STATUS_JC="7";//借出
 	String STUDENT_STATUS_XX="8";//休学
 	String STUDENT_STATUS_SW="9";//死亡
+	String STUDENT_STATUS_BCP="10";//不参评，即不参加考试
 	void add(Student sy);
 	List<Student> findAll();
 	Student get(int id);
@@ -27,6 +29,11 @@ public interface StudentService {
 	List<Student> findBySchoolClass(Integer classId);
 	void upload(List<Student> students, String loginUser);
 	void changeStatus(StudentStatusChange sc);
+	/**
+	 * 同时改变多个学生的状态
+	 * @param sc
+	 */
+	void changeStatus(StudentStatusChangeVo sc);
 	List<Student> findByGradeOrderByStudentId(int gradeId,int yearId);
 	/**
 	 * 设置学生的考试科目

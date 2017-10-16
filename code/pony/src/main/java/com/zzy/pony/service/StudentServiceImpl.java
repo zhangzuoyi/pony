@@ -13,8 +13,11 @@ import com.zzy.pony.dao.StudentDao;
 import com.zzy.pony.dao.StudentStatusChangeDao;
 import com.zzy.pony.mapper.StudentMapper;
 import com.zzy.pony.model.SchoolClass;
+import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Student;
 import com.zzy.pony.model.StudentStatusChange;
+import com.zzy.pony.model.Term;
+import com.zzy.pony.vo.StudentStatusChangeVo;
 @Service
 @Transactional
 public class StudentServiceImpl implements StudentService {
@@ -183,6 +186,10 @@ public class StudentServiceImpl implements StudentService {
 			return STUDENT_STATUS_JC;
 		}else if("休学".equals(changeType)){
 			return STUDENT_STATUS_XX;
+		}else if("在读".equals(changeType)){
+			return STUDENT_STATUS_ZD;
+		}else if("不参评".equals(changeType)){
+			return STUDENT_STATUS_BCP;
 		}
 		
 		return STUDENT_STATUS_ZD;
@@ -194,6 +201,29 @@ public class StudentServiceImpl implements StudentService {
 			Student student=dao.findOne(studentId);
 			student.setExamSubjects(subjectsName);
 			dao.save(student);
+		}
+		
+	}
+	@Override
+	public void changeStatus(StudentStatusChangeVo vo) {
+		String[] ids=vo.getStudentIds().split(",");
+		SchoolYear year=yearService.getCurrent();
+		Term term=termService.getCurrent();
+		for(String id: ids) {
+			StudentStatusChange sc=new StudentStatusChange();
+			sc.setSchoolYear(year);
+			sc.setTerm(term);
+			sc.setChangeType(vo.getChangeType());
+			sc.setCreateTime(vo.getCreateTime());
+			sc.setCreateUser(vo.getCreateUser());
+			sc.setDescription(vo.getDescription());
+			sc.setOccurDate(vo.getOccurDate());
+			sc.setStudentId(Integer.valueOf(id));
+			Student student=dao.findOne(Integer.valueOf(id));
+			student.setStatus(getStatusByChangeType(sc.getChangeType()));
+			
+			dao.save(student);
+			changeDao.save(sc);
 		}
 		
 	}
