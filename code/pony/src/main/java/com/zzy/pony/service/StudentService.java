@@ -27,6 +27,7 @@ public interface StudentService {
 	void update(Student sy);
 	void delete(int id);
 	List<Student> findBySchoolClass(Integer classId);
+	List<Student> findBySchoolClassAndStatus(Integer classId,String status);
 	void upload(List<Student> students, String loginUser);
 	void changeStatus(StudentStatusChange sc);
 	/**

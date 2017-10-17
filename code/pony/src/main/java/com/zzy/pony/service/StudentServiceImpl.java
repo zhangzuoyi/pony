@@ -110,7 +110,16 @@ public class StudentServiceImpl implements StudentService {
 		sc.setClassId(classId);
 		return dao.findBySchoolClass(sc);
 	}
+	
+	
 
+	@Override
+	public List<Student> findBySchoolClassAndStatus(Integer classId, String status) {
+		// TODO Auto-generated method stub
+		SchoolClass sc=new SchoolClass();
+		sc.setClassId(classId);
+		return dao.findBySchoolClassAndStatus(sc, status);
+	}
 	@Override
 	public void upload(List<Student> students, String loginUser) {
 		Date now=new Date();

@@ -69,7 +69,7 @@ public class ExamineeServiceImpl implements ExamineeService {
 			List<SchoolClass> schoolClasses = schoolClassService.findByYearAndGradeOrderBySeq(year.getYearId(), gradeId);
 			Map<Integer, String> map = this.generateRegNo(examId, gradeId, prefixNo, bitNo);
 			for (SchoolClass schoolClass : schoolClasses) {
-				List<Student> students = studentService.findBySchoolClass(schoolClass.getClassId());
+				List<Student> students = studentService.findBySchoolClassAndStatus(schoolClass.getClassId(),StudentService.STUDENT_STATUS_ZD);
 				for (Student student : students) {
 					Examinee examinee = new Examinee();
 					examinee.setExam(exam);
