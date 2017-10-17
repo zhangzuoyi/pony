@@ -165,7 +165,7 @@ var app = new Vue({
 				this.getCurrentTerm();
 				this.getExams();
 				this.getGrades();
-				//this.getSubjects();
+				this.getSubjects();
 
 		
 			
@@ -200,10 +200,13 @@ var app = new Vue({
 			);
 			},			
 			getSubjects : function(){ 
-			this.$http.get(this.subjectsUrl,{params:{examId:this.examId}}).then(
-			function(response){this.subjects=response.data; },
-			function(response){}  	 			
-			);
+				if(this.examId){
+					this.$http.get(this.subjectsUrl,{params:{examId:this.examId}}).then(
+							function(response){this.subjects=response.data; },
+							function(response){}  	 			
+							);
+				}
+				
 			},
 			
 			findExamineeRoomArrangeBySubjectId : function(){
