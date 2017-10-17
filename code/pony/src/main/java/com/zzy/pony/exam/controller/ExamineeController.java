@@ -42,17 +42,20 @@ public class ExamineeController {
 	@ResponseBody
 	public String generateNo(MultipartFile fileUpload,HttpServletRequest request,
 			@RequestParam(value="examId") int examId,@RequestParam(value="gradeId") int gradeId,
+			@RequestParam(value="prefixNo") String prefixNo,@RequestParam(value="bitNo") int bitNo){		
+			examineeService.generateNo(examId, gradeId, prefixNo, bitNo);		
+		return "0";
+		
+		
+	}
+	@RequestMapping(value="generateNoByFile",method=RequestMethod.POST)
+	@ResponseBody
+	public String generateNoByFile(MultipartFile fileUpload,HttpServletRequest request,
+			@RequestParam(value="examId") int examId,@RequestParam(value="gradeId") int gradeId,
 			@RequestParam(value="prefixNo") String prefixNo,@RequestParam(value="bitNo") int bitNo){
 		MultipartHttpServletRequest multipartRequest=(MultipartHttpServletRequest)request;
-		MultipartFile file = multipartRequest.getFile("fileUpload");
-		//按照附件excel中的总成绩排名生成
-		if (file != null) {
-			
-			examineeService.generateNoByFile(examId, gradeId, prefixNo, bitNo, file);
-			
-		}else {
-			examineeService.generateNo(examId, gradeId, prefixNo, bitNo);
-		}
+		MultipartFile file = multipartRequest.getFile("fileUpload");					
+			examineeService.generateNoByFile(examId, gradeId, prefixNo, bitNo, file);				
 		return "0";
 		
 		

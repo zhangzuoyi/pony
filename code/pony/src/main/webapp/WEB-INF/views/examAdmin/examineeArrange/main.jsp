@@ -416,6 +416,7 @@ var app = new Vue({
 		schoolClassesUrl:"<s:url value='/schoolClass/findByGrade'/>",
 		gradeUrl:"<s:url value='/grade/get'/>",
 		generateNoUrl:"<s:url value='/examAdmin/examinee/generateNo'/>",
+		generateNoByFileUrl:"<s:url value='/examAdmin/examinee/generateNoByFile'/>",
 		fileUploadUrl:"<s:url value='/examAdmin/examinee/fileUpload'/>",
         submitByClassUrl:"<s:url value='/examAdmin/examineeArrange/submitByClass'/>",
         submitByStudentUrl:"<s:url value='/examAdmin/examineeArrange/submitByStudent'/>",
@@ -683,7 +684,7 @@ var app = new Vue({
                   formData.append('bitNo',this.bitNo);
                   formData.append('examId',this.examId);
                   formData.append('gradeId',this.gradeId);                
-                  this.$http.post(this.generateNoUrl,formData).then(
+                  this.$http.post(this.generateNoByFileUrl,formData).then(
                           function(response){ 
                               this.generateNoFlag = false;
                               this.prefixNo= null;
@@ -715,7 +716,42 @@ var app = new Vue({
 				this.generateExamineeNoDialogFormVisible = true;
             },
             onSubmitGenerateNo : function(){                      
-            	this.$refs.upload.submit();                     
+            	if(this.$refs.upload.uploadFiles.length>0){
+                	this.$refs.upload.submit();           	
+            	}else{
+            	if(this.prefixNo == null || this.examId==''){
+                  	this.$alert("请选择前缀","提示",{
+    					type:"warning",
+    					confirmButtonText:'确认'
+    				});
+    				return;
+                  }
+                  if(this.bitNo == null || this.examId==''){
+                  	this.$alert("请选择位数","提示",{
+    					type:"warning",
+    					confirmButtonText:'确认'
+    				});
+    				return;
+                  }	
+                  this.generateNoFlag = true;
+                  var formData = new FormData();
+                  formData.append('prefixNo',this.prefixNo);
+                  formData.append('bitNo',this.bitNo);
+                  formData.append('examId',this.examId);
+                  formData.append('gradeId',this.gradeId);                
+                  this.$http.post(this.generateNoUrl,formData).then(
+                          function(response){ 
+                              this.generateNoFlag = false;
+                              this.prefixNo= null;
+                              this.bitNo=null;
+                              this.generateExamineeNoDialogFormVisible=false;
+                              this.isGenerateShowFlag=false;
+                              this.clearFiles();
+                              this.$message({type:"info",message:"生成成功"});                       
+                              
+                              }); 
+            	}
+            	
             },
             submitByClass:function(){
 				

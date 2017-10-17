@@ -100,7 +100,7 @@ public class ExamineeServiceImpl implements ExamineeService {
 				SchoolYear year = schoolYearService.getCurrent();
 				List<SchoolClass> schoolClasses = schoolClassService.findByYearAndGradeOrderBySeq(year.getYearId(), gradeId);
 				for (SchoolClass schoolClass : schoolClasses) {
-					List<Student> students = studentService.findBySchoolClass(schoolClass.getClassId());
+					List<Student> students = studentService.findBySchoolClassAndStatus(schoolClass.getClassId(), StudentService.STUDENT_STATUS_ZD);
 					for (Student student : students) {
 						Examinee examinee = new Examinee();
 						examinee.setExam(exam);
