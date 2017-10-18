@@ -263,11 +263,22 @@ public class ExamineeServiceImpl implements ExamineeService {
 		for (int i = 1; i <= map.size(); i++) {  
             if (map.get(i).get(2) == null || map.get(i).get(2) =="") {
             	//double-->int
-            	unsortMap.put(df.parse(map.get(i).get(0).toString()).intValue()+"" , 0f);
-			}
-           
+            	String key ="";
+            	try {
+            		key =  df.parse(map.get(i).get(0).toString()).intValue()+"";
+				} catch (Exception e) {
+					key = map.get(i).get(0).toString();
+				}           	           	
+            	unsortMap.put(key , 0f);           	           	
+			}           
             else {
-				unsortMap.put(df.parse(map.get(i).get(0).toString()).intValue()+"", Float.valueOf((map.get(i).get(2).toString())));  	
+            	String key ="";
+            	try {
+            		key =  df.parse(map.get(i).get(0).toString()).intValue()+"";
+				} catch (Exception e) {
+					key = map.get(i).get(0).toString();
+				}            	
+				unsortMap.put(key, Float.valueOf((map.get(i).get(2).toString())));  	
 			}
         } 			
 		//map进行排序
