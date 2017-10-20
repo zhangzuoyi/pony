@@ -81,15 +81,15 @@ width:200px;
                     </div>        
             	</el-col>
             	<el-col :span="6" >
-               		<el-button type="primary"  @click="list">查询</el-button>
-               		<el-button type="primary"  @click="setAverageIndex">设置均量值指标</el-button>
+               		<!-- <el-button type="primary"  @click="list">查询</el-button> -->
+               		<el-button type="primary"  @click="setAverageIndex">设置指标</el-button>
                		<el-button type="primary"  @click="openUploadIndex">导入指标</el-button>
                		<el-button type="primary"  @click="exportAverage">导出</el-button>
                		
               	</el-col>                           
               </el-row>
             </div>
-            <el-table
+            <!-- <el-table
             		ref="multipleTable"
                     :data="tableData"
                     border
@@ -113,7 +113,7 @@ width:200px;
 						prop="monitorCount"
 						label="监考次数">
 				</el-table-column>
-            </el-table>
+            </el-table> -->
         </el-card>
 		<el-dialog title="设置均量值指标"  v-model="setIndexDialogFormVisible" size="large">
 			<div slot="title" class="dialog-title">
