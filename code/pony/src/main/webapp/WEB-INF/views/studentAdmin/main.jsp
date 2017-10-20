@@ -431,6 +431,10 @@
 	function openChangeStatus(ct){
 		//var item = $('#my-datagrid-2').datagrid('getSelected');
 		var rows = $('#my-datagrid-2').datagrid('getSelections');
+		if(rows.length == 0){
+			$.messager.alert('信息提示','请选择一条或多条学生记录！','info');
+			return;
+		}
 		var studentIds=[];
 		var studentNos=[];
 		var studentNames=[];
@@ -467,6 +471,10 @@
 	}
 	
 	function changeStatus(){
+		if( ! $("input[name='occurDate']").val()){
+			$.messager.alert('信息提示','请填写发生日期！','info');
+			return;
+		}
 		$('#my-form-4').form('submit', {
 			url:"<s:url value='/studentAdmin/changeStatus' />",
 			success:function(data){
