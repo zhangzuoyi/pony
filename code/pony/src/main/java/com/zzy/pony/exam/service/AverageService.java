@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.zzy.pony.exam.model.AverageIndex;
 import com.zzy.pony.exam.vo.AverageIndexRowVo;
 
@@ -18,4 +20,6 @@ public interface AverageService {
 	 * 计算档数，累数
 	 */
 	Map<Integer,Map<String, Map<String, BigDecimal>>> calculateAverage(int examId,int gradeId);
+	Map<Integer,Map<String, Map<String, BigDecimal>>> calculateAverageByFile(MultipartFile file);
+
 }

@@ -157,6 +157,7 @@ width:200px;
 			<el-button type="primary" size="small" @click="downloadTemplate">下载模板</el-button>
 			</el-row>
 		</el-dialog>
+		
 		</div>
 </div>
 <script type="text/javascript">
@@ -179,6 +180,7 @@ var app = new Vue({
 		gradeId: ${gradeId == null ? 'null' : gradeId},
 		setIndexDialogFormVisible : false,
 		uploadIndexDialogFormVisible : false,
+		uploadResultDialogFormVisible : false,
 		subjects : [],
 		indexRows : [],
 		fileList : [],
@@ -322,7 +324,9 @@ var app = new Vue({
    					var url = "<s:url value='/examAdmin/average/exportAverage?'/>"+jQuery.param(exportParams);
    					/*  window.location.href = encodeURI(encodeURI(url));*/
    				    window.open(encodeURI(encodeURI(url)));	
-   			}	
+   			},
+            
+   			
             
         }	        
 });  

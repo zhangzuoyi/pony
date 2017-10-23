@@ -67,6 +67,7 @@ public class Constants {
 	public static final String DICT_PROPERTY_STATUS= "property_status";
 	public static final String DICT_SUBJECT_TYPE= "subject_type";
 	public static final String DICT_IMPORTANCE= "importance";
+	
 
 
 

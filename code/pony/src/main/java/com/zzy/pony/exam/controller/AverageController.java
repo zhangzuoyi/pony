@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.google.gson.Gson;
 import com.zzy.pony.config.Constants;
@@ -78,7 +79,7 @@ public class AverageController {
 	
 	@RequestMapping(value="main",method=RequestMethod.GET)
 	public String main(Model model){
-		return "examAdmin/average/main";
+		return "examAdmin/averageByFile/main";
 	}
 	@RequestMapping(value="getIndexRows",method=RequestMethod.GET)
 	@ResponseBody
@@ -167,7 +168,7 @@ public class AverageController {
 	}
 	@SuppressWarnings("deprecation")
 	@RequestMapping(value="exportAverage",method = RequestMethod.GET)	 
-    public void exportByClassId(HttpServletRequest request,HttpServletResponse response) throws Exception{  
+    public void exportAverage(HttpServletRequest request,HttpServletResponse response) throws Exception{  
         
 		int examId = Integer.valueOf(request.getParameter("examId"));
         int gradeId = Integer.valueOf(request.getParameter("gradeId"));
@@ -270,6 +271,109 @@ public class AverageController {
         }catch(Exception e){  
             e.printStackTrace();  
         }  
+          
+    }
+	
+	@SuppressWarnings("deprecation")
+	@RequestMapping(value="exportResult",method = RequestMethod.GET)	 
+    public void exportResult(MultipartFile fileUpload,HttpServletRequest request,HttpServletResponse response) throws Exception{  
+		MultipartHttpServletRequest multipartRequest=(MultipartHttpServletRequest)request;
+		MultipartFile file = multipartRequest.getFile("upoadfile");		
+        String title = "均量值统计";
+				
+		/*try{  
+            HSSFWorkbook workbook = new HSSFWorkbook();                     // 创建工作簿对象  
+    		HSSFSheet sheet = workbook.createSheet(title);                  // 创建工作表   
+    		List<Map<String, Object>> headList = new ArrayList<Map<String,Object>>();
+    		List<Map<String, Object>> datas = new ArrayList<Map<String,Object>>();
+
+    		int range = 0 ;
+    		for (Integer	 subjectId : dataMap.keySet()) {
+    			Map<String, Map<String, BigDecimal>> innerMap = dataMap.get(subjectId);
+        		Subject subject = subjectService.get(subjectId);
+    			List<AverageIndexVo> averageIndexVos = averageIndexMapper.findByExamAndGradeAndSubject(examId, gradeId,subject.getSubjectId());
+    			// 产生表格标题行  
+                HSSFRow titleRow = sheet.createRow(range); 
+                HSSFCell titleCell = titleRow.createCell(0);                                                                     
+                sheet.addMergedRegion(new Region(range, (short)0,range, (short)(1)));    
+                titleCell.setCellValue(subject.getName()); 
+                HSSFRow headRow = sheet.createRow(range+1);
+                headRow.createCell(0).setCellValue("段名");
+                headRow.createCell(1).setCellValue("各档指标");
+                int colNums = 2;
+            	int classSize = 1; 
+                for (SchoolClass schoolClass : schoolClasses) {
+                	HSSFCell classSeqCell = titleRow.createCell(classSize*2);
+                	classSeqCell.setCellValue(schoolClass.getSeq());                	
+                	headRow.createCell(classSize*2).setCellValue("档数");
+                	headRow.createCell(classSize*2+1).setCellValue("累数");
+                	classSize++;
+                	colNums +=2;
+				}
+                titleRow.createCell(colNums).setCellValue("全部");
+                headRow.createCell(colNums).setCellValue("档数");
+                headRow.createCell(colNums+1).setCellValue("累数");                                
+				int index = 0;
+                for (String section : innerMap.keySet()) {
+                	HSSFRow dataRow = sheet.createRow(range+index+2);
+					dataRow.createCell(0).setCellValue(section);
+					dataRow.createCell(1).setCellValue(String.valueOf(averageIndexVos.get(index).getIndexValue()));
+					for (int j=1;j<=schoolClasses.size();j++) {
+						dataRow.createCell(j*2).setCellValue(innerMap.get(section).get("level"+j).toString());
+						dataRow.createCell(j*2+1).setCellValue(innerMap.get(section).get("levelSum"+j).toString());						
+					}
+					dataRow.createCell(schoolClasses.size()*2+2).setCellValue(innerMap.get(section).get("allLevel").toString());
+					dataRow.createCell(schoolClasses.size()*2+3).setCellValue(innerMap.get(section).get("allLevelSum").toString());
+					index++;
+				}
+                range += 25;
+    		}
+          //让列宽随着导出的列长自动适应  
+            for (int colNum = 0; colNum < 30; colNum++) {
+                int columnWidth = sheet.getColumnWidth(colNum) / 256;
+                for (int rowNum = 3; rowNum < sheet.getLastRowNum(); rowNum++) {
+                    HSSFRow currentRow;  
+                    //当前行未被使用过  
+                    if (sheet.getRow(rowNum) == null) {
+                        currentRow = sheet.createRow(rowNum);
+                    } else {  
+                        currentRow = sheet.getRow(rowNum);
+                    }  
+                    if (currentRow.getCell(colNum) != null&&!"".equals(currentRow.getCell(colNum))) {  
+                        HSSFCell currentCell = currentRow.getCell(colNum);  
+                        if (currentCell.getCellType() == HSSFCell.CELL_TYPE_STRING) {  
+                            int length = currentCell.getStringCellValue().getBytes().length;  
+                            if (columnWidth < length) {  
+                                columnWidth = length;  
+                            }  
+                        }  
+                    }  
+                }                 
+                sheet.setColumnWidth(colNum, (columnWidth+4) * 256);
+            }
+            
+                                  
+            if(workbook !=null){  
+                try  
+                {
+                	String fileName = new String(title.getBytes("utf-8"), "ISO8859-1")+DateTimeUtil.dateToStr(new Date()) + ".xls" ;
+                  //  String fileName = "Excel-" + String.valueOf(System.currentTimeMillis()).substring(4, 13) + ".xls";  
+                    String headStr = "attachment; filename=\"" + fileName + "\"";  
+                  //  response = getResponse();  
+                    response.setContentType("APPLICATION/OCTET-STREAM");  
+                    response.setHeader("Content-Disposition", headStr);  
+                    OutputStream out = response.getOutputStream();  
+                    workbook.write(out);  
+                }  
+                catch (IOException e)  
+                {  
+                    e.printStackTrace();  
+                }  
+            }  
+  
+        }catch(Exception e){  
+            e.printStackTrace();  
+        }*/  
           
     }
 	

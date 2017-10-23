@@ -55,7 +55,7 @@ public class ExamineeController {
 			@RequestParam(value="prefixNo") String prefixNo,@RequestParam(value="bitNo") int bitNo){
 		MultipartHttpServletRequest multipartRequest=(MultipartHttpServletRequest)request;
 		MultipartFile file = multipartRequest.getFile("fileUpload");					
-			examineeService.generateNoByFile(examId, gradeId, prefixNo, bitNo, file);				
+		examineeService.generateNoByFile(examId, gradeId, prefixNo, bitNo, file);				
 		return "0";
 		
 		
