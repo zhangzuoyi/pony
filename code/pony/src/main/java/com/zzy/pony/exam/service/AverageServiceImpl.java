@@ -1,26 +1,5 @@
 package com.zzy.pony.exam.service;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.transaction.Transactional;
-
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import com.zzy.pony.config.Constants;
 import com.zzy.pony.exam.dao.AverageIndexDao;
 import com.zzy.pony.exam.mapper.AverageIndexMapper;
 import com.zzy.pony.exam.model.AverageIndex;
@@ -36,6 +15,17 @@ import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.SubjectService;
 import com.zzy.pony.util.ReadExcelUtils;
 import com.zzy.pony.vo.ExamResultVo;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
 
 @Service
 @Transactional
@@ -795,27 +785,40 @@ public class AverageServiceImpl implements AverageService {
         }  
 		return result;
 	}
-	private void sortAverageExcelVo(List<AverageExcelVo> averageExcelVos) {		
-		Collections.sort(averageExcelVos, new Comparator<AverageExcelVo>(){  			             
-            public int compare(AverageExcelVo o1, AverageExcelVo o2) {                
-                //按照成绩进行降序排列  
-                if(o1.getSubjectResult() > o2.getSubjectResult()){  
-                    return -1;  
-                }  
-                if(o1.getSubjectResult() == o2.getSubjectResult()){  
-                    return 0;  
-                }  
-                return 1;  
-            }  
-        }); 
+	
+	/**
+	  * @Author : Administrator
+	  * @Description : 
+	  成绩排序
+	*/
+	private void sortAverageExcelVo(List<AverageExcelVo> averageExcelVos) {
+		Collections.sort(averageExcelVos, new Comparator<AverageExcelVo>() {
+			public int compare(AverageExcelVo o1, AverageExcelVo o2) {
+				//按照成绩进行降序排列
+				if (o1.getSubjectResult() > o2.getSubjectResult()) {
+					return -1;
+				}
+				if (o1.getSubjectResult() == o2.getSubjectResult()) {
+					return 0;
+				}
+				return 1;
+			}
+		});
 		for (int i = 0; i < averageExcelVos.size(); i++) {
 			int count = i;
-			averageExcelVos.get(i).setRank(i+1);
-			while((i+1)<=averageExcelVos.size()&&averageExcelVos.get(i).getSubjectResult() == averageExcelVos.get(i+1).getSubjectResult()) {
+			averageExcelVos.get(i).setRank(i + 1);
+			while ((i + 1) <= averageExcelVos.size() && averageExcelVos.get(i).getSubjectResult() == averageExcelVos.get(i + 1).getSubjectResult()) {
 				i++;
-				averageExcelVos.get(i).setRank(count+1);																
-			}															
+				averageExcelVos.get(i).setRank(count + 1);
+			}
 		}
+	}
+	/**
+	  * @Author : Administrator
+	  * @Description : 
+	  按等级分组
+	*/
+	private Map<Integer,List<AverageExcelVo>> getLevelMap(List<AverageExcelVo> averageExcelVos){
 		List<BigDecimal> level = new ArrayList<BigDecimal>();
 		level.add(new BigDecimal("2.5"));
 		for (int i = 1; i < 20; i++) {
@@ -823,24 +826,27 @@ public class AverageServiceImpl implements AverageService {
 		}
 		level.add(new BigDecimal("97.5"));
 		level.add(new BigDecimal("100"));
-
-
+		
 		BigDecimal size = new BigDecimal(averageExcelVos.size()) ;//参加考试人数
+		Map<Integer,List<AverageExcelVo>> levelMap = new HashMap<Integer, List<AverageExcelVo>>();
 		for (int i = 0; i < level.size(); i++) {
-			//初始按照百分比计算出的,后续可调整
+			int previousLevelCount = 0;
+			if (i>0){
+				//获取前一个段位的人数
+				 previousLevelCount = levelMap.get(i-1).size();
+			}
 			BigDecimal initBigDecimal =  size.multiply(level.get(i)).setScale(2,RoundingMode.HALF_UP);
-			
-			
-			
-			
+			int ceil = (int) Math.ceil(initBigDecimal.floatValue());
+			int floor = (int) Math.floor(initBigDecimal.floatValue());
+			while ((ceil+1)<averageExcelVos.size()&&averageExcelVos.get(ceil).getRank() == averageExcelVos.get(ceil+1).getRank()){
+				ceil++;
+			}
+			levelMap.put(i,averageExcelVos.subList(previousLevelCount,ceil));
 		}
-		
-		
-		
-		
-		
-	
+		return levelMap;
 	}
+
+
 
 	//计算累数
 	private void caculateAverageSum(Map<String, Map<String, BigDecimal>> map) {
