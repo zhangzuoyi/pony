@@ -20,6 +20,6 @@ public interface AverageService {
 	 * 计算档数，累数
 	 */
 	Map<Integer,Map<String, Map<String, BigDecimal>>> calculateAverage(int examId,int gradeId);
-	Map<Integer,Map<String, Map<String, BigDecimal>>> calculateAverageByFile(MultipartFile file);
+	Map<String,Map<String, Map<String, BigDecimal>>> calculateAverageByFile(MultipartFile file);
 
 }
