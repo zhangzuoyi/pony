@@ -1,5 +1,6 @@
 package com.zzy.pony.exam.service;
 
+import com.mxgraph.swing.handler.mxElbowEdgeHandler;
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.exam.dao.AverageIndexDao;
 import com.zzy.pony.exam.mapper.AverageIndexMapper;
@@ -466,51 +467,65 @@ public class AverageServiceImpl implements AverageService {
 						Map<Integer,List<AverageExcelVo>> levelMap = getLevelMap(averageExcelVos);
 						Map<Integer,BigDecimal> levelMapDecimal = getLevelMapDecimal(averageExcelVos);
 						Map<Integer,List<AverageExcelVo>> schoolLevelMap = getLevelMapBySchoolName(levelMap,Constants.SCHOOL_NAME);
-						Map<Integer,BigDecimal> schoolLevelMapDecimal = getLevelMapDecimalBySchoolName(schoolLevelMap,levelMapDecimal,Constants.SCHOOL_NAME);
+						Map<Integer,BigDecimal> schoolLevelMapDecimal = getLevelMapDecimalBySchoolName(levelMap,levelMapDecimal,Constants.SCHOOL_NAME);
 						List<String> classCodes = getClassCode(averageExcelVos,Constants.SCHOOL_NAME);
-						
-						
-					}
-					
-					
+						Map<String, Map<String, BigDecimal>> innerMap = calculate(schoolLevelMap, schoolLevelMapDecimal, classCodes);
+						result.put(titles[i], innerMap);
+					}										
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
-		
-				
-
-				
 				return result;
 	}
-	
-	private void calculate(Map<Integer,List<AverageExcelVo>> schoolLevelMap,Map<Integer,BigDecimal> schoolLevelMapDecimal,List<String> classCodes) {
+	@Override
+	public  Map<String, Map<String, BigDecimal>> calculate(Map<Integer,List<AverageExcelVo>> schoolLevelMap,Map<Integer,BigDecimal> schoolLevelMapDecimal,List<String> classCodes) {
 		Map<String, Map<String, BigDecimal>> result = new LinkedHashMap<String, Map<String,BigDecimal>>();
+		BigDecimal zero = new BigDecimal("0");
+		BigDecimal one = new BigDecimal("1");
 		for (Integer level : schoolLevelMap.keySet()) {
-			List<AverageExcelVo> averageExcelVos = schoolLevelMap.get(level);			
+			List<AverageExcelVo> averageExcelVos = schoolLevelMap.get(level);
+			BigDecimal levelDecimal = schoolLevelMapDecimal.get(level);
+		    int last  = levelDecimal.intValue();//最后一个的
+		    int first = 0;//第一个的
+		    int total = averageExcelVos.size();//总人数
+		    BigDecimal totalDecimal = new BigDecimal(total);		   			
 			for (String classCode : classCodes) {
-				
-				
+				Map<String, BigDecimal> innerMap = new LinkedHashMap<String, BigDecimal>();	
+				BigDecimal count = new BigDecimal("0");
+				BigDecimal classSameCount = new BigDecimal("0");//该班重名人数
 				if (averageExcelVos == null || averageExcelVos.size() ==0) {
-					//result.put("A"+level, );
+					innerMap.put("A"+level,zero);
+				}else {
+					int lastRank = averageExcelVos.get(last).getRank();				
+					for (int i =0 ;i<averageExcelVos.size();i++) {
+						if (averageExcelVos.get(i).getClassCode().equalsIgnoreCase(classCode)) {
+							if (averageExcelVos.get(i).getRank()!=lastRank) {
+								count = count.add(one);
+							}else {
+								classSameCount = classSameCount.add(one);
+							}
+						}						
+						if (averageExcelVos.get(i).getRank()==lastRank&&first == 0) {
+							first = i; 
+						}						
+					}
+				    BigDecimal firstDecimal = new BigDecimal(first);
+					// 可分配指标 / 总体重名人数 * 该班重名人数
+				    BigDecimal	availabelLevel = levelDecimal.subtract(firstDecimal);//可分配指标
+					BigDecimal  sameCount = new BigDecimal(total-first);//总体重名人数
+					innerMap.put("A"+level, count.add(availabelLevel.multiply(classSameCount).divide(sameCount, RoundingMode.HALF_UP)));										
 				}
-			
-				
-				
-				
+				result.put(classCode, innerMap);				
 			}									
-		}
-		
-		
-		
-		
+		}		
+		return result;				
 	}
 	
 	/**
 	 * @return 班级编码
 	 */
-	private List<String> getClassCode(List<AverageExcelVo> averageExcelVos,String schoolName){
+	@Override
+	public List<String> getClassCode(List<AverageExcelVo> averageExcelVos,String schoolName){
 		List<String> result = new ArrayList<String>();
 		for (AverageExcelVo vo : averageExcelVos) {
 			if (vo.getSchoolName().equalsIgnoreCase(schoolName) && ! result.contains(vo.getClassCode())) {
@@ -520,8 +535,8 @@ public class AverageServiceImpl implements AverageService {
 		return result;
 	}
 	
-	
-	private List<AverageExcelVo> getAverageExcelVo (Workbook wb,int index){
+	@Override
+	public List<AverageExcelVo> getAverageExcelVo (Workbook wb,int index){
 		List<AverageExcelVo> result = new ArrayList<AverageExcelVo>();		           
         Sheet sheet = wb.getSheetAt(0);  
         // 得到总行数  
@@ -533,9 +548,10 @@ public class AverageServiceImpl implements AverageService {
             row = sheet.getRow(i);  
             int j = 0; 
             AverageExcelVo vo = new AverageExcelVo();
-            vo.setSchoolName(row.getCell(1).getRichStringCellValue().getString());
-            vo.setClassCode(row.getCell(2).getRichStringCellValue().getString());   
-            vo.setSchoolName(row.getCell(3).getRichStringCellValue().getString()); 
+            
+            vo.setSchoolName(ReadExcelUtils.getCellFormatValue(row.getCell(0)).toString());
+            vo.setClassCode(ReadExcelUtils.getCellFormatValue(row.getCell(1)).toString());   
+            vo.setName(ReadExcelUtils.getCellFormatValue(row.getCell(2)).toString()); 
             vo.setSubjectResult(Float.valueOf(String.valueOf(row.getCell(index).getNumericCellValue()))   );              
             result.add(vo); 
         }  
@@ -547,7 +563,8 @@ public class AverageServiceImpl implements AverageService {
 	  * @Description : 
 	  成绩排序
 	*/
-	private void sortAverageExcelVo(List<AverageExcelVo> averageExcelVos) {
+	@Override
+	public void sortAverageExcelVo(List<AverageExcelVo> averageExcelVos) {
 		Collections.sort(averageExcelVos, new Comparator<AverageExcelVo>() {
 			public int compare(AverageExcelVo o1, AverageExcelVo o2) {
 				//按照成绩进行降序排列
@@ -563,7 +580,7 @@ public class AverageServiceImpl implements AverageService {
 		for (int i = 0; i < averageExcelVos.size(); i++) {
 			int count = i;
 			averageExcelVos.get(i).setRank(i + 1);
-			while ((i + 1) <= averageExcelVos.size() && averageExcelVos.get(i).getSubjectResult() == averageExcelVos.get(i + 1).getSubjectResult()) {
+			while ((i + 1) < averageExcelVos.size() && averageExcelVos.get(i).getSubjectResult() == averageExcelVos.get(i + 1).getSubjectResult()) {
 				i++;
 				averageExcelVos.get(i).setRank(count + 1);
 			}
@@ -574,8 +591,10 @@ public class AverageServiceImpl implements AverageService {
 	  * @Description : 
 	  按等级分组
 	*/
-	private Map<Integer,List<AverageExcelVo>> getLevelMap(List<AverageExcelVo> averageExcelVos){
+	@Override
+	public Map<Integer,List<AverageExcelVo>> getLevelMap(List<AverageExcelVo> averageExcelVos){
 		List<BigDecimal> level = new ArrayList<BigDecimal>();
+		BigDecimal hundred =  new BigDecimal("100");
 		level.add(new BigDecimal("2.5"));
 		for (int i = 1; i < 20; i++) {
 			level.add(new BigDecimal(i*5));
@@ -584,19 +603,23 @@ public class AverageServiceImpl implements AverageService {
 		level.add(new BigDecimal("100"));		
 		BigDecimal size = new BigDecimal(averageExcelVos.size()) ;//参加考试人数
 		Map<Integer,List<AverageExcelVo>> levelMap = new LinkedHashMap<Integer, List<AverageExcelVo>>();
+		int previousLevelCount = 0;
 		for (int i = 0; i < level.size(); i++) {
-			int previousLevelCount = 0;
-			if (i>0){
-				//获取前一个段位的人数
-				 previousLevelCount = levelMap.get(i-1).size();
-			}
-			BigDecimal initBigDecimal =  size.multiply(level.get(i)).setScale(2,RoundingMode.HALF_UP);
+			
+			BigDecimal initBigDecimal =  size.multiply(level.get(i)).divide(hundred).setScale(2,RoundingMode.HALF_UP);
 			int ceil = (int) Math.ceil(initBigDecimal.floatValue());
 			int floor = (int) Math.floor(initBigDecimal.floatValue());
 			while ((ceil+1)<averageExcelVos.size()&&averageExcelVos.get(ceil).getRank() == averageExcelVos.get(ceil+1).getRank()){
 				ceil++;
 			}
-			levelMap.put(i,averageExcelVos.subList(previousLevelCount,ceil));
+			if (ceil+1 >= averageExcelVos.size()) {
+				levelMap.put(i+1,averageExcelVos.subList(previousLevelCount,averageExcelVos.size()));						
+			}else {
+				levelMap.put(i+1,averageExcelVos.subList(previousLevelCount,ceil+1));						
+			}
+			//获取前一个段位的人数				 
+			previousLevelCount = ceil+1;
+			
 		}
 		return levelMap;
 	}
@@ -605,8 +628,10 @@ public class AverageServiceImpl implements AverageService {
 	  * @Description : 
 	  按等级分组(初始指标)
 	*/
-	private Map<Integer,BigDecimal> getLevelMapDecimal(List<AverageExcelVo> averageExcelVos){
+	@Override
+	public  Map<Integer,BigDecimal> getLevelMapDecimal(List<AverageExcelVo> averageExcelVos){
 		List<BigDecimal> level = new ArrayList<BigDecimal>();
+		BigDecimal hundred =  new BigDecimal("100");
 		level.add(new BigDecimal("2.5"));
 		for (int i = 1; i < 20; i++) {
 			level.add(new BigDecimal(i*5));
@@ -616,8 +641,14 @@ public class AverageServiceImpl implements AverageService {
 		BigDecimal size = new BigDecimal(averageExcelVos.size()) ;//参加考试人数
 		Map<Integer,BigDecimal> levelMapDecimal = new LinkedHashMap<Integer, BigDecimal>();
 		for (int i = 0; i < level.size(); i++) {			
-			BigDecimal initBigDecimal =  size.multiply(level.get(i)).setScale(2,RoundingMode.HALF_UP);			
-			levelMapDecimal.put(i,initBigDecimal);
+			if (i>0) {
+				BigDecimal initBigDecimal =  size.multiply(level.get(i).subtract(level.get(i-1))).divide(hundred,2,RoundingMode.HALF_UP);	
+				levelMapDecimal.put(i+1,initBigDecimal);
+			}else {
+				BigDecimal initBigDecimal =  size.multiply(level.get(i)).divide(hundred,2,RoundingMode.HALF_UP);
+				levelMapDecimal.put(i+1,initBigDecimal);
+			}
+			
 		}
 		return levelMapDecimal;
 	}
@@ -628,7 +659,8 @@ public class AverageServiceImpl implements AverageService {
 	 * @param schoolName
 	 * @return
 	 */
-	private Map<Integer,List<AverageExcelVo>> getLevelMapBySchoolName(Map<Integer,List<AverageExcelVo>> levelMap,String schoolName) {
+	@Override
+	public Map<Integer,List<AverageExcelVo>> getLevelMapBySchoolName(Map<Integer,List<AverageExcelVo>> levelMap,String schoolName) {
 		Map<Integer, List<AverageExcelVo>> schoolLevelMap = new LinkedHashMap<Integer, List<AverageExcelVo>>();				
 		for (int level : levelMap.keySet()) {
 			List<AverageExcelVo> averageExcelVos = levelMap.get(level);
@@ -653,14 +685,24 @@ public class AverageServiceImpl implements AverageService {
 	 * @param schoolName
 	 * 某一个学校的指标
 	 */
-	private Map<Integer, BigDecimal> getLevelMapDecimalBySchoolName(Map<Integer,List<AverageExcelVo>> levelMap,Map<Integer,BigDecimal> levelMapDecimal,String schoolName) {
+	@Override
+	public Map<Integer, BigDecimal> getLevelMapDecimalBySchoolName(Map<Integer,List<AverageExcelVo>> levelMap,Map<Integer,BigDecimal> levelMapDecimal,String schoolName) {
 		Map<Integer, BigDecimal> schoolLevelMapDecimal = new LinkedHashMap<Integer, BigDecimal>();
 		BigDecimal zero = new BigDecimal("0");	
 		BigDecimal one = new BigDecimal("1");	
 		BigDecimal start = new BigDecimal("0");	
+		BigDecimal schoolRemainDecimal =  new BigDecimal("0");
+		BigDecimal remainDecimal =  new BigDecimal("0");
+		BigDecimal allCount = new BigDecimal(0);//人数累加
+		BigDecimal allLevelCount = new BigDecimal(0);//指标累加
+
+
 		
 		for (int level : levelMap.keySet()) {
 			List<AverageExcelVo> averageExcelVos = levelMap.get(level);
+			allCount = allCount.add(new BigDecimal(averageExcelVos.size()));
+			allLevelCount = allLevelCount.add(levelMapDecimal.get(level));
+
 			if (averageExcelVos == null || averageExcelVos.size() == 0) {
 				schoolLevelMapDecimal.put(level, zero);
 			}else {
@@ -689,9 +731,13 @@ public class AverageServiceImpl implements AverageService {
 			    BigDecimal initDecimal = levelMapDecimal.get(level);//初始指标
 			    BigDecimal firstDecimal = new BigDecimal(first);
 			    // (初始指标-同分第一个)/同分总人数*该校同分总人数
-			    BigDecimal bigDecimal = (initDecimal.subtract(firstDecimal)).divide(countDecimal).multiply(schoolCountDecimal).setScale(2, RoundingMode.HALF_UP);
-			    schoolLevelMapDecimal.put(level, bigDecimal.add(start));			    								
-			}									
+			    BigDecimal bigDecimal = (initDecimal.subtract(remainDecimal).subtract(firstDecimal)).multiply(schoolCountDecimal).divide(countDecimal,2,RoundingMode.HALF_UP);
+			    schoolLevelMapDecimal.put(level, bigDecimal.add(start).add(schoolRemainDecimal));
+			    schoolRemainDecimal =  schoolCountDecimal.subtract(bigDecimal);//该校留给下一个等级的 
+			    remainDecimal =  allCount.subtract(allLevelCount);//整体留给下一个等级的 
+			}
+			start = zero;//清0
+			
 		}
 		return schoolLevelMapDecimal;
 	}

@@ -47,6 +47,7 @@ import com.zzy.pony.config.Constants;
 import com.zzy.pony.exam.mapper.AverageIndexMapper;
 import com.zzy.pony.exam.model.AverageIndex;
 import com.zzy.pony.exam.service.AverageService;
+import com.zzy.pony.exam.vo.AverageExcelVo;
 import com.zzy.pony.exam.vo.AverageIndexRowVo;
 import com.zzy.pony.exam.vo.AverageIndexVo;
 import com.zzy.pony.model.Exam;
@@ -58,6 +59,7 @@ import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.SubjectService;
 import com.zzy.pony.util.DateTimeUtil;
+import com.zzy.pony.util.ReadExcelUtils;
 import com.zzy.pony.util.TemplateUtil;
 import com.zzy.pony.vo.GsonVo;
 
@@ -275,59 +277,81 @@ public class AverageController {
     }
 	
 	@SuppressWarnings("deprecation")
-	@RequestMapping(value="exportResult",method = RequestMethod.GET)	 
+	@RequestMapping(value="exportResult",method = RequestMethod.POST)	 
     public void exportResult(MultipartFile fileUpload,HttpServletRequest request,HttpServletResponse response) throws Exception{  
 		MultipartHttpServletRequest multipartRequest=(MultipartHttpServletRequest)request;
 		MultipartFile file = multipartRequest.getFile("upoadfile");		
-        String title = "均量值统计";
+        if (file == null) {
+			return ;
+		}
+		String title = "均量值统计";
 				
-		/*try{  
+		try{  
             HSSFWorkbook workbook = new HSSFWorkbook();                     // 创建工作簿对象  
     		HSSFSheet sheet = workbook.createSheet(title);                  // 创建工作表   
     		List<Map<String, Object>> headList = new ArrayList<Map<String,Object>>();
     		List<Map<String, Object>> datas = new ArrayList<Map<String,Object>>();
+   		
+    		//Map<String,Map<String, Map<String, BigDecimal>>> result = new LinkedHashMap<String, Map<String,Map<String,BigDecimal>>>();
+    		Map<String,Map<String, Map<String, BigDecimal>>> dataMap = new LinkedHashMap<String, Map<String,Map<String,BigDecimal>>>();
 
+			Workbook wb =  ReadExcelUtils.ReadExcelByFile(file);							
+			String[] titles = ReadExcelUtils.readExcelTitle(wb);
     		int range = 0 ;
-    		for (Integer	 subjectId : dataMap.keySet()) {
-    			Map<String, Map<String, BigDecimal>> innerMap = dataMap.get(subjectId);
-        		Subject subject = subjectService.get(subjectId);
-    			List<AverageIndexVo> averageIndexVos = averageIndexMapper.findByExamAndGradeAndSubject(examId, gradeId,subject.getSubjectId());
-    			// 产生表格标题行  
-                HSSFRow titleRow = sheet.createRow(range); 
-                HSSFCell titleCell = titleRow.createCell(0);                                                                     
-                sheet.addMergedRegion(new Region(range, (short)0,range, (short)(1)));    
-                titleCell.setCellValue(subject.getName()); 
-                HSSFRow headRow = sheet.createRow(range+1);
-                headRow.createCell(0).setCellValue("段名");
-                headRow.createCell(1).setCellValue("各档指标");
-                int colNums = 2;
-            	int classSize = 1; 
-                for (SchoolClass schoolClass : schoolClasses) {
-                	HSSFCell classSeqCell = titleRow.createCell(classSize*2);
-                	classSeqCell.setCellValue(schoolClass.getSeq());                	
-                	headRow.createCell(classSize*2).setCellValue("档数");
-                	headRow.createCell(classSize*2+1).setCellValue("累数");
-                	classSize++;
-                	colNums +=2;
-				}
-                titleRow.createCell(colNums).setCellValue("全部");
-                headRow.createCell(colNums).setCellValue("档数");
-                headRow.createCell(colNums+1).setCellValue("累数");                                
-				int index = 0;
-                for (String section : innerMap.keySet()) {
-                	HSSFRow dataRow = sheet.createRow(range+index+2);
-					dataRow.createCell(0).setCellValue(section);
-					dataRow.createCell(1).setCellValue(String.valueOf(averageIndexVos.get(index).getIndexValue()));
-					for (int j=1;j<=schoolClasses.size();j++) {
-						dataRow.createCell(j*2).setCellValue(innerMap.get(section).get("level"+j).toString());
-						dataRow.createCell(j*2+1).setCellValue(innerMap.get(section).get("levelSum"+j).toString());						
+
+			for (int i=3;i<titles.length;i++) {
+					List<AverageExcelVo> averageExcelVos = service.getAverageExcelVo(wb,i);
+					List<String> classCodes = service.getClassCode(averageExcelVos,Constants.SCHOOL_NAME);
+					service.sortAverageExcelVo(averageExcelVos);
+					Map<Integer,List<AverageExcelVo>> levelMap = service.getLevelMap(averageExcelVos);
+					Map<Integer,BigDecimal> levelMapDecimal = service.getLevelMapDecimal(averageExcelVos);
+					Map<Integer,List<AverageExcelVo>> schoolLevelMap = service.getLevelMapBySchoolName(levelMap,Constants.SCHOOL_NAME);
+					Map<Integer,BigDecimal> schoolLevelMapDecimal = service.getLevelMapDecimalBySchoolName(levelMap,levelMapDecimal,Constants.SCHOOL_NAME);
+					Map<String, Map<String, BigDecimal>> innerMap = service.calculate(schoolLevelMap, schoolLevelMapDecimal, classCodes);
+					dataMap.put(titles[i], innerMap);
+					
+					
+	    			// 产生表格标题行  
+	                HSSFRow titleRow = sheet.createRow(range); 
+	                HSSFCell titleCell = titleRow.createCell(0);                                                                     
+	                sheet.addMergedRegion(new Region(range, (short)0,range, (short)(1)));    
+	                titleCell.setCellValue(titles[i]); 
+	                HSSFRow headRow = sheet.createRow(range+1);
+	                headRow.createCell(0).setCellValue("段名");
+	                headRow.createCell(1).setCellValue("各档指标");
+	                int colNums = 2;
+	            	int classSize = 1; 
+	                for (String classCode : classCodes) {
+	                	HSSFCell classSeqCell = titleRow.createCell(classSize*2);
+	                	classSeqCell.setCellValue(classCode);                	
+	                	headRow.createCell(classSize*2).setCellValue("档数");
+	                	headRow.createCell(classSize*2+1).setCellValue("累数");
+	                	classSize++;
+	                	colNums +=2;
 					}
-					dataRow.createCell(schoolClasses.size()*2+2).setCellValue(innerMap.get(section).get("allLevel").toString());
-					dataRow.createCell(schoolClasses.size()*2+3).setCellValue(innerMap.get(section).get("allLevelSum").toString());
-					index++;
-				}
-                range += 25;
-    		}
+	                titleRow.createCell(colNums).setCellValue("全部");
+	                headRow.createCell(colNums).setCellValue("档数");
+	                headRow.createCell(colNums+1).setCellValue("累数");                                
+					int index = 0;
+	                for (String section : innerMap.keySet()) {
+	                	HSSFRow dataRow = sheet.createRow(range+index+2);
+						dataRow.createCell(0).setCellValue(section);
+						dataRow.createCell(1).setCellValue(schoolLevelMapDecimal.get(index+1).floatValue());
+						int j = 1;
+						for (String classCode : classCodes) {
+							dataRow.createCell(j*2).setCellValue(innerMap.get(section).get(classCode).toString());
+						//	dataRow.createCell(j*2+1).setCellValue(innerMap.get(section).get("levelSum"+j).toString());						
+							j++;
+						}
+						//dataRow.createCell(schoolClasses.size()*2+2).setCellValue(innerMap.get(section).get("allLevel").toString());
+						//dataRow.createCell(schoolClasses.size()*2+3).setCellValue(innerMap.get(section).get("allLevelSum").toString());
+						index++;
+					}
+	                range += 25;
+					
+					
+			}										
+			   		    		    		
           //让列宽随着导出的列长自动适应  
             for (int colNum = 0; colNum < 30; colNum++) {
                 int columnWidth = sheet.getColumnWidth(colNum) / 256;
@@ -351,8 +375,7 @@ public class AverageController {
                 }                 
                 sheet.setColumnWidth(colNum, (columnWidth+4) * 256);
             }
-            
-                                  
+                                             
             if(workbook !=null){  
                 try  
                 {
@@ -373,7 +396,7 @@ public class AverageController {
   
         }catch(Exception e){  
             e.printStackTrace();  
-        }*/  
+        }  
           
     }
 	

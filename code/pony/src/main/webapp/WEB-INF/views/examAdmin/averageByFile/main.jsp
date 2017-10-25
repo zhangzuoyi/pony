@@ -63,7 +63,7 @@ width:200px;
 	  			 ref="uploadResult" 	
 	  			 name="upoadfile"
 	  			 accept=".xls,.xlsx"
-	  			 action="<s:url value='/examAdmin/average/uploadResult'/>"
+	  			 action="<s:url value='/examAdmin/average/exportResult'/>"
 	  			:file-list="fileList"
 	  			:auto-upload="false"
 	  			>
@@ -112,30 +112,19 @@ var app = new Vue({
 					function(response){}
 				);
 			},			
-            exportAverageByFile : function(){
-      			 if(this.examId == null || this.examId == ""){
-                    	this.$alert("请选择考试","提示",{
-      					type:"warning",
-      					confirmButtonText:'确认'
-      				});
-      				return;
-                    }			
-      			if(this.gradeId == null || this.gradeId == ""){
-                    	this.$alert("请选择年级","提示",{
-      					type:"warning",
-      					confirmButtonText:'确认'
-      				});
-      				return;
-                    }              
+            exportAverageByFile : function(){     			              
           	 	 this.uploadResultDialogFormVisible = true;		     			 	
       			},
-   			uploadResult : function(){           	  
-            	  this.$refs.upload.submit();
-            	  this.$refs.upload.clearFiles();
+   			uploadResult : function(){  
+   				
+   				
+   				
+            	  this.$refs.uploadResult.submit();
+            	  this.$refs.uploadResult.clearFiles();
             	  this.uploadResultDialogFormVisible = false;
-            	  var exportParams = {};
+            	 /*  var exportParams = {};
 				 var url = "<s:url value='/examAdmin/average/exportResult?'/>"+jQuery.param(exportParams);
-	   			 window.open(encodeURI(encodeURI(url)));             	  
+	   			 window.open(encodeURI(encodeURI(url)));  */            	  
               },
    			
             
