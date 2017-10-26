@@ -118,13 +118,14 @@ var app = new Vue({
    			uploadResult : function(){  
    				
    				
-   				
-            	  this.$refs.uploadResult.submit();
+            	  this.$refs.uploadResult.submit();           	             	                                                               	  
             	  this.$refs.uploadResult.clearFiles();
             	  this.uploadResultDialogFormVisible = false;
-            	 /*  var exportParams = {};
-				 var url = "<s:url value='/examAdmin/average/exportResult?'/>"+jQuery.param(exportParams);
-	   			 window.open(encodeURI(encodeURI(url)));  */            	  
+            	  exportParams = {};
+			var url = "<s:url value='/examAdmin/average/exportAverage?'/>"+jQuery.param(exportParams);
+		    window.open(encodeURI(encodeURI(url)));	
+            	  
+            	               	  
               },
    			
             

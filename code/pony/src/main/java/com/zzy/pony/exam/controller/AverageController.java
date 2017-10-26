@@ -1,5 +1,7 @@
 package com.zzy.pony.exam.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -333,13 +335,13 @@ public class AverageController {
 	                headRow.createCell(colNums).setCellValue("档数");
 	                headRow.createCell(colNums+1).setCellValue("累数");                                
 					int index = 0;
-	                for (String section : innerMap.keySet()) {
+	                for (int section=1;i<=22;i++) {
 	                	HSSFRow dataRow = sheet.createRow(range+index+2);
-						dataRow.createCell(0).setCellValue(section);
+						dataRow.createCell(0).setCellValue("A"+section);
 						dataRow.createCell(1).setCellValue(schoolLevelMapDecimal.get(index+1).floatValue());
 						int j = 1;
 						for (String classCode : classCodes) {
-							dataRow.createCell(j*2).setCellValue(innerMap.get(section).get(classCode).toString());
+							dataRow.createCell(j*2).setCellValue(innerMap.get(classCode).get("A"+section).toString());
 						//	dataRow.createCell(j*2+1).setCellValue(innerMap.get(section).get("levelSum"+j).toString());						
 							j++;
 						}
@@ -377,24 +379,31 @@ public class AverageController {
             }
                                              
             if(workbook !=null){  
-                try  
-                {
+              
                 	String fileName = new String(title.getBytes("utf-8"), "ISO8859-1")+DateTimeUtil.dateToStr(new Date()) + ".xls" ;
                   //  String fileName = "Excel-" + String.valueOf(System.currentTimeMillis()).substring(4, 13) + ".xls";  
                     String headStr = "attachment; filename=\"" + fileName + "\"";  
                   //  response = getResponse();  
                     response.setContentType("APPLICATION/OCTET-STREAM");  
                     response.setHeader("Content-Disposition", headStr);  
-                    OutputStream out = response.getOutputStream();  
-                    workbook.write(out);  
-                }  
-                catch (IOException e)  
-                {  
-                    e.printStackTrace();  
-                }  
+                    //OutputStream out = response.getOutputStream();  
+                   // workbook.write(out); 
+                   
+                    File localFile = new File(Constants.AVERAGE_PATH);
+					FileOutputStream outputStream = new FileOutputStream(localFile);
+                    workbook.write(outputStream);
+                    
+                    
+                    
+                    
+                 
             }  
   
-        }catch(Exception e){  
+        } catch (IOException e)  
+        {  
+            e.printStackTrace();  
+        } 
+		 catch(Exception e){  
             e.printStackTrace();  
         }  
           
