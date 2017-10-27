@@ -1,7 +1,10 @@
 package com.zzy.pony.config;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Constants {
@@ -40,6 +43,9 @@ public class Constants {
 	public static final int AUTO_MODE_TWO = 2;//自动安排考场--按照考场容量分配
 	public static final String SELECT = "select";
 	public static final String EXPORT = "export";
+	public static final List<BigDecimal> AVERAGE_LEVELS;
+
+
 
 
 
@@ -47,7 +53,9 @@ public class Constants {
 
 	
 	public static final String MESSAGE_ATTACH_UPLOADPATH = "/home/upload";
-	public static final String AVERAGE_PATH = "D:\\tmp";
+	//public static final String AVERAGE_PATH = "D:\\tmp";
+	public static final String AVERAGE_PATH = "/home/upload";
+
 
 	
 
@@ -143,5 +151,14 @@ public class Constants {
 		PP_TYPES=new LinkedHashMap<Integer, String>(); 
 		PP_TYPES.put(0, "奖"); 
 		PP_TYPES.put(1, "惩"); 
+		
+		AVERAGE_LEVELS = new ArrayList<BigDecimal>();
+		AVERAGE_LEVELS.add(new BigDecimal("2.5"));
+		for (int i = 1; i < 20; i++) {
+			AVERAGE_LEVELS.add(new BigDecimal(i * 5));
+		}
+		AVERAGE_LEVELS.add(new BigDecimal("97.5"));
+		AVERAGE_LEVELS.add(new BigDecimal("100"));
+		
 	}
 }

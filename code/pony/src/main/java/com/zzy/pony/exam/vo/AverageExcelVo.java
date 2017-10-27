@@ -5,7 +5,9 @@ public class AverageExcelVo {
 	private String classCode;
 	private String name;
 	private float subjectResult;
+	private float subjectResultSum;
 	private int rank;
+	private int rankSum;
 	private int level;
 	public AverageExcelVo() {}
 	public String getSchoolName() {
@@ -44,5 +46,18 @@ public class AverageExcelVo {
 	public void setLevel(int level) {
 		this.level = level;
 	}
+	public float getSubjectResultSum() {
+		return subjectResultSum;
+	}
+	public void setSubjectResultSum(float subjectResultSum) {
+		this.subjectResultSum = subjectResultSum;
+	}
+	public int getRankSum() {
+		return rankSum;
+	}
+	public void setRankSum(int rankSum) {
+		this.rankSum = rankSum;
+	}
+	
 	
 }

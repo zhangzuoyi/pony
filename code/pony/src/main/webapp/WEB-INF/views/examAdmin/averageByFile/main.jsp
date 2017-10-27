@@ -49,9 +49,24 @@ width:200px;
             	</el-col> 
                <el-col  :span="1">
                		{{term.name}}
-               </el-col>             	
+               </el-col> 
+               <el-col :span="1" >
+                    <b>年级:</b>                                    
+            	</el-col> 
+            	<el-col :span="4" >
+            	<div class="grid-content bg-purple">                                     
+					<el-select v-model="gradeId"   filterable clearable placeholder="请选择..">
+               		 <el-option
+                        v-for="grade in grades" 
+                        :label="grade.name"                      
+                        :value="grade.gradeId">
+                        <span style="float: left">{{grade.name}}</span>
+               		 </el-option>
+           			 </el-select>				
+                    </div>        
+            	</el-col>            	
             	<el-col :span="6" >              		
-               		<el-button type="primary"  @click="exportAverageByFile">导出</el-button>              		             		
+               		<el-button type="primary"  @click="exportAverageByFile" :disabled="exportFlag" >导出</el-button>              		             		
               	</el-col>                           
               </el-row>
             </div>        
@@ -63,7 +78,8 @@ width:200px;
 	  			 ref="uploadResult" 	
 	  			 name="upoadfile"
 	  			 accept=".xls,.xlsx"
-	  			 action="<s:url value='/examAdmin/average/exportResult'/>"
+	  			 :before-upload="beforeUpload"
+	  			 action="<s:url value='/examAdmin/examinee/fileUpload'/>"
 	  			:file-list="fileList"
 	  			:auto-upload="false"
 	  			>
@@ -84,15 +100,22 @@ var app = new Vue({
 	data : { 		
 		schoolYearUrl:"<s:url value='/schoolYear/getCurrent'/>",
 		termUrl:"<s:url value='/term/getCurrent'/>",
+		gradesUrl :"<s:url value='/grade/list'/>",
+		exportResultUrl :"<s:url value='/examAdmin/average/exportResult'/>",
 		schoolYear :null,
 		term : null,		
 		uploadResultDialogFormVisible : false,
+		grades : [],	
+		gradeId: ${gradeId == null ? 'null' : gradeId},
 		fileList : [],
+		exportFlag : false
 		
 	}, 
 	mounted : function() { 
 		this.getCurrentSchoolYear();
-		this.getCurrentTerm();		
+		this.getCurrentTerm();	
+		this.getGrades();
+
 	},
 	watch:{			
 	},
@@ -111,20 +134,51 @@ var app = new Vue({
 					this.term=response.data; },
 					function(response){}
 				);
-			},			
-            exportAverageByFile : function(){     			              
+			},	
+			getGrades	:function(){ 
+				this.$http.get(this.gradesUrl).then(
+				function(response){this.grades=response.data; },
+				function(response){}  	 			
+				);
+				},
+				beforeUpload : function(file){
+	            	
+	                  var formData = new FormData();
+	                  formData.append('upoadfile',file);
+	                  formData.append('gradeId',this.gradeId);	                               
+	                  this.$http.post(this.exportResultUrl,formData).then(
+	                          function(response){ 
+	                              this.gradeId = null;	
+	               				  this.exportFlag = false;
+
+	                              this.$message({type:"info",message:"生成成功"});  
+	                              var url = "<s:url value='/examAdmin/average/exportResultFile'/>";
+	                  		      window.open(encodeURI(encodeURI(url)));	
+	                              
+	                              });
+	                  return false;           
+	            },	
+				
+            exportAverageByFile : function(){ 
+            	if(this.gradeId == null || this.gradeId == ""){
+                  	this.$alert("请选择年级","提示",{
+    					type:"warning",
+    					confirmButtonText:'确认'
+    				});
+    				return;
+                  }
           	 	 this.uploadResultDialogFormVisible = true;		     			 	
       			},
    			uploadResult : function(){  
    				
-   				
+   				  this.exportFlag = true;
             	  this.$refs.uploadResult.submit();           	             	                                                               	  
             	  this.$refs.uploadResult.clearFiles();
             	  this.uploadResultDialogFormVisible = false;
-            	  exportParams = {};
-			var url = "<s:url value='/examAdmin/average/exportAverage?'/>"+jQuery.param(exportParams);
-		    window.open(encodeURI(encodeURI(url)));	
-            	  
+            	 // exportParams = {};
+			//var url = "<s:url value='/examAdmin/average/exportResult?'/>"+jQuery.param(exportParams);
+		   // window.open(encodeURI(encodeURI(url)));	
+            
             	               	  
               },
    			

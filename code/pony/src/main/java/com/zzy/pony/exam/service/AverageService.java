@@ -25,8 +25,11 @@ public interface AverageService {
 	Map<String,Map<String, Map<String, BigDecimal>>> calculateAverageByFile(MultipartFile file);
 	List<String> getClassCode(List<AverageExcelVo> averageExcelVos,String schoolName);
 	void sortAverageExcelVo(List<AverageExcelVo> averageExcelVos);
+	void sortAverageExcelVoSum(List<AverageExcelVo> averageExcelVos);
 	List<AverageExcelVo> getAverageExcelVo (Workbook wb,int index);
-	Map<Integer,List<AverageExcelVo>> getLevelMap(List<AverageExcelVo> averageExcelVos); 
+	List<AverageExcelVo> getAverageExcelVoSum (Workbook wb,List<String> subjectNames);
+	Map<Integer,List<AverageExcelVo>> getLevelMap(List<AverageExcelVo> averageExcelVos);
+	Map<Integer,List<AverageExcelVo>> getLevelMapSum(List<AverageExcelVo> averageExcelVos); 
 	Map<Integer,BigDecimal> getLevelMapDecimal(List<AverageExcelVo> averageExcelVos);
 	Map<Integer,List<AverageExcelVo>> getLevelMapBySchoolName(Map<Integer,List<AverageExcelVo>> levelMap,String schoolName);
 	Map<Integer, BigDecimal> getLevelMapDecimalBySchoolName(Map<Integer,List<AverageExcelVo>> levelMap,Map<Integer,BigDecimal> levelMapDecimal,String schoolName);

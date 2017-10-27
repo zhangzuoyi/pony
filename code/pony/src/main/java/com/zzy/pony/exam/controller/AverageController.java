@@ -1,8 +1,10 @@
 package com.zzy.pony.exam.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -16,6 +18,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -29,6 +32,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.hibernate.type.PrimitiveByteArrayBlobType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -53,10 +57,12 @@ import com.zzy.pony.exam.vo.AverageExcelVo;
 import com.zzy.pony.exam.vo.AverageIndexRowVo;
 import com.zzy.pony.exam.vo.AverageIndexVo;
 import com.zzy.pony.model.Exam;
+import com.zzy.pony.model.Grade;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.service.ExamService;
+import com.zzy.pony.service.GradeService;
 import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.SubjectService;
@@ -80,6 +86,8 @@ public class AverageController {
 	private AverageIndexMapper averageIndexMapper;
 	@Autowired
 	private SubjectService subjectService;
+	@Autowired
+	private GradeService gradeService;
 	
 	@RequestMapping(value="main",method=RequestMethod.GET)
 	public String main(Model model){
@@ -279,15 +287,37 @@ public class AverageController {
     }
 	
 	@SuppressWarnings("deprecation")
+	@RequestMapping(value="exportResultFile",method = RequestMethod.GET)	 
+    public void exportResultFile(HttpServletRequest request,HttpServletResponse response) {
+		File localFile = new File(Constants.AVERAGE_PATH, "averageTmp.xls");
+		try {
+			response.setContentType("APPLICATION/OCTET-STREAM");  
+            String headStr = "attachment; filename=\"" + "averageTmp.xls" + "\"";  
+			response.setHeader("Content-Disposition", headStr);
+			OutputStream outputStream = response.getOutputStream();
+			FileInputStream inputStream = new FileInputStream(localFile);
+			IOUtils.copy(inputStream, outputStream);
+			 						
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	@SuppressWarnings("deprecation")
 	@RequestMapping(value="exportResult",method = RequestMethod.POST)	 
-    public void exportResult(MultipartFile fileUpload,HttpServletRequest request,HttpServletResponse response) throws Exception{  
+    public void exportResult(MultipartFile fileUpload,HttpServletRequest request,HttpServletResponse response,@RequestParam(value="gradeId") int gradeId) throws Exception{  
 		MultipartHttpServletRequest multipartRequest=(MultipartHttpServletRequest)request;
 		MultipartFile file = multipartRequest.getFile("upoadfile");		
         if (file == null) {
 			return ;
 		}
 		String title = "均量值统计";
-				
+		List<String> subjectNames = new ArrayList<String>();
+		Grade grade = gradeService.get(gradeId);
+		
+		
+		
+		
 		try{  
             HSSFWorkbook workbook = new HSSFWorkbook();                     // 创建工作簿对象  
     		HSSFSheet sheet = workbook.createSheet(title);                  // 创建工作表   
@@ -300,6 +330,64 @@ public class AverageController {
 			Workbook wb =  ReadExcelUtils.ReadExcelByFile(file);							
 			String[] titles = ReadExcelUtils.readExcelTitle(wb);
     		int range = 0 ;
+    		
+    		if (grade.getName().equalsIgnoreCase("高一")) {
+    			for(int i=3;i<titles.length;i++) {
+    				subjectNames.add(titles[i]);
+    			}
+    		}else {
+    			subjectNames.add("语文");
+    			subjectNames.add("数学");
+    			subjectNames.add("英语");
+    		}
+    		List<AverageExcelVo> averageExcelVoSum = service.getAverageExcelVoSum(wb,subjectNames);
+			List<String> classCodeSum = service.getClassCode(averageExcelVoSum,Constants.SCHOOL_NAME);
+			service.sortAverageExcelVoSum(averageExcelVoSum);
+			Map<Integer,List<AverageExcelVo>> levelMapSum = service.getLevelMapSum(averageExcelVoSum);
+			Map<Integer,BigDecimal> levelMapDecimalSum = service.getLevelMapDecimal(averageExcelVoSum);
+			Map<Integer,List<AverageExcelVo>> schoolLevelMapSum = service.getLevelMapBySchoolName(levelMapSum,Constants.SCHOOL_NAME);
+			Map<Integer,BigDecimal> schoolLevelMapDecimalSum = service.getLevelMapDecimalBySchoolName(levelMapSum,levelMapDecimalSum,Constants.SCHOOL_NAME);
+			Map<String, Map<String, BigDecimal>> innerMapSum = service.calculate(schoolLevelMapSum, schoolLevelMapDecimalSum, classCodeSum);
+			// 产生表格标题行  
+            HSSFRow titleRowSum = sheet.createRow(range); 
+            HSSFCell titleCellSum = titleRowSum.createCell(0);                                                                     
+            sheet.addMergedRegion(new Region(range, (short)0,range, (short)(1)));    
+            titleCellSum.setCellValue("总成绩"); 
+            HSSFRow headRowSum = sheet.createRow(range+1);
+            headRowSum.createCell(0).setCellValue("段名");
+            headRowSum.createCell(1).setCellValue("各档指标");
+            int colNumSum = 2;
+        	int classSizeSum = 1; 
+            for (String classCode : classCodeSum) {
+            	HSSFCell classSeqCell = titleRowSum.createCell(classSizeSum*2);
+            	classSeqCell.setCellValue(classCode);                	
+            	headRowSum.createCell(classSizeSum*2).setCellValue("档数");
+            	headRowSum.createCell(classSizeSum*2+1).setCellValue("累数");
+            	classSizeSum++;
+            	colNumSum +=2;
+			}
+            titleRowSum.createCell(colNumSum).setCellValue("全部");
+            headRowSum.createCell(colNumSum).setCellValue("档数");
+            headRowSum.createCell(colNumSum+1).setCellValue("累数");                                
+			int indexSum = 0;
+            for (int section=1;section<=Constants.AVERAGE_LEVELS.size();section++) {
+            	HSSFRow dataRow = sheet.createRow(range+indexSum+2);
+				dataRow.createCell(0).setCellValue("A"+section);
+				dataRow.createCell(1).setCellValue(schoolLevelMapDecimalSum.get(indexSum+1).toString());
+				int j = 1;
+				for (String classCode : classCodeSum) {
+					dataRow.createCell(j*2).setCellValue(innerMapSum.get(classCode).get("A"+section).toString());
+					dataRow.createCell(j*2+1).setCellValue(innerMapSum.get(classCode).get("classAllSum"+section).toString());						
+					j++;
+				}
+				dataRow.createCell(classCodeSum.size()*2+2).setCellValue(innerMapSum.get("allLevel").get("allLevel"+section).toString());
+				dataRow.createCell(classCodeSum.size()*2+3).setCellValue(innerMapSum.get("allLevelSum").get("allLevelSum"+section).toString());
+				indexSum++;
+			}
+            range += 25;
+    		
+    		
+    		
 
 			for (int i=3;i<titles.length;i++) {
 					List<AverageExcelVo> averageExcelVos = service.getAverageExcelVo(wb,i);
@@ -310,9 +398,7 @@ public class AverageController {
 					Map<Integer,List<AverageExcelVo>> schoolLevelMap = service.getLevelMapBySchoolName(levelMap,Constants.SCHOOL_NAME);
 					Map<Integer,BigDecimal> schoolLevelMapDecimal = service.getLevelMapDecimalBySchoolName(levelMap,levelMapDecimal,Constants.SCHOOL_NAME);
 					Map<String, Map<String, BigDecimal>> innerMap = service.calculate(schoolLevelMap, schoolLevelMapDecimal, classCodes);
-					dataMap.put(titles[i], innerMap);
-					
-					
+					dataMap.put(titles[i], innerMap);										
 	    			// 产生表格标题行  
 	                HSSFRow titleRow = sheet.createRow(range); 
 	                HSSFCell titleCell = titleRow.createCell(0);                                                                     
@@ -335,18 +421,18 @@ public class AverageController {
 	                headRow.createCell(colNums).setCellValue("档数");
 	                headRow.createCell(colNums+1).setCellValue("累数");                                
 					int index = 0;
-	                for (int section=1;i<=22;i++) {
+	                for (int section=1;section<=Constants.AVERAGE_LEVELS.size();section++) {
 	                	HSSFRow dataRow = sheet.createRow(range+index+2);
 						dataRow.createCell(0).setCellValue("A"+section);
-						dataRow.createCell(1).setCellValue(schoolLevelMapDecimal.get(index+1).floatValue());
+						dataRow.createCell(1).setCellValue(schoolLevelMapDecimal.get(index+1).toString());
 						int j = 1;
 						for (String classCode : classCodes) {
 							dataRow.createCell(j*2).setCellValue(innerMap.get(classCode).get("A"+section).toString());
-						//	dataRow.createCell(j*2+1).setCellValue(innerMap.get(section).get("levelSum"+j).toString());						
+							dataRow.createCell(j*2+1).setCellValue(innerMap.get(classCode).get("classAllSum"+section).toString());						
 							j++;
 						}
-						//dataRow.createCell(schoolClasses.size()*2+2).setCellValue(innerMap.get(section).get("allLevel").toString());
-						//dataRow.createCell(schoolClasses.size()*2+3).setCellValue(innerMap.get(section).get("allLevelSum").toString());
+						dataRow.createCell(classCodes.size()*2+2).setCellValue(innerMap.get("allLevel").get("allLevel"+section).toString());
+						dataRow.createCell(classCodes.size()*2+3).setCellValue(innerMap.get("allLevelSum").get("allLevelSum"+section).toString());
 						index++;
 					}
 	                range += 25;
@@ -389,14 +475,11 @@ public class AverageController {
                     //OutputStream out = response.getOutputStream();  
                    // workbook.write(out); 
                    
-                    File localFile = new File(Constants.AVERAGE_PATH);
+                    File localFile = new File(Constants.AVERAGE_PATH,"averageTmp.xls");
 					FileOutputStream outputStream = new FileOutputStream(localFile);
                     workbook.write(outputStream);
-                    
-                    
-                    
-                    
-                 
+                    outputStream.close();
+                                                                                              
             }  
   
         } catch (IOException e)  
