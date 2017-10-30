@@ -339,12 +339,18 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		GAUtilTwo.getPre(preArrangeVos,classMap,teacherMap,teacherClassMap,preTeacherMap,classAlreadyMap);
         //3按照班级顺序排课
         List<SchoolClass> schoolClasses = schoolClassService.findByYearAndGradeOrderBySeq(year.getYearId(),gradeId);
+        ConditionVo cv= new ConditionVo();
+        cv.setYearId(year.getYearId());
+		cv.setTermId(term.getTermId());
+		cv.setGradeId(gradeId);        
+        List<TeacherSubjectVo> voSeq = teacherSubjectMapper.findArrangeSeq(cv);
+        
         for (SchoolClass sc:
         schoolClasses ) {
-
+        	
         	Map<Integer,Integer> classTSInnerMap = classTSMap.get(sc.getClassId());
         	Map<Integer, Integer> classSubjectTeacherMap = subjectTeacherMap.get(sc.getClassId());
-        	Map<Integer, Integer> sortClassTSInnerMap =  GAUtilTwo.sortBySubject(classTSInnerMap,classSubjectTeacherMap,subjects);
+        	Map<Integer, Integer> sortClassTSInnerMap =  GAUtilTwo.sortBySubject(classTSInnerMap,classSubjectTeacherMap,subjects,voSeq);
 			Map<Integer,List<Integer>> preClassMap = classMap.get(sc.getClassId());
 			Set<Integer> classAlreadySet = classAlreadyMap.get(sc.getClassId());
 			Map<Integer,Integer> innerAutoArrangeMap = new HashMap<Integer, Integer>();
@@ -357,13 +363,18 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 				}
 				int autoArrangeCount = classTSInnerMap.get(teacherId) - preArrangeCount;
 				List<Integer> preAlreadyTeacherList = new ArrayList<Integer>();
+				int preSize = 0;//预排课程数,用来判断是否第一次排
 				List<Integer> alreadyTeacherList = new ArrayList<Integer>();//本班的已安排
 				List<Integer> alreadyTeacherAllList = new ArrayList<Integer>();//所有的已安排
-
-
+				
+				if (preTeacherMap.get(teacherId)!=null){					
+					for (Integer key : preTeacherMap.get(teacherId).keySet()) {
+						preSize += preTeacherMap.get(teacherId).get(key).size();
+					}							
+				}				
 				if (preTeacherMap.get(teacherId)!=null && preTeacherMap.get(teacherId).get(sc.getClassId())!= null){
 					preAlreadyTeacherList = preTeacherMap.get(teacherId).get(sc.getClassId());//已经预排的
-					alreadyTeacherList = teacherClassMap.get(teacherId).get(sc.getClassId());
+					alreadyTeacherList = teacherClassMap.get(teacherId).get(sc.getClassId());				
 				}
 				if (teacherMap.get(teacherId)!= null){
 					alreadyTeacherAllList = teacherMap.get(teacherId);
@@ -374,12 +385,22 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 					log.error("----------------"+sc.getName()+":老师("+teacherId+")"+"预排与自动排的超过5天----------------");
 				}
 
+				System.out.println("-----前:"+preAlreadyTeacherList.size());
 				Set<Integer> availWeek = WeekSeqUtil.getAvailWeek(preAlreadyTeacherList);
+				System.out.println("-----后:"+availWeek.size());
+
+				
+				
 				Set<Integer> teacherSet = new HashSet<Integer>();//保存当次的教师上课安排
+				Set<Integer> alreadyWeekSet = new HashSet<Integer>();
+
 				for (int i = 0; i<autoArrangeCount;i++){
 
+																				
 					//从预排过后的剩下的星期中选择 (每天安排的课程不能超过3节)
-					int week = WeekSeqUtil.getRandomWeek(availWeek,preAlreadyTeacherList,alreadyTeacherList,alreadyTeacherAllList,classAlreadySet);
+					int week = WeekSeqUtil.getRandomWeek(availWeek,preAlreadyTeacherList,alreadyTeacherList,alreadyTeacherAllList,classAlreadySet,alreadyWeekSet);															
+					availWeek.remove(week);
+					alreadyWeekSet.add(week);
 					/*weekseq的获取
 					 * 1 不能在已安排的课程中 classAlreadySet
 					 * 2 满足年级不排课(放在classAlreadySet)
@@ -401,7 +422,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 					if (comList.contains(subjectId)) {
 						 type = Constants.SUBJECT_COMMON;
 					}
-					int weekSeq = WeekSeqUtil.getWeekSeq(week,preAlreadyTeacherList, preAlreadyTeacherList,alreadyTeacherAllList, classAlreadySet, type);
+					int weekSeq = WeekSeqUtil.getWeekSeq(week,preAlreadyTeacherList, alreadyTeacherList,alreadyTeacherAllList, classAlreadySet, type,preSize);
 
 					classAlreadySet.add(weekSeq);
 					teacherSet.add(weekSeq);

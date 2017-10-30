@@ -79,26 +79,32 @@ public class WeekSeqUtil {
 		}		
 		for (int weekSeq : list) {
 			result.remove(getWeek(weekSeq));			
-		}		
+		}	
+		
+		if (list.size() == 0 && result.size()<5) {
+			System.out.println("aaa");
+		}
+		
 		return result ;
 	}
 	
 	/*** 
 	* <p>Description: 随机返回一个week,
-	* 1每天安排的课程不能超过3节
+	* 1每天安排的课程不能超过4节
 	* 2已经安排完了的不能选择
 	* 3优先按照之前的教师上课星期选择
 	* </p>
 	* @author  wangchao262
 	*/
-	public static Integer getRandomWeek(Set<Integer> set,List<Integer> preAlreadyTeacherList,List<Integer> alreadyTeacherList,List<Integer> alreadyTeacherAllList,Set<Integer> classAlreadySet){
+	public static Integer getRandomWeek(Set<Integer> set,List<Integer> preAlreadyTeacherList,List<Integer> alreadyTeacherList,List<Integer> alreadyTeacherAllList,Set<Integer> classAlreadySet,Set<Integer> alreadyWeekSet){
 		Set<Integer> alreadySet = new HashSet<Integer>();
 		Set<Integer> allSet = new HashSet<Integer>();
 		allSet.addAll(classAlreadySet);
 		allSet.addAll(alreadyTeacherAllList);
-		if(alreadyTeacherList!= null){
-			alreadySet =  getWeek(alreadyTeacherList);//已经安排的星期,需要排除掉预排的
+		if(alreadyTeacherAllList!= null && alreadyTeacherAllList.size()>0){
+			alreadySet =  getWeek(alreadyTeacherAllList);//已经安排的星期,需要排除掉预排的
 			alreadySet.removeAll(getWeek(preAlreadyTeacherList));
+			alreadySet.removeAll(alreadyWeekSet);
 			for (int e:
 			alreadySet) {
 				int[] seqs = WeekSeq[e-1];
@@ -109,15 +115,14 @@ public class WeekSeqUtil {
 					}
 				}
 				//条件2
-				if (classAlreadySet.containsAll(arrayToList( WeekSeq[e-1]))) {
+				if (allSet.containsAll(arrayToList( WeekSeq[e-1]))) {
 					continue ;
 				}else {
 					//条件1
-					if (count >=3) {
+					if (count >3) {
 						continue ;
 					}
-				}
-
+				}				
 				return e;
 			}
 		}
@@ -130,11 +135,11 @@ public class WeekSeqUtil {
 					}
 				}
             	//条件2
-            	if (classAlreadySet.containsAll(arrayToList( WeekSeq[e-1]))) {
+            	if (allSet.containsAll(arrayToList( WeekSeq[e-1]))) {
 					continue ;
 				}else {
 					//条件1
-					if (count >=3) {
+					if (count >3) {
 						continue ;
 					}
 				}
@@ -151,7 +156,7 @@ public class WeekSeqUtil {
 	 * 6 若该老师在其他班级有安排，则需要靠拢(每天安排的课程不能超过3节)
 	 * 7 重要程度的设定，语数外尽量在上午
 	 */
-	public static int getWeekSeq(int week,List<Integer> preAlreadyTeacherList,List<Integer> alreadyTeacherList,List<Integer> alreadyTeacherAllList,Set<Integer> classAlreadySet,int type){
+	public static int getWeekSeq(int week,List<Integer> preAlreadyTeacherList,List<Integer> alreadyTeacherList,List<Integer> alreadyTeacherAllList,Set<Integer> classAlreadySet,int type,int preSize){
 		int result = 0;
 		int[] seqs = WeekSeq[week-1];
 		
@@ -160,9 +165,10 @@ public class WeekSeqUtil {
 			if (!classAlreadySet.contains(seqs[i])&& !alreadyTeacherAllList.contains(seqs[i])) {
 				list.add(seqs[i]);
 			}										
-		}				
+		}		
+		
 		//优先根据老师之前的安排就近选取,如果preAlreadyTeacherList == alreadyTeacherList 表明是第一次排，不需要获取最近
-		if (alreadyTeacherList != null && preAlreadyTeacherList.size() != alreadyTeacherList.size() ) {
+		if (preSize != alreadyTeacherAllList.size()) {
 			result = getNext(week,list,alreadyTeacherAllList);
 		}else {
 			if (type == Constants.SUBJECT_SIGNIFICANT) {
@@ -201,13 +207,13 @@ public class WeekSeqUtil {
 				i++;
 			}						
 		}
-		for (Integer integer : list) {
-			if (Math.abs(integer-min)<=Math.abs(integer-max)) {
-				result = min; 	
-			}else{
-				result = max;
-			}
-				
+		int distance =  Math.abs(list.get(0)-min)+Math.abs(list.get(0)-max);//初始化距离
+		result = list.get(0);
+		for (Integer integer : list) {			
+			if (Math.abs(integer-min)+Math.abs(integer-max)<distance ) {
+				distance = Math.abs(integer-min)+Math.abs(integer-max) ;
+				result = integer; 	
+			}				
 		}		
 		return result;
 		
@@ -218,14 +224,14 @@ public class WeekSeqUtil {
 		List<Integer> list = new ArrayList<Integer>();
 		int[] weekSeqs = WeekSeq[week-1];
 		//非常重要
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 4; i++) {
 			if(!classAlreadySet.contains(weekSeqs[i])){
 				list.add(weekSeqs[i]);
 			}
 		}
 		//重要
 		if (list.size() == 0) {
-			for (int i = 5; i < 7; i++) {
+			for (int i = 4; i < 7; i++) {
 				if(!classAlreadySet.contains(weekSeqs[i])){
 					list.add(weekSeqs[i]);
 				}
@@ -248,7 +254,7 @@ public class WeekSeqUtil {
 		}
 		//非常重要
 		if (list.size() == 0) {
-			for (int i = 0; i < 5; i++) {
+			for (int i = 0; i < 4; i++) {
 				if(!classAlreadySet.contains(weekSeqs[i])){
 					list.add(weekSeqs[i]);
 				}

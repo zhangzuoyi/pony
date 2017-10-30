@@ -2,6 +2,8 @@ package com.zzy.pony.util;
 
 import java.util.*;
 
+import org.apache.velocity.runtime.directive.Foreach;
+
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.vo.ArrangeVo;
@@ -149,17 +151,39 @@ public class GAUtilTwo {
 		}
 	}
 	
-	public static Map<Integer,Integer> sortBySubject(Map<Integer,Integer> classTSInnerMap,Map<Integer, Integer> classSubjectTeacherMap,List<Subject> subjects){
+	public static Map<Integer,Integer> sortBySubject(Map<Integer,Integer> classTSInnerMap,Map<Integer, Integer> classSubjectTeacherMap,List<Subject> subjects,List<TeacherSubjectVo> voSeq){
 		
 		Map<Integer, Integer> result = new LinkedHashMap<Integer, Integer>();
-		for (Subject subject : subjects) {
+		//按照科目顺序排
+		/*for (Subject subject : subjects) {
 			if (classSubjectTeacherMap.get(subject.getSubjectId())!= null) {
 				int teacherId = classSubjectTeacherMap.get(subject.getSubjectId());
 				if (classTSInnerMap.containsKey(teacherId)) {
 					result.put(teacherId, classTSInnerMap.get(teacherId));
 				}
 			}
+		}*/
+		//按照科目课程数量排
+		/*List<Map.Entry<Integer, Integer>> list = new ArrayList<Map.Entry<Integer, Integer>>(classTSInnerMap.entrySet());
+				// 通过比较器来实现排序
+				Collections.sort(list, new Comparator<Map.Entry<Integer, Integer>>() {
+				@Override
+				public int compare(Map.Entry<Integer, Integer> o1, Map.Entry<Integer, Integer> o2) {
+						   // 降序排序 
+					return o2.getValue().compareTo(o1.getValue());
+						       }
+				});
+		for(int i=0;i<list.size();i++) {			
+			result.put(list.get(i).getKey(), list.get(i).getValue());
+		}*/
+		
+		//先按照总课程数量安排,后按照本班课程数量排
+		for (TeacherSubjectVo teacherSubjectVo : voSeq) {
+			if (classTSInnerMap.containsKey(teacherSubjectVo.getTeacherId())) {
+				result.put(teacherSubjectVo.getTeacherId(), classTSInnerMap.get(teacherSubjectVo.getTeacherId()));
+			}
 		}
+							
 		return result;
 		
 	}
