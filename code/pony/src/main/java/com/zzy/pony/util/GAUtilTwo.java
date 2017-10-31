@@ -164,7 +164,7 @@ public class GAUtilTwo {
 			}
 		}*/
 		//按照科目课程数量排
-		/*List<Map.Entry<Integer, Integer>> list = new ArrayList<Map.Entry<Integer, Integer>>(classTSInnerMap.entrySet());
+		List<Map.Entry<Integer, Integer>> list = new ArrayList<Map.Entry<Integer, Integer>>(classTSInnerMap.entrySet());
 				// 通过比较器来实现排序
 				Collections.sort(list, new Comparator<Map.Entry<Integer, Integer>>() {
 				@Override
@@ -175,14 +175,26 @@ public class GAUtilTwo {
 				});
 		for(int i=0;i<list.size();i++) {			
 			result.put(list.get(i).getKey(), list.get(i).getValue());
-		}*/
+		}
 		
-		//先按照总课程数量安排,后按照本班课程数量排
-		for (TeacherSubjectVo teacherSubjectVo : voSeq) {
-			if (classTSInnerMap.containsKey(teacherSubjectVo.getTeacherId())) {
+		//语文数学英语保证排在首位  先按照总课程数量安排,后按照本班课程数量排
+		/*for (TeacherSubjectVo teacherSubjectVo : voSeq) {
+			if (teacherSubjectVo.getSubjectName().equalsIgnoreCase("语文")&&classTSInnerMap.containsKey(teacherSubjectVo.getTeacherId())) {
+				result.put(teacherSubjectVo.getTeacherId(), classTSInnerMap.get(teacherSubjectVo.getTeacherId()));
+			}
+			if (teacherSubjectVo.getSubjectName().equalsIgnoreCase("数学")&&classTSInnerMap.containsKey(teacherSubjectVo.getTeacherId())) {
+				result.put(teacherSubjectVo.getTeacherId(), classTSInnerMap.get(teacherSubjectVo.getTeacherId()));
+			}
+			if (teacherSubjectVo.getSubjectName().equalsIgnoreCase("英语")&&classTSInnerMap.containsKey(teacherSubjectVo.getTeacherId())) {
 				result.put(teacherSubjectVo.getTeacherId(), classTSInnerMap.get(teacherSubjectVo.getTeacherId()));
 			}
 		}
+		
+		for (TeacherSubjectVo teacherSubjectVo : voSeq) {
+			if (classTSInnerMap.containsKey(teacherSubjectVo.getTeacherId())&&!(teacherSubjectVo.getSubjectName().equalsIgnoreCase("语文")||teacherSubjectVo.getSubjectName().equalsIgnoreCase("数学")||teacherSubjectVo.getSubjectName().equalsIgnoreCase("英语"))) {
+				result.put(teacherSubjectVo.getTeacherId(), classTSInnerMap.get(teacherSubjectVo.getTeacherId()));
+			}
+		}*/
 							
 		return result;
 		

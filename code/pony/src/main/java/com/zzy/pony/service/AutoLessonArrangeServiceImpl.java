@@ -458,6 +458,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 				
 			}
 			autoArrangeMap.put(sc.getClassId(),innerAutoArrangeMap);
+			WeekSeqUtil.printCourseTable(sc.getClassId(), teacherSubjectMap,preClassMap,innerAutoArrangeMap);
         }
         saveTwo(autoArrangeMap,year,term);
 		return true;
