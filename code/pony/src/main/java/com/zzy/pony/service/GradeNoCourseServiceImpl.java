@@ -77,7 +77,7 @@ public class GradeNoCourseServiceImpl implements GradeNoCourseService {
 		List<GradeNoCourse> list = gradeNoCourseDao.findBySchoolYearAndTerm(schoolYear, term);
 		for (GradeNoCourse gradeNoCourse : list) {
 			GradeNoCourseVo gncv = toGradeNoCourseVo(gradeNoCourse);
-			List<SchoolClass> schoolClasses = schoolClassService.findByGrade(gradeNoCourse.getGrade().getGradeId());
+			List<SchoolClass> schoolClasses = schoolClassService.findByYearAndGradeOrderBySeq(schoolYear.getYearId(), gradeNoCourse.getGrade().getGradeId());
 			List<Integer> gradeClassIds=new ArrayList<Integer>();
 			for (SchoolClass schoolClass : schoolClasses) {
 				gradeClassIds.add(schoolClass.getClassId());

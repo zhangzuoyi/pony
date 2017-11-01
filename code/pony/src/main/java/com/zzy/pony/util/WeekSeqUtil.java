@@ -125,9 +125,12 @@ public class WeekSeqUtil {
 					continue;
 				} else {
 					// 条件1
-					if (count > 3) {
+					if (count > 4) {
 						continue;
 					}
+				}
+				if (weekAverage(classAlreadySet, e)) {
+					continue;
 				}
 				return e;
 			}
@@ -145,13 +148,48 @@ public class WeekSeqUtil {
 				continue;
 			} else {
 				// 条件1
-				if (count > 3) {
+				if (count > 4) {
 					continue;
 				}
 			}
+			if (weekAverage(classAlreadySet, e)) {
+				continue;
+			}
 			return e;
 		}
-		return null;
+		return 0;
+	}
+	
+	/**
+	 * @param classAlreadySet
+	 * @param week
+	 * @return 选择星期时上课数最大与最小不能超过2
+	 */
+	public static boolean weekAverage(Set<Integer> classAlreadySet,int week) {
+		int max = 0;
+		int min = 8;
+		for (int i = 1; i <= 5; i++) {
+			int count = 0;
+			for (int j = 1; j <= 8; j++) {
+				int index = 8*(i-1)+j;
+				if (classAlreadySet.contains(index)) {
+					count++;
+				}				
+			}
+			if (week == i) {
+				count++;
+			}
+			if (count > max) {
+				max = count ;
+			}
+			if (count < min) {
+				min = count ;
+			}
+		}		
+		if (max - min > 2) {
+			return true;
+		}		
+		return false;
 	}
 
 	/*
@@ -160,13 +198,13 @@ public class WeekSeqUtil {
 	 * 若该老师在其他班级有安排，则需要靠拢(每天安排的课程不能超过3节) 7 重要程度的设定，语数外尽量在上午
 	 */
 	public static int getWeekSeq(int week, List<Integer> preAlreadyTeacherList, List<Integer> alreadyTeacherList,
-			List<Integer> alreadyTeacherAllList, Set<Integer> classAlreadySet, int type, int preSize) {
+			List<Integer> alreadyTeacherAllList, Set<Integer> classAlreadySet, int type, int preSize,List<Integer> noCourseList) {
 		int result = 0;
 		int[] seqs = WeekSeq[week - 1];
 
 		List<Integer> list = new ArrayList<Integer>();
 		for (int i = 0; i < seqs.length; i++) {
-			if (!classAlreadySet.contains(seqs[i]) && !alreadyTeacherAllList.contains(seqs[i])) {
+			if (!classAlreadySet.contains(seqs[i]) && !alreadyTeacherAllList.contains(seqs[i])&& !noCourseList.contains(seqs[i])) {
 				list.add(seqs[i]);
 			}
 		}
@@ -176,13 +214,13 @@ public class WeekSeqUtil {
 			result = getNext(week, list, alreadyTeacherAllList);
 		} else {
 			if (type == Constants.SUBJECT_SIGNIFICANT) {
-				result = getSigWeekSeq(week, classAlreadySet);
+				result = getSigWeekSeq(week, classAlreadySet,noCourseList);
 			}
 			if (type == Constants.SUBJECT_IMPORTANT) {
-				result = getImpWeekSeq(week, classAlreadySet);
+				result = getImpWeekSeq(week, classAlreadySet,noCourseList);
 			}
 			if (type == Constants.SUBJECT_COMMON) {
-				result = getComWeekSeq(week, classAlreadySet);
+				result = getComWeekSeq(week, classAlreadySet,noCourseList);
 			}
 		}
 		return result;
@@ -218,24 +256,27 @@ public class WeekSeqUtil {
 				distance = Math.abs(integer - min) + Math.abs(integer - max);
 				result = integer;
 			}
+			if (Math.abs(integer - min) + Math.abs(integer - max) == distance) {
+				result = integer;
+			}
 		}
 		return result;
 
 	}
 
-	public static int getSigWeekSeq(int week, Set<Integer> classAlreadySet) {
+	public static int getSigWeekSeq(int week, Set<Integer> classAlreadySet,List<Integer> noCourseList) {
 		List<Integer> list = new ArrayList<Integer>();
 		int[] weekSeqs = WeekSeq[week - 1];
 		// 非常重要
 		for (int i = 0; i < 4; i++) {
-			if (!classAlreadySet.contains(weekSeqs[i])) {
+			if (!classAlreadySet.contains(weekSeqs[i]) && !noCourseList.contains(weekSeqs[i])) {
 				list.add(weekSeqs[i]);
 			}
 		}
 		// 重要
 		if (list.size() == 0) {
 			for (int i = 4; i < 7; i++) {
-				if (!classAlreadySet.contains(weekSeqs[i])) {
+				if (!classAlreadySet.contains(weekSeqs[i]) && !noCourseList.contains(weekSeqs[i])) {
 					list.add(weekSeqs[i]);
 				}
 			}
@@ -243,7 +284,7 @@ public class WeekSeqUtil {
 		// 一般
 		if (list.size() == 0) {
 			for (int i = 7; i < 8; i++) {
-				if (!classAlreadySet.contains(weekSeqs[i])) {
+				if (!classAlreadySet.contains(weekSeqs[i]) && !noCourseList.contains(weekSeqs[i])) {
 					list.add(weekSeqs[i]);
 				}
 			}
@@ -254,19 +295,19 @@ public class WeekSeqUtil {
 
 	}
 
-	public static int getImpWeekSeq(int week, Set<Integer> classAlreadySet) {
+	public static int getImpWeekSeq(int week, Set<Integer> classAlreadySet,List<Integer> noCourseList) {
 		List<Integer> list = new ArrayList<Integer>();
 		int[] weekSeqs = WeekSeq[week - 1];
 		// 重要
 		for (int i = 4; i < 7; i++) {
-			if (!classAlreadySet.contains(weekSeqs[i])) {
+			if (!classAlreadySet.contains(weekSeqs[i]) && !noCourseList.contains(weekSeqs[i])) {
 				list.add(weekSeqs[i]);
 			}
 		}
 		// 非常重要
 		if (list.size() == 0) {
 			for (int i = 0; i < 4; i++) {
-				if (!classAlreadySet.contains(weekSeqs[i])) {
+				if (!classAlreadySet.contains(weekSeqs[i]) && !noCourseList.contains(weekSeqs[i])) {
 					list.add(weekSeqs[i]);
 				}
 			}
@@ -274,7 +315,7 @@ public class WeekSeqUtil {
 		// 一般
 		if (list.size() == 0) {
 			for (int i = 7; i < 8; i++) {
-				if (!classAlreadySet.contains(weekSeqs[i])) {
+				if (!classAlreadySet.contains(weekSeqs[i]) && !noCourseList.contains(weekSeqs[i])) {
 					list.add(weekSeqs[i]);
 				}
 			}
@@ -285,19 +326,19 @@ public class WeekSeqUtil {
 
 	}
 
-	public static int getComWeekSeq(int week, Set<Integer> classAlreadySet) {
+	public static int getComWeekSeq(int week, Set<Integer> classAlreadySet,List<Integer> noCourseList) {
 		List<Integer> list = new ArrayList<Integer>();
 		int[] weekSeqs = WeekSeq[week - 1];
 		// 一般
 		for (int i = 6; i < weekSeqs.length; i++) {
-			if (!classAlreadySet.contains(weekSeqs[i])) {
+			if (!classAlreadySet.contains(weekSeqs[i]) && !noCourseList.contains(weekSeqs[i])) {
 				list.add(weekSeqs[i]);
 			}
 		}
 		// 重要
 		if (list.size() == 0) {
 			for (int i = 4; i < 7; i++) {
-				if (!classAlreadySet.contains(weekSeqs[i])) {
+				if (!classAlreadySet.contains(weekSeqs[i]) && !noCourseList.contains(weekSeqs[i])) {
 					list.add(weekSeqs[i]);
 				}
 			}
@@ -305,7 +346,7 @@ public class WeekSeqUtil {
 		// 非常重要
 		if (list.size() == 0) {
 			for (int i = 0; i < 4; i++) {
-				if (!classAlreadySet.contains(weekSeqs[i])) {
+				if (!classAlreadySet.contains(weekSeqs[i]) && !noCourseList.contains(weekSeqs[i])) {
 					list.add(weekSeqs[i]);
 				}
 			}

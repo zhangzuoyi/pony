@@ -331,6 +331,21 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		//获取科目重要程度
 		List<Subject> subjects = subjectService.findAll();
 		GAUtilTwo.getSubjectList(subjects,sigList,impList,comList);
+		
+		//不排课设置(年级)
+				
+		List<GradeNoCourseVo> gradeNoCourseVos = gradeNoCourseService.findCurrentAllVo();
+		Map<Integer, List<Integer>> gradeNoCourseMap = GAUtilTwo.getGradeNoCourse(gradeId, gradeNoCourseVos);
+		
+		//走班设置 (走班仅发生在一个班)  todo 需要加入走班
+		List<CombineAndRotationVo> combineAndRotationVos = arrangeRotationService.findCurrentAllVo();
+		Map<String, Integer> rotationMap = GAUtilTwo.getArrangeRotation(combineAndRotationVos);
+		
+		//无法安排的 classId  teacherId  size
+		Map<Integer, Map<Integer, Integer>> unableMap = new LinkedHashMap<Integer, Map<Integer,Integer>>();
+				
+		
+		
 		//1获取总的上课安排
         List<TeacherSubjectVo> teacherSubjectVos = teacherSubjectService.findByGrade(year.getYearId(),term.getTermId(),gradeId);
         GAUtilTwo.getTeacherSubject(teacherSubjectVos,classTSMap,teacherTSMap,teacherSubjectMap,subjectTeacherMap);
@@ -354,6 +369,11 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 			Map<Integer,List<Integer>> preClassMap = classMap.get(sc.getClassId());
 			Set<Integer> classAlreadySet = classAlreadyMap.get(sc.getClassId());
 			Map<Integer,Integer> innerAutoArrangeMap = new HashMap<Integer, Integer>();
+			List<Integer> noCourseList = new ArrayList<Integer>();
+			List<Integer> gradeNoCourseList = gradeNoCourseMap.get(sc.getClassId());//年级不排课
+			if (gradeNoCourseList != null && gradeNoCourseList.size()>0) {
+				noCourseList.addAll(gradeNoCourseList);
+			}
 			//按照老师(即科目)的顺序来排
 			for (Integer teacherId:
 				sortClassTSInnerMap.keySet()) {
@@ -399,6 +419,22 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 																				
 					//从预排过后的剩下的星期中选择 (每天安排的课程不能超过3节)
 					int week = WeekSeqUtil.getRandomWeek(availWeek,preAlreadyTeacherList,alreadyTeacherList,alreadyTeacherAllList,classAlreadySet,alreadyWeekSet);															
+					if (week == 0) {
+						//无法安排
+						if (unableMap.containsKey(sc.getClassId())) {
+							Map<Integer, Integer> innerMap = unableMap.get(sc.getClassId());
+							if (innerMap.containsKey(teacherId)) {
+								innerMap.put(teacherId, innerMap.get(teacherId).intValue()+1);
+							}else {
+								innerMap.put(teacherId, 1);
+							}
+						}else {
+							Map<Integer, Integer> innerMap = new HashMap<Integer, Integer>();
+							innerMap.put(teacherId, 1);
+							unableMap.put(sc.getClassId(), innerMap);
+						}
+						continue;
+					}
 					availWeek.remove(week);
 					alreadyWeekSet.add(week);
 					/*weekseq的获取
@@ -422,7 +458,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 					if (comList.contains(subjectId)) {
 						 type = Constants.SUBJECT_COMMON;
 					}
-					int weekSeq = WeekSeqUtil.getWeekSeq(week,preAlreadyTeacherList, alreadyTeacherList,alreadyTeacherAllList, classAlreadySet, type,preSize);
+					int weekSeq = WeekSeqUtil.getWeekSeq(week,preAlreadyTeacherList, alreadyTeacherList,alreadyTeacherAllList, classAlreadySet, type,preSize,noCourseList);
 
 					classAlreadySet.add(weekSeq);
 					teacherSet.add(weekSeq);
@@ -461,6 +497,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 			WeekSeqUtil.printCourseTable(sc.getClassId(), teacherSubjectMap,preClassMap,innerAutoArrangeMap);
         }
         saveTwo(autoArrangeMap,year,term);
+        System.out.println(unableMap.size());       
 		return true;
 	}
 

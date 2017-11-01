@@ -3,10 +3,13 @@ package com.zzy.pony.util;
 import java.util.*;
 
 import org.apache.velocity.runtime.directive.Foreach;
+import org.springframework.security.authentication.TestingAuthenticationProvider;
 
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.model.Subject;
 import com.zzy.pony.vo.ArrangeVo;
+import com.zzy.pony.vo.CombineAndRotationVo;
+import com.zzy.pony.vo.GradeNoCourseVo;
 import com.zzy.pony.vo.TeacherSubjectVo;
 
 
@@ -163,8 +166,8 @@ public class GAUtilTwo {
 				}
 			}
 		}*/
-		//按照科目课程数量排
-		List<Map.Entry<Integer, Integer>> list = new ArrayList<Map.Entry<Integer, Integer>>(classTSInnerMap.entrySet());
+		//按照科目课程数量排  
+		/*List<Map.Entry<Integer, Integer>> list = new ArrayList<Map.Entry<Integer, Integer>>(classTSInnerMap.entrySet());
 				// 通过比较器来实现排序
 				Collections.sort(list, new Comparator<Map.Entry<Integer, Integer>>() {
 				@Override
@@ -175,10 +178,10 @@ public class GAUtilTwo {
 				});
 		for(int i=0;i<list.size();i++) {			
 			result.put(list.get(i).getKey(), list.get(i).getValue());
-		}
+		}*/
 		
 		//语文数学英语保证排在首位  先按照总课程数量安排,后按照本班课程数量排
-		/*for (TeacherSubjectVo teacherSubjectVo : voSeq) {
+		for (TeacherSubjectVo teacherSubjectVo : voSeq) {
 			if (teacherSubjectVo.getSubjectName().equalsIgnoreCase("语文")&&classTSInnerMap.containsKey(teacherSubjectVo.getTeacherId())) {
 				result.put(teacherSubjectVo.getTeacherId(), classTSInnerMap.get(teacherSubjectVo.getTeacherId()));
 			}
@@ -194,11 +197,43 @@ public class GAUtilTwo {
 			if (classTSInnerMap.containsKey(teacherSubjectVo.getTeacherId())&&!(teacherSubjectVo.getSubjectName().equalsIgnoreCase("语文")||teacherSubjectVo.getSubjectName().equalsIgnoreCase("数学")||teacherSubjectVo.getSubjectName().equalsIgnoreCase("英语"))) {
 				result.put(teacherSubjectVo.getTeacherId(), classTSInnerMap.get(teacherSubjectVo.getTeacherId()));
 			}
-		}*/
+		}
 							
 		return result;
 		
 	}
+	
+	public static Map<Integer,List<Integer>> getGradeNoCourse(int gradeId,List<GradeNoCourseVo> gradeNoCourseVos){
+		//key classId 
+		Map<Integer, List<Integer>> result = new LinkedHashMap<Integer, List<Integer>>();
+		for (GradeNoCourseVo gradeNoCourseVo : gradeNoCourseVos) {
+			if (gradeNoCourseVo.getGradeId() == gradeId && gradeNoCourseVo.getGradeClassIds()!= null && gradeNoCourseVo.getGradeClassIds().size()>0) {
+				for (Integer classId : gradeNoCourseVo.getGradeClassIds()) {
+					if (result.containsKey(classId)) {
+						result.get(classId).add(WeekSeqUtil.getWeekPeriod(gradeNoCourseVo.getWeekdayId(), gradeNoCourseVo.getLessonPeriodSeq()));						
+					}else {
+						List<Integer> innerList = new ArrayList<Integer>();
+						innerList.add(WeekSeqUtil.getWeekPeriod(gradeNoCourseVo.getWeekdayId(), gradeNoCourseVo.getLessonPeriodSeq()));
+						result.put(classId, innerList);										
+					}
+					
+				}								
+			}
+		}		
+		return result;				
+	}
+	
+	
+	public static Map<String, Integer> getArrangeRotation(List<CombineAndRotationVo> combineAndRotationVos){
+		Map<String, Integer> result = new HashMap<String, Integer>();
+		for (CombineAndRotationVo vo : combineAndRotationVos) {
+			String teacherId = String.format("%04d", vo.getTeacherId())  ;
+			String classId = String.format("%03d", vo.getClassId())  ;			
+			result.put(teacherId+classId, vo.getRotationId());								
+		}						
+		return result;				
+	}
+
 
 
 
