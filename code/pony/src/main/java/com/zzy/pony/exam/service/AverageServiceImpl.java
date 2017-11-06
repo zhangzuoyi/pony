@@ -30,6 +30,10 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.*;
 
+/**
+ * @author WANGCHAO262
+ *
+ */
 @Service
 @Transactional
 public class AverageServiceImpl implements AverageService {
@@ -894,6 +898,74 @@ public class AverageServiceImpl implements AverageService {
 
 		}
 		return schoolLevelMapDecimal;
+	}
+	
+	
+
+	@Override
+	public Map<Integer, List<AverageExcelVo>> getTopTenLevelMapSumBySchoolName(Map<Integer, List<AverageExcelVo>> levelMap,
+			String schoolName) {
+		// TODO Auto-generated method stub
+		int range = 10;//取前十名(可能重名)
+		int count = 0;
+		int lastRank = 0;
+		Map<Integer, List<AverageExcelVo>> schoolLevelMap = new LinkedHashMap<Integer, List<AverageExcelVo>>();
+		for (int level : levelMap.keySet()) {
+			List<AverageExcelVo> averageExcelVos = levelMap.get(level);
+			List<AverageExcelVo> innerList = new ArrayList<AverageExcelVo>();
+			if (averageExcelVos == null || averageExcelVos.size() == 0) {
+				schoolLevelMap.put(level, innerList);
+			} else {
+				for (int i = 0; i < averageExcelVos.size(); i++) {
+					if (count == range) {
+						lastRank  = averageExcelVos.get(i).getRankSum();
+					}
+					if (averageExcelVos.get(i).getSchoolName().equalsIgnoreCase(schoolName) ) {							
+						if (count<=range) {
+							innerList.add(averageExcelVos.get(i));
+							count ++;	
+						}else if (averageExcelVos.get(i).getRankSum() == lastRank) {
+							innerList.add(averageExcelVos.get(i));
+						}																									
+					}
+				}
+				schoolLevelMap.put(level, innerList);
+			}
+		}
+		return schoolLevelMap;
+	}
+	
+	@Override
+	public Map<Integer, List<AverageExcelVo>> getTopTenLevelMapBySchoolName(Map<Integer, List<AverageExcelVo>> levelMap,
+			String schoolName) {
+		// TODO Auto-generated method stub
+		int range = 10;//取前十名(可能重名)
+		int count = 0;
+		int lastRank = 0;
+		Map<Integer, List<AverageExcelVo>> schoolLevelMap = new LinkedHashMap<Integer, List<AverageExcelVo>>();
+		for (int level : levelMap.keySet()) {
+			List<AverageExcelVo> averageExcelVos = levelMap.get(level);
+			List<AverageExcelVo> innerList = new ArrayList<AverageExcelVo>();
+			if (averageExcelVos == null || averageExcelVos.size() == 0) {
+				schoolLevelMap.put(level, innerList);
+			} else {
+				for (int i = 0; i < averageExcelVos.size(); i++) {
+					if (count == range) {
+						lastRank  = averageExcelVos.get(i).getRank();
+					}
+					if (averageExcelVos.get(i).getSchoolName().equalsIgnoreCase(schoolName) ) {							
+						if (count<=range) {
+							innerList.add(averageExcelVos.get(i));
+							count ++;	
+						}else if (averageExcelVos.get(i).getRank() == lastRank) {
+							innerList.add(averageExcelVos.get(i));
+						}																									
+					}
+				}
+				schoolLevelMap.put(level, innerList);
+			}
+		}
+		return schoolLevelMap;
 	}
 
 	/**
