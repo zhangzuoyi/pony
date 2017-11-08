@@ -34,6 +34,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.hibernate.type.PrimitiveByteArrayBlobType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -88,6 +89,8 @@ public class AverageController {
 	private SubjectService subjectService;
 	@Autowired
 	private GradeService gradeService;
+	@Value("${averagePath}")
+	private String averagePath;
 	
 	@RequestMapping(value="main",method=RequestMethod.GET)
 	public String main(Model model){
@@ -289,7 +292,7 @@ public class AverageController {
 	@SuppressWarnings("deprecation")
 	@RequestMapping(value="exportResultFile",method = RequestMethod.GET)	 
     public void exportResultFile(HttpServletRequest request,HttpServletResponse response) {
-		File localFile = new File(Constants.AVERAGE_PATH, "averageTmp.xls");
+		File localFile = new File(averagePath, "averageTmp.xls");
 		try {
 			response.setContentType("APPLICATION/OCTET-STREAM");  
             String headStr = "attachment; filename=\"" + "averageTmp.xls" + "\"";  
@@ -354,11 +357,11 @@ public class AverageController {
 			Map<Integer,BigDecimal> levelMapDecimalSum = service.getLevelMapDecimal(averageExcelVoSum);
 			//学校每个等级人数
 			Map<Integer,List<AverageExcelVo>> schoolLevelMapSum = service.getLevelMapBySchoolName(levelMapSum,Constants.SCHOOL_NAME);
-			Map<Integer,List<AverageExcelVo>> schoolTopTenLevelMap =  service.getTopTenLevelMapSumBySchoolName(levelMapSum,Constants.SCHOOL_NAME);
+			Map<Integer,List<AverageExcelVo>> schoolTopTenLevelMap =  service.getTopTenLevelMapSumBySchoolName(levelMapSum,classCodeSum,Constants.SCHOOL_NAME);
 			//学校每个等级指标
 			Map<Integer,BigDecimal> schoolLevelMapDecimalSum = service.getLevelMapDecimalBySchoolName(levelMapSum,levelMapDecimalSum,Constants.SCHOOL_NAME);
 			Map<String, Map<String, BigDecimal>> innerMapSum = service.calculate(schoolLevelMapSum, schoolLevelMapDecimalSum, classCodeSum);
-			Map<String, Map<String, BigDecimal>> innerTopTenMapSum = service.calculate(schoolTopTenLevelMap, schoolLevelMapDecimalSum, classCodeSum);
+			Map<String, Map<String, BigDecimal>> innerTopTenMapSum = service.calculateTopTen(schoolTopTenLevelMap,schoolLevelMapSum, schoolLevelMapDecimalSum, classCodeSum);
 
 			
 			// 产生表格标题行  
@@ -497,9 +500,10 @@ public class AverageController {
 				service.sortAverageExcelVo(averageExcelVos);
 				Map<Integer,List<AverageExcelVo>> levelMap = service.getLevelMap(averageExcelVos);
 				Map<Integer,BigDecimal> levelMapDecimal = service.getLevelMapDecimal(averageExcelVos);
-				Map<Integer,List<AverageExcelVo>> topTenSchoolLevelMap = service.getTopTenLevelMapBySchoolName(levelMap,Constants.SCHOOL_NAME);
+				Map<Integer,List<AverageExcelVo>> schoolLevelMap = service.getLevelMapBySchoolName(levelMap,Constants.SCHOOL_NAME);
+				Map<Integer,List<AverageExcelVo>> topTenSchoolLevelMap = service.getTopTenLevelMapBySchoolName(levelMap,classCodes,Constants.SCHOOL_NAME);
 				Map<Integer,BigDecimal> schoolLevelMapDecimal = service.getLevelMapDecimalBySchoolName(levelMap,levelMapDecimal,Constants.SCHOOL_NAME);
-				Map<String, Map<String, BigDecimal>> innerMap = service.calculate(topTenSchoolLevelMap, schoolLevelMapDecimal, classCodes);
+				Map<String, Map<String, BigDecimal>> innerMap = service.calculateTopTen(topTenSchoolLevelMap,schoolLevelMap,schoolLevelMapDecimal, classCodes);
 				dataMap.put(titles[i], innerMap);										
     			// 产生表格标题行  
                 HSSFRow titleRow = sheet2.createRow(range2); 
@@ -577,7 +581,7 @@ public class AverageController {
                     //OutputStream out = response.getOutputStream();  
                    // workbook.write(out); 
                    
-                    File localFile = new File(Constants.AVERAGE_PATH,"averageTmp.xls");
+                    File localFile = new File(averagePath,"averageTmp.xls");
 					FileOutputStream outputStream = new FileOutputStream(localFile);
                     workbook.write(outputStream);
                     outputStream.close();

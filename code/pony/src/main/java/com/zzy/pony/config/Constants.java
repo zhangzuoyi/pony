@@ -54,7 +54,7 @@ public class Constants {
 	
 	public static final String MESSAGE_ATTACH_UPLOADPATH = "/home/upload";
 	//public static final String AVERAGE_PATH = "D:\\tmp";
-	public static final String AVERAGE_PATH = "/home/upload";
+	 //public static final String AVERAGE_PATH = "/home/upload";
 
 
 	

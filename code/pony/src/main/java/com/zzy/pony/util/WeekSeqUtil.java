@@ -195,10 +195,11 @@ public class WeekSeqUtil {
 	/*
 	 * weekseq的获取 1 不能在已安排的课程中 classAlreadySet 2 满足年级不排课(放在classAlreadySet) 3
 	 * 满足班级不排课(放在classAlreadySet) 4 满足老师不排课 5 满足科目不排课 6
-	 * 若该老师在其他班级有安排，则需要靠拢(每天安排的课程不能超过3节) 7 重要程度的设定，语数外尽量在上午
+	 * 若该老师在其他班级有安排，则需要靠拢(每天安排的课程不能超过4节) 7 重要程度的设定，语数外尽量在上午
+	 * 8 语文在周三周五第一二节,英语在周二周四第一二节 9 每天上四节的分开
 	 */
 	public static int getWeekSeq(int week, List<Integer> preAlreadyTeacherList, List<Integer> alreadyTeacherList,
-			List<Integer> alreadyTeacherAllList, Set<Integer> classAlreadySet, int type, int preSize,List<Integer> noCourseList) {
+		List<Integer> alreadyTeacherAllList, Set<Integer> classAlreadySet, int type, int preSize,List<Integer> noCourseList) {
 		int result = 0;
 		int[] seqs = WeekSeq[week - 1];
 

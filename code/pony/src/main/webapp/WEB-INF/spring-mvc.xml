@@ -12,6 +12,10 @@
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
 	</context:component-scan>
 	
+	<context:property-placeholder  
+        location="classpath*:/database.properties,classpath*:/application.properties"  
+        ignore-unresolvable="true" /> 
+	
 	<!-- <mvc:annotation-driven/> -->
 	<!-- Customize ObjectMapper for XSS -->
     <mvc:annotation-driven>

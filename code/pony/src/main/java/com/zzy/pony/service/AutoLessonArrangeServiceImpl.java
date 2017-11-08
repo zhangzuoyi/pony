@@ -374,7 +374,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 			if (gradeNoCourseList != null && gradeNoCourseList.size()>0) {
 				noCourseList.addAll(gradeNoCourseList);
 			}
-			//按照老师(即科目)的顺序来排
+			//按照老师(即科目)的顺序来排  (语文在周三周五第一节，英语在二四第一节)
 			for (Integer teacherId:
 				sortClassTSInnerMap.keySet()) {
 				int preArrangeCount = 0;

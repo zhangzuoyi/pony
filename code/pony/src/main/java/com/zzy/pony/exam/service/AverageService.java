@@ -46,14 +46,14 @@ public interface AverageService {
 	 */
 	Map<Integer,List<AverageExcelVo>> getLevelMapBySchoolName(Map<Integer,List<AverageExcelVo>> levelMap,String schoolName);
 	
-	Map<Integer,List<AverageExcelVo>> getTopTenLevelMapSumBySchoolName(Map<Integer,List<AverageExcelVo>> levelMap,String schoolName);
+	Map<Integer,List<AverageExcelVo>> getTopTenLevelMapSumBySchoolName(Map<Integer,List<AverageExcelVo>> levelMap,List<String> classCode,String schoolName);
 
 	/**
 	 * @param levelMap
 	 * @param schoolName
 	 * @return 某个学校的前10等级人数
 	 */
-	Map<Integer,List<AverageExcelVo>> getTopTenLevelMapBySchoolName(Map<Integer,List<AverageExcelVo>> levelMap,String schoolName);
+	Map<Integer,List<AverageExcelVo>> getTopTenLevelMapBySchoolName(Map<Integer,List<AverageExcelVo>> levelMap,List<String> classCode,String schoolName);
 
 	/**
 	 * @param levelMap
@@ -63,4 +63,6 @@ public interface AverageService {
 	 */
 	Map<Integer, BigDecimal> getLevelMapDecimalBySchoolName(Map<Integer,List<AverageExcelVo>> levelMap,Map<Integer,BigDecimal> levelMapDecimal,String schoolName);
 	Map<String, Map<String, BigDecimal>> calculate(Map<Integer,List<AverageExcelVo>> schoolLevelMap,Map<Integer,BigDecimal> schoolLevelMapDecimal,List<String> classCodes);
+	Map<String, Map<String, BigDecimal>> calculateTopTen(Map<Integer,List<AverageExcelVo>> schoolTopTenLevelMap,Map<Integer,List<AverageExcelVo>> schoolLevelMap,Map<Integer,BigDecimal> schoolLevelMapDecimal,List<String> classCodes);
+
 }
