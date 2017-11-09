@@ -9,7 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -108,7 +110,7 @@ public class TeacherClass {
 				"where t.year_id=5 and t.term_id=1 and t.CLASS_ID in \r\n" + 
 				"(select class_id from t_school_class where grade_id = '1') and a.teacher_id in \r\n" + 
 				"(select t.teacher_id from t_teacher_subject t where t.year_id=5 and t.term_id=1 and t.CLASS_ID in (select class_id from t_school_class where grade_id = '1') \r\n" + 
-				"group by t.teacher_id having count(1)>1) group by t.week_day,a.teacher_id,t.class_id order by a.teacher_id,week_day";
+				"group by t.teacher_id having count(1)>1) group by t.week_day,a.teacher_id,t.class_id,subjectname order by a.teacher_id,week_day";
 		List<User> list=new ArrayList<User>();
 		try{
 			ResultSet rs=stat.executeQuery(sql);
@@ -152,6 +154,7 @@ public class TeacherClass {
 		Integer weekDay;
 		String teacherName;
 		String subjectname;
-		int[] nums=new int[11];
+		int[] nums=new int[11];//在每个班级的任课数据，默认高一，11个班
 	}
+
 }
