@@ -191,6 +191,12 @@ public class GAUtilTwo {
 			if (teacherSubjectVo.getSubjectName().equalsIgnoreCase("英语")&&classTSInnerMap.containsKey(teacherSubjectVo.getTeacherId())) {
 				result.put(teacherSubjectVo.getTeacherId(), classTSInnerMap.get(teacherSubjectVo.getTeacherId()));
 			}
+			if (teacherSubjectVo.getSubjectName().equalsIgnoreCase("政治")&&classTSInnerMap.containsKey(teacherSubjectVo.getTeacherId())) {
+				result.put(teacherSubjectVo.getTeacherId(), classTSInnerMap.get(teacherSubjectVo.getTeacherId()));
+			}
+			if (teacherSubjectVo.getSubjectName().equalsIgnoreCase("信息技术")&&classTSInnerMap.containsKey(teacherSubjectVo.getTeacherId())) {
+				result.put(teacherSubjectVo.getTeacherId(), classTSInnerMap.get(teacherSubjectVo.getTeacherId()));
+			}
 		}
 		
 		for (TeacherSubjectVo teacherSubjectVo : voSeq) {

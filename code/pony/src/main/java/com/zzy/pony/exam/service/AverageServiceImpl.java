@@ -567,6 +567,11 @@ public class AverageServiceImpl implements AverageService {
 						if (averageExcelVos.get(i).getRank() == lastRank && first == 0) {
 							first = i;
 						}
+						// 有可能某一个等级全部都是重名的
+						if (averageExcelVos.get(0).getRank() == lastRank) {
+							first = 0;
+						}
+						
 					}
 					firstDecimal = new BigDecimal(first);
 					// 可分配指标 / 总体重名人数 * 该班重名人数
@@ -600,8 +605,6 @@ public class AverageServiceImpl implements AverageService {
 		calculateSum(result);// 计算累数
 		return result;
 	}
-	
-	
 
 	@Override
 	public Map<String, Map<String, BigDecimal>> calculateTopTen(Map<Integer, List<AverageExcelVo>> schoolTopTenLevelMap,
@@ -656,13 +659,19 @@ public class AverageServiceImpl implements AverageService {
 								}
 							}
 						}
-						
+
 					}
-					for(int i = 0; i < schoolLevelMap.get(level).size(); i++) {
+					for (int i = 0; i < schoolLevelMap.get(level).size(); i++) {
+						
 						if (schoolLevelMap.get(level).get(i).getRank() == lastRank && first == 0) {
 							first = i;
-						}	
-					}										
+						}
+						// 有可能某一个等级全部都是重名的
+						if (schoolLevelMap.get(level).get(0).getRank() == lastRank) {
+							first = 0;
+						}
+
+					}
 					firstDecimal = new BigDecimal(first);
 					// 可分配指标 / 总体重名人数 * 该班重名人数
 					availabelLevel = levelDecimal.subtract(firstDecimal);// 可分配指标
@@ -720,17 +729,17 @@ public class AverageServiceImpl implements AverageService {
 		// 正文内容应该从第二行开始,第一行为表头的标题
 		for (int i = 1; i <= rowNum; i++) {
 			row = sheet.getRow(i);
-			
-			if (row.getCell(index)==null||row.getCell(index).getCellType() == Cell.CELL_TYPE_BLANK) {
+
+			if (row.getCell(index) == null || row.getCell(index).getCellType() == Cell.CELL_TYPE_BLANK) {
 				continue;
-			}else {
+			} else {
 				AverageExcelVo vo = new AverageExcelVo();
 				vo.setSchoolName(ReadExcelUtils.getCellFormatValue(row.getCell(0)).toString());
 				vo.setClassCode(ReadExcelUtils.getCellFormatValue(row.getCell(1)).toString());
 				vo.setName(ReadExcelUtils.getCellFormatValue(row.getCell(2)).toString());
 				vo.setSubjectResult(Float.valueOf(String.valueOf(row.getCell(index).getNumericCellValue())));
 				result.add(vo);
-			}						
+			}
 		}
 		return result;
 	}
@@ -755,13 +764,14 @@ public class AverageServiceImpl implements AverageService {
 			vo.setSchoolName(ReadExcelUtils.getCellFormatValue(row.getCell(0)).toString());
 			vo.setClassCode(ReadExcelUtils.getCellFormatValue(row.getCell(1)).toString());
 			vo.setName(ReadExcelUtils.getCellFormatValue(row.getCell(2)).toString());
-			for (int m = 3; m <colNum ; m++) {
+			for (int m = 3; m < colNum; m++) {
 				if (subjectNames.contains(sheet.getRow(0).getCell(m).getRichStringCellValue().toString())) {
-					vo.setSubjectResultSum(vo.getSubjectResultSum()+Float.valueOf(String.valueOf(row.getCell(m).getNumericCellValue())));
+					vo.setSubjectResultSum(vo.getSubjectResultSum()
+							+ Float.valueOf(String.valueOf(row.getCell(m).getNumericCellValue())));
 				}
-	
+
 			}
-			
+
 			result.add(vo);
 		}
 		return result;
@@ -795,7 +805,6 @@ public class AverageServiceImpl implements AverageService {
 			}
 		}
 	}
-	
 
 	@Override
 	public void sortAverageExcelVoSum(List<AverageExcelVo> averageExcelVos) {
@@ -815,8 +824,8 @@ public class AverageServiceImpl implements AverageService {
 		for (int i = 0; i < averageExcelVos.size(); i++) {
 			int count = i;
 			averageExcelVos.get(i).setRankSum(i + 1);
-			while ((i + 1) < averageExcelVos.size()
-					&& averageExcelVos.get(i).getSubjectResultSum() == averageExcelVos.get(i + 1).getSubjectResultSum()) {
+			while ((i + 1) < averageExcelVos.size() && averageExcelVos.get(i).getSubjectResultSum() == averageExcelVos
+					.get(i + 1).getSubjectResultSum()) {
 				i++;
 				averageExcelVos.get(i).setRankSum(count + 1);
 			}
@@ -977,8 +986,12 @@ public class AverageServiceImpl implements AverageService {
 						}
 					} else {
 						// 等于最后一名需要算出同名的总人数以及某个学校的人数
-						if (first == 0) {
+						if (first == 0 ) {								
 							first = i;
+						}
+						//所有的都是重名
+						if (averageExcelVos.get(0).getRank() == lastRank) {
+							first = 0;
 						}
 						if (averageExcelVos.get(i).getSchoolName().equalsIgnoreCase(schoolName)) {
 							schoolCount++;
@@ -1001,12 +1014,10 @@ public class AverageServiceImpl implements AverageService {
 		}
 		return schoolLevelMapDecimal;
 	}
-	
-	
 
 	@Override
-	public Map<Integer, List<AverageExcelVo>> getTopTenLevelMapSumBySchoolName(Map<Integer, List<AverageExcelVo>> levelMap,
-			List<String> classCodes,String schoolName) {
+	public Map<Integer, List<AverageExcelVo>> getTopTenLevelMapSumBySchoolName(
+			Map<Integer, List<AverageExcelVo>> levelMap, List<String> classCodes, String schoolName) {
 		// TODO Auto-generated method stub
 		Map<String, Integer> classMap = new HashMap<String, Integer>();
 		Map<String, Integer> classTenMap = new HashMap<String, Integer>();
@@ -1022,18 +1033,21 @@ public class AverageServiceImpl implements AverageService {
 				schoolLevelMap.put(level, innerList);
 			} else {
 				for (int i = 0; i < averageExcelVos.size(); i++) {
-					
-					if (averageExcelVos.get(i).getSchoolName().equalsIgnoreCase(schoolName) ) {							
+
+					if (averageExcelVos.get(i).getSchoolName().equalsIgnoreCase(schoolName)) {
 						if (classMap.get(averageExcelVos.get(i).getClassCode()) < ten) {
 							innerList.add(averageExcelVos.get(i));
-							classMap.put(averageExcelVos.get(i).getClassCode(), classMap.get(averageExcelVos.get(i).getClassCode())+1)  ;
-						}else if(classMap.get(averageExcelVos.get(i).getClassCode()) == ten){
+							classMap.put(averageExcelVos.get(i).getClassCode(),
+									classMap.get(averageExcelVos.get(i).getClassCode()) + 1);
+						} else if (classMap.get(averageExcelVos.get(i).getClassCode()) == ten) {
 							innerList.add(averageExcelVos.get(i));
 							classTenMap.put(averageExcelVos.get(i).getClassCode(), averageExcelVos.get(i).getRankSum());
-							classMap.put(averageExcelVos.get(i).getClassCode(), classMap.get(averageExcelVos.get(i).getClassCode())+1)  ;
-						}else if (classTenMap.get(averageExcelVos.get(i).getClassCode())!=null &&averageExcelVos.get(i).getRankSum() ==classTenMap.get(averageExcelVos.get(i).getClassCode())  ) {
+							classMap.put(averageExcelVos.get(i).getClassCode(),
+									classMap.get(averageExcelVos.get(i).getClassCode()) + 1);
+						} else if (classTenMap.get(averageExcelVos.get(i).getClassCode()) != null && averageExcelVos
+								.get(i).getRankSum() == classTenMap.get(averageExcelVos.get(i).getClassCode())) {
 							innerList.add(averageExcelVos.get(i));
-						}																															
+						}
 					}
 				}
 				schoolLevelMap.put(level, innerList);
@@ -1041,13 +1055,13 @@ public class AverageServiceImpl implements AverageService {
 		}
 		return schoolLevelMap;
 	}
-	
+
 	@Override
-	public Map<Integer, List<AverageExcelVo>> getTopTenLevelMapBySchoolName(Map<Integer, List<AverageExcelVo>> levelMap,List<String> classCodes,
-			String schoolName) {
+	public Map<Integer, List<AverageExcelVo>> getTopTenLevelMapBySchoolName(Map<Integer, List<AverageExcelVo>> levelMap,
+			List<String> classCodes, String schoolName) {
 		// TODO Auto-generated method stub
 		Map<String, Integer> classMap = new HashMap<String, Integer>();
-		Map<String, Integer> classTenMap = new HashMap<String, Integer>();		
+		Map<String, Integer> classTenMap = new HashMap<String, Integer>();
 		int ten = 10;
 		for (String string : classCodes) {
 			classMap.put(string, 0);
@@ -1060,17 +1074,20 @@ public class AverageServiceImpl implements AverageService {
 				schoolLevelMap.put(level, innerList);
 			} else {
 				for (int i = 0; i < averageExcelVos.size(); i++) {
-					if (averageExcelVos.get(i).getSchoolName().equalsIgnoreCase(schoolName) ) {							
+					if (averageExcelVos.get(i).getSchoolName().equalsIgnoreCase(schoolName)) {
 						if (classMap.get(averageExcelVos.get(i).getClassCode()) < ten) {
 							innerList.add(averageExcelVos.get(i));
-							classMap.put(averageExcelVos.get(i).getClassCode(), classMap.get(averageExcelVos.get(i).getClassCode())+1)  ;
-						}else if(classMap.get(averageExcelVos.get(i).getClassCode()) == ten){
+							classMap.put(averageExcelVos.get(i).getClassCode(),
+									classMap.get(averageExcelVos.get(i).getClassCode()) + 1);
+						} else if (classMap.get(averageExcelVos.get(i).getClassCode()) == ten) {
 							innerList.add(averageExcelVos.get(i));
 							classTenMap.put(averageExcelVos.get(i).getClassCode(), averageExcelVos.get(i).getRank());
-							classMap.put(averageExcelVos.get(i).getClassCode(), classMap.get(averageExcelVos.get(i).getClassCode())+1)  ;
-						}else if (classTenMap.get(averageExcelVos.get(i).getClassCode())!=null &&averageExcelVos.get(i).getRank() ==classTenMap.get(averageExcelVos.get(i).getClassCode())  ) {
+							classMap.put(averageExcelVos.get(i).getClassCode(),
+									classMap.get(averageExcelVos.get(i).getClassCode()) + 1);
+						} else if (classTenMap.get(averageExcelVos.get(i).getClassCode()) != null && averageExcelVos
+								.get(i).getRank() == classTenMap.get(averageExcelVos.get(i).getClassCode())) {
 							innerList.add(averageExcelVos.get(i));
-						}																															
+						}
 					}
 				}
 				schoolLevelMap.put(level, innerList);

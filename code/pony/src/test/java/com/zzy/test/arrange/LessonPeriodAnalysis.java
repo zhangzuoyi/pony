@@ -54,7 +54,7 @@ public class LessonPeriodAnalysis {
 		int pmNum=0;//下午课时数
 		for(Obj obj : teacherList) {
 			classSet.add(obj.classSeq);
-			if(obj.period <= 4) {
+			if(obj.period <= 5) {
 				amNum++;
 			}else {
 				pmNum++;

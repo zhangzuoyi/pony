@@ -24,6 +24,32 @@ public class WeekSeqUtil {
 			{ 17, 18, 19, 20, 21, 22, 23, 24 }, { 25, 26, 27, 28, 29, 30, 31, 32 },
 			{ 33, 34, 35, 36, 37, 38, 39, 40 } };
 
+	public static boolean isMorning(int weekSeq) {
+		List<Integer> list = new ArrayList<Integer>();
+		for (int i = 0; i < 5; i++) {
+			for (int j = 1; j <= 5; j++) {
+				list.add(i * 8 + j);
+			}
+		}
+		if (list.contains(weekSeq)) {
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean isAfternoon(int weekSeq) {
+		List<Integer> list = new ArrayList<Integer>();
+		for (int i = 0; i < 5; i++) {
+			for (int j = 6; j <= 8; j++) {
+				list.add(i * 8 + j);
+			}
+		}
+		if (list.contains(weekSeq)) {
+			return true;
+		}
+		return false;
+	}
+
 	public static int getWeekPeriod(int week, int periodSeq) {
 		return (week - 1) * 8 + periodSeq;
 	}
@@ -125,7 +151,7 @@ public class WeekSeqUtil {
 					continue;
 				} else {
 					// 条件1
-					if (count > 4) {
+					if (count > 3) {
 						continue;
 					}
 				}
@@ -148,7 +174,7 @@ public class WeekSeqUtil {
 				continue;
 			} else {
 				// 条件1
-				if (count > 4) {
+				if (count > 3) {
 					continue;
 				}
 			}
@@ -159,83 +185,94 @@ public class WeekSeqUtil {
 		}
 		return 0;
 	}
-	
+
 	/**
 	 * @param classAlreadySet
 	 * @param week
 	 * @return 选择星期时上课数最大与最小不能超过2
 	 */
-	public static boolean weekAverage(Set<Integer> classAlreadySet,int week) {
+	public static boolean weekAverage(Set<Integer> classAlreadySet, int week) {
 		int max = 0;
 		int min = 8;
 		for (int i = 1; i <= 5; i++) {
 			int count = 0;
 			for (int j = 1; j <= 8; j++) {
-				int index = 8*(i-1)+j;
+				int index = 8 * (i - 1) + j;
 				if (classAlreadySet.contains(index)) {
 					count++;
-				}				
+				}
 			}
 			if (week == i) {
 				count++;
 			}
 			if (count > max) {
-				max = count ;
+				max = count;
 			}
 			if (count < min) {
-				min = count ;
+				min = count;
 			}
-		}		
-		if (max - min > 2) {
+		}
+		if (max - min > 3) {
 			return true;
-		}		
+		}
 		return false;
 	}
 
 	/*
 	 * weekseq的获取 1 不能在已安排的课程中 classAlreadySet 2 满足年级不排课(放在classAlreadySet) 3
 	 * 满足班级不排课(放在classAlreadySet) 4 满足老师不排课 5 满足科目不排课 6
-	 * 若该老师在其他班级有安排，则需要靠拢(每天安排的课程不能超过4节) 7 重要程度的设定，语数外尽量在上午
-	 * 8 语文在周三周五第一二节,英语在周二周四第一二节 9 每天上四节的分开
+	 * 若该老师在其他班级有安排，则需要靠拢(每天安排的课程不能超过4节) 7 重要程度的设定，语数外尽量在上午 8
+	 * 语文在周三周五第一二节,英语在周二周四第一二节(预排处理) 9 每天上两节则连排，每天上三节则分成12,每天上四节则分成22
 	 */
-	public static int getWeekSeq(int week, List<Integer> preAlreadyTeacherList, List<Integer> alreadyTeacherList,
-		List<Integer> alreadyTeacherAllList, Set<Integer> classAlreadySet, int type, int preSize,List<Integer> noCourseList) {
+	public static int getWeekSeq(int week, List<Integer> preAlreadyTeacherList,List<Integer> preAlreadyTeacherLAllist, List<Integer> alreadyTeacherList,
+			List<Integer> alreadyTeacherAllList, Set<Integer> classAlreadySet, int type, int preSize,
+			List<Integer> noCourseList) {
 		int result = 0;
 		int[] seqs = WeekSeq[week - 1];
 
 		List<Integer> list = new ArrayList<Integer>();
 		for (int i = 0; i < seqs.length; i++) {
-			if (!classAlreadySet.contains(seqs[i]) && !alreadyTeacherAllList.contains(seqs[i])&& !noCourseList.contains(seqs[i])) {
+			if (!classAlreadySet.contains(seqs[i]) && !alreadyTeacherAllList.contains(seqs[i])
+					&& !noCourseList.contains(seqs[i])) {
 				list.add(seqs[i]);
 			}
 		}
 
 		// 优先根据老师之前的安排就近选取,如果preAlreadyTeacherList == alreadyTeacherList 表明是第一次排，不需要获取最近
 		if (preSize != alreadyTeacherAllList.size()) {
-			result = getNext(week, list, alreadyTeacherAllList);
+			result = getNext(week, list,preAlreadyTeacherLAllist, alreadyTeacherAllList);
 		} else {
 			if (type == Constants.SUBJECT_SIGNIFICANT) {
-				result = getSigWeekSeq(week, classAlreadySet,noCourseList);
+				result = getSigWeekSeq(week, classAlreadySet, noCourseList);
 			}
 			if (type == Constants.SUBJECT_IMPORTANT) {
-				result = getImpWeekSeq(week, classAlreadySet,noCourseList);
+				result = getImpWeekSeq(week, classAlreadySet, noCourseList);
 			}
 			if (type == Constants.SUBJECT_COMMON) {
-				result = getComWeekSeq(week, classAlreadySet,noCourseList);
+				result = getComWeekSeq(week, classAlreadySet, noCourseList);
 			}
 		}
 		return result;
 
 	}
 
-	public static int getNext(int week, List<Integer> list, List<Integer> alreadyTeacherAllList) {
+	public static int getNext(int week, List<Integer> list,List<Integer> preAlreadyTeacherLAllist, List<Integer> alreadyTeacherAllList) {
 
 		int result = 0;
 		int min = 0;
 		int max = 0;
 		int i = 0;
+		int morningCount = 0;
+		int afternoonCount = 0;
+		alreadyTeacherAllList.removeAll(preAlreadyTeacherLAllist);
 		for (Integer integer : alreadyTeacherAllList) {
 			if (getWeek(integer) == week) {
+				if (isMorning(integer)) {
+					morningCount++;
+				}
+				if (isAfternoon(integer)) {
+					afternoonCount++;
+				}
 				if (i == 0) {
 					max = integer;
 					min = integer;
@@ -250,22 +287,104 @@ public class WeekSeqUtil {
 				i++;
 			}
 		}
-		int distance = Math.abs(list.get(0) - min) + Math.abs(list.get(0) - max);// 初始化距离
-		result = list.get(0);
-		for (Integer integer : list) {
-			if (Math.abs(integer - min) + Math.abs(integer - max) < distance) {
-				distance = Math.abs(integer - min) + Math.abs(integer - max);
-				result = integer;
-			}
-			if (Math.abs(integer - min) + Math.abs(integer - max) == distance) {
-				result = integer;
+
+		if (morningCount == 0) {
+			// 随机排
+			if (afternoonCount==1) {
+				int distance = 0;
+				for (Integer integer : list) {
+					if (isAfternoon(integer)) {					
+						if (distance == 0) {
+							distance = Math.abs(integer - min) + Math.abs(integer - max);// 初始化距离
+							result = integer;
+						}										
+						if (Math.abs(integer - min) + Math.abs(integer - max) < distance) {
+							distance = Math.abs(integer - min) + Math.abs(integer - max);
+							result = integer;
+						}
+						/*if (Math.abs(integer - min) + Math.abs(integer - max) == distance) {
+							result = integer;
+						}*/
+					}
+				}
+			}else {
+				int distance = 0;
+				for (Integer integer : list) {
+					if (isMorning(integer)) {						
+						if (distance == 0) {
+							distance = Math.abs(integer - min) + Math.abs(integer - max);// 初始化距离
+							result = integer;
+						}										
+						if (Math.abs(integer - min) + Math.abs(integer - max) < distance) {
+							distance = Math.abs(integer - min) + Math.abs(integer - max);
+							result = integer;
+						}
+						/*if (Math.abs(integer - min) + Math.abs(integer - max) == distance) {
+							result = integer;
+						}*/
+					}
+				}
+				
+			}												
+		}
+		
+		if (morningCount == 1) {
+			// 排早上
+			int distance = 0;
+			for (Integer integer : list) {
+				if (isMorning(integer)) {
+					
+					if (distance == 0) {
+						distance = Math.abs(integer - min) + Math.abs(integer - max);// 初始化距离
+						result = integer;
+					}										
+					if (Math.abs(integer - min) + Math.abs(integer - max) < distance) {
+						distance = Math.abs(integer - min) + Math.abs(integer - max);
+						result = integer;
+					}
+					/*if (Math.abs(integer - min) + Math.abs(integer - max) == distance) {
+						result = integer;
+					}*/
+				}
 			}
 		}
+		if (morningCount == 2) {
+			// 排下午
+			int distance = 0;			
+			for (Integer integer : list) {
+				if (isAfternoon(integer)) {
+					if (distance == 0) {
+						distance = Math.abs(integer - min) + Math.abs(integer - max);// 初始化距离
+						result = integer;
+					}				
+					if (Math.abs(integer - min) + Math.abs(integer - max) < distance) {
+						distance = Math.abs(integer - min) + Math.abs(integer - max);
+						result = integer;
+					}
+					/*if (Math.abs(integer - min) + Math.abs(integer - max) == distance) {
+						result = integer;
+					}*/
+				}
+			}
+		}
+		
+		//不满足上述条件
+		if (result == 0) {
+			int distance = Math.abs(list.get(0) - min) + Math.abs(list.get(0) - max);
+			result = list.get(0);
+			for (Integer integer : list) {
+				if (Math.abs(integer - min) + Math.abs(integer - max) < distance) {
+					distance = Math.abs(integer - min) + Math.abs(integer - max);
+					result = integer;
+				}
+			}
+		}
+
 		return result;
 
 	}
 
-	public static int getSigWeekSeq(int week, Set<Integer> classAlreadySet,List<Integer> noCourseList) {
+	public static int getSigWeekSeq(int week, Set<Integer> classAlreadySet, List<Integer> noCourseList) {
 		List<Integer> list = new ArrayList<Integer>();
 		int[] weekSeqs = WeekSeq[week - 1];
 		// 非常重要
@@ -296,7 +415,7 @@ public class WeekSeqUtil {
 
 	}
 
-	public static int getImpWeekSeq(int week, Set<Integer> classAlreadySet,List<Integer> noCourseList) {
+	public static int getImpWeekSeq(int week, Set<Integer> classAlreadySet, List<Integer> noCourseList) {
 		List<Integer> list = new ArrayList<Integer>();
 		int[] weekSeqs = WeekSeq[week - 1];
 		// 重要
@@ -327,7 +446,7 @@ public class WeekSeqUtil {
 
 	}
 
-	public static int getComWeekSeq(int week, Set<Integer> classAlreadySet,List<Integer> noCourseList) {
+	public static int getComWeekSeq(int week, Set<Integer> classAlreadySet, List<Integer> noCourseList) {
 		List<Integer> list = new ArrayList<Integer>();
 		int[] weekSeqs = WeekSeq[week - 1];
 		// 一般
@@ -387,33 +506,32 @@ public class WeekSeqUtil {
 
 	}
 
-	public static void printCourseTable(Integer classId, Map<Integer,Integer> teacherSubjectMap,Map<Integer,List<Integer>> preClassMap, Map<Integer, Integer> autoMap) {
-		
-		System.out.println("班级:"+classId);
+	public static void printCourseTable(Integer classId, Map<Integer, Integer> teacherSubjectMap,
+			Map<Integer, List<Integer>> preClassMap, Map<Integer, Integer> autoMap) {
+
+		System.out.println("班级:" + classId);
 		Map<Integer, Integer> preMap = new HashMap<Integer, Integer>();
 		for (Integer teacherId : preClassMap.keySet()) {
 			for (Integer index : preClassMap.get(teacherId)) {
 				preMap.put(index, teacherSubjectMap.get(teacherId));
 			}
-			
-		}						
+
+		}
 		for (int i = 1; i <= 8; i++) {
 			for (int j = 1; j <= 5; j++) {
-				int index = 8*(j-1)+i;
+				int index = 8 * (j - 1) + i;
 				System.out.print(index);
 				if (autoMap.containsKey(index)) {
-					System.out.print("(  " + subjectMap.get(autoMap.get(index))  + ")");
-				}else if (preMap.containsKey(index)) {
-					System.out.print("(预" + subjectMap.get(preMap.get(index))  + ")");
-				}else {
+					System.out.print("(  " + subjectMap.get(autoMap.get(index)) + ")");
+				} else if (preMap.containsKey(index)) {
+					System.out.print("(预" + subjectMap.get(preMap.get(index)) + ")");
+				} else {
 					System.out.print("(   )");
-				} 
+				}
 			}
 			System.out.println();
 		}
 
 	}
-	
-	
 
 }

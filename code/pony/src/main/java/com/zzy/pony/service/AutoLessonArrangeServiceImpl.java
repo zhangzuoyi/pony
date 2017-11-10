@@ -382,14 +382,16 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 					preArrangeCount = preClassMap.get(teacherId).size();
 				}
 				int autoArrangeCount = classTSInnerMap.get(teacherId) - preArrangeCount;
-				List<Integer> preAlreadyTeacherList = new ArrayList<Integer>();
+				List<Integer> preAlreadyTeacherList = new ArrayList<Integer>();//本班的预排
 				int preSize = 0;//预排课程数,用来判断是否第一次排
+				List<Integer> preAlreadyTeacherLAllist = new ArrayList<Integer>();//整体的预排
 				List<Integer> alreadyTeacherList = new ArrayList<Integer>();//本班的已安排
 				List<Integer> alreadyTeacherAllList = new ArrayList<Integer>();//所有的已安排
 				
 				if (preTeacherMap.get(teacherId)!=null){					
 					for (Integer key : preTeacherMap.get(teacherId).keySet()) {
 						preSize += preTeacherMap.get(teacherId).get(key).size();
+						preAlreadyTeacherLAllist.addAll(preTeacherMap.get(teacherId).get(key));
 					}							
 				}				
 				if (preTeacherMap.get(teacherId)!=null && preTeacherMap.get(teacherId).get(sc.getClassId())!= null){
@@ -451,6 +453,9 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 					int type = 0;
 					if (sigList.contains(subjectId)) {
 						 type = Constants.SUBJECT_SIGNIFICANT;
+						 if (i == autoArrangeCount-1) {
+							type = Constants.SUBJECT_COMMON;//语数英选择一节
+						}
 					}
 					if (impList.contains(subjectId)) {
 						 type = Constants.SUBJECT_IMPORTANT;
@@ -458,7 +463,9 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 					if (comList.contains(subjectId)) {
 						 type = Constants.SUBJECT_COMMON;
 					}
-					int weekSeq = WeekSeqUtil.getWeekSeq(week,preAlreadyTeacherList, alreadyTeacherList,alreadyTeacherAllList, classAlreadySet, type,preSize,noCourseList);
+					
+					
+					int weekSeq = WeekSeqUtil.getWeekSeq(week,preAlreadyTeacherList,preAlreadyTeacherLAllist, alreadyTeacherList,alreadyTeacherAllList, classAlreadySet, type,preSize,noCourseList);
 
 					classAlreadySet.add(weekSeq);
 					teacherSet.add(weekSeq);
