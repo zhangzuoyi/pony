@@ -16,10 +16,14 @@ import org.springframework.stereotype.Service;
 import com.zzy.pony.dao.ExamDao;
 import com.zzy.pony.dao.ExamSubjectDao;
 import com.zzy.pony.dao.SubjectDao;
+import com.zzy.pony.mapper.TeacherSubjectMapper;
 import com.zzy.pony.model.Exam;
 import com.zzy.pony.model.ExamSubject;
 import com.zzy.pony.model.SchoolClass;
+import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Subject;
+import com.zzy.pony.model.Term;
+import com.zzy.pony.vo.TeacherSubjectVo;
 @Service
 @Transactional
 public class SubjectServiceImpl implements SubjectService {
@@ -31,6 +35,12 @@ public class SubjectServiceImpl implements SubjectService {
 	private ExamSubjectDao examSubjectDao;
 	@Autowired
 	private SchoolClassService schoolClassService;
+	@Autowired
+	private SchoolYearService schoolYearService;
+	@Autowired
+	private TermService termService;
+	@Autowired
+	private TeacherSubjectMapper teacherSubjectMapper;
 	
 	
 
@@ -166,6 +176,20 @@ public class SubjectServiceImpl implements SubjectService {
 		
 		return result;
 	}
+
+	@Override
+	public Subject findByTeacherAndGrade(int teacherId,int gradeId) {
+		// TODO Auto-generated method stub
+		SchoolYear year = schoolYearService.getCurrent();
+		Term term = termService.getCurrent();
+		List<TeacherSubjectVo> teacherSubjectVos = teacherSubjectMapper.findByGradeAndTeacher(year.getYearId(), term.getTermId(), gradeId, teacherId);
+		if (teacherSubjectVos!= null && teacherSubjectVos.size()>0) {
+			return dao.findOne(teacherSubjectVos.get(0).getSubjectId()); 
+		}	
+		return null;
+	}
+	
+	
 	
 	
 	

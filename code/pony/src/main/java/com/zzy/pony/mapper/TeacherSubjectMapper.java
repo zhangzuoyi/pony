@@ -10,6 +10,8 @@ public interface TeacherSubjectMapper {
 	List<TeacherSubjectVo> findCurrentByGroup(ConditionVo cv);
 	List<TeacherSubjectVo> findArrangeSeq(ConditionVo cv);
 	List<TeacherSubjectVo> findByGrade(int yearId,int termId,int gradeId);
+	List<TeacherSubjectVo> findByGradeAndTeacher(int yearId,int termId,int gradeId,int teacherId);
+
 
 
 }

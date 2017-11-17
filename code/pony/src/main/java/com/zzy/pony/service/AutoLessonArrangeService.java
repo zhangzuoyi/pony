@@ -18,4 +18,5 @@ public interface AutoLessonArrangeService {
 	boolean autoLessonArrangeTwo(int gradeId);
 	void save(List<ArrangeVo> list);
 	void saveTwo(Map<Integer,Map<Integer,Integer>> autoArrangeMap, SchoolYear year, Term term);
+	void saveUnable(Map<Integer,Map<Integer,Integer>> unableMap,SchoolYear year,Term term,int gradeId);
 }

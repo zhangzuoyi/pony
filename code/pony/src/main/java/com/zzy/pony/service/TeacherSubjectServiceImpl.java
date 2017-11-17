@@ -337,5 +337,13 @@ public class TeacherSubjectServiceImpl implements TeacherSubjectService {
 	public List<TeacherSubjectVo> findByGrade(int yearId, int termId, int gradeId) {
 		return teacherSubjectMapper.findByGrade(yearId,termId,gradeId);
 	}
+
+	@Override
+	public List<TeacherSubjectVo> findByTeacherAndGrade(int yearId, int termId, int gradeId, int teacherId) {
+		// TODO Auto-generated method stub
+		return teacherSubjectMapper.findByGradeAndTeacher(yearId, termId, gradeId, teacherId);
+	}
+	
+	
 }
 

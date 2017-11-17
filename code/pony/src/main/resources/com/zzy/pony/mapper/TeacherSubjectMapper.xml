@@ -95,5 +95,14 @@ ORDER BY
 			and  a.grade_Id=#{2}
 		order by t.CLASS_ID,t.SUBJECT_ID
 	</select>
+	<select id="findByGradeAndTeacher" resultType="com.zzy.pony.vo.TeacherSubjectVo">
+		<include refid="base_select"></include>
+		where 1=1
+			and  t.year_Id=#{0}
+			and  t.term_Id=#{1}
+			and  a.grade_Id=#{2}
+			and t.teacher_id =#{3}
+		order by t.CLASS_ID,t.SUBJECT_ID
+	</select>
 	
 </mapper>

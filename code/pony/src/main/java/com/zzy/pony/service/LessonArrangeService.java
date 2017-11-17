@@ -19,6 +19,7 @@ public interface LessonArrangeService {
 	List<LessonArrange> findByClassIdAndSchoolYearAndTerm(Integer classId, SchoolYear year, Term term);
 	List<LessonArrange> findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(Integer classId, SchoolYear year, Term term,String weekDay,LessonPeriod lessonPeriod);
 	LessonArrange findByClassIdAndSubjectAndSchoolYearAndTermAndWeekDayAndLessonPeriod(int classId,Subject subject, SchoolYear year, Term term,String weekDay,LessonPeriod lessonPeriod);
+	LessonArrange findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(int classId, SchoolYear year, Term term,String weekDay,LessonPeriod lessonPeriod);
 	List<LessonArrange> findBySchooleYearAndTermAndSourceType(SchoolYear year ,Term term,String sourceType);
 	List<LessonArrange> findBySchooleYearAndTermAndGradeIdAndSourceType(SchoolYear year ,Term term,int gradeId, String sourceType);
 	List<LessonArrange> findBySchoolYearAndTerm(SchoolYear year ,Term term);

@@ -35,4 +35,6 @@ public interface SubjectService {
 	Subject findByName(String name);
 	
 	List<Subject> findSubjects(int[] subjectIds);
+	
+	Subject findByTeacherAndGrade(int teacherId,int gradeId);
 }

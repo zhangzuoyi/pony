@@ -192,6 +192,20 @@ public class LessonArrangeServiceImpl implements LessonArrangeService {
 		
 		return null;
 	}
+	
+	
+
+	@Override
+	public LessonArrange findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(int classId, SchoolYear year,
+			Term term, String weekDay, LessonPeriod lessonPeriod) {
+		// TODO Auto-generated method stub
+		List<LessonArrange> list = dao.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(classId, year, term, weekDay, lessonPeriod);
+		if(list != null &&list.size()>0){
+			return list.get(0);
+		}
+		
+		return null;
+	}
 
 	@Override
 	public boolean isTeacherConflict(int week, int period,

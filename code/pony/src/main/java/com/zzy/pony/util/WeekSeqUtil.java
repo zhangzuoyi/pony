@@ -1,5 +1,10 @@
 package com.zzy.pony.util;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -509,7 +514,12 @@ public class WeekSeqUtil {
 	public static void printCourseTable(Integer classId, Map<Integer, Integer> teacherSubjectMap,
 			Map<Integer, List<Integer>> preClassMap, Map<Integer, Integer> autoMap) {
 
+		
+		
+		StringBuilder stringBuilder = new StringBuilder();
 		System.out.println("班级:" + classId);
+		stringBuilder.append("班级:" + classId);
+		stringBuilder.append("\r\n");
 		Map<Integer, Integer> preMap = new HashMap<Integer, Integer>();
 		for (Integer teacherId : preClassMap.keySet()) {
 			for (Integer index : preClassMap.get(teacherId)) {
@@ -521,15 +531,43 @@ public class WeekSeqUtil {
 			for (int j = 1; j <= 5; j++) {
 				int index = 8 * (j - 1) + i;
 				System.out.print(index);
+				stringBuilder.append(index);
 				if (autoMap.containsKey(index)) {
 					System.out.print("(  " + subjectMap.get(autoMap.get(index)) + ")");
+					stringBuilder.append("(  " + subjectMap.get(autoMap.get(index)) + ")");
 				} else if (preMap.containsKey(index)) {
 					System.out.print("(预" + subjectMap.get(preMap.get(index)) + ")");
+					stringBuilder.append("(预" + subjectMap.get(preMap.get(index)) + ")");
+
 				} else {
 					System.out.print("(   )");
+					stringBuilder.append("(   )");
 				}
 			}
 			System.out.println();
+			stringBuilder.append("\r\n");
+			stringBuilder.append("\r\n");
+
+		}
+		
+		FileOutputStream out = null;
+		BufferedOutputStream buff = null; 
+		try {
+			out  = new FileOutputStream("d:/courseTable.txt",true);
+			buff = new BufferedOutputStream(out);		
+			buff.write(stringBuilder.toString().getBytes());
+			buff.flush();			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				buff.close();
+				out.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}
