@@ -26,7 +26,7 @@ public interface AverageService {
 	List<String> getClassCode(List<AverageExcelVo> averageExcelVos,String schoolName);
 	void sortAverageExcelVo(List<AverageExcelVo> averageExcelVos);
 	void sortAverageExcelVoSum(List<AverageExcelVo> averageExcelVos);
-	List<AverageExcelVo> getAverageExcelVo (Workbook wb,int index);
+	List<AverageExcelVo> getAverageExcelVo (Workbook wb,int index,int schoolIndex);
 	List<AverageExcelVo> getAverageExcelVoSum (Workbook wb,List<String> subjectNames);
 	/**
 	 * @param averageExcelVos
@@ -34,6 +34,9 @@ public interface AverageService {
 	 */
 	Map<Integer,List<AverageExcelVo>> getLevelMap(List<AverageExcelVo> averageExcelVos);
 	Map<Integer,List<AverageExcelVo>> getLevelMapSum(List<AverageExcelVo> averageExcelVos);
+	
+	Map<Integer,List<AverageExcelVo>> getLevelAssignMap(List<AverageExcelVo> averageExcelVos);
+
 	/**
 	 * @param averageExcelVos
 	 * @return 整体每个等级指标
@@ -45,7 +48,8 @@ public interface AverageService {
 	 * @return 某个学校的等级人数
 	 */
 	Map<Integer,List<AverageExcelVo>> getLevelMapBySchoolName(Map<Integer,List<AverageExcelVo>> levelMap,String schoolName);
-	
+	Map<Integer,List<AverageExcelVo>> getLevelAssignMapBySchoolName(Map<Integer,List<AverageExcelVo>> levelMap,String schoolName);
+
 	Map<Integer,List<AverageExcelVo>> getTopTenLevelMapSumBySchoolName(Map<Integer,List<AverageExcelVo>> levelMap,List<String> classCode,String schoolName);
 
 	/**
@@ -64,5 +68,5 @@ public interface AverageService {
 	Map<Integer, BigDecimal> getLevelMapDecimalBySchoolName(Map<Integer,List<AverageExcelVo>> levelMap,Map<Integer,BigDecimal> levelMapDecimal,String schoolName);
 	Map<String, Map<String, BigDecimal>> calculate(Map<Integer,List<AverageExcelVo>> schoolLevelMap,Map<Integer,BigDecimal> schoolLevelMapDecimal,List<String> classCodes);
 	Map<String, Map<String, BigDecimal>> calculateTopTen(Map<Integer,List<AverageExcelVo>> schoolTopTenLevelMap,Map<Integer,List<AverageExcelVo>> schoolLevelMap,Map<Integer,BigDecimal> schoolLevelMapDecimal,List<String> classCodes);
-
+	void calculateAssign(Map<Integer,List<AverageExcelVo>> schoolLevelMap);
 }

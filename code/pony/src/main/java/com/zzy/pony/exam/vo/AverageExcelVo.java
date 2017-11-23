@@ -6,6 +6,7 @@ public class AverageExcelVo {
 	private String name;
 	private float subjectResult;
 	private float subjectResultSum;
+	private float subjectResultAssign;//赋分
 	private int rank;
 	private int rankSum;
 	private int level;
@@ -58,6 +59,13 @@ public class AverageExcelVo {
 	public void setRankSum(int rankSum) {
 		this.rankSum = rankSum;
 	}
+	public float getSubjectResultAssign() {
+		return subjectResultAssign;
+	}
+	public void setSubjectResultAssign(float subjectResultAssign) {
+		this.subjectResultAssign = subjectResultAssign;
+	}
+	
 	
 	
 }

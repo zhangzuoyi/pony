@@ -44,6 +44,10 @@ public class Constants {
 	public static final String SELECT = "select";
 	public static final String EXPORT = "export";
 	public static final List<BigDecimal> AVERAGE_LEVELS;
+	public static final List<BigDecimal> AVERAGE_ASSIGN_LEVELS;
+	public static final Map<Integer, Float> ASSIGN_LEVEL;//赋分映射 
+
+
 
 
 
@@ -159,6 +163,45 @@ public class Constants {
 		}
 		AVERAGE_LEVELS.add(new BigDecimal("97.5"));
 		AVERAGE_LEVELS.add(new BigDecimal("100"));
+		
+		AVERAGE_ASSIGN_LEVELS = new ArrayList<BigDecimal>();
+		for (int i = 1; i <= 8; i++) {
+			AVERAGE_ASSIGN_LEVELS.add(new BigDecimal(i));
+		}
+		for (int i = 1; i <= 5; i++) {
+			AVERAGE_ASSIGN_LEVELS.add(new BigDecimal(i));
+		}
+		for (int i = 7; i >= 1; i--) {
+			AVERAGE_ASSIGN_LEVELS.add(new BigDecimal(i));
+		}
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("1"));
+		
+		ASSIGN_LEVEL = new LinkedHashMap<Integer, Float>();
+		ASSIGN_LEVEL.put(1, 100f);
+		ASSIGN_LEVEL.put(2, 97f);
+		ASSIGN_LEVEL.put(3, 94f);
+		ASSIGN_LEVEL.put(4, 91f);
+		ASSIGN_LEVEL.put(5, 88f);
+		ASSIGN_LEVEL.put(6, 85f);
+		ASSIGN_LEVEL.put(7, 82f);
+		ASSIGN_LEVEL.put(8, 79f);
+		ASSIGN_LEVEL.put(9, 76f);
+		ASSIGN_LEVEL.put(10, 73f);
+		ASSIGN_LEVEL.put(11, 70f);
+		ASSIGN_LEVEL.put(12, 67f);
+		ASSIGN_LEVEL.put(13, 64f);
+		ASSIGN_LEVEL.put(14, 61f);
+		ASSIGN_LEVEL.put(15, 58f);
+		ASSIGN_LEVEL.put(16, 55f);
+		ASSIGN_LEVEL.put(17, 52f);
+		ASSIGN_LEVEL.put(18, 49f);
+		ASSIGN_LEVEL.put(19, 46f);
+		ASSIGN_LEVEL.put(20, 43f);
+		ASSIGN_LEVEL.put(21, 40f);
+		
+		
+
+		
 		
 	}
 }

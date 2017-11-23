@@ -91,6 +91,8 @@ public class AverageController {
 	private GradeService gradeService;
 	@Value("${averagePath}")
 	private String averagePath;
+	@Value("${averageAssignPath}")
+	private String averageAssignPath;
 	
 	@RequestMapping(value="main",method=RequestMethod.GET)
 	public String main(Model model){
@@ -444,7 +446,7 @@ public class AverageController {
     		
 
 			for (int i=3;i<titles.length;i++) {
-					List<AverageExcelVo> averageExcelVos = service.getAverageExcelVo(wb,i);
+					List<AverageExcelVo> averageExcelVos = service.getAverageExcelVo(wb,i,0);
 					List<String> classCodes = service.getClassCode(averageExcelVos,Constants.SCHOOL_NAME);
 					service.sortAverageExcelVo(averageExcelVos);
 					Map<Integer,List<AverageExcelVo>> levelMap = service.getLevelMap(averageExcelVos);
@@ -495,7 +497,7 @@ public class AverageController {
 			}
 			
 			for (int i=3;i<titles.length;i++) {
-				List<AverageExcelVo> averageExcelVos = service.getAverageExcelVo(wb,i);
+				List<AverageExcelVo> averageExcelVos = service.getAverageExcelVo(wb,i,0);
 				List<String> classCodes = service.getClassCode(averageExcelVos,Constants.SCHOOL_NAME);
 				service.sortAverageExcelVo(averageExcelVos);
 				Map<Integer,List<AverageExcelVo>> levelMap = service.getLevelMap(averageExcelVos);
@@ -545,6 +547,156 @@ public class AverageController {
 				
 				
 		}
+			   		    		    		
+          //让列宽随着导出的列长自动适应  
+            for (int colNum = 0; colNum < 30; colNum++) {
+                int columnWidth = sheet.getColumnWidth(colNum) / 256;
+                for (int rowNum = 3; rowNum < sheet.getLastRowNum(); rowNum++) {
+                    HSSFRow currentRow;  
+                    //当前行未被使用过  
+                    if (sheet.getRow(rowNum) == null) {
+                        currentRow = sheet.createRow(rowNum);
+                    } else {  
+                        currentRow = sheet.getRow(rowNum);
+                    }  
+                    if (currentRow.getCell(colNum) != null&&!"".equals(currentRow.getCell(colNum))) {  
+                        HSSFCell currentCell = currentRow.getCell(colNum);  
+                        if (currentCell.getCellType() == HSSFCell.CELL_TYPE_STRING) {  
+                            int length = currentCell.getStringCellValue().getBytes().length;  
+                            if (columnWidth < length) {  
+                                columnWidth = length;  
+                            }  
+                        }  
+                    }  
+                }                 
+                sheet.setColumnWidth(colNum, (columnWidth+4) * 256);
+            }
+                                             
+            if(workbook !=null){  
+              
+                	String fileName = new String(title.getBytes("utf-8"), "ISO8859-1")+DateTimeUtil.dateToStr(new Date()) + ".xls" ;
+                  //  String fileName = "Excel-" + String.valueOf(System.currentTimeMillis()).substring(4, 13) + ".xls";  
+                    String headStr = "attachment; filename=\"" + fileName + "\"";  
+                  //  response = getResponse();  
+                    response.setContentType("APPLICATION/OCTET-STREAM");  
+                    response.setHeader("Content-Disposition", headStr);  
+                    //OutputStream out = response.getOutputStream();  
+                   // workbook.write(out); 
+                   
+                    File localFile = new File(averagePath,"averageTmp.xls");
+					FileOutputStream outputStream = new FileOutputStream(localFile);
+                    workbook.write(outputStream);
+                    outputStream.close();
+                                                                                              
+            }  
+  
+        } catch (IOException e)  
+        {  
+            e.printStackTrace();  
+        } 
+		 catch(Exception e){  
+            e.printStackTrace();  
+        }  
+          
+    }
+	
+	@SuppressWarnings("deprecation")
+	@RequestMapping(value="exportAssignResultFile",method = RequestMethod.GET)	 
+    public void exportAssignResultFile(HttpServletRequest request,HttpServletResponse response) {
+		File localFile = new File(averageAssignPath, "averageAssignTmp.xls");
+		try {
+			response.setContentType("APPLICATION/OCTET-STREAM");  
+            String headStr = "attachment; filename=\"" + "averageAssignTmp.xls" + "\"";  
+			response.setHeader("Content-Disposition", headStr);
+			OutputStream outputStream = response.getOutputStream();
+			FileInputStream inputStream = new FileInputStream(localFile);
+			IOUtils.copy(inputStream, outputStream);
+			 						
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	@RequestMapping(value="exportAssignResult",method = RequestMethod.POST)	 
+    public void exportAssignResult(MultipartFile fileUpload,HttpServletRequest request,HttpServletResponse response) throws Exception{  
+		MultipartHttpServletRequest multipartRequest=(MultipartHttpServletRequest)request;
+		MultipartFile file = multipartRequest.getFile("upoadfile");		
+        if (file == null) {
+			return ;
+		}
+		String title = "均量值赋分";
+		List<String> subjectNames = new ArrayList<String>();
+		
+		
+		
+		
+		try{  
+            HSSFWorkbook workbook = new HSSFWorkbook();                     // 创建工作簿对象  
+    		HSSFSheet sheet = workbook.createSheet(title);                  // 创建工作表  
+
+    		List<Map<String, Object>> headList = new ArrayList<Map<String,Object>>();
+    		List<Map<String, Object>> datas = new ArrayList<Map<String,Object>>();
+   		
+    		Map<String,Map<String, Map<String, BigDecimal>>> dataMap = new LinkedHashMap<String, Map<String,Map<String,BigDecimal>>>();
+
+			Workbook wb =  ReadExcelUtils.ReadExcelByFile(file);							
+			String[] titles = ReadExcelUtils.readExcelTitle(wb);
+    		int range = 0 ;
+    		   		   						  		  		  		
+
+			for (int i=9;i<titles.length;i++) {
+					List<AverageExcelVo> averageExcelVos = service.getAverageExcelVo(wb,i,2);
+					List<String> classCodes = service.getClassCode(averageExcelVos,Constants.SCHOOL_NAME);
+					service.sortAverageExcelVo(averageExcelVos);
+					Map<Integer,List<AverageExcelVo>> levelMap = service.getLevelAssignMap(averageExcelVos);
+					Map<Integer,List<AverageExcelVo>> schoolLevelMap = service.getLevelMapBySchoolName(levelMap,Constants.SCHOOL_NAME);
+				    service.calculateAssign(schoolLevelMap);
+				    
+					/*dataMap.put(titles[i], innerMap);										
+	    			// 产生表格标题行  
+	                HSSFRow titleRow = sheet.createRow(range); 
+	                HSSFCell titleCell = titleRow.createCell(0);                                                                     
+	                sheet.addMergedRegion(new Region(range, (short)0,range, (short)(1)));    
+	                titleCell.setCellValue(titles[i]); 
+	                HSSFRow headRow = sheet.createRow(range+1);
+	                headRow.createCell(0).setCellValue("段名");
+	                headRow.createCell(1).setCellValue("各档指标");
+	                int colNums = 2;
+	            	int classSize = 1; 
+	                for (String classCode : classCodes) {
+	                	HSSFCell classSeqCell = titleRow.createCell(classSize*2);
+	                	classSeqCell.setCellValue(classCode);                	
+	                	headRow.createCell(classSize*2).setCellValue("档数");
+	                	headRow.createCell(classSize*2+1).setCellValue("累数");
+	                	classSize++;
+	                	colNums +=2;
+					}
+	                titleRow.createCell(colNums).setCellValue("全部");
+	                headRow.createCell(colNums).setCellValue("档数");
+	                headRow.createCell(colNums+1).setCellValue("累数");                                
+					int index = 0;
+	                for (int section=1;section<=Constants.AVERAGE_LEVELS.size();section++) {
+	                	HSSFRow dataRow = sheet.createRow(range+index+2);
+						dataRow.createCell(0).setCellValue("A"+section);
+						dataRow.createCell(1).setCellValue(schoolLevelMapDecimal.get(index+1).toString());
+						int j = 1;
+						for (String classCode : classCodes) {
+							dataRow.createCell(j*2).setCellValue(innerMap.get(classCode).get("A"+section).toString());
+							dataRow.createCell(j*2+1).setCellValue(innerMap.get(classCode).get("classAllSum"+section).toString());						
+							j++;
+						}
+						dataRow.createCell(classCodes.size()*2+2).setCellValue(innerMap.get("allLevel").get("allLevel"+section).toString());
+						dataRow.createCell(classCodes.size()*2+3).setCellValue(innerMap.get("allLevelSum").get("allLevelSum"+section).toString());
+						index++;
+					}
+	                range += 25;*/
+					
+					
+			}
+			
+			
 			   		    		    		
           //让列宽随着导出的列长自动适应  
             for (int colNum = 0; colNum < 30; colNum++) {
