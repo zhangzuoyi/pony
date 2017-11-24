@@ -164,18 +164,29 @@ public class Constants {
 		AVERAGE_LEVELS.add(new BigDecimal("97.5"));
 		AVERAGE_LEVELS.add(new BigDecimal("100"));
 		
-		AVERAGE_ASSIGN_LEVELS = new ArrayList<BigDecimal>();
-		for (int i = 1; i <= 8; i++) {
-			AVERAGE_ASSIGN_LEVELS.add(new BigDecimal(i));
-		}
-		for (int i = 1; i <= 5; i++) {
-			AVERAGE_ASSIGN_LEVELS.add(new BigDecimal(i));
-		}
-		for (int i = 7; i >= 1; i--) {
-			AVERAGE_ASSIGN_LEVELS.add(new BigDecimal(i));
-		}
+		AVERAGE_ASSIGN_LEVELS = new ArrayList<BigDecimal>();		
 		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("1"));
-		
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("3"));
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("6"));
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("10"));
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("15"));
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("21"));
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("28"));
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("36"));
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("43"));
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("50"));
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("57"));
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("64"));
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("71"));
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("78"));
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("84"));
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("89"));
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("93"));
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("96"));
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("98"));
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("99"));
+		AVERAGE_ASSIGN_LEVELS.add(new BigDecimal("100"));
+			
 		ASSIGN_LEVEL = new LinkedHashMap<Integer, Float>();
 		ASSIGN_LEVEL.put(1, 100f);
 		ASSIGN_LEVEL.put(2, 97f);

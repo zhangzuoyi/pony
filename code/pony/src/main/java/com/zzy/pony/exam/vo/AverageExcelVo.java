@@ -1,9 +1,11 @@
 package com.zzy.pony.exam.vo;
 
 public class AverageExcelVo {
+	private String uniqueId;
 	private String schoolName;
 	private String classCode;
 	private String name;
+	private String subjectName;
 	private float subjectResult;
 	private float subjectResultSum;
 	private float subjectResultAssign;//赋分
@@ -11,6 +13,15 @@ public class AverageExcelVo {
 	private int rankSum;
 	private int level;
 	public AverageExcelVo() {}
+	
+	public String getUniqueId() {
+		return uniqueId;
+	}
+
+	public void setUniqueId(String uniqueId) {
+		this.uniqueId = uniqueId;
+	}
+
 	public String getSchoolName() {
 		return schoolName;
 	}
@@ -29,6 +40,15 @@ public class AverageExcelVo {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public String getSubjectName() {
+		return subjectName;
+	}
+
+	public void setSubjectName(String subjectName) {
+		this.subjectName = subjectName;
+	}
+
 	public float getSubjectResult() {
 		return subjectResult;
 	}

@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Workbook;
+import org.codehaus.groovy.classgen.asm.indy.IndyBinHelper;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.zzy.pony.exam.model.AverageIndex;
+import com.zzy.pony.exam.vo.AverageAssignExcelVo;
 import com.zzy.pony.exam.vo.AverageExcelVo;
 import com.zzy.pony.exam.vo.AverageIndexRowVo;
 
@@ -27,6 +29,7 @@ public interface AverageService {
 	void sortAverageExcelVo(List<AverageExcelVo> averageExcelVos);
 	void sortAverageExcelVoSum(List<AverageExcelVo> averageExcelVos);
 	List<AverageExcelVo> getAverageExcelVo (Workbook wb,int index,int schoolIndex);
+	List<AverageAssignExcelVo> getAverageAssignExcelVo(Workbook wb,int schoolIndex,String schoolName);
 	List<AverageExcelVo> getAverageExcelVoSum (Workbook wb,List<String> subjectNames);
 	/**
 	 * @param averageExcelVos
@@ -69,4 +72,5 @@ public interface AverageService {
 	Map<String, Map<String, BigDecimal>> calculate(Map<Integer,List<AverageExcelVo>> schoolLevelMap,Map<Integer,BigDecimal> schoolLevelMapDecimal,List<String> classCodes);
 	Map<String, Map<String, BigDecimal>> calculateTopTen(Map<Integer,List<AverageExcelVo>> schoolTopTenLevelMap,Map<Integer,List<AverageExcelVo>> schoolLevelMap,Map<Integer,BigDecimal> schoolLevelMapDecimal,List<String> classCodes);
 	void calculateAssign(Map<Integer,List<AverageExcelVo>> schoolLevelMap);
+	void calculateAssignScore(Map<Integer,List<AverageExcelVo>> schoolLevelMap,List<AverageAssignExcelVo> averageAssignExcelVos);
 }

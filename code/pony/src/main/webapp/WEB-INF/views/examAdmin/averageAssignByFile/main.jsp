@@ -158,8 +158,8 @@ var app = new Vue({
 	                              });
 	                  return false;           
 	            },	
-				
-            exportAssignAverageByFile : function(){ 
+	          	
+	           exportAverageAssignByFile : function(){ 
             	/* if(this.gradeId == null || this.gradeId == ""){
                   	this.$alert("请选择年级","提示",{
     					type:"warning",

@@ -142,6 +142,9 @@
                     <dd>
                         <a href="javascript:;" data-url="<s:url value='/examAdmin/average/main/' />"><label>均量值</label></a>
                     </dd>
+                    <dd>
+                        <a href="javascript:;" data-url="<s:url value='/examAdmin/average/mainAssign/' />"><label>均量值赋分</label></a>
+                    </dd>
                 </dl>
             </li>
             </shiro:hasPermission>

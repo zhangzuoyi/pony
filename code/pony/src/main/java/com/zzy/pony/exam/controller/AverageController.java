@@ -28,6 +28,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -54,6 +55,7 @@ import com.zzy.pony.config.Constants;
 import com.zzy.pony.exam.mapper.AverageIndexMapper;
 import com.zzy.pony.exam.model.AverageIndex;
 import com.zzy.pony.exam.service.AverageService;
+import com.zzy.pony.exam.vo.AverageAssignExcelVo;
 import com.zzy.pony.exam.vo.AverageExcelVo;
 import com.zzy.pony.exam.vo.AverageIndexRowVo;
 import com.zzy.pony.exam.vo.AverageIndexVo;
@@ -97,6 +99,11 @@ public class AverageController {
 	@RequestMapping(value="main",method=RequestMethod.GET)
 	public String main(Model model){
 		return "examAdmin/averageByFile/main";
+	}
+	
+	@RequestMapping(value="mainAssign",method=RequestMethod.GET)
+	public String mainAssign(Model model){
+		return "examAdmin/averageAssignByFile/main";
 	}
 	@RequestMapping(value="getIndexRows",method=RequestMethod.GET)
 	@ResponseBody
@@ -627,74 +634,59 @@ public class AverageController {
 			return ;
 		}
 		String title = "均量值赋分";
-		List<String> subjectNames = new ArrayList<String>();
-		
-		
-		
-		
 		try{  
             HSSFWorkbook workbook = new HSSFWorkbook();                     // 创建工作簿对象  
     		HSSFSheet sheet = workbook.createSheet(title);                  // 创建工作表  
-
-    		List<Map<String, Object>> headList = new ArrayList<Map<String,Object>>();
-    		List<Map<String, Object>> datas = new ArrayList<Map<String,Object>>();
-   		
-    		Map<String,Map<String, Map<String, BigDecimal>>> dataMap = new LinkedHashMap<String, Map<String,Map<String,BigDecimal>>>();
-
+	
 			Workbook wb =  ReadExcelUtils.ReadExcelByFile(file);							
 			String[] titles = ReadExcelUtils.readExcelTitle(wb);
-    		int range = 0 ;
-    		   		   						  		  		  		
-
+    		List<AverageAssignExcelVo> averageAssignExcelVos = service.getAverageAssignExcelVo(wb, 2, Constants.SCHOOL_NAME);
+    		
+    		
+    		
 			for (int i=9;i<titles.length;i++) {
 					List<AverageExcelVo> averageExcelVos = service.getAverageExcelVo(wb,i,2);
-					List<String> classCodes = service.getClassCode(averageExcelVos,Constants.SCHOOL_NAME);
 					service.sortAverageExcelVo(averageExcelVos);
 					Map<Integer,List<AverageExcelVo>> levelMap = service.getLevelAssignMap(averageExcelVos);
 					Map<Integer,List<AverageExcelVo>> schoolLevelMap = service.getLevelMapBySchoolName(levelMap,Constants.SCHOOL_NAME);
 				    service.calculateAssign(schoolLevelMap);
-				    
-					/*dataMap.put(titles[i], innerMap);										
-	    			// 产生表格标题行  
-	                HSSFRow titleRow = sheet.createRow(range); 
-	                HSSFCell titleCell = titleRow.createCell(0);                                                                     
-	                sheet.addMergedRegion(new Region(range, (short)0,range, (short)(1)));    
-	                titleCell.setCellValue(titles[i]); 
-	                HSSFRow headRow = sheet.createRow(range+1);
-	                headRow.createCell(0).setCellValue("段名");
-	                headRow.createCell(1).setCellValue("各档指标");
-	                int colNums = 2;
-	            	int classSize = 1; 
-	                for (String classCode : classCodes) {
-	                	HSSFCell classSeqCell = titleRow.createCell(classSize*2);
-	                	classSeqCell.setCellValue(classCode);                	
-	                	headRow.createCell(classSize*2).setCellValue("档数");
-	                	headRow.createCell(classSize*2+1).setCellValue("累数");
-	                	classSize++;
-	                	colNums +=2;
-					}
-	                titleRow.createCell(colNums).setCellValue("全部");
-	                headRow.createCell(colNums).setCellValue("档数");
-	                headRow.createCell(colNums+1).setCellValue("累数");                                
-					int index = 0;
-	                for (int section=1;section<=Constants.AVERAGE_LEVELS.size();section++) {
-	                	HSSFRow dataRow = sheet.createRow(range+index+2);
-						dataRow.createCell(0).setCellValue("A"+section);
-						dataRow.createCell(1).setCellValue(schoolLevelMapDecimal.get(index+1).toString());
-						int j = 1;
-						for (String classCode : classCodes) {
-							dataRow.createCell(j*2).setCellValue(innerMap.get(classCode).get("A"+section).toString());
-							dataRow.createCell(j*2+1).setCellValue(innerMap.get(classCode).get("classAllSum"+section).toString());						
-							j++;
-						}
-						dataRow.createCell(classCodes.size()*2+2).setCellValue(innerMap.get("allLevel").get("allLevel"+section).toString());
-						dataRow.createCell(classCodes.size()*2+3).setCellValue(innerMap.get("allLevelSum").get("allLevelSum"+section).toString());
-						index++;
-					}
-	                range += 25;*/
-					
-					
+				    service.calculateAssignScore(schoolLevelMap, averageAssignExcelVos);				    				    													
 			}
+			
+			HSSFRow headRow = sheet.createRow(0);
+			headRow.createCell(0).setCellValue("学校");
+			headRow.createCell(1).setCellValue("班级");
+			headRow.createCell(2).setCellValue("姓名");
+			Row wbHeadRow = wb.getSheetAt(0).getRow(0);
+			int n = 6;
+			for(int i = 6;i<wbHeadRow.getLastCellNum();i++) {
+				if (!"总分".equals(wbHeadRow.getCell(i).getStringCellValue())) {
+					headRow.createCell(n-3).setCellValue(wbHeadRow.getCell(i).getStringCellValue());
+					n++;
+				}
+			}
+			
+			for (int j=1;j<=averageAssignExcelVos.size();j++) {
+				HSSFRow row = sheet.createRow(j);
+				AverageAssignExcelVo vo = averageAssignExcelVos.get(j-1);
+				row.createCell(0).setCellValue(vo.getSchoolName());
+				row.createCell(1).setCellValue(vo.getClassCode());
+				row.createCell(2).setCellValue(vo.getName());
+				for(int m = 3;m<headRow.getLastCellNum();m++) {
+					if ("语文".equals(headRow.getCell(m).getStringCellValue()) || "数学".equals(headRow.getCell(m).getStringCellValue())||"英语".equals(headRow.getCell(m).getStringCellValue())) {
+						row.createCell(m).setCellValue(vo.getInitScore().get(headRow.getCell(m).getStringCellValue()).toString());
+					}else {
+					if (vo.getAssignScore().get(headRow.getCell(m).getStringCellValue()) != null) {
+						row.createCell(m).setCellValue(vo.getAssignScore().get(headRow.getCell(m).getStringCellValue()).toString());
+					}else {
+						row.createCell(m).setCellValue(String.valueOf(0));;
+						}
+					}
+				}
+
+			}
+			
+			
 			
 			
 			   		    		    		
@@ -733,7 +725,7 @@ public class AverageController {
                     //OutputStream out = response.getOutputStream();  
                    // workbook.write(out); 
                    
-                    File localFile = new File(averagePath,"averageTmp.xls");
+                    File localFile = new File(averagePath,"averageAssignTmp.xls");
 					FileOutputStream outputStream = new FileOutputStream(localFile);
                     workbook.write(outputStream);
                     outputStream.close();

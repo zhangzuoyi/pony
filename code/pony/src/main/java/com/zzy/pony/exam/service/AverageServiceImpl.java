@@ -5,6 +5,7 @@ import com.zzy.pony.config.Constants;
 import com.zzy.pony.exam.dao.AverageIndexDao;
 import com.zzy.pony.exam.mapper.AverageIndexMapper;
 import com.zzy.pony.exam.model.AverageIndex;
+import com.zzy.pony.exam.vo.AverageAssignExcelVo;
 import com.zzy.pony.exam.vo.AverageExcelVo;
 import com.zzy.pony.exam.vo.AverageIndexRowVo;
 import com.zzy.pony.exam.vo.AverageIndexVo;
@@ -23,6 +24,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.codehaus.groovy.tools.shell.IO.Verbosity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -789,6 +791,25 @@ public class AverageServiceImpl implements AverageService {
 			}
 		}		
 	}
+	
+	
+	
+	@Override
+	public void calculateAssignScore(Map<Integer, List<AverageExcelVo>> schoolLevelMap,List<AverageAssignExcelVo> averageAssignExcelVos) {
+		// TODO Auto-generated method stub
+		Map<String, AverageAssignExcelVo> map = new HashMap<String, AverageAssignExcelVo>();
+		for (AverageAssignExcelVo vo : averageAssignExcelVos) {
+			map.put(vo.getUniqueId(), vo);
+		}
+		for (Integer level : schoolLevelMap.keySet()) {
+			List<AverageExcelVo> vos = schoolLevelMap.get(level);
+			for (AverageExcelVo vo : vos) {
+				if (map.containsKey(vo.getUniqueId())) {
+					map.get(vo.getUniqueId()).getAssignScore().put(vo.getSubjectName(),new BigDecimal(vo.getSubjectResultAssign()));
+				}
+			}
+		}
+	}
 
 	/**
 	 * @return 班级编码
@@ -811,12 +832,12 @@ public class AverageServiceImpl implements AverageService {
 		Sheet sheet = wb.getSheetAt(0);
 		// 得到总行数
 		int rowNum = sheet.getLastRowNum();
-		Row row = sheet.getRow(0);
+		Row headRow = sheet.getRow(0);
 		// 正文内容应该从第二行开始,第一行为表头的标题
 		for (int i = 1; i <= rowNum; i++) {
-			row = sheet.getRow(i);
+			Row row = sheet.getRow(i);
 
-			if (row.getCell(index) == null || row.getCell(index).getCellType() == Cell.CELL_TYPE_BLANK) {
+			if (row.getCell(index) == null || row.getCell(index).getCellType() == Cell.CELL_TYPE_BLANK || row.getCell(index).getNumericCellValue() == 0) {
 				continue;
 			} else {
 				AverageExcelVo vo = new AverageExcelVo();
@@ -824,8 +845,43 @@ public class AverageServiceImpl implements AverageService {
 				vo.setClassCode(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex+1)).toString());
 				vo.setName(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex+2)).toString());
 				vo.setSubjectResult(Float.valueOf(String.valueOf(row.getCell(index).getNumericCellValue())));
+				vo.setUniqueId(vo.getSchoolName()+vo.getClassCode()+vo.getName());
+				vo.setSubjectName(ReadExcelUtils.getCellFormatValue(headRow.getCell(index)).toString());
 				result.add(vo);
 			}
+		}
+		return result;
+	}
+	
+
+	@Override
+	public List<AverageAssignExcelVo> getAverageAssignExcelVo(Workbook wb, int schoolIndex, String schoolName) {
+		// TODO Auto-generated method stub
+		List<AverageAssignExcelVo> result = new ArrayList<AverageAssignExcelVo>();
+		Sheet sheet = wb.getSheetAt(0);
+		// 得到总行数
+		int rowNum = sheet.getLastRowNum();
+		Row headRow = sheet.getRow(0);//标题
+		// 正文内容应该从第二行开始,第一行为表头的标题
+		for (int i = 1; i <= rowNum; i++) {
+			Row row = sheet.getRow(i);
+
+			if (row.getCell(schoolIndex).getStringCellValue().equals(schoolName)) {
+				AverageAssignExcelVo vo = new AverageAssignExcelVo();
+				vo.setSchoolName(schoolName);
+				vo.setClassCode(row.getCell(schoolIndex+1).getStringCellValue());
+				vo.setName(row.getCell(schoolIndex+2).getStringCellValue());
+				vo.setSex(row.getCell(schoolIndex+3).getStringCellValue());
+				vo.setUniqueId(vo.getSchoolName()+vo.getClassCode()+vo.getName());
+				Map<String, BigDecimal> assignScore  = new LinkedHashMap<String, BigDecimal>();
+				vo.setAssignScore(assignScore);
+				Map<String, BigDecimal> initScore  = new LinkedHashMap<String, BigDecimal>();
+				for(int j = schoolIndex+4;j< row.getLastCellNum();j++) {
+					initScore.put(headRow.getCell(j).getStringCellValue(),new BigDecimal(row.getCell(j).getNumericCellValue()));
+				}
+				vo.setInitScore(initScore);
+				result.add(vo);
+			} 
 		}
 		return result;
 	}
