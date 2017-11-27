@@ -496,7 +496,7 @@ public class AverageServiceImpl implements AverageService {
 		try {
 			String[] titles = ReadExcelUtils.readExcelTitle(wb);
 			for (int i = 3; i < titles.length; i++) {
-				List<AverageExcelVo> averageExcelVos = getAverageExcelVo(wb, i,0);
+				List<AverageExcelVo> averageExcelVos = getAverageExcelVo(wb, i, 0);
 				sortAverageExcelVo(averageExcelVos);
 				Map<Integer, List<AverageExcelVo>> levelMap = getLevelMap(averageExcelVos);
 				Map<Integer, BigDecimal> levelMapDecimal = getLevelMapDecimal(averageExcelVos);
@@ -611,7 +611,7 @@ public class AverageServiceImpl implements AverageService {
 					}
 					innerMap.put("A" + level, lastLevelDecimal.add(count).add(averageDecimal.multiply(classSameCount))
 							.setScale(2, RoundingMode.HALF_UP));
-					
+
 					flag = true;
 
 				}
@@ -628,12 +628,11 @@ public class AverageServiceImpl implements AverageService {
 				remainCountMap.clear();
 				// 留给下一等级的
 				for (String key : remainMap.keySet()) {
-					remainDecimalMap.put(key,
-							remainMap.get(key).multiply(one.subtract(averageDecimal)).setScale(2, RoundingMode.HALF_UP));
+					remainDecimalMap.put(key, remainMap.get(key).multiply(one.subtract(averageDecimal)).setScale(2,
+							RoundingMode.HALF_UP));
 					remainCountMap.put(key, remainMap.get(key));
 				}
 			}
-			
 
 		}
 
@@ -778,34 +777,33 @@ public class AverageServiceImpl implements AverageService {
 		calculateSum(result);// 计算累数
 		return result;
 	}
-	
-	
-	//计算赋分值
+
+	// 计算赋分值
 	@Override
-	public void calculateAssign(Map<Integer, List<AverageExcelVo>> schoolLevelMap) {
+	public void calculateAssign(Map<Integer, List<AverageExcelVo>> levelMap) {
 		// TODO Auto-generated method stub
-		for (Integer level : schoolLevelMap.keySet()) {
-			List<AverageExcelVo> averageExcelVos = schoolLevelMap.get(level);
+		for (Integer level : levelMap.keySet()) {
+			List<AverageExcelVo> averageExcelVos = levelMap.get(level);
 			for (AverageExcelVo vo : averageExcelVos) {
 				vo.setSubjectResultAssign(Constants.ASSIGN_LEVEL.get(level));
 			}
-		}		
+		}
 	}
-	
-	
-	
+
 	@Override
-	public void calculateAssignScore(Map<Integer, List<AverageExcelVo>> schoolLevelMap,List<AverageAssignExcelVo> averageAssignExcelVos) {
+	public void calculateAssignScore(Map<Integer, List<AverageExcelVo>> levelMap,
+			List<AverageAssignExcelVo> averageAssignExcelVos) {
 		// TODO Auto-generated method stub
 		Map<String, AverageAssignExcelVo> map = new HashMap<String, AverageAssignExcelVo>();
 		for (AverageAssignExcelVo vo : averageAssignExcelVos) {
 			map.put(vo.getUniqueId(), vo);
 		}
-		for (Integer level : schoolLevelMap.keySet()) {
-			List<AverageExcelVo> vos = schoolLevelMap.get(level);
+		for (Integer level : levelMap.keySet()) {
+			List<AverageExcelVo> vos = levelMap.get(level);
 			for (AverageExcelVo vo : vos) {
 				if (map.containsKey(vo.getUniqueId())) {
-					map.get(vo.getUniqueId()).getAssignScore().put(vo.getSubjectName(),new BigDecimal(vo.getSubjectResultAssign()));
+					map.get(vo.getUniqueId()).getAssignScore().put(vo.getSubjectName(),
+							new BigDecimal(vo.getSubjectResultAssign()));
 				}
 			}
 		}
@@ -827,7 +825,7 @@ public class AverageServiceImpl implements AverageService {
 	}
 
 	@Override
-	public List<AverageExcelVo> getAverageExcelVo(Workbook wb, int index,int schoolIndex) {
+	public List<AverageExcelVo> getAverageExcelVo(Workbook wb, int index, int schoolIndex) {
 		List<AverageExcelVo> result = new ArrayList<AverageExcelVo>();
 		Sheet sheet = wb.getSheetAt(0);
 		// 得到总行数
@@ -837,23 +835,24 @@ public class AverageServiceImpl implements AverageService {
 		for (int i = 1; i <= rowNum; i++) {
 			Row row = sheet.getRow(i);
 
-			if (row.getCell(index) == null || row.getCell(index).getCellType() == Cell.CELL_TYPE_BLANK || row.getCell(index).getNumericCellValue() == 0) {
+			if (row.getCell(index) == null || row.getCell(index).getCellType() == Cell.CELL_TYPE_BLANK
+					|| row.getCell(index).getNumericCellValue() == 0) {
 				continue;
 			} else {
 				AverageExcelVo vo = new AverageExcelVo();
 				vo.setSchoolName(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex)).toString());
-				vo.setClassCode(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex+1)).toString());
-				vo.setName(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex+2)).toString());
+				vo.setClassCode(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex + 1)).toString());
+				vo.setName(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex + 2)).toString());
 				vo.setSubjectResult(Float.valueOf(String.valueOf(row.getCell(index).getNumericCellValue())));
-				vo.setUniqueId(vo.getSchoolName()+vo.getClassCode()+vo.getName());
+				vo.setUniqueId(vo.getSchoolName() + vo.getClassCode() + vo.getName());
 				vo.setSubjectName(ReadExcelUtils.getCellFormatValue(headRow.getCell(index)).toString());
 				result.add(vo);
 			}
 		}
 		return result;
 	}
-	
 
+	// 不区分学校
 	@Override
 	public List<AverageAssignExcelVo> getAverageAssignExcelVo(Workbook wb, int schoolIndex, String schoolName) {
 		// TODO Auto-generated method stub
@@ -861,27 +860,26 @@ public class AverageServiceImpl implements AverageService {
 		Sheet sheet = wb.getSheetAt(0);
 		// 得到总行数
 		int rowNum = sheet.getLastRowNum();
-		Row headRow = sheet.getRow(0);//标题
+		Row headRow = sheet.getRow(0);// 标题
 		// 正文内容应该从第二行开始,第一行为表头的标题
 		for (int i = 1; i <= rowNum; i++) {
 			Row row = sheet.getRow(i);
+			AverageAssignExcelVo vo = new AverageAssignExcelVo();
+			vo.setSchoolName(row.getCell(schoolIndex).getStringCellValue());
+			vo.setClassCode(row.getCell(schoolIndex + 1).getStringCellValue());
+			vo.setName(row.getCell(schoolIndex + 2).getStringCellValue());
+			vo.setSex(row.getCell(schoolIndex + 3).getStringCellValue());
+			vo.setUniqueId(vo.getSchoolName() + vo.getClassCode() + vo.getName());
+			Map<String, BigDecimal> assignScore = new LinkedHashMap<String, BigDecimal>();
+			vo.setAssignScore(assignScore);
+			Map<String, BigDecimal> initScore = new LinkedHashMap<String, BigDecimal>();
+			for (int j = schoolIndex + 4; j < row.getLastCellNum(); j++) {
+				initScore.put(headRow.getCell(j).getStringCellValue(),
+						new BigDecimal(row.getCell(j).getNumericCellValue()));
+			}
+			vo.setInitScore(initScore);
+			result.add(vo);
 
-			if (row.getCell(schoolIndex).getStringCellValue().equals(schoolName)) {
-				AverageAssignExcelVo vo = new AverageAssignExcelVo();
-				vo.setSchoolName(schoolName);
-				vo.setClassCode(row.getCell(schoolIndex+1).getStringCellValue());
-				vo.setName(row.getCell(schoolIndex+2).getStringCellValue());
-				vo.setSex(row.getCell(schoolIndex+3).getStringCellValue());
-				vo.setUniqueId(vo.getSchoolName()+vo.getClassCode()+vo.getName());
-				Map<String, BigDecimal> assignScore  = new LinkedHashMap<String, BigDecimal>();
-				vo.setAssignScore(assignScore);
-				Map<String, BigDecimal> initScore  = new LinkedHashMap<String, BigDecimal>();
-				for(int j = schoolIndex+4;j< row.getLastCellNum();j++) {
-					initScore.put(headRow.getCell(j).getStringCellValue(),new BigDecimal(row.getCell(j).getNumericCellValue()));
-				}
-				vo.setInitScore(initScore);
-				result.add(vo);
-			} 
 		}
 		return result;
 	}
@@ -1037,8 +1035,6 @@ public class AverageServiceImpl implements AverageService {
 		}
 		return levelMap;
 	}
-	
-	
 
 	@Override
 	public Map<Integer, List<AverageExcelVo>> getLevelAssignMap(List<AverageExcelVo> averageExcelVos) {
@@ -1049,8 +1045,8 @@ public class AverageServiceImpl implements AverageService {
 		int previousLevelCount = 0;
 		for (int i = 0; i < Constants.AVERAGE_ASSIGN_LEVELS.size(); i++) {
 
-			BigDecimal initBigDecimal = size.multiply(Constants.AVERAGE_ASSIGN_LEVELS.get(i)).divide(hundred).setScale(2,
-					RoundingMode.HALF_UP);
+			BigDecimal initBigDecimal = size.multiply(Constants.AVERAGE_ASSIGN_LEVELS.get(i)).divide(hundred)
+					.setScale(2, RoundingMode.HALF_UP);
 			int ceil = (int) Math.ceil(initBigDecimal.floatValue());
 			int floor = (int) Math.floor(initBigDecimal.floatValue());
 			while ((floor + 1) < averageExcelVos.size()
@@ -1121,8 +1117,6 @@ public class AverageServiceImpl implements AverageService {
 		}
 		return schoolLevelMap;
 	}
-	
-	
 
 	@Override
 	public Map<Integer, List<AverageExcelVo>> getLevelAssignMapBySchoolName(Map<Integer, List<AverageExcelVo>> levelMap,
@@ -1144,7 +1138,8 @@ public class AverageServiceImpl implements AverageService {
 				schoolLevelMap.put(level, innerList);
 			}
 		}
-		return schoolLevelMap;	}
+		return schoolLevelMap;
+	}
 
 	/**
 	 * @param levelMap
@@ -1178,7 +1173,7 @@ public class AverageServiceImpl implements AverageService {
 					schoolLevelMapDecimal.put(level, remain);
 					schoolRemainDecimal = schoolRemainDecimal.subtract(remain);
 					remainDecimal = remainDecimal.subtract(levelMapDecimal.get(level));
-				} 
+				}
 			} else {
 				// 最后一名名次
 				int lastRank = averageExcelVos.get(averageExcelVos.size() - 1).getRank();

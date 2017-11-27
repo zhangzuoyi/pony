@@ -648,9 +648,9 @@ public class AverageController {
 					List<AverageExcelVo> averageExcelVos = service.getAverageExcelVo(wb,i,2);
 					service.sortAverageExcelVo(averageExcelVos);
 					Map<Integer,List<AverageExcelVo>> levelMap = service.getLevelAssignMap(averageExcelVos);
-					Map<Integer,List<AverageExcelVo>> schoolLevelMap = service.getLevelMapBySchoolName(levelMap,Constants.SCHOOL_NAME);
-				    service.calculateAssign(schoolLevelMap);
-				    service.calculateAssignScore(schoolLevelMap, averageAssignExcelVos);				    				    													
+					//Map<Integer,List<AverageExcelVo>> schoolLevelMap = service.getLevelMapBySchoolName(levelMap,Constants.SCHOOL_NAME);
+				    service.calculateAssign(levelMap);
+				    service.calculateAssignScore(levelMap, averageAssignExcelVos);				    				    													
 			}
 			
 			HSSFRow headRow = sheet.createRow(0);
