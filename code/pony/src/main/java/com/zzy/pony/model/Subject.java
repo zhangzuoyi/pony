@@ -28,6 +28,8 @@ public class Subject implements Serializable {
 	private Integer type;
 	
 	private Integer importance;
+	
+	private Integer seq;
 
 	public Subject() {
 	}
@@ -62,6 +64,14 @@ public class Subject implements Serializable {
 
 	public void setImportance(Integer importance) {
 		this.importance = importance;
+	}
+
+	public Integer getSeq() {
+		return seq;
+	}
+
+	public void setSeq(Integer seq) {
+		this.seq = seq;
 	}
 
 	@Override
