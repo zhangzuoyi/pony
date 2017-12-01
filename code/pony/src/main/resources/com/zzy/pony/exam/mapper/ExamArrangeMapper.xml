@@ -39,6 +39,7 @@
 		t.start_time as startTime,t.end_time as endTime,a.`NAME` as subjectName  from t_exam_arrange t
 		left join t_subject a on t.SUBJECT_ID = a.SUBJECT_ID
 		where t.exam_id = #{0} and t.grade_id =#{1}
+		order by a.seq
 	
 	</select>
 	<select id="findByExamAndGradeAndGroupIsNull" resultType="com.zzy.pony.exam.vo.ExamArrangeVo">

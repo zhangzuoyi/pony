@@ -161,12 +161,12 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		String[] groupSeqStrings = {"columnSeqOne","columnSeqTwo","columnSeqThree","columnSeqFour","columnSeqFive","columnSeqSix","columnSeqSeven","columnSeqEight","columnSeqNine","columnSeqTen","columnSeqEleven","columnSeqTwelve"};
 
 		List<ExamArrangeVo> examArranges = examArrangeService.findVoByExamAndGrade(examId, gradeId);
-		Map<Integer , String> arrangeMap = new HashMap<Integer, String>();//不在组内
-		Map<Integer, String> groupMap = new HashMap<Integer, String>();//在组内
-		Map<Integer, String> arrangeHeadMap = new HashMap<Integer, String>();
-		Map<Integer, String> groupHeadMap = new HashMap<Integer, String>();
-		Map<Integer, String> arrangeSeqHeadMap = new HashMap<Integer, String>();
-		Map<Integer, String> groupSeqHeadMap = new HashMap<Integer, String>();
+		Map<Integer , String> arrangeMap = new LinkedHashMap<Integer, String>();//不在组内
+		Map<Integer, String> groupMap = new LinkedHashMap<Integer, String>();//在组内
+		Map<Integer, String> arrangeHeadMap = new LinkedHashMap<Integer, String>();
+		Map<Integer, String> groupHeadMap = new LinkedHashMap<Integer, String>();
+		Map<Integer, String> arrangeSeqHeadMap = new LinkedHashMap<Integer, String>();
+		Map<Integer, String> groupSeqHeadMap = new LinkedHashMap<Integer, String>();
 		
 		for (ExamArrangeVo examArrange : examArranges) {
 			if (examArrange.getGroupId() == 0) {
@@ -271,7 +271,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		headList.add(classNameMap);
 		headList.add(studentNoMap);		
 		for (Integer arrangeId : arrangeHeadMap.keySet()) {
-			  arrangeHeadMap.get(arrangeId);
+			 // arrangeHeadMap.get(arrangeId);
 			Map<String, Object> headMap = new HashMap<String, Object>();
 			headMap.put("prop", arrangeHeadMap.get(arrangeId));
 			headMap.put("label", arrangeMap.get(arrangeId));
@@ -334,12 +334,12 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		String[] groupSeqStrings = {"columnSeqOne","columnSeqTwo","columnSeqThree","columnSeqFour","columnSeqFive","columnSeqSix","columnSeqSeven","columnSeqEight","columnSeqNine","columnSeqTen","columnSeqEleven","columnSeqTwelve"};
 
 		List<ExamArrangeVo> examArranges = examArrangeService.findVoByExamAndGrade(examId, gradeId);
-		Map<Integer , String> arrangeMap = new HashMap<Integer, String>();//不在组内
-		Map<Integer, String> groupMap = new HashMap<Integer, String>();//在组内
-		Map<Integer, String> arrangeHeadMap = new HashMap<Integer, String>();
-		Map<Integer, String> groupHeadMap = new HashMap<Integer, String>();
-		Map<Integer, String> arrangeSeqHeadMap = new HashMap<Integer, String>();
-		Map<Integer, String> groupSeqHeadMap = new HashMap<Integer, String>();
+		Map<Integer , String> arrangeMap = new LinkedHashMap<Integer, String>();//不在组内
+		Map<Integer, String> groupMap = new LinkedHashMap<Integer, String>();//在组内
+		Map<Integer, String> arrangeHeadMap = new LinkedHashMap<Integer, String>();
+		Map<Integer, String> groupHeadMap = new LinkedHashMap<Integer, String>();
+		Map<Integer, String> arrangeSeqHeadMap = new LinkedHashMap<Integer, String>();
+		Map<Integer, String> groupSeqHeadMap = new LinkedHashMap<Integer, String>();
 		
 		for (ExamArrangeVo examArrange : examArranges) {
 			if (examArrange.getGroupId() == 0) {
