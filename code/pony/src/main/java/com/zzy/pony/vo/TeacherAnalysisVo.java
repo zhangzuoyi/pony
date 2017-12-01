@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class TeacherAnalysisVo {
+public class TeacherAnalysisVo implements Comparable<TeacherAnalysisVo> {
 	
 	private int teacherId;
 	private String teacherName;
@@ -37,6 +37,7 @@ public class TeacherAnalysisVo {
 	 * 下午课程与班级比例(语数英为1,其他为2)
 	 */
 	private int pmRatio;
+	private int amRatio;
 	
 	/**
 	 * 是否平齐 
@@ -46,6 +47,20 @@ public class TeacherAnalysisVo {
 	
 	public TeacherAnalysisVo() {}
 	
+	
+	
+	@Override
+	public int compareTo(TeacherAnalysisVo o) {
+		// TODO Auto-generated method stub
+		int i = this.getSubjectId()-o.getSubjectId();//先按照科目排序
+		if (i==0) {
+			return this.getTeacherId()-o.getTeacherId();//科目一样则按照教师排序
+		}
+		return i;
+	}
+
+
+
 	public TeacherAnalysisVo(boolean PQ) {
 		this.PQ = PQ;
 	}
@@ -158,6 +173,20 @@ public class TeacherAnalysisVo {
 	public void setPQ(boolean pQ) {
 		PQ = pQ;
 	}
+
+
+
+	public int getAmRatio() {
+		return amRatio;
+	}
+
+
+
+	public void setAmRatio(int amRatio) {
+		this.amRatio = amRatio;
+	}
+	
+	
 
 
 	

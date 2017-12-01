@@ -331,9 +331,10 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		List<GradeNoCourseVo> gradeNoCourseVos = gradeNoCourseService.findCurrentAllVo();
 		Map<Integer, List<Integer>> gradeNoCourseMap = GAUtilTwo.getGradeNoCourse(gradeId, gradeNoCourseVos);
 
-		// 走班设置 (走班仅发生在一个班) todo 需要加入走班
+		// 走班设置 (走班仅发生在一个班)
 		List<CombineAndRotationVo> combineAndRotationVos = arrangeRotationService.findCurrentAllVo();
-		Map<String, Integer> rotationMap = GAUtilTwo.getArrangeRotation(combineAndRotationVos);
+		Map<Integer, List<Integer>> rotationSubjectMap = new HashMap<Integer, List<Integer>>();
+		Map<String, Integer> rotationMap = GAUtilTwo.getArrangeRotation(combineAndRotationVos, rotationSubjectMap);
 
 		// 无法安排的 classId teacherId size
 		Map<Integer, Map<Integer, Integer>> unableMap = new LinkedHashMap<Integer, Map<Integer, Integer>>();
@@ -341,6 +342,9 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		// 1获取总的上课安排
 		List<TeacherSubjectVo> teacherSubjectVos = teacherSubjectService.findByGrade(year.getYearId(), term.getTermId(),
 				gradeId);
+		// 走班处理
+		GAUtilTwo.rotationHandle(teacherSubjectVos, rotationMap);
+
 		GAUtilTwo.getTeacherSubject(teacherSubjectVos, classTSMap, teacherTSMap, teacherSubjectMap, subjectTeacherMap);
 		// 2获取预排
 		List<ArrangeVo> preArrangeVos = preLessonArrangeService.findCurrentVoByGrade(gradeId);
@@ -352,7 +356,10 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		cv.setTermId(term.getTermId());
 		cv.setGradeId(gradeId);
 		List<TeacherSubjectVo> voSeq = teacherSubjectMapper.findArrangeSeq(cv);
-
+		
+		try {
+			
+		
 		for (SchoolClass sc : schoolClasses) {
 
 			Map<Integer, Integer> classTSInnerMap = classTSMap.get(sc.getClassId());
@@ -436,19 +443,24 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 					 * 重要程度的设定，语数外尽量在上午
 					 * 
 					 */
-					int subjectId = teacherSubjectMap.get(teacherId);
 					int type = 0;
-					if (sigList.contains(subjectId)) {
-						type = Constants.SUBJECT_SIGNIFICANT;
-						if (i == autoArrangeCount - 1) {
-							type = Constants.SUBJECT_COMMON;// 语数英选择一节
-						}
-					}
-					if (impList.contains(subjectId)) {
+					int subjectId = 0;
+					if (teacherId > 990) {
 						type = Constants.SUBJECT_IMPORTANT;
-					}
-					if (comList.contains(subjectId)) {
-						type = Constants.SUBJECT_COMMON;
+					} else {
+						subjectId = teacherSubjectMap.get(teacherId);
+						if (sigList.contains(subjectId)) {
+							type = Constants.SUBJECT_SIGNIFICANT;
+							if (i == autoArrangeCount - 1) {
+								type = Constants.SUBJECT_COMMON;// 语数英选择一节
+							}
+						}
+						if (impList.contains(subjectId)) {
+							type = Constants.SUBJECT_IMPORTANT;
+						}
+						if (comList.contains(subjectId)) {
+							type = Constants.SUBJECT_COMMON;
+						}
 					}
 
 					int weekSeq = WeekSeqUtil.getWeekSeq(week, preAlreadyTeacherList, preAlreadyTeacherLAllist,
@@ -457,7 +469,12 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 					classAlreadySet.add(weekSeq);
 					teacherSet.add(weekSeq);
 					availWeek.remove(WeekSeqUtil.getWeek(weekSeq));
-					innerAutoArrangeMap.put(weekSeq, teacherSubjectMap.get(teacherId));
+					if (teacherId > 990) {
+						// 走班
+						innerAutoArrangeMap.put(weekSeq, teacherId);
+					} else {
+						innerAutoArrangeMap.put(weekSeq, teacherSubjectMap.get(teacherId));
+					}
 				}
 				// 所有的
 				if (alreadyTeacherAllList == null || alreadyTeacherAllList.size() == 0) {
@@ -487,7 +504,11 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 			autoArrangeMap.put(sc.getClassId(), innerAutoArrangeMap);
 			WeekSeqUtil.printCourseTable(sc.getClassId(), teacherSubjectMap, preClassMap, innerAutoArrangeMap);
 		}
-		saveTwo(autoArrangeMap, year, term);
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		saveTwo(autoArrangeMap, year, term, rotationSubjectMap);
 		System.out.println(unableMap.size());
 		saveUnable(unableMap, year, term, gradeId);
 		return true;
@@ -514,8 +535,9 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 					String weekSeq = weekSeqs.get(random.nextInt(weekSeqs.size()));
 					if (lessonArrangeService.isTeacherConflict(Integer.valueOf(weekSeq.split(";")[0]),
 							Integer.valueOf(weekSeq.split(";")[1]), teacherId)) {
-						List<LessonArrange> regionLessonArranges = getRegionArranges(year, term, classId,weekSeq);
-						regionAdjust(year.getYearId(), term.getTermId(), gradeId, classId,teacherId, weekSeq,regionLessonArranges);
+						List<LessonArrange> regionLessonArranges = getRegionArranges(year, term, classId, weekSeq);
+						regionAdjust(year.getYearId(), term.getTermId(), gradeId, classId, teacherId, weekSeq,
+								regionLessonArranges);
 						weekSeqs.remove(weekSeq);
 
 					} else {
@@ -531,7 +553,7 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 						la.setSchoolYear(year);
 						la.setTerm(term);
 						la.setSourceType(Constants.SOURCE_TYPE_AUTO);
-						las.add(la);						
+						las.add(la);
 						weekSeqs.remove(weekSeq);
 					}
 					count++;
@@ -543,7 +565,8 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 	}
 
 	@Override
-	public void saveTwo(Map<Integer, Map<Integer, Integer>> autoArrangeMap, SchoolYear year, Term term) {
+	public void saveTwo(Map<Integer, Map<Integer, Integer>> autoArrangeMap, SchoolYear year, Term term,
+			Map<Integer, List<Integer>> rotationSubjectMap) {
 		List<LessonPeriod> lessonPeriods = lessonPeriodService.findBySchoolYearAndTerm(year, term);
 		Map<Integer, Integer> map = new HashMap<Integer, Integer>();
 		for (LessonPeriod lp : lessonPeriods) {
@@ -553,31 +576,52 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 			List<LessonArrange> lessonArranges = new ArrayList<LessonArrange>();
 			Map<Integer, Integer> innerAutoArrangeMap = autoArrangeMap.get(classId);
 			for (int weekSeq : innerAutoArrangeMap.keySet()) {
-				LessonArrange la = new LessonArrange();
-				la.setClassId(classId);
-				Subject subject = subjectService.get(innerAutoArrangeMap.get(weekSeq));
-				la.setSubject(subject);
-				la.setWeekDay(WeekSeqUtil.getWeek(weekSeq) + "");
-				LessonPeriod lp = lessonPeriodService.get(map.get(WeekSeqUtil.getSeq(weekSeq)));
-				la.setLessonPeriod(lp);
-				la.setCreateTime(new Date());
-				la.setCreateUser("testTwo");
-				la.setSchoolYear(year);
-				la.setTerm(term);
-				la.setSourceType(Constants.SOURCE_TYPE_AUTO);
-				lessonArranges.add(la);
+				if (innerAutoArrangeMap.get(weekSeq) > 990) {
+					// 走班
+					for (Integer subjectId : rotationSubjectMap.get(innerAutoArrangeMap.get(weekSeq))) {
+						LessonArrange la = new LessonArrange();
+						la.setClassId(classId);
+						la.setWeekDay(WeekSeqUtil.getWeek(weekSeq) + "");
+						LessonPeriod lp = lessonPeriodService.get(map.get(WeekSeqUtil.getSeq(weekSeq)));
+						la.setLessonPeriod(lp);
+						la.setCreateTime(new Date());
+						la.setCreateUser("testTwo");
+						la.setSchoolYear(year);
+						la.setTerm(term);
+						la.setSourceType(Constants.SOURCE_TYPE_AUTO);
+						Subject subject = subjectService.get(subjectId);
+						la.setSubject(subject);
+						lessonArranges.add(la);
+					}
+				} else {
+					LessonArrange la = new LessonArrange();
+					la.setClassId(classId);
+					la.setWeekDay(WeekSeqUtil.getWeek(weekSeq) + "");
+					LessonPeriod lp = lessonPeriodService.get(map.get(WeekSeqUtil.getSeq(weekSeq)));
+					la.setLessonPeriod(lp);
+					la.setCreateTime(new Date());
+					la.setCreateUser("testTwo");
+					la.setSchoolYear(year);
+					la.setTerm(term);
+					la.setSourceType(Constants.SOURCE_TYPE_AUTO);
+					Subject subject = subjectService.get(innerAutoArrangeMap.get(weekSeq));
+					la.setSubject(subject);
+					lessonArranges.add(la);
+				}
+
 			}
 			lessonArrangeDao.save(lessonArranges);
 		}
 	}
-	
+
 	/**
 	 * @param yearId
 	 * @param termId
 	 * @param lessonArranges
-	 * 区域调整,某一班级不跨天
+	 *            区域调整,某一班级不跨天
 	 */
-	private void regionAdjust(int yearId,int termId,int gradeId, int classId,int teacherId,String weekSeq,  List<LessonArrange> lessonArranges) {
+	private void regionAdjust(int yearId, int termId, int gradeId, int classId, int teacherId, String weekSeq,
+			List<LessonArrange> lessonArranges) {
 		List<Integer> teacherIds = new ArrayList<Integer>();
 		List<String> weekSeqs = new ArrayList<String>();
 		teacherIds.add(teacherId);
@@ -585,29 +629,31 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 		SchoolYear year = schoolYearService.get(yearId);
 		Term term = termService.get(termId);
 		for (LessonArrange la : lessonArranges) {
-			//teacher
+			// teacher
 			SchoolClass schoolClass = schoolClassService.get(la.getClassId());
 			TeacherSubject ts = teacherSubjectService.findCurrentByClassAndSubject(schoolClass, la.getSubject());
-			teacherIds.add(ts.getTeacher().getTeacherId());		
-			//weekSeq
-			weekSeqs.add(la.getWeekDay()+";"+la.getLessonPeriod().getPeriodId());
+			teacherIds.add(ts.getTeacher().getTeacherId());
+			// weekSeq
+			weekSeqs.add(la.getWeekDay() + ";" + la.getLessonPeriod().getPeriodId());
 		}
-		//删除原有
+		// 删除原有
 		lessonArrangeDao.delete(lessonArranges);
 		boolean flag = true;
-		List<LessonArrange> las= new ArrayList<LessonArrange>();
+		List<LessonArrange> las = new ArrayList<LessonArrange>();
 		List<String> conflictList = new ArrayList<String>();
 		Random random = new Random();
-		while(flag) {
-			List<List<String>> arranges = GAUtilTwo.availableArrange(teacherIds, weekSeqs,conflictList);
+		while (flag) {
+			List<List<String>> arranges = GAUtilTwo.availableArrange(teacherIds, weekSeqs, conflictList);
 			List<String> arrange = arranges.get(random.nextInt(arranges.size()));
 			int count = 0;
 			for (String weekseq : arrange) {
-				if (!lessonArrangeService.isTeacherConflict(Integer.valueOf(weekseq.split(";")[0]),Integer.valueOf(weekseq.split(";")[1]),Integer.valueOf(weekseq.split(";")[2]))) {				
+				if (!lessonArrangeService.isTeacherConflict(Integer.valueOf(weekseq.split(";")[0]),
+						Integer.valueOf(weekseq.split(";")[1]), Integer.valueOf(weekseq.split(";")[2]))) {
 					count++;
 					LessonArrange la = new LessonArrange();
 					la.setClassId(classId);
-					Subject subject = subjectService.findByTeacherAndGrade(Integer.valueOf(weekseq.split(";")[2]), gradeId);
+					Subject subject = subjectService.findByTeacherAndGrade(Integer.valueOf(weekseq.split(";")[2]),
+							gradeId);
 					la.setSubject(subject);
 					la.setWeekDay(weekseq.split(";")[0]);
 					LessonPeriod lp = lessonPeriodService.get(Integer.valueOf(weekseq.split(";")[1]));
@@ -618,44 +664,47 @@ public class AutoLessonArrangeServiceImpl implements AutoLessonArrangeService {
 					la.setTerm(term);
 					la.setSourceType(Constants.SOURCE_TYPE_AUTO);
 					las.add(la);
-				}else {
+				} else {
 					conflictList.add(weekseq);
 					las.clear();
 					break;
 				}
 			}
 			if (count == arrange.size()) {
-				flag=false;
-			}						
+				flag = false;
+			}
 		}
-		lessonArrangeDao.save(las);	
+		lessonArrangeDao.save(las);
 	}
-	
+
 	/**
 	 * @param classId
 	 * @param weekSeq
-	 * @return  当天范围的weekseq相邻的已经安排的
+	 * @return 当天范围的weekseq相邻的已经安排的
 	 */
-	private List<LessonArrange> getRegionArranges(SchoolYear year, Term term,int classId,String weekSeq){
+	private List<LessonArrange> getRegionArranges(SchoolYear year, Term term, int classId, String weekSeq) {
 		List<LessonArrange> result = new ArrayList<LessonArrange>();
-		LessonPeriod lessonPeriod = lessonPeriodService.get(Integer.valueOf(weekSeq.split(";")[1]));		
+		LessonPeriod lessonPeriod = lessonPeriodService.get(Integer.valueOf(weekSeq.split(";")[1]));
 		int initSeq = lessonPeriod.getSeq();
 		int distance = 1;
-		while(result.size()<5) {			
-			int  previous = initSeq - distance;						
-			if (previous>0) {
-				LessonPeriod previouslp = lessonPeriodService.findBySchoolYearAndTermAndSeq(year, term, previous); 
-				LessonArrange previousla = lessonArrangeService.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(classId, year, term, weekSeq.split(";")[0], previouslp);
-				result.add(previousla);	
-			}							
-			int next = initSeq + distance;		
-			if (result.size()<5&&next<=8) {
-				LessonPeriod nextlp = lessonPeriodService.findBySchoolYearAndTermAndSeq(year, term, next); 
-				LessonArrange nextla = lessonArrangeService.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(classId, year, term, weekSeq.split(";")[0], nextlp);		
+		while (result.size() < 5) {
+			int previous = initSeq - distance;
+			if (previous > 0) {
+				LessonPeriod previouslp = lessonPeriodService.findBySchoolYearAndTermAndSeq(year, term, previous);
+				LessonArrange previousla = lessonArrangeService
+						.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(classId, year, term,
+								weekSeq.split(";")[0], previouslp);
+				result.add(previousla);
+			}
+			int next = initSeq + distance;
+			if (result.size() < 5 && next <= 8) {
+				LessonPeriod nextlp = lessonPeriodService.findBySchoolYearAndTermAndSeq(year, term, next);
+				LessonArrange nextla = lessonArrangeService.findByClassIdAndSchoolYearAndTermAndWeekDayAndLessonPeriod(
+						classId, year, term, weekSeq.split(";")[0], nextlp);
 				result.add(nextla);
-			}					
+			}
 			distance++;
-		}				
+		}
 		return result;
 	}
 

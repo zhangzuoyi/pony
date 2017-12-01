@@ -732,9 +732,21 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		//todo 同班同学不相临
 		swap(examinees);
         int i=0;
+        int fromIndex = 0;
+        int toIndex = 0;
         for (ExamRoomAllocateVo era:
         examRoomAllocates) {
-            List<ExamineeVo> averageExaminees = examinees.subList(i*averageExaminee,(i+1)*averageExaminee);
+        	
+        	if(remainExaminee > 0) {
+        		fromIndex = toIndex ;
+        		toIndex = (i+1)*averageExaminee + 1;
+        	}else {
+        		fromIndex = toIndex ;
+        		toIndex = (i+1)*averageExaminee ;
+        	}
+        	
+            List<ExamineeVo> averageExaminees = examinees.subList(fromIndex,toIndex);
+            //List<ExamineeVo> averageExaminees = examinees.subList(i*averageExaminee,(i+1)*averageExaminee);
             int seq=1;
             for (ExamineeVo examinee:
             averageExaminees) {
@@ -746,16 +758,10 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
                 seq++;
             }
             i++;
+            remainExaminee--;
         }
-        List<ExamineeVo> remainExaminees = new ArrayList<ExamineeVo>();
-        remainExaminees =     examinees.subList(examinees.size()-remainExaminee,examinees.size());
-        for (int j=0;j<remainExaminee;j++){
-			ExamineeRoomArrangeVo vo = new ExamineeRoomArrangeVo();
-			vo.setRoomId(examRoomAllocates.get(j).getRoomId());
-			vo.setExamineeId(remainExaminees.get(j).getExamineeId());
-			vo.setSeq(averageExaminee+1);
-			examineeRoomArrangeMapper.insertExamineeRoomArrange(vo);
-		}
+        
+        
 	}
 	//按考场容量分配
 	private void autoModeTwo(List<ExamineeVo> examinees,List<ExamRoomAllocateVo> examRoomAllocates){

@@ -26,9 +26,10 @@ public class LPAnalysis {
 	@Test
 	public void analysis() {
 		
-		List<ArrangeVo> arrangeVos = lessonPeriodAnalysisService.findAllLessonArrange(5, 1, 1);
+		List<ArrangeVo> arrangeVos = lessonPeriodAnalysisService.findAllLessonArrange(5, 1, 3);
 		List<TeacherAnalysisVo> vos = lessonPeriodAnalysisService.findAllTeacher(arrangeVos);
 		lessonPeriodAnalysisService.analysisXW(vos);
+		lessonPeriodAnalysisService.analysisSW(vos);
 		lessonPeriodAnalysisService.analysisPQ(vos);
 		for (TeacherAnalysisVo vo : vos) {
 			if (!vo.isPQ()) {
@@ -43,6 +44,8 @@ public class LPAnalysis {
 					System.out.println(vo.getTeacherName()+":"+vo.getSubjectName()+"下午课程过多"+vo.getPmRatio());
 				}
 			}
+			System.out.println("上午"+vo.getTeacherName()+":"+vo.getSubjectName()+vo.getAmRatio());
+			
 		}
 		
 	}

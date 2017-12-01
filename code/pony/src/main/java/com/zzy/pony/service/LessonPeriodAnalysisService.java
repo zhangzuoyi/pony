@@ -21,6 +21,11 @@ public interface LessonPeriodAnalysisService {
 	 * 分析下午
 	 */
 	void analysisXW(List<TeacherAnalysisVo> teacherAnalysisVos);
+	/**
+	 * @param teacherAnalysisVos
+	 * 分析上午
+	 */
+	void analysisSW(List<TeacherAnalysisVo> teacherAnalysisVos);
 	
 	/**
 	 * @param teacherAnalysisVos

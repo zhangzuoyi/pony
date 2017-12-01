@@ -1,9 +1,13 @@
 package com.zzy.pony.util;
 
-import java.util.*;
-
-import org.apache.velocity.runtime.directive.Foreach;
-import org.springframework.security.authentication.TestingAuthenticationProvider;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.model.LessonArrange;
@@ -14,8 +18,10 @@ import com.zzy.pony.vo.CombineAndRotationVo;
 import com.zzy.pony.vo.GradeNoCourseVo;
 import com.zzy.pony.vo.TeacherSubjectVo;
 
-import jdk.nashorn.internal.runtime.regexp.RegExpResult;
-
+/**
+ * @author WANGCHAO262
+ *
+ */
 public class GAUtilTwo {
 
 	/**
@@ -99,13 +105,48 @@ public class GAUtilTwo {
 
 	}
 
+	
+	public static void rotationHandle(List<TeacherSubjectVo> teacherSubjectVos,Map<String, Integer> rotationMap) {
+		//key rotationId value weekarrange
+		Map<Integer, String> map = new HashMap<Integer, String>();
+		List<TeacherSubjectVo> removeVos = new ArrayList<TeacherSubjectVo>();
+		for (TeacherSubjectVo vo : teacherSubjectVos) {
+			for (String key : rotationMap.keySet()) {
+				int teacherId = Integer.valueOf(key.substring(0, 4));
+				int classId = Integer.valueOf(key.substring(4, 7));
+				if (vo.getClassId() == classId && vo.getTeacherId() == teacherId) {				
+					map.put(rotationMap.get(key),vo.getWeekArrange());
+					removeVos.add(vo);	
+				}		
+			}
+		}
+		teacherSubjectVos.removeAll(removeVos);
+		for (Integer rotationId : map.keySet()) {
+			TeacherSubjectVo vo = new TeacherSubjectVo();
+			int classId = 0;
+			for (String key : rotationMap.keySet()) {
+				if (rotationMap.get(key) == rotationId) {
+					classId = Integer.valueOf(key.substring(4, 7));
+					break;
+				}
+			}
+			vo.setClassId(classId);
+			vo.setTeacherId(Integer.valueOf("99"+rotationId));
+			vo.setWeekArrange(map.get(rotationId));
+			teacherSubjectVos.add(vo);	
+		}
+		
+		
+	}
+	
+	
 	public static void getTeacherSubject(List<TeacherSubjectVo> teacherSubjectVos,
 			Map<Integer, Map<Integer, Integer>> classTSMap, Map<Integer, Map<Integer, Integer>> teacherTSMap,
 			Map<Integer, Integer> teacherSubjectMap, Map<Integer, Map<Integer, Integer>> subjectTeacherMap) {
 		for (TeacherSubjectVo vo : teacherSubjectVos) {
 			// classTSMap初始化
-			if (classTSMap.containsKey(vo.getClassId())) {
-				classTSMap.get(vo.getClassId()).put(vo.getTeacherId(), Integer.valueOf(vo.getWeekArrange()));
+			if (classTSMap.containsKey(vo.getClassId())) {	
+				classTSMap.get(vo.getClassId()).put(vo.getTeacherId(), Integer.valueOf(vo.getWeekArrange()));			
 			} else {
 				Map<Integer, Integer> innerClassMap = new HashMap<Integer, Integer>();
 				innerClassMap.put(vo.getTeacherId(), Integer.valueOf(vo.getWeekArrange()));
@@ -206,6 +247,13 @@ public class GAUtilTwo {
 				result.put(teacherSubjectVo.getTeacherId(), classTSInnerMap.get(teacherSubjectVo.getTeacherId()));
 			}
 		}
+		//走班
+		/*for (Integer teacherId : classTSInnerMap.keySet()) {
+			if (!result.containsKey(teacherId)) {
+				result.put(teacherId, classTSInnerMap.get(teacherId));
+			}
+		}*/
+		
 
 		return result;
 
@@ -234,12 +282,25 @@ public class GAUtilTwo {
 		return result;
 	}
 
-	public static Map<String, Integer> getArrangeRotation(List<CombineAndRotationVo> combineAndRotationVos) {
+	/**
+	 * @param map  key rotationId  value subjectId
+	 * @return
+	 */
+	public static Map<String, Integer> getArrangeRotation(List<CombineAndRotationVo> combineAndRotationVos,Map<Integer, List<Integer>> map) {
 		Map<String, Integer> result = new HashMap<String, Integer>();
 		for (CombineAndRotationVo vo : combineAndRotationVos) {
 			String teacherId = String.format("%04d", vo.getTeacherId());
 			String classId = String.format("%03d", vo.getClassId());
-			result.put(teacherId + classId, vo.getRotationId());
+			result.put(teacherId + classId,vo.getRotationId());
+			
+			if (map.containsKey(Integer.valueOf("99"+vo.getRotationId()))) {
+				map.get(Integer.valueOf("99"+vo.getRotationId())).add(vo.getSubjectId());					
+			}else {
+				List<Integer> innerList = new ArrayList<Integer>();
+				innerList.add(vo.getSubjectId());
+				map.put(Integer.valueOf("99"+vo.getRotationId()), innerList);
+			}
+			
 		}
 		return result;
 	}

@@ -1,6 +1,7 @@
 package com.zzy.pony.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -130,6 +131,23 @@ public class LessonPeriodAnalysisServiceImpl implements LessonPeriodAnalysisServ
 			
 		}
 	}
+	
+	
+
+	@Override
+	public void analysisSW(List<TeacherAnalysisVo> teacherAnalysisVos) {
+		// TODO Auto-generated method stub
+		for (TeacherAnalysisVo vo : teacherAnalysisVos) {
+			int classNum = vo.getClassIds().size();
+			if (vo.getPeriodAm()!= null) {
+				int amNum = vo.getPeriodAm().size();
+				vo.setAmRatio(amNum / classNum);
+			}else {
+				vo.setAmRatio(0);
+			}
+			
+		}
+	}
 
 	@Override
 	public void analysisPQ(List<TeacherAnalysisVo> teacherAnalysisVos) {
@@ -172,13 +190,42 @@ public class LessonPeriodAnalysisServiceImpl implements LessonPeriodAnalysisServ
 			if (!vo.isPQ()) {
 				vos.add(vo);
 			}
-		}		
+		}	
+		Collections.sort(vos);//排序
 		for (TeacherAnalysisVo vo : vos) {
+			Map<Integer, List<Integer>> weekPeriod = vo.getWeekPeriod();
+			Map<Integer, Set<Integer>> weekClass = vo.getWeekClass();
+			
 			
 		}
 		
 		
 		
 	}
+	
+	//找出不平齐
+	
+	private void findunPQ(Map<Integer, List<Integer>> weekPeriod,Map<Integer, Set<Integer>> weekClass,TeacherAnalysisVo vo) {
+		Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+		
+		for (Integer week : weekPeriod.keySet()) {
+			List<Integer> list = weekPeriod.get(week);
+			if (list != null && list.size() > 0) {
+				map.put(week, list.size());
+			}		
+		}
+		int max,min = 0;
+		for (Integer week : map.keySet()) {
+			if (map.get(week) > vo.getClassIds().size()) {
+				
+			}
+			if (map.get(week) < vo.getClassIds().size()) {
+				
+			}
+		}
+		
+		
+	}
+	
 
 }

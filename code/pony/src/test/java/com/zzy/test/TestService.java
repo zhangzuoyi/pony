@@ -108,7 +108,7 @@ public class TestService {
 	
 	@Test
 	public void testAutoLessonArrangeTwo(){
-		Grade grade = gradeService.get(1);
+		Grade grade = gradeService.get(3);
 		SchoolYear year = schoolYearService.getCurrent();
 		Term term = termService.getCurrent();
 		List<SchoolClass> schoolClassList = schoolClassService.findByGrade(grade.getGradeId());
