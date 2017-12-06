@@ -8,6 +8,9 @@ public class Sha1HashUtil {
 		Sha1Hash hash = new Sha1Hash(psw, loginName);
 		return hash.toString();
 	}
-
+	
+	public static void main(String[] args) {
+		System.out.println(hashPassword("123456","t002"));
+	}
 
 }

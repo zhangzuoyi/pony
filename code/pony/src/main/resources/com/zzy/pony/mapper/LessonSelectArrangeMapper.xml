@@ -4,7 +4,7 @@
 
 <mapper namespace="com.zzy.pony.mapper.LessonSelectArrangeMapper">
 	<sql id="base_select">
-		select a.ARRANGE_ID arrangeId,a.YEAR_ID yearId,sc.NAME yearName,
+		select a.ARRANGE_ID arrangeId,a.YEAR_ID yearId,concat(sc.start_year,'-',sc.end_year) yearName,
 		a.term_id termId,term.NAME termName,a.SUBJECT_ID subjectId,sub.name subjectName,
 		a.period,credit,upper_limit upperLimit,LOWER_LIMIT lowerLimit,classroom,
 		a.TEACHER_ID teacherId,te.NAME teacherName,
