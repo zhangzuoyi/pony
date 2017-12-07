@@ -32,7 +32,7 @@ width:200px;
 <body>
 <div id="app">
   <div>   	           	
-        <el-card class="box-card content-margin" v-if="showEdit">
+        <el-card class="box-card content-margin" >
             <div slot="header" class="clearfix">
               <el-row>
 	              <el-col :span="4">
@@ -89,6 +89,8 @@ width:200px;
 		tableData : [],
 		currentConfigUrl:"<s:url value='/ss/config/current'/>",
 		totalSelectUrl:"<s:url value='/ss/statistics/totalSelect'/>",
+		groupUrl:"<s:url value='/ss/statistics/group'/>",
+
 
 		
 	}, 
@@ -96,6 +98,7 @@ width:200px;
 	mounted : function() { 
 		this.getCurrentConfig();
 		this.getTotalSelect();
+		this.getGroup();
 	}, 
 	methods : { 
 		getCurrentConfig : function(){
@@ -114,6 +117,14 @@ width:200px;
 			function(response){}  			
 			); 
 		},
+		getGroup : function(){
+			this.$http.get(this.groupUrl).then(
+					function(response){
+						this.tableData=response.data;
+					},
+					function(response){}  			
+					); 
+				},
 		
 		
       }

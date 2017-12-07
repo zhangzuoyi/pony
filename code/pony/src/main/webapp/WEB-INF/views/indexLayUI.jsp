@@ -308,6 +308,9 @@
                         <dd>
                             <a href="javascript:;" data-url="<s:url value='/ss/select/main/' />"><label>科目选择</label></a>
                         </dd>
+                        <dd>
+                            <a href="javascript:;" data-url="<s:url value='/ss/statistics/main/' />"><label>选课统计</label></a>
+                        </dd>
                     </dl>
                 </li>
             </shiro:hasPermission>
