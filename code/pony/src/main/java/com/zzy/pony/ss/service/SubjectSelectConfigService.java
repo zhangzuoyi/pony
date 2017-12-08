@@ -13,4 +13,5 @@ public interface SubjectSelectConfigService {
 	void delete(Integer id);
 	List<SubjectSelectConfig> findAll();
 	SubjectSelectConfig getCurrent();
+	SubjectSelectConfig get(int configId);
 }

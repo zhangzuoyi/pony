@@ -47,6 +47,8 @@ public class SubjectSelectStatisticsController {
 		SubjectSelectConfig config = subjectSelectConfigService.getCurrent();
 		return subjectSelectStatisticsService.group(config.getConfigId());					
 	}
+	
+	
 
 	
 

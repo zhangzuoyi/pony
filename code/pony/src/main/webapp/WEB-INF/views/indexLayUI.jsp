@@ -1,4 +1,4 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿'<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 <!DOCTYPE html>
@@ -310,6 +310,9 @@
                         </dd>
                         <dd>
                             <a href="javascript:;" data-url="<s:url value='/ss/statistics/main/' />"><label>选课统计</label></a>
+                        </dd>
+                        <dd>
+                            <a href="javascript:;" data-url="<s:url value='/ss/admin/main/' />"><label>选课管理</label></a>
                         </dd>
                     </dl>
                 </li>

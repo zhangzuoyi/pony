@@ -56,4 +56,13 @@ public class SubjectSelectConfigServiceImpl implements SubjectSelectConfigServic
 		return null;
 	}
 
+	@Override
+	public SubjectSelectConfig get(int configId) {
+		// TODO Auto-generated method stub
+		return dao.findOne(configId);
+	}
+	
+	
+	
+
 }
