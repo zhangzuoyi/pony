@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>均量值赋分</title>
+<title>7选3赋分</title>
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/easyui/themes/default/easyui.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/style.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/icon.css' />" />
@@ -34,7 +34,7 @@ width:200px;
             <div slot="header" class="clearfix">
               <el-row>
               <el-col :span="4">
-              <b>均量值赋分</b>
+              <b>7选3赋分</b>
               </el-col>
               </el-row>
               <el-row>                            

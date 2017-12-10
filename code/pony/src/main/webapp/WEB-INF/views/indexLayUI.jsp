@@ -1,18 +1,17 @@
-﻿'<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags" %>
 <!DOCTYPE html>
 <html>
-
 <head>
+	<title>管理系统</title>
     <meta charset="UTF-8">
-    <title>管理系统</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
     <link rel="stylesheet" href="<s:url value='/static/layui/index.css' />">
-    <link rel="stylesheet" href="<s:url value='/static/layui/css/layui.css' />"></head>
-
+    <link rel="stylesheet" href="<s:url value='/static/layui/css/layui.css' />">
+</head>
 <body>
 <div class="layui-layout-admin fly-body">
     <div class="layui-header">
@@ -143,7 +142,7 @@
                         <a href="javascript:;" data-url="<s:url value='/examAdmin/average/main/' />"><label>均量值</label></a>
                     </dd>
                     <dd>
-                        <a href="javascript:;" data-url="<s:url value='/examAdmin/average/mainAssign/' />"><label>均量值赋分</label></a>
+                        <a href="javascript:;" data-url="<s:url value='/examAdmin/average/mainAssign/' />"><label>7选3赋分</label></a>
                     </dd>
                 </dl>
             </li>
