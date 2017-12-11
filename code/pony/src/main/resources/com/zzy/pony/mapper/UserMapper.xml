@@ -11,7 +11,7 @@
 	</sql>
 	<select id="findByLoginName" resultType="com.zzy.pony.vo.UserVo">
 		<include refid="base_select"></include>
-		where t.LOGIN_NAME=#{0}
+		where lower(t.LOGIN_NAME)=#{0}
 	</select>
 	<select id="findPage" resultType="com.zzy.pony.vo.UserVo">
 		<include refid="base_select"></include>

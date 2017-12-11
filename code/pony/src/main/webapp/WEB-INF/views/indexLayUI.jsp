@@ -296,17 +296,18 @@
                 <li class="layui-nav-item">
                     <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe637;</i>选课管理</a>
                     <dl class="layui-nav-child">
-                        <dd>
+                        <%-- <dd>
                             <a href="javascript:;" data-url="<s:url value='/lessonSelectArrange/main/' />"><label>可选课程设置</label></a>
                         </dd>
                         <dd>
                             <a href="javascript:;" data-url="<s:url value='/lessonSelect/main/' />"><label>学生选课</label></a>
-                        </dd><dd>
-                        <a href="javascript:;" data-url="<s:url value='/ss/config/main/' />"><label>科目选择配置</label></a>
-                    </dd>
+                        </dd> --%>
                         <dd>
+	                        <a href="javascript:;" data-url="<s:url value='/ss/config/main/' />"><label>科目选择配置</label></a>
+	                    </dd>
+                        <%-- <dd>
                             <a href="javascript:;" data-url="<s:url value='/ss/select/main/' />"><label>科目选择</label></a>
-                        </dd>
+                        </dd> --%>
                         <dd>
                             <a href="javascript:;" data-url="<s:url value='/ss/statistics/main/' />"><label>选课统计</label></a>
                         </dd>
@@ -453,7 +454,7 @@
                     </dl>
                 </li>
             </shiro:hasPermission>
-            <shiro:hasPermission name="student_page">
+            <%-- <shiro:hasPermission name="student_page">
                 <li class="layui-nav-item">
                     <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe613;</i>学生菜单</a>
                     <dl class="layui-nav-child">
@@ -465,7 +466,17 @@
                         </dd>
                     </dl>
                 </li>
-            </shiro:hasPermission>
+            </shiro:hasPermission> --%>
+            <shiro:hasRole name="student">
+                <li class="layui-nav-item">
+                    <a><i class="layui-icon" style="font-size: 25px;padding-right: 10px;">&#xe63c;</i>学生用户</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="javascript:;" data-url="<s:url value='/ss/select/main/' />"><label>科目选择</label></a>
+                        </dd>
+                    </dl>
+                </li>
+            </shiro:hasRole>
         </ul>
     </div>
     <div class="layui-body">

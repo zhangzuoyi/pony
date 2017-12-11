@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserVo findVo(String loginName) {
-		return mapper.findByLoginName(loginName);
+		return mapper.findByLoginName(loginName.toLowerCase());//小写比较
 	}
 
 	@Override
