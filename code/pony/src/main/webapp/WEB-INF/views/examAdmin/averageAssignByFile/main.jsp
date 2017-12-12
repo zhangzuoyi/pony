@@ -65,7 +65,8 @@ width:200px;
            			 </el-select>				
                     </div>        
             	</el-col>  --%>           	
-            	<el-col :span="6" >              		
+            	<el-col :span="6" > 
+            	    <el-button type="primary"  @click="downloadTemplate">下载模板</el-button>          	             		
                		<el-button type="primary"  @click="exportAverageAssignByFile" :disabled="exportFlag" >导出</el-button>              		             		
               	</el-col>                           
               </el-row>
@@ -181,6 +182,9 @@ var app = new Vue({
             
             	               	  
               },
+              downloadTemplate : function(){
+              	  window.location.href="<s:url value='/examAdmin/average/exportAssignTemplate' />";
+                },
    			
             
         }	        

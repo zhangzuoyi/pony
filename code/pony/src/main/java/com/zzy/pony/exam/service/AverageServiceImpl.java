@@ -16,6 +16,7 @@ import com.zzy.pony.model.Subject;
 import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.SubjectService;
+import com.zzy.pony.util.ExcelUtil;
 import com.zzy.pony.util.ReadExcelUtils;
 import com.zzy.pony.vo.ExamResultVo;
 
@@ -840,11 +841,12 @@ public class AverageServiceImpl implements AverageService {
 				continue;
 			} else {
 				AverageExcelVo vo = new AverageExcelVo();
-				vo.setSchoolName(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex)).toString());
+				/*vo.setSchoolName(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex)).toString());
 				vo.setClassCode(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex + 1)).toString());
 				vo.setName(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex + 2)).toString());
-				vo.setSubjectResult(Float.valueOf(String.valueOf(row.getCell(index).getNumericCellValue())));
-				vo.setUniqueId(vo.getSchoolName() + vo.getClassCode() + vo.getName());
+				vo.setUniqueId(vo.getSchoolName() + vo.getClassCode() + vo.getName());*/
+				vo.setUniqueId(row.getRowNum()+"");//用行号来代替唯一Id
+				vo.setSubjectResult(Float.valueOf(String.valueOf(row.getCell(index).getNumericCellValue())));				
 				vo.setSubjectName(ReadExcelUtils.getCellFormatValue(headRow.getCell(index)).toString());
 				result.add(vo);
 			}
@@ -864,12 +866,14 @@ public class AverageServiceImpl implements AverageService {
 		// 正文内容应该从第二行开始,第一行为表头的标题
 		for (int i = 1; i <= rowNum; i++) {
 			Row row = sheet.getRow(i);
+			//modify 不区分学校 姓名 名字  性别等
 			AverageAssignExcelVo vo = new AverageAssignExcelVo();
-			vo.setSchoolName(row.getCell(schoolIndex).getStringCellValue());
-			vo.setClassCode(row.getCell(schoolIndex + 1).getStringCellValue());
-			vo.setName(row.getCell(schoolIndex + 2).getStringCellValue());
-			vo.setSex(row.getCell(schoolIndex + 3).getStringCellValue());
-			vo.setUniqueId(vo.getSchoolName() + vo.getClassCode() + vo.getName());
+			vo.setSchoolName(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex)).toString());
+			vo.setClassCode(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex+1)).toString());
+			vo.setName(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex+2)).toString());
+			/*vo.setSex(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex+3)).toString());
+			vo.setUniqueId(vo.getSchoolName() + vo.getClassCode() + vo.getName());*/
+			vo.setUniqueId(row.getRowNum()+"");//用行号来表示唯一Id
 			Map<String, BigDecimal> assignScore = new LinkedHashMap<String, BigDecimal>();
 			vo.setAssignScore(assignScore);
 			Map<String, BigDecimal> initScore = new LinkedHashMap<String, BigDecimal>();
