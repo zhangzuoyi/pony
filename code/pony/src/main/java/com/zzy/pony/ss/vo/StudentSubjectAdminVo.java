@@ -1,6 +1,6 @@
 package com.zzy.pony.ss.vo;
 
-public class StudentSubjectAdminVo {
+public class StudentSubjectAdminVo implements Comparable<StudentSubjectAdminVo> {
 
 	private int studentId;
 	private String studentName;
@@ -40,6 +40,14 @@ public class StudentSubjectAdminVo {
 	public void setSelectSubjects(String[] selectSubjects) {
 		this.selectSubjects = selectSubjects;
 	}
+
+	@Override
+	public int compareTo(StudentSubjectAdminVo o) {
+		// TODO Auto-generated method stub
+		return o.getGroup().compareTo(this.getGroup());
+	}
+	
+	
 	
 	
 	

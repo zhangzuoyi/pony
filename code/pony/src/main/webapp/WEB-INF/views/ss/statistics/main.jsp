@@ -53,7 +53,10 @@ width:200px;
                </el-col>
                <el-col :span="6">
                	<span>{{totalSelect}}</span>
-               </el-col>
+               </el-col>             
+               <el-col  :span="4" :offset="4">
+                <el-button type="primary" @click="exportStatistics">导出</el-button> 
+                </el-col>
               </el-row>                      
             </div>
             <el-table
@@ -125,6 +128,9 @@ width:200px;
 					function(response){}  			
 					); 
 				},
+		exportStatistics : function(){
+        	  window.location.href="<s:url value='/ss/statistics/exportStatistics' />";
+		}
 		
 		
       }
