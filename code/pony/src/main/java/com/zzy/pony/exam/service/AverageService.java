@@ -3,15 +3,16 @@ package com.zzy.pony.exam.service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Workbook;
-import org.codehaus.groovy.classgen.asm.indy.IndyBinHelper;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.zzy.pony.exam.model.AverageIndex;
 import com.zzy.pony.exam.vo.AverageAssignExcelVo;
 import com.zzy.pony.exam.vo.AverageExcelVo;
 import com.zzy.pony.exam.vo.AverageIndexRowVo;
+import com.zzy.pony.exam.vo.AverageNewVo;
 
 public interface AverageService {
 	int SECTION_COUNT=22;//分段数
@@ -24,10 +25,13 @@ public interface AverageService {
 	 * 计算档数，累数
 	 */
 	Map<Integer,Map<String, Map<String, BigDecimal>>> calculateAverage(int examId,int gradeId);
+	Map<String,Map<String, Map<String, BigDecimal>>> calculateNewAverage(List<String> subjects,Set<String> schoolClasses,
+			Map<String, Map<String, BigDecimal>> subjectLevelMap,Map<String, List<AverageNewVo>> subjectResults);
 	Map<String,Map<String, Map<String, BigDecimal>>> calculateAverageByFile(MultipartFile file);
 	List<String> getClassCode(List<AverageExcelVo> averageExcelVos,String schoolName);
 	void sortAverageExcelVo(List<AverageExcelVo> averageExcelVos);
 	void sortAverageExcelVoSum(List<AverageExcelVo> averageExcelVos);
+	void sortAverageNewVo(List<AverageNewVo> averageNewVos);
 	List<AverageExcelVo> getAverageExcelVo (Workbook wb,int index,int schoolIndex);
 	List<AverageAssignExcelVo> getAverageAssignExcelVo(Workbook wb,int schoolIndex,String schoolName);
 	List<AverageExcelVo> getAverageExcelVoSum (Workbook wb,List<String> subjectNames);
