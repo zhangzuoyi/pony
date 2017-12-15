@@ -24,6 +24,7 @@ public class SubjectSelectStatisticsServiceImpl implements SubjectSelectStatisti
 
 	@Autowired
 	private SubjectSelectStatisticsMapper subjectSelectStatisticsMapper;
+	
 
 	@Override
 	public int findTotalSelectByConfig(int configId) {
@@ -37,20 +38,28 @@ public class SubjectSelectStatisticsServiceImpl implements SubjectSelectStatisti
 		List<StudentSubjectStatisticsVo> result = new ArrayList<StudentSubjectStatisticsVo>();
 		Map<String, Integer> map = new HashMap<String, Integer>();
 		List<StudentSubjectSelectVo> vos = subjectSelectStatisticsMapper.findAllByConfig(configId);
+		Map<Integer, String> studentInfo = new HashMap<Integer, String>();
+		for (StudentSubjectSelectVo vo : vos) {
+			studentInfo.put(vo.getStudentId(), vo.getStudentName()+"("+vo.getClassName()+")");
+		}
+		Map<String, String> students = new HashMap<String, String>();
 		// 每个学生的选课结果
 		Map<Integer, String> studentMap = studentSelect(vos);
 		for (Integer studentId : studentMap.keySet()) {
 			String subjects = studentMap.get(studentId);
 			if (map.containsKey(subjects)) {
 				map.put(subjects, map.get(subjects).intValue() + 1);
+				students.put(subjects, students.get(subjects)+","+studentInfo.get(studentId));
 			} else {
 				map.put(subjects, 1);
+				students.put(subjects,studentInfo.get(studentId));				
 			}
 		}
 		for (String group : map.keySet()) {
 			StudentSubjectStatisticsVo vo = new StudentSubjectStatisticsVo();
 			vo.setGroup(group);
 			vo.setCount(map.get(group));
+			vo.setStudents(students.get(group));
 			result.add(vo);
 		}		
 		Collections.sort(result);		

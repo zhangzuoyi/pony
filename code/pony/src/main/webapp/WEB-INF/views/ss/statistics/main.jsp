@@ -73,7 +73,14 @@ width:200px;
                         prop="count"
                         label="人数"
                         >
-                </el-table-column>                            
+                </el-table-column>
+                <el-table-column
+                        prop="students"
+                        label="学生名单"
+                        show-overflow-tooltip="true"
+                        >
+                </el-table-column>
+                                            
             </el-table>
         </el-card>
         

@@ -5,7 +5,10 @@
 <mapper namespace="com.zzy.pony.ss.mapper.SubjectSelectStatisticsMapper">
 	<sql id="base_select">
 		select t.id,t.config_id as configId,t.student_id as studentId,t.subject
-		,t.create_time as createTime from t_student_subject_select t
+		,t.create_time as createTime ,a.name as studentName,CONCAT(CONVERT(b.SEQ,char),'班') as className  
+		from t_student_subject_select t 
+		left join t_student a on t.STUDENT_ID = a.STUDENT_ID 
+		left join t_school_class b on a.CLASS_ID = b.CLASS_ID
 	</sql>
 
 	<select id="findTotalSelectByConfig" resultType="int">

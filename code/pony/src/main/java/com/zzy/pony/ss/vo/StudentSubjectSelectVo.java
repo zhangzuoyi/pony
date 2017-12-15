@@ -9,6 +9,8 @@ public class StudentSubjectSelectVo {
 	private int studentId;
 	private String subject;
 	private Date createTime;
+	private String studentName;
+	private String className;
 	
 	public StudentSubjectSelectVo() {}
 
@@ -51,6 +53,24 @@ public class StudentSubjectSelectVo {
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
+
+	public String getStudentName() {
+		return studentName;
+	}
+
+	public void setStudentName(String studentName) {
+		this.studentName = studentName;
+	}
+
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+	
+	
 	
 	
 

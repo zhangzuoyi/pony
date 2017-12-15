@@ -4,6 +4,7 @@ public class StudentSubjectStatisticsVo implements Comparable<StudentSubjectStat
 	
 	private String group;//组合形式 
 	private int count;//组合人数
+	private String students;	
 	public StudentSubjectStatisticsVo() {}
 	public String getGroup() {
 		return group;
@@ -16,6 +17,12 @@ public class StudentSubjectStatisticsVo implements Comparable<StudentSubjectStat
 	}
 	public void setCount(int count) {
 		this.count = count;
+	}	
+	public String getStudents() {
+		return students;
+	}
+	public void setStudents(String students) {
+		this.students = students;
 	}
 	@Override
 	public int compareTo(StudentSubjectStatisticsVo o) {

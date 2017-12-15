@@ -9,6 +9,7 @@ import com.zzy.pony.exam.vo.AverageAssignExcelVo;
 import com.zzy.pony.exam.vo.AverageExcelVo;
 import com.zzy.pony.exam.vo.AverageIndexRowVo;
 import com.zzy.pony.exam.vo.AverageIndexVo;
+import com.zzy.pony.exam.vo.AverageNewVo;
 import com.zzy.pony.mapper.ExamResultMapper;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.SchoolYear;
@@ -36,6 +37,14 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.*;
 
+/**
+ * @author WANGCHAO262
+ *
+ */
+/**
+ * @author WANGCHAO262
+ *
+ */
 /**
  * @author WANGCHAO262
  *
@@ -488,6 +497,359 @@ public class AverageServiceImpl implements AverageService {
 	}
 
 	@Override
+	public Map<String, Map<String, Map<String, BigDecimal>>> calculateNewAverage(List<String> subjects,Set<String> schoolClasses,
+			Map<String, Map<String, BigDecimal>> subjectLevelMap,Map<String, List<AverageNewVo>> subjectResults) {
+		// TODO Auto-generated method stub
+
+		BigDecimal one = new BigDecimal("1");
+		BigDecimal zero = new BigDecimal("0");
+		Map<String, Map<String, Map<String, BigDecimal>>> result = new LinkedHashMap<String, Map<String, Map<String, BigDecimal>>>();
+
+		for (String subject : subjects) {
+			// key section(A1) value(key seq)
+			Map<String, Map<String, BigDecimal>> map = new LinkedHashMap<String, Map<String, BigDecimal>>();
+			// 前一个段位剩下的
+			Map<String, Map<String, BigDecimal>> mapRemain = new HashMap<String, Map<String, BigDecimal>>();
+			BigDecimal remainCount = new BigDecimal(String.valueOf(0));
+			List<Float> indexValues = new ArrayList<Float>();		
+			Map<String, BigDecimal> levelMap = subjectLevelMap.get(subject);
+			List<AverageNewVo> examResultVos = subjectResults.get(subject);
+			sortAverageNewVo(examResultVos);
+			
+			for (String level : levelMap.keySet()) {
+				indexValues.add(levelMap.get(level).floatValue());
+				Map<String, BigDecimal> innerMap = new LinkedHashMap<String, BigDecimal>();
+				Iterator<String> iterator =  schoolClasses.iterator();
+				while(iterator.hasNext()) {
+					innerMap.put("level" + iterator.next(), zero);
+				}		
+				map.put(level, innerMap);
+			}
+			int j = 0;// 段位控制
+			BigDecimal indexValue = new BigDecimal(indexValues.get(0).toString());
+			int lastj = j;
+			BigDecimal remainIndexValueDecimal = new BigDecimal(indexValues.get(0).toString());
+			BigDecimal remainCountNum = new BigDecimal("0");
+
+			for (int i = 0; i < examResultVos.size(); i++) {
+				String classSeq = examResultVos.get(i).getClassName();
+				BigDecimal indexValueDecimal = new BigDecimal("0");
+				int indexValueFloor = 0;
+				BigDecimal indexValueFloorDecimal = new BigDecimal("0");
+
+				int indexValueCeil = 0;
+				
+				if (i == 495) {
+					System.out.println("495");
+				}
+				
+				if (lastj != j) {
+					indexValue = indexValue.add(new BigDecimal(indexValues.get(j).toString()));
+					indexValueDecimal = new BigDecimal(indexValues.get(j).toString());
+					indexValueFloor = (int) Math.floor(indexValue.floatValue());
+					if (indexValueFloor >= examResultVos.size()) {
+						indexValueFloor = examResultVos.size() - 2;
+					}
+					indexValueFloorDecimal = new BigDecimal(String.valueOf(indexValueFloor));
+					indexValueCeil = (int) Math.ceil(indexValue.floatValue());
+					if (indexValueCeil >= examResultVos.size()) {
+						indexValueCeil = examResultVos.size() - 1;
+					}
+					lastj = j;
+				} else {
+					indexValueDecimal = new BigDecimal(indexValues.get(j).toString());
+					indexValueFloor = (int) Math.floor(indexValue.floatValue());
+					if (indexValueFloor >= examResultVos.size()) {
+						indexValueFloor = examResultVos.size() - 2;
+					}
+					indexValueFloorDecimal = new BigDecimal(String.valueOf(indexValueFloor));
+					indexValueCeil = (int) Math.ceil(indexValue.floatValue());
+					if (indexValueCeil >= examResultVos.size()) {
+						indexValueCeil = examResultVos.size() - 1;
+					}
+				}
+
+				// BigDecimal indexValueFloorCeil = new
+				// BigDecimal(String.valueOf(indexValueCeil));
+
+				// 前一个段位剩下的
+				if (j > 0 && remainCount.compareTo(new BigDecimal("0")) > 0) {
+					if (remainCount.compareTo(indexValueDecimal) > 0) {
+						int start = j;
+						// 剩下的比待分配的段位还多
+						BigDecimal bigDecimal = indexValueDecimal;
+						while ((j + 1) < indexValues.size() && remainCount.compareTo(bigDecimal) > 0) {
+							bigDecimal = indexValueDecimal.add(new BigDecimal(String.valueOf(indexValues.get(j + 1))));
+							j++;
+						}
+						for (int m = start; m <= j; m++) {
+							if (m == j) {
+								// BigDecimal count = new BigDecimal(mapRemain.get("A"+(start+1)).size());
+								BigDecimal average = remainCount.divide(remainCountNum, 2, RoundingMode.DOWN);
+								BigDecimal remain = remainCount.subtract(average.multiply(remainCountNum)); // 多余的
+								int first = 1;
+								for (String key : mapRemain.get("A" + (m + 1)).keySet()) {
+									if (map.get("A" + (m + 1)) != null && map.get("A" + (m + 1)).get(key) != null) {
+										// 档数
+										if (first == 2) {
+											map.get("A" + (m + 1)).put(key,
+													map.get("A" + (m + 1)).get(key).add(average.add(remain)));
+										} else {
+											map.get("A" + (m + 1)).put(key,
+													map.get("A" + (m + 1)).get(key).add(average.add(remain)));
+										}
+									} else {
+										map.get("A" + (m + 1)).put(key, average);
+									}
+									first++;
+								}
+							} else {
+								BigDecimal total = new BigDecimal(indexValues.get(m).toString());
+								// BigDecimal count = new BigDecimal(mapRemain.get("A"+(start+1)).size());
+								BigDecimal average = total.divide(remainCountNum, 2, RoundingMode.DOWN);
+								BigDecimal remain = total.subtract(average.multiply(remainCountNum)); // 多余的
+								int first = 1;
+								for (String key : mapRemain.get("A" + (m + 1)).keySet()) {
+									if (map.get("A" + (m + 1)) != null && map.get("A" + (m + 1)).get(key) != null) {
+										// 档数
+										if (first == 2) {
+											map.get("A" + (m + 1)).put(key,
+													map.get("A" + (m + 1)).get(key).add(average.add(remain)));
+											Map<String, BigDecimal> innerMap = new HashMap<String, BigDecimal>();
+											innerMap.put(key, mapRemain.get("A" + (m + 1)).get(key)
+													.subtract(average.add(remain)));
+											if (mapRemain.get("A" + (m + 2)) != null) {
+												mapRemain.get("A" + (m + 2)).put(key, mapRemain.get("A" + (m + 1))
+														.get(key).subtract(average.add(remain)));
+											} else {
+												mapRemain.put("A" + (m + 2), innerMap);
+											}
+
+										} else {
+											map.get("A" + (m + 1)).put(key,
+													map.get("A" + (m + 1)).get(key).add(average));
+											Map<String, BigDecimal> innerMap = new HashMap<String, BigDecimal>();
+											innerMap.put(key, mapRemain.get("A" + (m + 1)).get(key).subtract(average));
+											mapRemain.put("A" + (m + 2), innerMap);
+										}
+									} else {
+										map.get("A" + (m + 1)).put(key, average);
+										Map<String, BigDecimal> innerMap = new HashMap<String, BigDecimal>();
+										innerMap.put(key, mapRemain.get("A" + (m + 1)).get(key).subtract(average));
+										mapRemain.put("A" + (m + 2), innerMap);
+
+									}
+									first++;
+								}
+								remainCount = remainCount.subtract(total);
+							}
+						}
+
+						indexValue = indexValue.add(new BigDecimal(indexValues.get(j).toString()));
+						indexValueDecimal = new BigDecimal(indexValues.get(j).toString());
+						indexValueFloor = (int) Math.floor(indexValue.floatValue());
+						if (indexValueFloor >= examResultVos.size()) {
+							indexValueFloor = examResultVos.size() - 1;
+						}
+						indexValueFloorDecimal = new BigDecimal(String.valueOf(indexValueFloor));
+						indexValueCeil = (int) Math.ceil(indexValue.floatValue());
+						if (indexValueCeil >= examResultVos.size()) {
+							indexValueCeil = examResultVos.size() - 1;
+						}
+						lastj = j;
+
+					} else {
+						for (String key : mapRemain.get("A" + (j + 1)).keySet()) {
+							if (map.get("A" + (j + 1)) != null && map.get("A" + (j + 1)).get(key) != null) {
+								// 档数
+								map.get("A" + (j + 1)).put(key,
+										map.get("A" + (j + 1)).get(key).add(mapRemain.get("A" + (j + 1)).get(key)));
+							} else {
+								map.get("A" + (j + 1)).put(key, mapRemain.get("A" + (j + 1)).get(key));
+							}
+						}
+						mapRemain.clear();
+					}
+					remainIndexValueDecimal = indexValueDecimal.subtract(remainCount);
+					remainCount = remainCount.subtract(remainCount);// 归0
+				}
+				
+				// 6.82 在6后面出现相等				
+				if (examResultVos.get(indexValueFloor).getGradeRank() != examResultVos.get(indexValueCeil)
+						.getGradeRank()) {
+					// 小于档位
+					if (i <= indexValueFloor) {
+						if (indexValue.subtract(new BigDecimal(i)).compareTo(one)<0) {
+							if (map.get("A" + (j + 1)) != null && map.get("A" + (j + 1)).get("level" + classSeq) != null) {
+								// 档数
+								map.get("A" + (j + 1)).put("level" + classSeq,
+										map.get("A" + (j + 1)).get("level" + classSeq).add(indexValue.subtract(new BigDecimal(i))));
+							} else {
+								map.get("A" + (j + 1)).put("level" + classSeq, indexValue.subtract(new BigDecimal(i)));
+							}
+							remainIndexValueDecimal = remainIndexValueDecimal.subtract(indexValue.subtract(new BigDecimal(i)));
+							
+						}else {
+							if (map.get("A" + (j + 1)) != null && map.get("A" + (j + 1)).get("level" + classSeq) != null) {
+								// 档数
+								map.get("A" + (j + 1)).put("level" + classSeq,
+										map.get("A" + (j + 1)).get("level" + classSeq).add(one));
+							} else {
+								map.get("A" + (j + 1)).put("level" + classSeq, one);
+							}
+							remainIndexValueDecimal = remainIndexValueDecimal.subtract(one);
+						}
+						
+					}
+					// 等于档位
+					if (i == indexValueCeil) {
+						if (i == examResultVos.size()-1 ) {
+							if (map.get("A" + (j + 1)) != null && map.get("A" + (j + 1)).get("level" + classSeq) != null) {
+								// 档数
+								map.get("A" + (j + 1)).put("level" + classSeq,
+										map.get("A" + (j + 1)).get("level" + classSeq).add(one));
+							} else {
+								map.get("A" + (j + 1)).put("level" + classSeq, one);
+							}
+							continue;
+						}
+						int count = 1;// 相同排名数
+						while (examResultVos.get(i).getGradeRank() == examResultVos.get(i + 1).getGradeRank()) {
+							i++;
+							count++;
+						}
+						BigDecimal total = remainIndexValueDecimal;
+						BigDecimal average = total.divide(new BigDecimal(count), 2, RoundingMode.DOWN);
+						BigDecimal remain = total.subtract(average.multiply(new BigDecimal(count))); // 多余的
+						remainCountNum = new BigDecimal(count);
+						for (int m = indexValueCeil; m <= i; m++) {
+							classSeq = examResultVos.get(m).getClassName();
+							// @todo 除不尽的默认加在第一个
+							if (map.get("A" + (j + 1)) != null
+									&& map.get("A" + (j + 1)).get("level" + classSeq) != null) {
+								// 档数
+								if (m == indexValueCeil) {
+									map.get("A" + (j + 1)).put("level" + classSeq,
+											map.get("A" + (j + 1)).get("level" + classSeq).add(average.add(remain)));
+								} else {
+									map.get("A" + (j + 1)).put("level" + classSeq,
+											map.get("A" + (j + 1)).get("level" + classSeq).add(average));
+								}
+							} else {
+								map.get("A" + (j + 1)).put("level" + classSeq, average);
+							}
+							// 剩余的
+							if (mapRemain.get("A" + (j + 2)) != null
+									&& mapRemain.get("A" + (j + 2)).get("level" + classSeq) != null) {
+								// 档数
+								mapRemain.get("A" + (j + 2)).put("level" + classSeq, mapRemain.get("A" + (j + 2))
+										.get("level" + classSeq).add(one.subtract(average)));
+								remainCount = remainCount.add(one.subtract(average));
+							} else {
+								if (mapRemain.get("A" + (j + 2)) == null) {
+									mapRemain.put("A" + (j + 2), new HashMap<String, BigDecimal>());
+									mapRemain.get("A" + (j + 2)).put("level" + classSeq,
+											one.subtract(average.add(remain)));
+									remainCount = remainCount.add(one.subtract(average.add(remain)));
+
+								} else {
+									mapRemain.get("A" + (j + 2)).put("level" + classSeq, one.subtract(average));
+									remainCount = remainCount.add(one.subtract(average));
+
+								}
+							}
+
+						}
+
+						j++;
+					}
+				}
+				// 6.82 在6前后面出现相等
+				else {
+					int gradeRank = examResultVos.get(indexValueFloor).getGradeRank();
+					/*
+					 * int m = indexValueFloor;//开始相等 int n = indexValueCeil;//结束相等 while() {
+					 * 
+					 * }
+					 */
+					if (examResultVos.get(i).getGradeRank() != gradeRank) {
+						if (map.get("A" + (j + 1)) != null && map.get("A" + (j + 1)).get("level" + classSeq) != null) {
+							// 档数
+							map.get("A" + (j + 1)).put("level" + classSeq,
+									map.get("A" + (j + 1)).get("level" + classSeq).add(one));
+						} else {
+							map.get("A" + (j + 1)).put("level" + classSeq, one);
+						}
+						remainIndexValueDecimal = remainIndexValueDecimal.subtract(one);
+					} else {
+						int count = 1;
+						int start = i;// 最后一个不相等
+						while((i + 1) < examResultVos.size()
+								&& examResultVos.get(i).getGradeRank() == examResultVos.get(i + 1).getGradeRank()) {
+							i++;
+							count++;
+						}
+						remainCountNum = new BigDecimal(count);
+						BigDecimal total = remainIndexValueDecimal;
+						BigDecimal average = total.divide(new BigDecimal(count), 2, RoundingMode.DOWN);
+						BigDecimal remain = total.subtract(average.multiply(new BigDecimal(count))); // 多余的
+						for (int m = start; m <= i; m++) {
+							classSeq = examResultVos.get(m).getClassName();
+							// @todo 除不尽的默认加在第一个
+							if (map.get("A" + (j + 1)) != null
+									&& map.get("A" + (j + 1)).get("level" + classSeq) != null) {
+								// 档数
+								if (m == start) {
+									map.get("A" + (j + 1)).put("level" + classSeq,
+											map.get("A" + (j + 1)).get("level" + classSeq).add(average.add(remain)));
+								} else {
+									map.get("A" + (j + 1)).put("level" + classSeq,
+											map.get("A" + (j + 1)).get("level" + classSeq).add(average));
+								}
+							} else {
+								map.get("A" + (j + 1)).put("level" + classSeq, average);
+							}
+							// 剩余的
+							if (mapRemain.get("A" + (j + 2)) != null
+									&& mapRemain.get("A" + (j + 2)).get("level" + classSeq) != null) {
+								// 档数
+								mapRemain.get("A" + (j + 2)).put("level" + classSeq, mapRemain.get("A" + (j + 2))
+										.get("level" + classSeq).add(one.subtract(average)));
+								remainCount = remainCount.add(one.subtract(average));
+
+							} else {
+								if (mapRemain.get("A" + (j + 2)) == null) {
+									mapRemain.put("A" + (j + 2), new HashMap<String, BigDecimal>());
+									mapRemain.get("A" + (j + 2)).put("level" + classSeq,
+											one.subtract(average.add(remain)));
+									remainCount = remainCount.add(one.subtract(average.add(remain)));
+								} else {
+									mapRemain.get("A" + (j + 2)).put("level" + classSeq, one.subtract(average));
+									remainCount = remainCount.add(one.subtract(average));
+
+								}
+							}
+
+						}
+						j++;
+
+					}
+				}
+
+			}
+			for (String key : map.keySet()) {
+				System.out.print(key + ":");
+				for (String innerKey : map.get(key).keySet()) {
+					System.out.println(innerKey + ":" + map.get(key).get(innerKey).floatValue());
+				}
+			}
+			caculateNewAverageSum(map);
+			result.put(subject, map);
+		}
+		return result;
+	}
+
+	@Override
 	public Map<String, Map<String, Map<String, BigDecimal>>> calculateAverageByFile(MultipartFile file) {
 		// TODO Auto-generated method stub
 		// subjectName level class
@@ -841,12 +1203,18 @@ public class AverageServiceImpl implements AverageService {
 				continue;
 			} else {
 				AverageExcelVo vo = new AverageExcelVo();
-				/*vo.setSchoolName(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex)).toString());
-				vo.setClassCode(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex + 1)).toString());
-				vo.setName(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex + 2)).toString());
-				vo.setUniqueId(vo.getSchoolName() + vo.getClassCode() + vo.getName());*/
-				vo.setUniqueId(row.getRowNum()+"");//用行号来代替唯一Id
-				vo.setSubjectResult(Float.valueOf(String.valueOf(row.getCell(index).getNumericCellValue())));				
+				
+				  vo.setSchoolName(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex)).
+				  toString());
+				  vo.setClassCode(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex +
+				  1)).toString());
+				  vo.setName(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex +
+				  2)).toString()); 
+				  /*vo.setUniqueId(vo.getSchoolName() + vo.getClassCode() +
+				  vo.getName());*/
+				 
+				vo.setUniqueId(row.getRowNum() + "");// 用行号来代替唯一Id
+				vo.setSubjectResult(Float.valueOf(String.valueOf(row.getCell(index).getNumericCellValue())));
 				vo.setSubjectName(ReadExcelUtils.getCellFormatValue(headRow.getCell(index)).toString());
 				result.add(vo);
 			}
@@ -866,14 +1234,17 @@ public class AverageServiceImpl implements AverageService {
 		// 正文内容应该从第二行开始,第一行为表头的标题
 		for (int i = 1; i <= rowNum; i++) {
 			Row row = sheet.getRow(i);
-			//modify 不区分学校 姓名 名字  性别等
+			// modify 不区分学校 姓名 名字 性别等
 			AverageAssignExcelVo vo = new AverageAssignExcelVo();
 			vo.setSchoolName(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex)).toString());
-			vo.setClassCode(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex+1)).toString());
-			vo.setName(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex+2)).toString());
-			/*vo.setSex(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex+3)).toString());
-			vo.setUniqueId(vo.getSchoolName() + vo.getClassCode() + vo.getName());*/
-			vo.setUniqueId(row.getRowNum()+"");//用行号来表示唯一Id
+			vo.setClassCode(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex + 1)).toString());
+			vo.setName(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex + 2)).toString());
+			/*
+			 * vo.setSex(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex+3)).
+			 * toString()); vo.setUniqueId(vo.getSchoolName() + vo.getClassCode() +
+			 * vo.getName());
+			 */
+			vo.setUniqueId(row.getRowNum() + "");// 用行号来表示唯一Id
 			Map<String, BigDecimal> assignScore = new LinkedHashMap<String, BigDecimal>();
 			vo.setAssignScore(assignScore);
 			Map<String, BigDecimal> initScore = new LinkedHashMap<String, BigDecimal>();
@@ -972,6 +1343,34 @@ public class AverageServiceImpl implements AverageService {
 					.get(i + 1).getSubjectResultSum()) {
 				i++;
 				averageExcelVos.get(i).setRankSum(count + 1);
+			}
+		}
+	}
+	
+	
+
+	@Override
+	public void sortAverageNewVo(List<AverageNewVo> averageNewVos) {
+		// TODO Auto-generated method stub
+		Collections.sort(averageNewVos, new Comparator<AverageNewVo>() {
+			public int compare(AverageNewVo o1, AverageNewVo o2) {
+				// 按照成绩进行降序排列
+				if (o1.getSubjectScore() > o2.getSubjectScore()) {
+					return -1;
+				}
+				if (o1.getSubjectScore() == o2.getSubjectScore()) {
+					return 0;
+				}
+				return 1;
+			}
+		});
+		for (int i = 0; i < averageNewVos.size(); i++) {
+			int count = i;
+			averageNewVos.get(i).setGradeRank(i + 1);
+			while ((i + 1) < averageNewVos.size() && averageNewVos.get(i).getSubjectScore() == averageNewVos
+					.get(i + 1).getSubjectScore()) {
+				i++;
+				averageNewVos.get(i).setGradeRank(count + 1);
 			}
 		}
 	}
@@ -1359,5 +1758,35 @@ public class AverageServiceImpl implements AverageService {
 			}
 		}
 	}
+		// 计算累数
+		private void caculateNewAverageSum(Map<String, Map<String, BigDecimal>> map) {
+			for (String section : map.keySet()) {
+				int i = Integer.valueOf(section.substring(1));
+				Map<String, BigDecimal> innerMap = map.get(section);
+				int size = innerMap.size();
+				// 1 --> 22
+				BigDecimal allLevel = new BigDecimal("0");
+				BigDecimal allLevelSum = new BigDecimal("0");
+				
+				List<String> keys = new ArrayList<String>(innerMap.keySet());
+				
+				for (int j = 1; j <= size; j++) {
+					//某一班
+					BigDecimal sum = new BigDecimal("0");
+					for (int m = 1; m <= i; m++) {
+						sum = sum.add(map.get("A" + m).get(keys.get(j-1)));
+					}
+					innerMap.put("levelSum" + keys.get(j-1).substring(5), sum);
+					allLevel = allLevel.add(map.get("A" + i).get(keys.get(j-1)));
+					
+				}																					
+				innerMap.put("allLevel", allLevel);
+				if (i == 1) {
+					innerMap.put("allLevelSum", allLevel);
+				} else {
+					innerMap.put("allLevelSum", map.get("A" + (i - 1)).get("allLevelSum").add(allLevel));
+				}
+			}
+		}
 
 }
