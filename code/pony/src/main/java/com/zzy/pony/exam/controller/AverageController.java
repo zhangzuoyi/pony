@@ -1,45 +1,24 @@
 package com.zzy.pony.exam.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.collections.comparators.ComparatorChain;
+import com.zzy.pony.config.Constants;
+import com.zzy.pony.exam.mapper.AverageIndexMapper;
+import com.zzy.pony.exam.model.AverageIndex;
+import com.zzy.pony.exam.service.AverageService;
+import com.zzy.pony.exam.vo.*;
+import com.zzy.pony.model.*;
+import com.zzy.pony.service.*;
+import com.zzy.pony.util.DateTimeUtil;
+import com.zzy.pony.util.ReadExcelUtils;
+import com.zzy.pony.util.TemplateUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.Region;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.hibernate.type.PrimitiveByteArrayBlobType;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -48,36 +27,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.zzy.pony.config.Constants;
-import com.zzy.pony.exam.mapper.AverageIndexMapper;
-import com.zzy.pony.exam.model.AverageIndex;
-import com.zzy.pony.exam.service.AverageService;
-import com.zzy.pony.exam.vo.AverageAssignExcelVo;
-import com.zzy.pony.exam.vo.AverageExcelVo;
-import com.zzy.pony.exam.vo.AverageIndexRowVo;
-import com.zzy.pony.exam.vo.AverageIndexVo;
-import com.zzy.pony.exam.vo.AverageNewVo;
-import com.zzy.pony.model.Exam;
-import com.zzy.pony.model.Grade;
-import com.zzy.pony.model.SchoolClass;
-import com.zzy.pony.model.SchoolYear;
-import com.zzy.pony.model.Subject;
-import com.zzy.pony.service.ExamService;
-import com.zzy.pony.service.GradeService;
-import com.zzy.pony.service.SchoolClassService;
-import com.zzy.pony.service.SchoolYearService;
-import com.zzy.pony.service.SubjectService;
-import com.zzy.pony.util.DateTimeUtil;
-import com.zzy.pony.util.ReadExcelUtils;
-import com.zzy.pony.util.TemplateUtil;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Controller
 @RequestMapping(value = "/examAdmin/average")
@@ -837,9 +795,13 @@ public class AverageController {
 			Map<String, Map<String, BigDecimal>> subjectLevelMap = new LinkedHashMap<String, Map<String, BigDecimal>>();
 			Row headRowOne = averageSheet.getRow(0);
 			Row dataSheetRow = null;
+			List<String> levels = new ArrayList<String>();
+			Map<String,Integer> levelWeight = new HashMap<String, Integer>();
 			for (int i = 1; i <= averageSheet.getLastRowNum(); i++) {
 				dataSheetRow = averageSheet.getRow(i);
-				for (int j = 1; j < headRowOne.getLastCellNum(); j++) {
+                levels.add(dataSheetRow.getCell(0).getStringCellValue());
+                levelWeight.put(dataSheetRow.getCell(0).getStringCellValue(),(int)dataSheetRow.getCell(1).getNumericCellValue());
+				for (int j = 2; j < headRowOne.getLastCellNum(); j++) {
 					if (subjectLevelMap.containsKey(headRowOne.getCell(j).getStringCellValue())) {
 						subjectLevelMap.get(headRowOne.getCell(j).getStringCellValue()).put(
 								dataSheetRow.getCell(0).getStringCellValue(),
@@ -897,7 +859,7 @@ public class AverageController {
 			}
 			List<String> classList = new ArrayList<String>(schoolClasses);
 			Map<String, Map<String, Map<String, BigDecimal>>> dataMap = service.calculateNewAverage(subjects,
-					schoolClasses, subjectLevelMap, subjectResults);
+					schoolClasses, subjectLevelMap, subjectResults,levelWeight);
 
 			try {
 				HSSFWorkbook workbook = new HSSFWorkbook(); // 创建工作簿对象
@@ -933,22 +895,31 @@ public class AverageController {
 					headRow.createCell(colNums).setCellValue("档数");
 					headRow.createCell(colNums + 1).setCellValue("累数");
 					int index = 0;
-					for (String section : innerMap.keySet()) {
+
+					for (int i=1; i<=levels.size();i++) {
+					    String section = levels.get(i-1);
 						HSSFRow dataRow = sheet.createRow(range + index + 2);
 						dataRow.createCell(0).setCellValue(section);
 						dataRow.createCell(1).setCellValue(subjectLevel.get(section).toString());
 						for (int j = 1; j <= schoolClasses.size(); j++) {
-							dataRow.createCell(j * 2).setCellValue(innerMap.get(section).get("level" + classList.get(j-1)).toString());
+							dataRow.createCell(j * 2).setCellValue(innerMap.get(classList.get(j-1)).get(section).toString());
 							dataRow.createCell(j * 2 + 1)
-									.setCellValue(innerMap.get(section).get("levelSum" + classList.get(j-1)).toString());
+									.setCellValue(innerMap.get(classList.get(j-1)).get("classAllSum" + i).toString());
 						}
 						dataRow.createCell(schoolClasses.size() * 2 + 2)
-								.setCellValue(innerMap.get(section).get("allLevel").toString());
+								.setCellValue(innerMap.get("allLevel").get("allLevel"+i).toString());
 						dataRow.createCell(schoolClasses.size() * 2 + 3)
-								.setCellValue(innerMap.get(section).get("allLevelSum").toString());
+								.setCellValue(innerMap.get("allLevelSum").get("allLevelSum"+i).toString());
 						index++;
 					}
-					range += 25;
+					//M值
+                    HSSFRow MRow = sheet.createRow(range+index+2);
+                    MRow.createCell(0).setCellValue("M值");
+                    for (int j = 1; j <= schoolClasses.size(); j++) {
+                        MRow.createCell(j * 2).setCellValue(innerMap.get(classList.get(j-1)).get("M").toString());
+                    }
+
+					range += 26;
 				}
 				// 让列宽随着导出的列长自动适应
 				for (int colNum = 0; colNum < 30; colNum++) {
