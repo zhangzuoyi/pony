@@ -6,26 +6,14 @@ package com.zzy.pony.exam.service;
 
 
 
-import java.util.*;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.zzy.pony.exam.mapper.ExamineeMapper;
-import com.zzy.pony.exam.mapper.ExamineeRoomArrangeMapper;
-import com.zzy.pony.exam.model.*;
-import com.zzy.pony.exam.vo.ExamArrangeVo;
-
-import com.zzy.pony.exam.vo.ExamRoomAllocateVo;
-import com.zzy.pony.exam.vo.ExamineeVo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.zzy.pony.config.Constants;
 import com.zzy.pony.exam.dao.ExamineeRoomArrangeDao;
-import com.zzy.pony.model.Exam;
+import com.zzy.pony.exam.mapper.ExamineeRoomArrangeMapper;
+import com.zzy.pony.exam.vo.ExamArrangeVo;
+import com.zzy.pony.exam.vo.ExamRoomAllocateVo;
+import com.zzy.pony.exam.vo.ExamineeVo;
 import com.zzy.pony.model.SchoolYear;
 import com.zzy.pony.model.Term;
 import com.zzy.pony.service.ExamService;
@@ -35,6 +23,13 @@ import com.zzy.pony.service.TermService;
 import com.zzy.pony.util.CollectionsUtil;
 import com.zzy.pony.vo.ExamVo;
 import com.zzy.pony.vo.ExamineeRoomArrangeVo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
 
 
 
@@ -727,6 +722,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		int examRoomCount = examRoomAllocates.size();
 		int averageExaminee = examineeCount/examRoomCount;//每个考场分配多少考生
 		int remainExaminee = examineeCount%examRoomCount;//剩余的考生
+		int remainSize = remainExaminee;
 		//将所有考生排序
 		//Collections.sort(examinees);
 		//todo 同班同学不相临
@@ -739,10 +735,10 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
         	
         	if(remainExaminee > 0) {
         		fromIndex = toIndex ;
-        		toIndex = (i+1)*averageExaminee + 1;
+        		toIndex = (i+1)*averageExaminee + 1+i;//modify 此处应该为i+1
         	}else {
         		fromIndex = toIndex ;
-        		toIndex = (i+1)*averageExaminee ;
+        		toIndex = (i+1)*averageExaminee + remainSize ;
         	}
         	
             List<ExamineeVo> averageExaminees = examinees.subList(fromIndex,toIndex);

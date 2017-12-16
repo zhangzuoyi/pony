@@ -138,12 +138,12 @@
                     <dd>
                         <a href="javascript:;" data-url="<s:url value='/comprehensiveRank/main/' />"><label>学生整体成绩分析</label></a>
                     </dd>
-                    <dd>
+                    <%--<dd>
                         <a href="javascript:;" data-url="<s:url value='/examAdmin/average/main/' />"><label>均量值</label></a>
                     </dd>
                     <dd>
                         <a href="javascript:;" data-url="<s:url value='/examAdmin/average/main2/' />"><label>均量值(文件)</label></a>
-                    </dd>
+                    </dd>--%>
                     <dd>
                         <a href="javascript:;" data-url="<s:url value='/examAdmin/average/mainAssign/' />"><label>7选3赋分</label></a>
                     </dd>
