@@ -46,6 +46,8 @@ public class Constants {
 	public static final List<BigDecimal> AVERAGE_LEVELS;
 	public static final List<BigDecimal> AVERAGE_ASSIGN_LEVELS;
 	public static final Map<Integer, Float> ASSIGN_LEVEL;//赋分映射 
+	public static final Map<String,BigDecimal> LEVEL_WEIGHT;//指标权重
+
 
 
 
@@ -209,6 +211,31 @@ public class Constants {
 		ASSIGN_LEVEL.put(19, 46f);
 		ASSIGN_LEVEL.put(20, 43f);
 		ASSIGN_LEVEL.put(21, 40f);
+		
+		LEVEL_WEIGHT = new LinkedHashMap<String, BigDecimal>();
+		LEVEL_WEIGHT.put("A1", new BigDecimal("200"));
+		LEVEL_WEIGHT.put("A2", new BigDecimal("190"));
+		LEVEL_WEIGHT.put("A3", new BigDecimal("180"));
+		LEVEL_WEIGHT.put("A4", new BigDecimal("160"));
+		LEVEL_WEIGHT.put("A5", new BigDecimal("155"));
+		LEVEL_WEIGHT.put("A6", new BigDecimal("150"));
+		LEVEL_WEIGHT.put("A7", new BigDecimal("130"));
+		LEVEL_WEIGHT.put("A8", new BigDecimal("125"));
+		LEVEL_WEIGHT.put("A9", new BigDecimal("120"));
+		LEVEL_WEIGHT.put("A10", new BigDecimal("100"));
+		LEVEL_WEIGHT.put("A11", new BigDecimal("95"));
+		LEVEL_WEIGHT.put("A12", new BigDecimal("90"));
+		LEVEL_WEIGHT.put("A13", new BigDecimal("85"));
+		LEVEL_WEIGHT.put("A14", new BigDecimal("80"));
+		LEVEL_WEIGHT.put("A15", new BigDecimal("75"));
+		LEVEL_WEIGHT.put("A16", new BigDecimal("70"));
+		LEVEL_WEIGHT.put("A17", new BigDecimal("50"));
+		LEVEL_WEIGHT.put("A18", new BigDecimal("45"));
+		LEVEL_WEIGHT.put("A19", new BigDecimal("40"));
+		LEVEL_WEIGHT.put("A20", new BigDecimal("35"));
+		LEVEL_WEIGHT.put("A21", new BigDecimal("25"));
+		LEVEL_WEIGHT.put("A22", new BigDecimal("15"));
+
 		
 		
 

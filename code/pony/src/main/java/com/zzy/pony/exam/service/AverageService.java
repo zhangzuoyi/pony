@@ -28,6 +28,7 @@ public interface AverageService {
 			Map<String, Map<String, BigDecimal>> subjectLevelMap,Map<String, List<AverageNewVo>> subjectResults,Map<String,Integer> levelWeight);
 	Map<String,Map<String, Map<String, BigDecimal>>> calculateAverageByFile(MultipartFile file);
 	List<String> getClassCode(List<AverageExcelVo> averageExcelVos,String schoolName);
+	Set<String> getSchoolName(List<AverageExcelVo> averageExcelVos);
 	void sortAverageExcelVo(List<AverageExcelVo> averageExcelVos);
 	void sortAverageExcelVoSum(List<AverageExcelVo> averageExcelVos);
 	void sortAverageNewVo(List<AverageNewVo> averageNewVos);
@@ -76,4 +77,5 @@ public interface AverageService {
 	Map<String, Map<String, BigDecimal>> calculateTopTen(Map<Integer,List<AverageExcelVo>> schoolTopTenLevelMap,Map<Integer,List<AverageExcelVo>> schoolLevelMap,Map<Integer,BigDecimal> schoolLevelMapDecimal,List<String> classCodes);
 	void calculateAssign(Map<Integer,List<AverageExcelVo>> schoolLevelMap);
 	void calculateAssignScore(Map<Integer,List<AverageExcelVo>> schoolLevelMap,List<AverageAssignExcelVo> averageAssignExcelVos);
+	void calculateSchoolSum(Map<String,Map<Integer, BigDecimal>> schoolLevelSumMap);
 }

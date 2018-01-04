@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>均量值</title>
+<title>均量值(全县)</title>
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/easyui/themes/default/easyui.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/style.css' />" />
 <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/icon.css' />" />
@@ -50,7 +50,7 @@ width:200px;
                <el-col  :span="1">
                		{{term.name}}
                </el-col> 
-               <el-col :span="1" >
+               <%-- <el-col :span="1" >
                     <b>年级:</b>                                    
             	</el-col> 
             	<el-col :span="4" >
@@ -64,7 +64,7 @@ width:200px;
                		 </el-option>
            			 </el-select>				
                     </div>        
-            	</el-col>            	
+            	</el-col> --%>            	
             	<el-col :span="6" >              		
                		<el-button type="primary"  @click="exportAverageByFile" :disabled="exportFlag" >导出</el-button>              		             		
               	</el-col>                           
@@ -114,7 +114,7 @@ var app = new Vue({
 	mounted : function() { 
 		this.getCurrentSchoolYear();
 		this.getCurrentTerm();	
-		this.getGrades();
+		//this.getGrades();
 
 	},
 	watch:{			
@@ -160,13 +160,13 @@ var app = new Vue({
 	            },	
 				
             exportAverageByFile : function(){ 
-            	if(this.gradeId == null || this.gradeId == ""){
+            	/* if(this.gradeId == null || this.gradeId == ""){
                   	this.$alert("请选择年级","提示",{
     					type:"warning",
     					confirmButtonText:'确认'
     				});
     				return;
-                  }
+                  } */
           	 	 this.uploadResultDialogFormVisible = true;		     			 	
       			},
    			uploadResult : function(){  
