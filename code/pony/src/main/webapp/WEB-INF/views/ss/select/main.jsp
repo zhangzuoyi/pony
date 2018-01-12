@@ -49,7 +49,10 @@
 <body>
 	<div id="app">
 		<div>
-			<el-card class="box-card content-margin" v-if="showEdit">
+			<el-card class="box-card content-margin" v-if=" ! canSelect()">
+				<div>您没有选课资格！</div>
+			</el-card>
+			<el-card class="box-card content-margin" v-if="canSelect() && showEdit">
 			<div slot="header" class="clearfix">
 				<el-row> 
 				<el-col :span="4"> 
@@ -63,14 +66,16 @@
 				</el-col> </el-row>
 				<el-row> <el-col :span="4"> <span>可选数量</span> </el-col> <el-col
 					:span="6"> <span>{{config.selectNum}}</span> </el-col> </el-row>
-				<el-row> <el-row> <el-col :span="4"> <span>选课时间范围</span>
+				<el-row> 
+				<el-row> <el-col :span="4"> <span>选课时间范围</span>
 				</el-col> <el-col :span="6"> <span>{{new
 					Date(config.startTime).toLocaleString()}}--{{new
-					Date(config.endTime).toLocaleString()}}</span> </el-col> </el-row> 
-					<el-row v-if="before"> 
-				<el-col :span="4"> 
-				<b>选课暂未开始</b> 
-				</el-col> 
+					Date(config.endTime).toLocaleString()}}</span> </el-col> 
+				</el-row> 
+				<el-row v-if="before"> 
+					<el-col :span="4"> 
+					<b>选课暂未开始</b> 
+					</el-col> 
 				</el-row>
 					<el-row v-if="!before  && !after "> <el-col
 					:span="4"> <span>科目</span> </el-col> <el-col :span="10"> <el-checkbox-group
@@ -91,7 +96,7 @@
 				
 			</div>
 			</el-card>
-			<el-card class="box-card content-margin" v-if=" ! showEdit">
+			<el-card class="box-card content-margin" v-if="canSelect() && ! showEdit">
 			<div slot="header" class="clearfix">
 				<el-row> <el-col :span="4"> <b>科目选择</b> </el-col> </el-row>
 				<el-row> <el-col :span="4"> <span>学年</span> </el-col> <el-col
@@ -140,6 +145,7 @@
 				currentConfigUrl : "<s:url value='/ss/config/current'/>",
 				selectedUrl : "<s:url value='/ss/select/selected'/>",
 				saveUrl : "<s:url value='/ss/select/save'/>",
+				currentStudentGradeIdUrl:"<s:url value='/ss/select/currentStudentGradeId'/>",
 				types : [ {
 					id : "0",
 					name : "否"
@@ -150,6 +156,7 @@
 				showEdit : true,
 				before : false,
 				after : false,
+				studentGradeId:null,
 				mySelect : "",
 				
 				rules : {
@@ -161,6 +168,7 @@
 			mounted : function() {
 				this.getCurrentConfig();
 				this.getSelectedSubjects();
+				this.getStudentGradeId();
 			},
 			methods : {
 				getCurrentConfig : function() {
@@ -177,6 +185,14 @@
 							}, function(response) {
 							});
 				},
+				getStudentGradeId : function(){
+					this.$http.get(this.currentStudentGradeIdUrl).then(
+					function(response){
+						this.studentGradeId=response.data;
+					},
+					function(response){}  			
+					); 
+				},	
 				getSelectedSubjects : function() {
 					this.$http.get(this.selectedUrl).then(function(response) {
 						this.subjects = response.data;
@@ -217,6 +233,9 @@
 				},
 				cancelEdit : function() {
 					this.showEdit = false;
+				},
+				canSelect : function(){
+					return this.config.gradeIds.indexOf(this.studentGradeId) >=0;
 				}
 			}
 

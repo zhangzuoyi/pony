@@ -16,15 +16,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
-import com.zzy.pony.model.LessonArrange;
 import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.ss.model.SubjectSelectConfig;
 import com.zzy.pony.ss.service.SubjectSelectConfigService;
-import com.zzy.pony.vo.LessonArrangeVo;
 
 @Controller
 @RequestMapping(value = "/ss/config")

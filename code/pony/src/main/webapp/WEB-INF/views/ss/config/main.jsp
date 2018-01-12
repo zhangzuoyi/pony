@@ -103,6 +103,11 @@ width:200px;
 			 <el-form-item label="学年" :label-width="formLabelWidth" > 
 			 	{{config.schoolYear.name }}
 			 </el-form-item>
+			 <el-form-item label="年级" :label-width="formLabelWidth" > 
+            	<el-checkbox-group v-model="config.gradeIds" id="gradesGroup" >
+					<el-checkbox v-for="x in grades" :label="x.gradeId">{{x.name}}</el-checkbox>
+				</el-checkbox-group>
+			 </el-form-item> 
 			 <el-form-item label="科目" :label-width="formLabelWidth" > 
             	<el-input v-model="config.subjects"></el-input>
 			 </el-form-item> 
@@ -146,7 +151,7 @@ width:200px;
 	var app = new Vue({ 
 	el : '#app' ,
 	data : { 		
-		config:{configId:null,subjects:null,selectNum:null,startTime:null,endTime:null,isCurrent:null,schoolYear:{}},
+		config:{configId:null,subjects:null,selectNum:null,startTime:null,endTime:null,isCurrent:null,schoolYear:{},gradeIds:[]},
 		dialogFormVisible:false,
 		formLabelWidth:"120px",
 		tableData:[],
@@ -155,9 +160,11 @@ width:200px;
 		deleteUrl :"<s:url value='/ss/config/delete'/>",
 		addUrl :"<s:url value='/ss/config/add'/>",
 		updateUrl :"<s:url value='/ss/config/edit'/>",
+		gradeListUrl:"<s:url value='/grade/list'/>",
 		title:"",
 		types:[{id:"0",name:"否"},{id:"1",name:"是"}],
-		choolYear:null, 
+		schoolYear:null, 
+		grades:[],
 		rules :{
 		/* seq: [{required :true,message:"请填写顺序..",trigger:"blur"}]	 */			
 		}
@@ -167,9 +174,18 @@ width:200px;
 	mounted : function() { 
 		this.getConfigList();
 		this.getCurrentSchoolYear();
+		this.getGradeList();
 	}, 
 	methods : { 
-			getConfigList : function(){
+		getGradeList : function(){
+			this.$http.get(this.gradeListUrl).then(
+			function(response){
+				this.grades=response.data;
+			},
+			function(response){}  			
+			); 
+		},	
+		getConfigList : function(){
 				this.$http.get(this.listUrl).then(
 				function(response){
 					this.tableData=response.data;
@@ -210,7 +226,7 @@ width:200px;
 		addConfig:function(){
 			this.title="新增配置";
 			this.dialogFormVisible = true;
-			this.config={configId:null,subjects:null,selectNum:null,startTime:null,endTime:null,isCurrent:null,schoolYear:this.schoolYear};
+			this.config={configId:null,subjects:null,selectNum:null,startTime:null,endTime:null,isCurrent:null,schoolYear:this.schoolYear,gradeIds:[]};
 		},		
 		onSubmit :function(formName){
 			if(this.config.configId == null ){

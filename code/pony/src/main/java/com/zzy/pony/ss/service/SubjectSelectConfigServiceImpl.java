@@ -32,6 +32,7 @@ public class SubjectSelectConfigServiceImpl implements SubjectSelectConfigServic
 		old.setSubjects(config.getSubjects());
 		old.setUpdateTime(new Date());
 		old.setUpdateUser(loginName);
+		old.setGrades(config.getGrades());
 		
 		dao.save(old);
 	}

@@ -3,6 +3,8 @@ package com.zzy.pony.ss.model;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.zzy.pony.model.SchoolYear;
 
@@ -55,6 +57,8 @@ public class SubjectSelectConfig implements Serializable {
 
 	@Column(name="UPDATE_USER")
 	private String updateUser;
+	
+	private String grades;
 
 	//bi-directional many-to-one association to StudentSubjectSelect
 	@OneToMany(mappedBy="subjectSelectConfig")
@@ -68,6 +72,22 @@ public class SubjectSelectConfig implements Serializable {
 	public SubjectSelectConfig() {
 	}
 
+	public void setGradeIds(Integer[] gradeIds){
+		if(gradeIds != null && gradeIds.length>0){
+			grades=StringUtils.join(gradeIds,",");
+		}
+	}
+	public Integer[] getGradeIds(){
+		if(grades != null){
+			String[] strs=grades.split(",");
+			Integer[] results=new Integer[strs.length];
+			for(int i=0;i<strs.length;i++){
+				results[i]=Integer.valueOf(strs[i]);
+			}
+			return results;
+		}
+		return new Integer[0];
+	}
 	public String[] getSubjectArray(){
 		return subjects.split(",");
 	}
@@ -179,6 +199,14 @@ public class SubjectSelectConfig implements Serializable {
 
 	public void setSchoolYear(SchoolYear schoolYear) {
 		this.schoolYear = schoolYear;
+	}
+
+	public String getGrades() {
+		return grades;
+	}
+
+	public void setGrades(String grades) {
+		this.grades = grades;
 	}
 
 }

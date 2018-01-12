@@ -1,7 +1,6 @@
 package com.zzy.pony.ss.controller;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -20,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 
+import com.zzy.pony.model.Student;
 import com.zzy.pony.security.ShiroUtil;
+import com.zzy.pony.service.StudentService;
 import com.zzy.pony.ss.service.StudentSubjectSelectService;
 
 @Controller
@@ -28,6 +29,8 @@ import com.zzy.pony.ss.service.StudentSubjectSelectService;
 public class SubjectSelectController {
 	@Autowired
 	private StudentSubjectSelectService service;
+	@Autowired
+	private StudentService studentService;
 	
 	@RequestMapping(value="main",method = RequestMethod.GET)
 	public String main(Model model){
@@ -45,6 +48,12 @@ public class SubjectSelectController {
 	public String save(@RequestParam("configId") Integer configId,@RequestParam("subjects") String subjects, Model model){
 		service.save(configId, Arrays.asList(subjects.split(",")), ShiroUtil.getLoginUser().getLoginName());
 		return "success";
+	}
+	@RequestMapping(value="currentStudentGradeId",method = RequestMethod.GET)
+	@ResponseBody
+	public Integer currentStudentGradeId(Model model){
+		Student student=studentService.get(ShiroUtil.getLoginUser().getStudentId());
+		return student.getSchoolClass().getGrade().getGradeId();
 	}
 
 	@InitBinder
