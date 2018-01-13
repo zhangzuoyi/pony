@@ -1,5 +1,6 @@
 package com.zzy.pony.controller;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
@@ -13,8 +14,10 @@ import javax.servlet.ServletException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -39,6 +42,7 @@ import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
+import com.zzy.pony.exam.vo.ExamRoomAllocateVo;
 import com.zzy.pony.model.CommonDict;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.Student;
@@ -48,6 +52,7 @@ import com.zzy.pony.service.SchoolClassService;
 import com.zzy.pony.service.StudentService;
 import com.zzy.pony.service.SubjectService;
 import com.zzy.pony.util.DateTimeUtil;
+import com.zzy.pony.util.ExcelUtil;
 import com.zzy.pony.util.TemplateUtil;
 import com.zzy.pony.vo.StudentStatusChangeVo;
 
@@ -138,7 +143,77 @@ public class StudentAdminController {
 		}
 		return list;
 	}
-	
+	@RequestMapping(value="exportByClass",method = RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<byte[]> exportByClass(@RequestParam(value="classId") int classId, Model model){
+		List<Student> list=service.findBySchoolClass(classId);
+		SchoolClass sc=classService.get(classId);
+		String reportName = sc.getName()+"学生名单";
+		HttpHeaders headers = new HttpHeaders();
+		try {
+			headers.setContentDispositionFormData("attachment", new String(reportName.getBytes("utf-8"), "ISO8859-1")
+					+ DateTimeUtil.dateToStr(new Date()) + ".xls");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		return new ResponseEntity<byte[]>(excelContent(list, reportName), headers, HttpStatus.CREATED);
+	}
+	private byte[] excelContent(List<Student> list, String reportName) {
+		List<CommonDict> sexes=dictService.findSexes();
+		Workbook wb = new HSSFWorkbook();
+		String sheetName = reportName;
+		Sheet sheet = wb.createSheet(sheetName);
+
+		CellStyle style = ExcelUtil.getCommonStyle(wb);
+
+		CellStyle styleTitle = ExcelUtil.getTitleStyle(wb, style);
+
+		// 设置标题
+		Row titleRow = sheet.createRow(0);
+		int colIndex=0;
+		String[] titles=new String[]{"学号","姓名","性别"};
+		for(String title : titles){
+			getCell(titleRow, title, styleTitle, colIndex);
+			colIndex++;
+		}
+
+		// 设置内容
+		int voLen = list.size();
+		for (int i = 0; i < voLen; i++) {
+			Student vo = list.get(i);
+			Row row = sheet.createRow(1 + i);
+			int cellIndex = 0;
+			// 学号
+			getCell(row, vo.getStudentNo(), style, cellIndex++);
+			// 姓名
+			getCell(row, vo.getName(), style, cellIndex++);
+			// 性别
+			getCell(row, getSex(sexes, vo.getSex()), style, cellIndex++);
+		}
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try {
+			wb.write(out);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return out.toByteArray();
+	}
+	private String getSex(List<CommonDict> sexes, String code){
+		for(CommonDict sex: sexes){
+			if(sex.getCode().equals(code)){
+				return sex.getValue();
+			}
+		}
+		return null;
+	}
+	private Cell getCell(Row row, String value, CellStyle style, int colIndex) {
+		Cell cell = row.createCell(colIndex);
+		cell.setCellStyle(style);
+		cell.setCellValue(value);
+		return cell;
+	}
 	@RequestMapping(value="add",method = RequestMethod.POST)
 	@ResponseBody
 	public String add(Student sy, Model model){

@@ -51,6 +51,7 @@
             	<option v-for="g in schoolClasses" v-bind:value="g.classId">{{g.name}}</option>
             </select>
             <a href="#" id="searchButton" class="easyui-linkbutton" iconCls="icon-search">查询</a>
+            <a href="#" id="exportButton" class="easyui-linkbutton" iconCls="icon-search">导出</a>
         </div>
     </div>
     <!-- End of toolbar -->
@@ -540,7 +541,16 @@
 					}	
 				});
 			}else{
-				alert("empty");
+				alert("请选择班级");
+			}
+			
+		});
+		$("#exportButton").click(function(){
+			var classId=$("select[name='schoolClass']").children('option:selected').val();
+			if(classId){
+				window.location.href="<s:url value='/studentAdmin/exportByClass' />"+"?classId="+classId;
+			}else{
+				alert("请选择班级");
 			}
 			
 		});
