@@ -146,8 +146,8 @@ public class StudentAdminController {
 	@RequestMapping(value="exportByClass",method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseEntity<byte[]> exportByClass(@RequestParam(value="classId") int classId, Model model){
-		List<Student> list=service.findBySchoolClass(classId);
 		SchoolClass sc=classService.get(classId);
+		List<Student> list=service.findByGrade(sc.getGrade().getGradeId());
 		String reportName = sc.getName()+"学生名单";
 		HttpHeaders headers = new HttpHeaders();
 		try {
@@ -172,7 +172,7 @@ public class StudentAdminController {
 		// 设置标题
 		Row titleRow = sheet.createRow(0);
 		int colIndex=0;
-		String[] titles=new String[]{"学号","姓名","性别"};
+		String[] titles=new String[]{"学号","姓名","性别","班级"};
 		for(String title : titles){
 			getCell(titleRow, title, styleTitle, colIndex);
 			colIndex++;
@@ -190,6 +190,8 @@ public class StudentAdminController {
 			getCell(row, vo.getName(), style, cellIndex++);
 			// 性别
 			getCell(row, getSex(sexes, vo.getSex()), style, cellIndex++);
+			//班级
+			getCell(row, vo.getSchoolClass().getName(), style, cellIndex++);
 		}
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -35,6 +35,8 @@ public class StudentServiceImpl implements StudentService {
 	private UserService userService;
 	@Autowired
 	private StudentMapper mapper;
+	@Autowired
+	private SchoolClassService scService;
 
 	@Override
 	public void add(Student sy) {
@@ -235,5 +237,11 @@ public class StudentServiceImpl implements StudentService {
 			changeDao.save(sc);
 		}
 		
+	}
+	@Override
+	public List<Student> findByGrade(Integer gradeId) {
+		List<SchoolClass> classes=scService.findByGrade(gradeId);
+		List<Student> students=dao.findBySchoolClasses(classes);
+		return students;
 	}
 }

@@ -42,4 +42,5 @@ public interface StudentService {
 	 * @param studentIds
 	 */
 	void setStudentSubjects(String[] subjects,Integer[] studentIds);
+	List<Student> findByGrade(Integer gradeId);
 }
