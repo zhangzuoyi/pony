@@ -4,7 +4,7 @@
 
 <mapper namespace="com.zzy.pony.ss.mapper.SubjectSelectResultMapper">
     <sql id="base_select">
-		select t.STUDENT_ID as studentId,a.name as studentName,a.CLASS_ID as classId,CONCAT(c.name,CONVERT(b.SEQ,char),'班') as className, group_concat(t.`SUBJECT` ORDER BY t.subject ) as groupName
+		select t.STUDENT_ID as studentId,a.name as studentName,a.CLASS_ID as classId,CONCAT(c.name,'(',CONVERT(b.SEQ,char),')班') as className, group_concat(t.`SUBJECT` ORDER BY t.subject ) as groupName
 		from  t_student_subject_select t
 		left join t_student a on t.STUDENT_ID = a.STUDENT_ID
 		left join t_school_class b on a.CLASS_ID = b.CLASS_ID

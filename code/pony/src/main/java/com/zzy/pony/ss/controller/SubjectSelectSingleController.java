@@ -49,6 +49,49 @@ public class SubjectSelectSingleController {
         return subjectSelectSingleService.list();
 
     }
+    @RequestMapping(value="export",method = RequestMethod.GET)
+    public void export(HttpServletRequest request,HttpServletResponse response) throws Exception{
+
+        try {
+            String title = "单科统计";
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            HSSFSheet sheet = workbook.createSheet(title);
+
+
+            List<StudentSubjectSingleVo> list = subjectSelectSingleService.list();
+            HSSFRow  headRow = sheet.createRow(0);
+            headRow.createCell(0).setCellValue("科目");
+            headRow.createCell(1).setCellValue("人数");
+            HSSFRow row = null;
+            for(int  i = 1; i<=list.size();i++) {
+                row = sheet.createRow(i);
+                row.createCell(0).setCellValue(list.get(i-1).getSubjectName());
+                row.createCell(1).setCellValue(list.get(i-1).getCountNum());
+            }
+
+
+
+            if(workbook !=null){
+                try
+                {
+                    String fileName = new String(title.getBytes("utf-8"), "ISO8859-1")+DateTimeUtil.dateToStr(new Date()) + ".xls" ;
+                    String headStr = "attachment; filename=\"" + fileName + "\"";
+                    response.setContentType("APPLICATION/OCTET-STREAM");
+                    response.setHeader("Content-Disposition", headStr);
+                    OutputStream out = response.getOutputStream();
+                    workbook.write(out);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
 
 }
