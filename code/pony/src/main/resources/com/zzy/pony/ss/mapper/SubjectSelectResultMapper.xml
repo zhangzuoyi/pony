@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.ss.mapper.SubjectSelectResultMapper">
+    <sql id="base_select">
+		select t.STUDENT_ID as studentId,a.name as studentName,a.CLASS_ID as classId,CONCAT(c.name,CONVERT(b.SEQ,char),'班') as className, group_concat(t.`SUBJECT` ORDER BY t.subject ) as groupName
+		from  t_student_subject_select t
+		left join t_student a on t.STUDENT_ID = a.STUDENT_ID
+		left join t_school_class b on a.CLASS_ID = b.CLASS_ID
+		left join t_grade c on b.grade_id = c.grade_id
+
+	</sql>
+
+    <select id="findBySelected" resultType="com.zzy.pony.ss.vo.StudentSubjectResultVo">
+        <include refid="base_select"></include>
+        where 1=1
+        <if test="gradeId != null and gradeId != 0 ">
+            and c.grade_id = #{gradeId}
+        </if>
+        <if test="classId != null and classId != 0 ">
+            and a.CLASS_ID = #{classId}
+        </if>
+        <if test="studentId != null and studentId != '' ">
+            and t.STUDENT_ID = #{studentId}
+        </if>
+        <if test="configId != null and configId != 0 ">
+            and t.config_id = #{configId}
+        </if>
+        group by t.STUDENT_ID;
+    </select>
+
+
+
+
+</mapper>

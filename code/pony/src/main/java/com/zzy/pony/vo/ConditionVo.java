@@ -22,6 +22,10 @@ public class ConditionVo {
 
 	private int weekdayId;
 	private int periodId;
+
+	private boolean status;
+
+	private int configId;
 	
 	public ConditionVo(){
 		
@@ -151,4 +155,20 @@ public class ConditionVo {
 	public void setPeriodId(int periodId) {
 		this.periodId = periodId;
 	}
+
+	public boolean isStatus() {
+		return status;
+	}
+
+	public void setStatus(boolean status) {
+		this.status = status;
+	}
+
+    public int getConfigId() {
+        return configId;
+    }
+
+    public void setConfigId(int configId) {
+        this.configId = configId;
+    }
 }

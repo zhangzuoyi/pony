@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.ss.mapper.SubjectSelectSingleMapper">
+
+
+    <select id="list" resultType="com.zzy.pony.ss.vo.StudentSubjectSingleVo">
+
+        select t.`SUBJECT` as subjectName,count(1) as countNum
+        from  t_student_subject_select t
+        where  t.CONFIG_ID = #{0}
+        group by t.`SUBJECT` order by t.`SUBJECT`
+
+
+    </select>
+
+
+
+
+</mapper>

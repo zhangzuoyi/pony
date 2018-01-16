@@ -66,7 +66,7 @@
 			<ul class="layui-nav layui-nav-tree" id="sideNav"
 				lay-filter="sideNav">
 				<shiro:hasPermission name="sys_admin">
-					<li class="layui-nav-item layui-nav-itemed"><a><i
+					<li class="layui-nav-item"><a><i
 							class="layui-icon" style="font-size: 25px; padding-right: 10px;">&#xe614;</i>系统管理</a>
 						<dl class="layui-nav-child">
 							<shiro:hasPermission name="schoolyear_admin">
@@ -362,14 +362,23 @@
 							<%-- <dd>
                             <a href="javascript:;" data-url="<s:url value='/ss/select/main/' />"><label>科目选择</label></a>
                         </dd> --%>
-							<dd>
-								<a href="javascript:;"
-									data-url="<s:url value='/ss/statistics/main/' />"><label>选课统计</label></a>
-							</dd>
+
 							<dd>
 								<a href="javascript:;"
 									data-url="<s:url value='/ss/admin/main/' />"><label>选课管理</label></a>
 							</dd>
+								<dd>
+									<a href="javascript:;"
+									   data-url="<s:url value='/ss/statistics/main/' />"><label>选课统计</label></a>
+								</dd>
+								<dd>
+									<a href="javascript:;"
+									   data-url="<s:url value='/ss/result/main/' />"><label>选课结果</label></a>
+								</dd>
+								<dd>
+									<a href="javascript:;"
+									   data-url="<s:url value='/ss/single/main/' />"><label>单科统计</label></a>
+								</dd>
 						</dl></li>
 				</shiro:hasPermission>
 				<shiro:hasPermission name="attendance">
