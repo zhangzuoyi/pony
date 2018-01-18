@@ -26,6 +26,13 @@ public class ConditionVo {
 	private boolean status;
 
 	private int configId;
+
+	private String questionType;
+
+	private int currentPage;
+	private int pageSize;
+	private int startNum;//currentPage*pageSize
+
 	
 	public ConditionVo(){
 		
@@ -171,4 +178,36 @@ public class ConditionVo {
     public void setConfigId(int configId) {
         this.configId = configId;
     }
+
+	public int getCurrentPage() {
+		return currentPage;
+	}
+
+	public void setCurrentPage(int currentPage) {
+		this.currentPage = currentPage;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public int getStartNum() {
+		return startNum;
+	}
+
+	public void setStartNum(int startNum) {
+		this.startNum = startNum;
+	}
+
+	public String getQuestionType() {
+		return questionType;
+	}
+
+	public void setQuestionType(String questionType) {
+		this.questionType = questionType;
+	}
 }
