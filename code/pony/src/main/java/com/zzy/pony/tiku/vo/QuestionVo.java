@@ -34,7 +34,11 @@ public class QuestionVo {
     private String collectUrl;
     private int paperId;
     private int isHandle;
-    private Object[] itemArr;
+    private Object[] itemArr;//答案备选项
+    private boolean showPoint;
+    private String paperName;
+    private String paperCollectUrl;
+
 
     public QuestionVo(){}
 
@@ -244,5 +248,29 @@ public class QuestionVo {
 
     public void setItemArr(Object[] itemArr) {
         this.itemArr = itemArr;
+    }
+
+    public boolean isShowPoint() {
+        return showPoint;
+    }
+
+    public void setShowPoint(boolean showPoint) {
+        this.showPoint = showPoint;
+    }
+
+    public String getPaperName() {
+        return paperName;
+    }
+
+    public void setPaperName(String paperName) {
+        this.paperName = paperName;
+    }
+
+    public String getPaperCollectUrl() {
+        return paperCollectUrl;
+    }
+
+    public void setPaperCollectUrl(String paperCollectUrl) {
+        this.paperCollectUrl = paperCollectUrl;
     }
 }

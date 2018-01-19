@@ -43,10 +43,6 @@ public class QuestionServiceImpl implements QuestionService{
                 Type listType = new TypeToken<ArrayList<MyJson>>(){}.getType();
                 Gson gson = new Gson();
                 ArrayList<MyJson> jsons = gson.fromJson(vo.getItems(), listType);
-                Object[] itemArr = new Object[jsons.size()];
-                for (int i=0;i<jsons.size();i++) {
-                    itemArr[i] =jsons.get(i);
-                }
                 vo.setItemArr(jsons.toArray());
             }finally {
                 continue;

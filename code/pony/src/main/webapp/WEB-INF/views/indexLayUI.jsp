@@ -519,7 +519,7 @@
 				</shiro:hasPermission>
 
 					<li class="layui-nav-item"><a><i class="layui-icon"
-													 style="font-size: 25px; padding-right: 10px;">&#xe610;</i>题库管理</a>
+													 style="font-size: 25px; padding-right: 10px;">&#xe624;</i>题库管理</a>
 						<dl class="layui-nav-child">
 							<dd>
 								<a href="javascript:;" data-url="<s:url value='/tiku/question/main' />"><label>题库管理</label></a>

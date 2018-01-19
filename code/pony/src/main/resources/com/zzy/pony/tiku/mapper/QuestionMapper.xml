@@ -8,7 +8,7 @@
 		t.`SUBJECT`,t.GRADE,t.PROPERTY,t.DIFFICULTY,t.PROVINCE,t.CITY,t.SCHOOL,t.TEXTBOOK,t.SOURCE,
 		t.COLLECT_SOURCE as collectSource,t.CREATE_USER as createUser,t.CREATE_TIME as createTime,
 		t.UPDATE_USER as updateUser,t.UPDATE_TIME as updateTime,t.SEQ,t.COLLECT_URL as collectUrl,
-		t.PAPER_ID as paperId,t.is_handle as isHandle from exam_question t
+		t.PAPER_ID as paperId,t.is_handle as isHandle,FALSE as showPoint,a.name as paperName,a.collect_url as paperCollectUrl from exam_question t left join exam_paper a on t.paper_id = a.id
 	</sql>
 
 	<select id="findPage" resultType="com.zzy.pony.tiku.vo.QuestionVo">
