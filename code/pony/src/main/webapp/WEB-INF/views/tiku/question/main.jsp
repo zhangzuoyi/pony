@@ -112,6 +112,30 @@
 
 
         </el-card>
+        <div class="basket" style="position: fixed;top: 50%;right: 0; z-index: 999;overflow: hidden;padding-left: 40px;">
+            <div class="basket_tit" style="position: absolute;top: 0;left:0;width: 40px;height:100%;background:#4498ee;color: #fff;">
+                <p style=" margin-top: 20px;line-height: 14px;font-size: 14px;">
+                    <i class="layui-icon" style="display: inline-block;margin-left: 10px;font-size: 25px;">&#xe60a;</i>
+                    <em  style="display: block;width: 1em;margin-left: 13px;margin-right: 13px;">试题篮</em>
+                </p>
+                <span style="position: absolute;bottom: 0;left: 0;width: 40px;height: 40px;display: block; border-top:1px solid #eee;cursor: pointer;">
+                    <i v-if="openFlag" class="layui-icon" style="display: inline-block;margin-top: 12px; margin-left: 10px;font-size: 25px;" @click="closeBasket()">&#xe602;</i>
+                    <i v-if="!openFlag" class="layui-icon" style="display: inline-block;margin-top: 12px; margin-left: 10px;font-size: 25px;" @click="openBasket()">&#xe603;</i>
+                </span>
+
+            </div>
+            <div class="basket_con" style="float: left;width: 100px;border:1px solid #dad4ae;border-left: 0;min-height: 198px;">
+                <div class="basket_count" style="margin: 2px;min-height: 150px;">
+                    <div style="background: #d5eaff;font-size: 12px;text-align: center;">共计0道题</div>
+                </div>
+                <div class="basket_foot" style="text-align: center;">
+                    <el-button type="primary" size="small" round @click="analyze(x.id)">生成试卷</el-button>
+                </div>
+
+            </div>
+
+        </div>
+
         <el-dialog title="解析" v-model="dialogFormVisible">
             <el-card>
                 <div class="exam-head">
@@ -143,7 +167,8 @@
             pageSize: [10],
             total: null,
             questions: [],
-            question: {}
+            question: {},
+            openFlag:true
 
 
         },
@@ -202,7 +227,16 @@
             },
             mouserleave:function(id){
                 document.getElementById(id).style.border="1px solid #eeeeee";
-            }
+            },
+            closeBasket:function(){
+                document.getElementsByClassName('basket')[0].style.right= '-100px';
+                this.openFlag=!this.openFlag;
+            },
+            openBasket:function(){
+                document.getElementsByClassName('basket')[0].style.right= '0px';
+                this.openFlag=!this.openFlag;
+
+            },
 
 
         }
