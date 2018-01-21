@@ -92,6 +92,10 @@
 
                     <div class="exam-foot" style="padding-top: 5px">
                         <el-button type="primary" size="small" round @click="analyze(x.id)">解析</el-button>
+                        <el-button v-if="!addFlag(x)" type="primary" size="small" round @click="add(x)">+选题</el-button>
+                        <el-button v-if="addFlag(x)" type="danger" size="small" round @click="remove(x)">-选题</el-button>
+
+
                     </div>
                     </div>
                 </el-card>
@@ -126,10 +130,13 @@
             </div>
             <div class="basket_con" style="float: left;width: 100px;border:1px solid #dad4ae;border-left: 0;min-height: 198px;">
                 <div class="basket_count" style="margin: 2px;min-height: 150px;">
-                    <div style="background: #d5eaff;font-size: 12px;text-align: center;">共计0道题</div>
+                    <div style="background: #d5eaff;font-size: 12px;text-align: center;">共计<span style="color: #fe8a00">{{count}}</span>道题</div>
+                    <div v-for="(item,key) in selectList" style="text-align: center;padding-top: 5px;">
+                        <span>{{key}}:<span style="color: #fe8a00"> {{item.length}}</span>道</span>
+                    </div>
                 </div>
                 <div class="basket_foot" style="text-align: center;">
-                    <el-button type="primary" size="small" round @click="analyze(x.id)">生成试卷</el-button>
+                    <el-button type="primary" size="small" round @click="generatePaper(x)">生成试卷</el-button>
                 </div>
 
             </div>
@@ -168,7 +175,10 @@
             total: null,
             questions: [],
             question: {},
-            openFlag:true
+            openFlag:true,//选题篮打开标记
+            count:0,//总选题数目
+            selectList:{},//已选集合,key  类型  value  选题id的数组
+            selectId:null,
 
 
         },
@@ -238,6 +248,41 @@
 
             },
 
+            add: function(x){
+                this.count++;
+                this.selectId = x.id;
+                if(this.selectList[x.type] != null){
+                    this.selectList[x.type].push(x.id);
+                }else{
+                    var arr = new Array();
+                    arr.push(x.id);
+                    this.selectList[x.type] =arr;
+                }
+            },
+            remove:function(x){
+                this.count--;
+                for(var i=0; i<this.selectList[x.type].length; i++) {
+                    if(this.selectList[x.type][i] == x.id) {
+                        this.selectList[x.type].splice(i, 1);
+                        if(this.selectList[x.type].length<=0){
+                            delete this.selectList[x.type];
+                        }
+                        break;
+                    }
+                }
+            },
+            addFlag:function(x){
+                if (this.selectList[x.type] != null) {
+                    for (var i = 0; i < this.selectList[x.type].length; i++) {
+                        if (this.selectList[x.type][i] == x.id) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        },
+        generatePaper:function(){
 
         }
 
