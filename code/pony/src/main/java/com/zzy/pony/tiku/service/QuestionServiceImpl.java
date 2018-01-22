@@ -3,9 +3,9 @@ package com.zzy.pony.tiku.service;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.zzy.pony.tiku.mapper.QuestionMapper;
+import com.zzy.pony.tiku.vo.MyJson;
 import com.zzy.pony.tiku.vo.QuestionVo;
 import com.zzy.pony.vo.ConditionVo;
-import com.zzy.pony.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -34,7 +33,7 @@ public class QuestionServiceImpl implements QuestionService{
 
     @Override
     public Page<QuestionVo> list(ConditionVo cv) {
-        cv.setStartNum(cv.getCurrentPage()*cv.getPageSize());
+        cv.setStartNum((cv.getCurrentPage()-1)*cv.getPageSize());
         List<QuestionVo> list=questionMapper.findPage(cv);
         //items str-->array
         for (QuestionVo vo:
@@ -50,7 +49,7 @@ public class QuestionServiceImpl implements QuestionService{
         }
 
         int count=questionMapper.findCount(cv);
-        Pageable pageable = new PageRequest(cv.getCurrentPage(), cv.getPageSize());
+        Pageable pageable = new PageRequest(cv.getCurrentPage()-1, cv.getPageSize());
         Page<QuestionVo> result = new PageImpl<QuestionVo>(list, pageable, count);
         return result;
 
@@ -58,16 +57,4 @@ public class QuestionServiceImpl implements QuestionService{
 
 
 }
-class MyJson {
-    private String item;
 
-    public String getItem() {
-        return item;
-    }
-
-    public void setItem(String item) {
-        this.item = item;
-    }
-
-
-}

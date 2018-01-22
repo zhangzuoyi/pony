@@ -54,49 +54,51 @@
                 </el-row>
             </div>
             <div>
-                <el-card v-for="x in questions" :id="x.id" >
+                <el-card v-for="x in questions" :id="x.id">
                     <div v-on:mouseenter="mouserenter(x.id)" v-on:mouseleave="mouserleave(x.id)">
-                    <div class="exam-head"  >
-                        <el-row>
-                            <el-col :span="5"><em>题型:{{x.type}}</em></el-col>
-                            <el-col :span="5"><em>题类:</em></el-col>
-                            <el-col :span="5"><em>难易度:{{x.difficulty}}</em></el-col>
-                            <el-col :span="9"><em>试题来源:<a v-bind:href="x.paperCollectUrl" target="_blank">{{x.paperName}}</a></em>
-                            </el-col>
-                        </el-row>
+                        <div class="exam-head">
+                            <el-row>
+                                <el-col :span="5"><em>题型:{{x.type}}</em></el-col>
+                                <el-col :span="5"><em>题类:</em></el-col>
+                                <el-col :span="5"><em>难易度:{{x.difficulty}}</em></el-col>
+                                <el-col :span="9"><em>试题来源:<a v-bind:href="x.paperCollectUrl" target="_blank">{{x.paperName}}</a></em>
+                                </el-col>
+                            </el-row>
 
-                    </div>
-                    <hr class="layui-bg-grey" style="margin: 5px 0px">
-                    <div style="cursor: pointer" @click="switchShowPoint(x)">
-
-                        <div class="exam-content" style="border-bottom: 2px dashed #dcdcdc">
-                            <div class="exam-q"><span v-html="x.question"></span></div>
-                            <div class="exam-a">
-                                <el-row>
-                                    <el-col v-for="(item,index) in x.itemArr" :span="6">
-                                        <%--{{item.item}}--%>
-                                        <span v-html="item.item"></span>
-                                    </el-col>
-                                </el-row>
-                            </div>
                         </div>
-                        <div v-show="x.showPoint" style="padding-top: 5px;padding-bottom: 5px;">
-                            <div>
-                                <span class="exam-point"><b>【考点】</b></span>
+                        <hr class="layui-bg-grey" style="margin: 5px 0px">
+                        <div style="cursor: pointer" @click="switchShowPoint(x)">
+
+                            <div class="exam-content" style="border-bottom: 2px dashed #dcdcdc">
+                                <div class="exam-q"><span v-html="x.question"></span></div>
+                                <div class="exam-a">
+                                    <el-row>
+                                        <el-col v-for="(item,index) in x.itemArr" :span="6">
+                                            <%--{{item.item}}--%>
+                                            <span v-html="item.item"></span>
+                                        </el-col>
+                                    </el-row>
+                                </div>
+                            </div>
+                            <div v-show="x.showPoint" style="padding-top: 5px;padding-bottom: 5px;">
                                 <div>
-                                    <span>{{x.checkPoints}}</span>
+                                    <span class="exam-point"><b>【考点】</b></span>
+                                    <div>
+                                        <span>{{x.checkPoints}}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="exam-foot" style="padding-top: 5px">
-                        <el-button type="primary" size="small" round @click="analyze(x.id)">解析</el-button>
-                        <el-button v-if="!addFlag(x)" type="primary" size="small" round @click="add(x)">+选题</el-button>
-                        <el-button v-if="addFlag(x)" type="danger" size="small" round @click="remove(x)">-选题</el-button>
+                        <div class="exam-foot" style="padding-top: 5px">
+                            <el-button type="primary" size="small" round @click="analyze(x.id)">解析</el-button>
+                            <el-button v-if="!addFlag(x)" type="primary" size="small" round @click="add(x)">+选题
+                            </el-button>
+                            <el-button v-if="addFlag(x)" type="danger" size="small" round @click="remove(x)">-选题
+                            </el-button>
 
 
-                    </div>
+                        </div>
                     </div>
                 </el-card>
             </div>
@@ -116,27 +118,35 @@
 
 
         </el-card>
-        <div class="basket" style="position: fixed;top: 50%;right: 0; z-index: 999;overflow: hidden;padding-left: 40px;">
-            <div class="basket_tit" style="position: absolute;top: 0;left:0;width: 40px;height:100%;background:#4498ee;color: #fff;">
-                <p style=" margin-top: 20px;line-height: 14px;font-size: 14px;">
+        <div class="basket"
+             style="position: fixed;top: 50%;right: 0; z-index: 999;overflow: hidden;padding-left: 40px;">
+            <div class="basket_tit"
+                 style="position: absolute;top: 0;left:0;width: 40px;height:100%;background:#4498ee;color: #fff;">
+                <p style=" margin-top: 20px;line-height: 20px;font-size: 14px;">
                     <i class="layui-icon" style="display: inline-block;margin-left: 10px;font-size: 25px;">&#xe60a;</i>
-                    <em  style="display: block;width: 1em;margin-left: 13px;margin-right: 13px;">试题篮</em>
+                    <em style="display: block;width: 1em;margin-left: 13px;margin-right: 13px;">试题篮</em>
                 </p>
                 <span style="position: absolute;bottom: 0;left: 0;width: 40px;height: 40px;display: block; border-top:1px solid #eee;cursor: pointer;">
-                    <i v-if="openFlag" class="layui-icon" style="display: inline-block;margin-top: 12px; margin-left: 10px;font-size: 25px;" @click="closeBasket()">&#xe602;</i>
-                    <i v-if="!openFlag" class="layui-icon" style="display: inline-block;margin-top: 12px; margin-left: 10px;font-size: 25px;" @click="openBasket()">&#xe603;</i>
+                    <i v-if="openFlag" class="layui-icon"
+                       style="display: inline-block;margin-top: 12px; margin-left: 10px;font-size: 25px;"
+                       @click="closeBasket()">&#xe602;</i>
+                    <i v-if="!openFlag" class="layui-icon"
+                       style="display: inline-block;margin-top: 12px; margin-left: 10px;font-size: 25px;"
+                       @click="openBasket()">&#xe603;</i>
                 </span>
 
             </div>
-            <div class="basket_con" style="float: left;width: 100px;border:1px solid #dad4ae;border-left: 0;min-height: 198px;">
+            <div class="basket_con"
+                 style="float: left;width: 100px;border:1px solid #dad4ae;border-left: 0;min-height: 198px;">
                 <div class="basket_count" style="margin: 2px;min-height: 150px;">
-                    <div style="background: #d5eaff;font-size: 12px;text-align: center;">共计<span style="color: #fe8a00">{{count}}</span>道题</div>
+                    <div style="background: #d5eaff;font-size: 12px;text-align: center;">共计<span style="color: #fe8a00">{{count}}</span>道题
+                    </div>
                     <div v-for="(item,key) in selectList" style="text-align: center;padding-top: 5px;">
                         <span>{{key}}:<span style="color: #fe8a00"> {{item.length}}</span>道</span>
                     </div>
                 </div>
                 <div class="basket_foot" style="text-align: center;">
-                    <el-button type="primary" size="small" round @click="generatePaper(x)">生成试卷</el-button>
+                    <el-button type="primary" size="small" round @click="generatePaper">生成试卷</el-button>
                 </div>
 
             </div>
@@ -151,6 +161,45 @@
                 <div class="exam-content" style="padding-top: 10px">
                     <span v-html="question.analysis"></span>
                 </div>
+            </el-card>
+        </el-dialog>
+
+        <el-dialog title="生成试卷" v-model="dialogFormVisible2">
+            <el-card>
+                <el-row>
+                    <el-col :span="8">
+                        试卷名:
+                <el-input
+                        v-model="zujuanName"
+                        placeholder="请输入试卷名...">
+                </el-input>
+                    </el-col>
+
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        年级:
+                        <el-select v-model="gradeId" placeholder="请选择" clearable>
+                            <el-option v-for="x in grades" :label="x.value" :value="x.code"></el-option>
+                        </el-select>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        科目:
+                        <el-select v-model="subjectId" placeholder="请选择" clearable>
+                            <el-option v-for="x in subjects" :label="x.value" :value="x.code"></el-option>
+                        </el-select>
+                    </el-col>
+                    <el-col :offset="2" :span="4">
+                        <el-button :disabled="zujuanName == null || zujuanName == '' || gradeId == null || gradeId == ''||subjectId == null || subjectId == '' "
+                                   type="primary" size="small" round
+                                   @click="submitZujuan()">确认
+                        </el-button>
+                    </el-col>
+                </el-row>
+
+
             </el-card>
         </el-dialog>
 
@@ -169,16 +218,25 @@
             formLabelWidth: "120px",
             tableData: [],
             questionsUrl: "<s:url value='/tiku/question/list'/>",
+            submitZujuanUrl: "<s:url value='/tiku/zujuan/add'/>",
+            gradesUrl:"<s:url value='/tiku/dict/grades'/>",
+            subjectsUrl:"<s:url value='/tiku/dict/subjects'/>",
             currentPage: 1,
             pageSizes: [10],
             pageSize: [10],
             total: null,
             questions: [],
             question: {},
-            openFlag:true,//选题篮打开标记
-            count:0,//总选题数目
-            selectList:{},//已选集合,key  类型  value  选题id的数组
-            selectId:null,
+            openFlag: true,//选题篮打开标记
+            count: 0,//总选题数目
+            selectList: {},//已选集合,key  类型  value  选题id的数组
+            selectId: null,
+            dialogFormVisible2: false,
+            zujuanName: null,
+            gradeId:null,
+            subjectId:null,
+            grades:[],
+            subjects:[]
 
 
         },
@@ -191,6 +249,8 @@
 
         mounted: function () {
             this.getQuestions();
+            this.getGrades();
+            this.getSubjects();
             //this.dialogFormVisible2 = false;//解决el-dialog中的el-tree第一次的动态渲染问题
 
 
@@ -203,7 +263,24 @@
                 this.getQuestions();
                 //console.log('当前页 : ${val}');
             },
-
+            getGrades: function () {
+                this.$http.get(this.gradesUrl).then(
+                    function (response) {
+                        this.grades = response.data;
+                    },
+                    function (response) {
+                    }
+                );
+            },
+            getSubjects: function () {
+                this.$http.get(this.subjectsUrl).then(
+                    function (response) {
+                        this.subjects = response.data;
+                    },
+                    function (response) {
+                    }
+                );
+            },
 
             getQuestions: function () {
                 this.$http.post(this.questionsUrl, this.conditionVo).then(
@@ -232,46 +309,46 @@
                 x.showPoint = !x.showPoint;
             },
 
-            mouserenter:function(id){
-                document.getElementById(id).style.border="1px solid #20a0ff";
+            mouserenter: function (id) {
+                document.getElementById(id).style.border = "1px solid #20a0ff";
             },
-            mouserleave:function(id){
-                document.getElementById(id).style.border="1px solid #eeeeee";
+            mouserleave: function (id) {
+                document.getElementById(id).style.border = "1px solid #eeeeee";
             },
-            closeBasket:function(){
-                document.getElementsByClassName('basket')[0].style.right= '-100px';
-                this.openFlag=!this.openFlag;
+            closeBasket: function () {
+                document.getElementsByClassName('basket')[0].style.right = '-100px';
+                this.openFlag = !this.openFlag;
             },
-            openBasket:function(){
-                document.getElementsByClassName('basket')[0].style.right= '0px';
-                this.openFlag=!this.openFlag;
+            openBasket: function () {
+                document.getElementsByClassName('basket')[0].style.right = '0px';
+                this.openFlag = !this.openFlag;
 
             },
 
-            add: function(x){
+            add: function (x) {
                 this.count++;
                 this.selectId = x.id;
-                if(this.selectList[x.type] != null){
+                if (this.selectList[x.type] != null) {
                     this.selectList[x.type].push(x.id);
-                }else{
+                } else {
                     var arr = new Array();
                     arr.push(x.id);
-                    this.selectList[x.type] =arr;
+                    this.selectList[x.type] = arr;
                 }
             },
-            remove:function(x){
+            remove: function (x) {
                 this.count--;
-                for(var i=0; i<this.selectList[x.type].length; i++) {
-                    if(this.selectList[x.type][i] == x.id) {
+                for (var i = 0; i < this.selectList[x.type].length; i++) {
+                    if (this.selectList[x.type][i] == x.id) {
                         this.selectList[x.type].splice(i, 1);
-                        if(this.selectList[x.type].length<=0){
+                        if (this.selectList[x.type].length <= 0) {
                             delete this.selectList[x.type];
                         }
                         break;
                     }
                 }
             },
-            addFlag:function(x){
+            addFlag: function (x) {
                 if (this.selectList[x.type] != null) {
                     for (var i = 0; i < this.selectList[x.type].length; i++) {
                         if (this.selectList[x.type][i] == x.id) {
@@ -280,11 +357,43 @@
                     }
                 }
                 return false;
-            }
-        },
-        generatePaper:function(){
+            },
+            generatePaper: function () {
+                //1 保存 2 跳转
+                if (this.count <= 0) {
+                    this.$message({type:"info",message:"选题数不能为空!"});
 
+                    return;
+                }
+                this.dialogFormVisible2 = true;
+
+            },
+            submitZujuan: function () {
+
+                var questionIds = new Array();
+                for (var key in this.selectList) {
+                    questionIds.push.apply(questionIds,this.selectList[key]);
+                }
+
+                this.$http.get(this.submitZujuanUrl, {params: {name: this.zujuanName,gradeId:this.gradeId,subjectId:this.subjectId, questionIds: questionIds}}).then(
+                    function (response) {
+                        this.dialogFormVisible2 = false;
+                        this.zujuanName = null;
+                        this.gradeId = null;
+                        this.subjectId = null;
+                        this.count = 0;
+                        this.selectList = {};
+                        this.$message({type:"info",message:"组卷成功!"});
+
+                    },
+                    function (response) {
+                    }
+                );
+
+
+            }
         }
+
 
 
     });

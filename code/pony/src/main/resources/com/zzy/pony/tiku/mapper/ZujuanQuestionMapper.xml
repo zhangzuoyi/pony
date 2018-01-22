@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.tiku.mapper.ZujuanQuestionMapper">
+    <resultMap id="BaseResultMap" type="com.zzy.pony.tiku.model.ZujuanQuestion">
+        <id column="ID" property="id" jdbcType="BIGINT"/>
+        <result column="QUESTION_ID" property="questionId" jdbcType="BIGINT"/>
+        <result column="ZUJUAN_ID" property="zujuanId" jdbcType="BIGINT"/>
+        <result column="SEQ" property="seq" jdbcType="INTEGER"/>
+        <result column="SCORE" property="score" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+		ID, QUESTION_ID, ZUJUAN_ID, SEQ, SCORE
+	</sql>
+
+    <select id="findById" parameterType="long" resultMap="BaseResultMap">
+		select * from exam_zujuan_question t where t.id = #{id}
+	</select>
+
+    <insert id="add" parameterType="com.zzy.pony.tiku.model.ZujuanQuestion"
+            useGeneratedKeys="true" keyProperty="id">
+		insert into exam_zujuan_question (QUESTION_ID,ZUJUAN_ID,SEQ,SCORE)
+		values(#{questionId},#{zujuanId},#{seq},#{score})
+	</insert>
+    <insert id="addBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+
+        insert into exam_zujuan_question
+        (QUESTION_ID,ZUJUAN_ID,SEQ,SCORE)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.questionId}, #{item.zujuanId},
+            #{item.seq},
+            #{item.score}
+            )
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="com.zzy.pony.tiku.model.ZujuanQuestion">
+		update exam_zujuan_question set QUESTION_ID=#{questionId},ZUJUAN_ID=#{zujuanId},SEQ=#{seq},
+		SCORE=#{score} where ID=#{id}
+	</update>
+
+    <delete id="deleteById" parameterType="long">
+		delete from exam_zujuan_question where ID=#{id}
+	</delete>
+
+    <select id="findByZujuanId" parameterType="java.lang.Long" resultType="com.zzy.pony.tiku.vo.ZujuanQuestionVo">
+        select 		t.ID, t.QUESTION_ID questionId, t.ZUJUAN_ID zujuanId, t.SEQ seq, t.SCORE score,
+        a.question question,a.items items
+        from exam_zujuan_question t left join exam_question a on t.QUESTION_ID = a.id
+        where t.ZUJUAN_ID = #{0}
+    </select>
+
+
+</mapper>

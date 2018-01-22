@@ -46,12 +46,12 @@
                         </el-col>
                         <el-col :span="4" >
                             <el-select v-model="conditionVo.gradeId" placeholder="请选择" clearable>
-                                <el-option v-for="x in grades" :label="x.name" :value="x.id"></el-option>
+                                <el-option v-for="x in grades" :label="x.value" :value="x.code"></el-option>
                             </el-select>
                         </el-col>
                         <el-col :span="4" >
                             <el-select v-model="conditionVo.subjectId" placeholder="请选择" clearable>
-                                <el-option v-for="x in subjects" :label="x.name" :value="x.id"></el-option>
+                                <el-option v-for="x in subjects" :label="x.value" :value="x.code"></el-option>
                             </el-select>
                         </el-col>
                         <el-col :span="4" >
@@ -110,6 +110,13 @@
         </div>
 
     <div v-if="!listFlag">
+        <div>
+            <el-row>
+                <el-col :offset="20" :span="4">
+                    <el-button size="small" type="primary" @click="back">返回</el-button>
+                </el-col>
+            </el-row>
+        </div>
         <div >
             <div class="header" style="height: 50px;">
                 <el-row>
@@ -138,13 +145,17 @@
                 tableData: [],
                 zujuansUrl: "<s:url value='/tiku/zujuan/list'/>",
                 deleteUrl:"<s:url value='/tiku/zujuan/delete'/>",
+                gradesUrl:"<s:url value='/tiku/dict/grades'/>",
+                subjectsUrl:"<s:url value='/tiku/dict/subjects'/>",
+                grades:[],
+                subjects:[],
                 currentPage: 1,
                 pageSizes: [10],
                 pageSize: [10],
                 total: null,
                 zujuans: [],
                 zujuan: {},
-                listFlag : false,//展示or编辑
+                listFlag : true,//展示or编辑
 
 
 
@@ -158,7 +169,9 @@
              }	,*/
 
             mounted: function () {
-               // this.getZujuans();
+                this.getZujuans();
+                this.getGrades();
+                this.getSubjects();
 
 
             },
@@ -167,7 +180,7 @@
 
                 handleCurrentChange: function (val) {
                     this.conditionVo.currentPage = val;
-                    this.getQuestions();
+                    this.getZujuans();
                     //console.log('当前页 : ${val}');
                 },
 
@@ -182,11 +195,35 @@
                         }
                     );
                 },
+                getGrades: function () {
+                    this.$http.get(this.gradesUrl).then(
+                        function (response) {
+                            this.grades = response.data;
+                        },
+                        function (response) {
+                        }
+                    );
+                },
+                getSubjects: function () {
+                    this.$http.get(this.subjectsUrl).then(
+                        function (response) {
+                            this.subjects = response.data;
+                        },
+                        function (response) {
+                        }
+                    );
+                },
                 handleEdit : function(index,row){
-                    /* this.title="修改用户";
-                     this.dialogFormVisible = true;
-                     this.user = row;
-                     this.addOrUpdate = false;*/
+                    this.listFlag = false;
+                    this.zujuan = row;
+
+                },
+                back :function(){
+                    this.listFlag = true;
+                    this.zujuan = {};
+                    this.getZujuans();
+
+
                 },
                 handleDelete : function(index,row){
                     this.$confirm("确认删除吗？","提示",{
@@ -203,7 +240,8 @@
                     })
                         .catch(function(){ app.$message({ type:'info',message:'已取消删除'})});
 
-                }
+                },
+
 
             }
 

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.tiku.mapper.ZujuanMapper">
+	<resultMap id="BaseResultMap" type="com.zzy.pony.tiku.model.Zujuan" >
+		<id column="ID" property="id" jdbcType="BIGINT" />
+		<result column="NAME" property="name" jdbcType="VARCHAR" />
+		<result column="GRADE_CODE" property="gradeCode" jdbcType="INTEGER" />
+		<result column="SUBJECT_CODE" property="subjectCode" jdbcType="INTEGER" />
+		<result column="CREATE_USER" property="createUser" jdbcType="VARCHAR" />
+		<result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="UPDATE_USER" property="updateUser" jdbcType="VARCHAR" />
+		<result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+		</resultMap>
+	<sql id="Base_Column_List" >
+		ID, NAME, GRADE_CODE, SUBJECT_CODE, CREATE_USER, CREATE_TIME,UPDATE_USER,UPDATE_TIME
+	</sql>
+
+	<select id="findById" parameterType="long" resultMap="BaseResultMap">
+		select * from exam_zujuan t where t.id = #{id}
+	</select>
+	<!--useGeneratedKeys 自增长 keyProperty 返回主键 -->
+	<insert id="add" parameterType="com.zzy.pony.tiku.model.Zujuan"
+			useGeneratedKeys="true" keyProperty="id">
+		insert into exam_zujuan (NAME,GRADE_CODE,SUBJECT_CODE,CREATE_USER,CREATE_TIME,UPDATE_USER,UPDATE_TIME)
+		values(#{name},#{gradeCode},#{subjectCode},#{createUser},#{createTime},#{updateUser},#{updateTime})
+	</insert>
+
+	<update id="update" parameterType="com.zzy.pony.tiku.model.Zujuan" >
+		update exam_zujuan set name=#{name},GRADE_CODE=#{gradeCode},SUBJECT_CODE=#{subjectCode},
+		UPDATE_USER=#{updateUser},UPDATE_TIME=#{subjectCode} where ID=#{id}
+	</update>
+
+	<delete id="deleteById" parameterType="long">
+		delete from exam_zujuan where ID=#{id}
+	</delete>
+
+	<select id="findPage" resultType="com.zzy.pony.tiku.vo.ZujuanVo">
+		select 		t.ID, t.NAME, GRADE_CODE gradeCode, SUBJECT_CODE subjectCode,a.value gradeName,b.value subjectName
+		from  exam_zujuan t left join exam_dict a on t.GRADE_CODE = a.code and a.type_code='grade'
+		left join exam_dict b on t.SUBJECT_CODE = b.code and b.type_code='subject'
+		where 1=1
+		<!--<if test="questionType != null and questionType != ''">
+			and t.type=#{questionType}
+		</if>-->
+		limit #{startNum},#{pageSize}
+	</select>
+	<select id="findCount" resultType="int">
+		select count(1) from (select 		t.ID, t.NAME, GRADE_CODE gradeCode, SUBJECT_CODE subjectCode,a.value gradeName,b.value subjectName
+		from  exam_zujuan t left join exam_dict a on t.GRADE_CODE = a.code and a.type_code='grade'
+		left join exam_dict b on t.SUBJECT_CODE = b.code and b.type_code='subject'
+		where 1=1
+		<!--<if test="questionType != null and questionType != ''">
+			and t.type=#{questionType}
+		</if>-->
+		) t
+	</select>
+
+
+
+</mapper>
