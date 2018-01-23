@@ -32,8 +32,8 @@
 		UPDATE_USER=#{updateUser},UPDATE_TIME=#{subjectCode} where ID=#{id}
 	</update>
 
-	<delete id="deleteById" parameterType="long">
-		delete from exam_zujuan where ID=#{id}
+	<delete id="deleteById" parameterType="java.lang.Long">
+		delete from exam_zujuan where ID=#{0}
 	</delete>
 
 	<select id="findPage" resultType="com.zzy.pony.tiku.vo.ZujuanVo">
@@ -41,9 +41,12 @@
 		from  exam_zujuan t left join exam_dict a on t.GRADE_CODE = a.code and a.type_code='grade'
 		left join exam_dict b on t.SUBJECT_CODE = b.code and b.type_code='subject'
 		where 1=1
-		<!--<if test="questionType != null and questionType != ''">
-			and t.type=#{questionType}
-		</if>-->
+		<if test="gradeId != null and gradeId != 0">
+			and t.GRADE_CODE=#{gradeId}
+		</if>
+		<if test="subjectId != null and subjectId != 0">
+			and t.SUBJECT_CODE=#{subjectId}
+		</if>
 		limit #{startNum},#{pageSize}
 	</select>
 	<select id="findCount" resultType="int">
@@ -51,9 +54,12 @@
 		from  exam_zujuan t left join exam_dict a on t.GRADE_CODE = a.code and a.type_code='grade'
 		left join exam_dict b on t.SUBJECT_CODE = b.code and b.type_code='subject'
 		where 1=1
-		<!--<if test="questionType != null and questionType != ''">
-			and t.type=#{questionType}
-		</if>-->
+		<if test="gradeId != null and gradeId != 0">
+			and t.GRADE_CODE=#{gradeId}
+		</if>
+		<if test="subjectId != null and subjectId != 0">
+			and t.SUBJECT_CODE=#{subjectId}
+		</if>
 		) t
 	</select>
 

@@ -3,6 +3,7 @@ package com.zzy.pony.tiku.service;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.zzy.pony.security.ShiroUtil;
+import com.zzy.pony.tiku.mapper.QuestionMapper;
 import com.zzy.pony.tiku.mapper.ZujuanMapper;
 import com.zzy.pony.tiku.mapper.ZujuanQuestionMapper;
 import com.zzy.pony.tiku.model.Zujuan;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -38,6 +40,9 @@ public class ZujuanServiceImpl implements  ZujuanService {
     private ZujuanMapper zujuanMapper;
     @Autowired
     private ZujuanQuestionMapper zujuanQuestionMapper;
+    @Autowired
+    private QuestionMapper questionMapper;
+
 
 
     @Override
@@ -46,7 +51,7 @@ public class ZujuanServiceImpl implements  ZujuanService {
         cv.setStartNum((cv.getCurrentPage()-1)*cv.getPageSize());
         List<ZujuanVo> list=zujuanMapper.findPage(cv);
         //查找questionVo
-        for (ZujuanVo vo:
+        /*for (ZujuanVo vo:
         list) {
         List<ZujuanQuestionVo>  questionVos =  zujuanQuestionMapper.findByZujuanId(vo.getId());
             for (ZujuanQuestionVo innerVo:
@@ -61,7 +66,7 @@ public class ZujuanServiceImpl implements  ZujuanService {
                 }
             }
             vo.setQuestions(questionVos);
-        }
+        }*/
         int count=zujuanMapper.findCount(cv);
         Pageable pageable = new PageRequest(cv.getCurrentPage()-1, cv.getPageSize());
         Page<ZujuanVo> result = new PageImpl<ZujuanVo>(list, pageable, count);
@@ -103,12 +108,17 @@ public class ZujuanServiceImpl implements  ZujuanService {
         zujuanMapper.add(zujuan);
 
         if (questionIds != null && questionIds.size()>0){
+            List<QuestionVo> questionVos = questionMapper.findByIds(questionIds);
+            Collections.sort(questionVos);
             List<ZujuanQuestion> list = new ArrayList<ZujuanQuestion>();
-            for (long questionId:
-                    questionIds) {
+            int seq = 1;
+            for (QuestionVo vo:
+                    questionVos) {
                 ZujuanQuestion zq = new ZujuanQuestion();
-                zq.setQuestionId(questionId);
+                zq.setQuestionId(vo.getId());
                 zq.setZujuanId(zujuan.getId());
+                zq.setSeq(seq);
+                seq++;
                 list.add(zq);
             }
             zujuanQuestionMapper.addBatch(list);

@@ -527,6 +527,9 @@
 							<dd>
 								<a href="javascript:;" data-url="<s:url value='/tiku/zujuan/main' />"><label>组卷管理</label></a>
 							</dd>
+							<dd>
+								<a href="javascript:;" data-url="<s:url value='/tiku/test/main' />"><label>测试管理</label></a>
+							</dd>
 						</dl></li>
 
 				<shiro:hasPermission name="teacher_page">

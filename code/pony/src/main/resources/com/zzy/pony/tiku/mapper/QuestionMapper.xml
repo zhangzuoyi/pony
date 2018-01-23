@@ -1,32 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.zzy.pony.tiku.mapper.QuestionMapper">
-	<sql id="base_select">
+    <sql id="base_select">
 		select t.id ,t.QUESTION ,t.ITEMS,t.ANSWER,t.ANALYSIS,t.TYPE,t.CHECK_POINTS as checkPoints,
 		t.`SUBJECT`,t.GRADE,t.PROPERTY,t.DIFFICULTY,t.PROVINCE,t.CITY,t.SCHOOL,t.TEXTBOOK,t.SOURCE,
 		t.COLLECT_SOURCE as collectSource,t.CREATE_USER as createUser,t.CREATE_TIME as createTime,
 		t.UPDATE_USER as updateUser,t.UPDATE_TIME as updateTime,t.SEQ,t.COLLECT_URL as collectUrl,
-		t.PAPER_ID as paperId,t.is_handle as isHandle,FALSE as showPoint,a.name as paperName,a.collect_url as paperCollectUrl from exam_question t left join exam_paper a on t.paper_id = a.id
+		t.PAPER_ID as paperId,t.is_handle as isHandle,FALSE as showPoint,a.name as paperName,a.collect_url as paperCollectUrl,t.type_code as typeCode from exam_question t left join exam_paper a on t.paper_id = a.id
 	</sql>
 
-	<select id="findPage" resultType="com.zzy.pony.tiku.vo.QuestionVo">
-		<include refid="base_select"></include>
-		where 1=1
-		<if test="questionType != null and questionType != ''">
-			and t.type=#{questionType}
-		</if>
-		   limit #{startNum},#{pageSize}
-	</select>
-	<select id="findCount" resultType="int">
-		select count(1) from (
-		<include refid="base_select"></include>
-		where 1=1
-		<if test="questionType != null and questionType != ''">
-			and t.type=#{questionType}
-		</if>
-		 ) t   
-	</select>
-	
+    <select id="findPage" resultType="com.zzy.pony.tiku.vo.QuestionVo">
+        <include refid="base_select"></include>
+        where 1=1
+        <if test="questionType != null and questionType != ''">
+            and t.type=#{questionType}
+        </if>
+        limit #{startNum},#{pageSize}
+    </select>
+    <select id="findCount" resultType="int">
+        select count(1) from (
+        <include refid="base_select"></include>
+        where 1=1
+        <if test="questionType != null and questionType != ''">
+            and t.type=#{questionType}
+        </if>
+        ) t
+    </select>
+    <select id="findByIds" parameterType="java.util.List" resultType="com.zzy.pony.tiku.vo.QuestionVo">
+        <include refid="base_select"></include>
+        where 1=1 and t.id in
+        <foreach collection="list" item="item" index="index" separator=","  open="("  close=")">
+            #{item}
+        </foreach>
+    </select>
+
 </mapper>

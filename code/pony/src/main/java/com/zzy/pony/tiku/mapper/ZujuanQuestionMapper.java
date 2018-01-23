@@ -14,10 +14,15 @@ import java.util.List;
  */
 public interface ZujuanQuestionMapper {
     ZujuanQuestion findById(long id);
+    List<ZujuanQuestion> findByIds(List<Long> ids);
+
     void add(ZujuanQuestion zujuanQuestion);
     void addBatch(List<ZujuanQuestion> zujuanQuestions);
     void deleteById(long id);
     void update(ZujuanQuestion zujuanQuestion);
+
+    void deleteByZujuanId(long zujuanId);
+
 
     List<ZujuanQuestionVo> findByZujuanId(long zujuanId);
 

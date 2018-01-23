@@ -1,7 +1,9 @@
 package com.zzy.pony.tiku.controller;
 
+import com.zzy.pony.tiku.model.ZujuanQuestion;
 import com.zzy.pony.tiku.service.QuestionService;
 import com.zzy.pony.tiku.vo.QuestionVo;
+import com.zzy.pony.tiku.vo.ZujuanQuestionVo;
 import com.zzy.pony.vo.ConditionVo;
 import com.zzy.pony.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,5 +33,7 @@ public class QuestionController {
         return questionService.list(cv);
 
     }
+
+
 
 }

@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>组卷管理</title>
+    <title>测试管理</title>
     <link rel="stylesheet" href="<s:url value='/static/layui/css/layui.css' />">
     <link rel="stylesheet" type="text/css" href="<s:url value='/static/easyui/themes/default/easyui.css' />"/>
     <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/style.css' />"/>
@@ -37,7 +37,7 @@
             <div slot="header" class="clearfix">
                 <el-row>
                     <el-col :span="4">
-                        <b>组卷管理</b>
+                        <b>测试管理</b>
                     </el-col>
                 </el-row>
                 <el-row>
@@ -85,9 +85,7 @@
                         label="操作"
                 >
                     <template scope="scope">
-                        <el-button size="small" @click="handleEdit(scope.$index,scope.row)">编辑</el-button>
-                        <el-button size="small" type="danger" @click="handleDelete(scope.$index,scope.row)">删除
-                        </el-button>
+                        <el-button size="small" @click="gotoTest(scope.$index,scope.row)">进入测试</el-button>
                     </template>
                 </el-table-column>
 
@@ -114,7 +112,7 @@
         <div>
             <el-row>
                 <el-col :offset="20" :span="4">
-                    <el-button size="small" type="primary" @click="back">返回</el-button>
+                    <el-button size="small" type="primary" @click="submitTest">提交</el-button>
                 </el-col>
             </el-row>
         </div>
@@ -127,60 +125,41 @@
             </div>
             <div class="content">
                 <div v-for="(question,index) in questions" :id="question.id">
-                    <div v-on:mouseenter="mouserenter(question.id)" v-on:mouseleave="mouserleave(question.id)">
-                        <div class="question-edit" v-if="selectId==question.id">
-                            <el-button size="small" type="danger" plain style="float:right"
-                                       @click="removeQuestion(question.id)">删除
-                            </el-button>
-                            <el-button size="small" type="primary" plain style="float:right"
-                                       @click="setScore(question)">设置得分
-                            </el-button>
-                            <%--<el-button size="small" type="primary" plain style="float:right" @click="setSeq(question)">
-                                设置顺序
-                            </el-button>--%>
-                        </div>
-                        <div class="question-header">
-                            <span><b>{{index+1}}.({{question.score}}分)</b></span>&nbsp;&nbsp;
-                            <span v-html="question.question"></span>
-                        </div>
-                        <div class="exam-answer">
-                            <el-row>
+                    <div class="question-header">
+                        <span><b>{{index+1}}.({{question.score}}分)</b></span>&nbsp;&nbsp;
+                        <span v-html="question.question"></span>
+                        <span v-if="question.typeCode==3"><el-input v-model="question.answer"></el-input></span><%-- 3 填空题--%>
+
+
+                    </div>
+                    <div>
+                        <span v-if="question.typeCode==4"><el-input type="textarea" :rows="10" v-model="question.answer"></el-input></span><%-- 4 计算题--%>
+                        <span v-if="question.typeCode==5"><el-input type="textarea" :rows="10" v-model="question.answer"></el-input></span><%-- 5 解答题--%>
+                        <span v-if="question.typeCode==6"><el-input type="textarea" :rows="10" v-model="question.answer"></el-input></span><%-- 6 综合题--%>
+                    </div>
+                    <div class="exam-answer">
+                        <el-row v-if="question.typeCode==1"><%-- 1 单选题--%>
+                            <el-radio-group style="width: 100%" v-model="question.answer">
                                 <el-col v-for="(item,index) in question.itemArr" :span="6">
-                                    <span v-html="item.item"></span>
+                                    <el-radio :label="index+1"><span v-html="item.item"></span></el-radio>
                                 </el-col>
-                            </el-row>
-                        </div>
+                            </el-radio-group>
+                        </el-row>
+                        <el-row v-if="question.typeCode==2"><%-- 1 多选题--%>
+                            <el-checkbox-group style="width: 100%" v-model="question.answer">
+                                <el-col v-for="(item,index) in question.itemArr" :span="6">
+                                    <el-checkbox label="index+1"><span v-html="item.item"></span></el-checkbox>
+                                </el-col>
+                            </el-checkbox-group>
+                        </el-row>
+
+
                     </div>
 
                 </div>
             </div>
         </div>
-        <el-dialog title="设置得分" v-model="dialogFormVisible">
-            <el-card>
-                <el-input-number
-                        v-model="question.score"
-                        placeholder="请输入分值...">
-                </el-input-number>
-            </el-card>
-            <div slot="footer" class="dialog-footer">
-                <el-button type="primary" size="small" @click="submitScore">确定</el-button>
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-            </div>
-        </el-dialog>
-        <%--<el-dialog title="设置顺序" v-model="dialogFormVisible1">
-            <el-card>
-                <el-input-number
-                        v-model="question.seq"
-                        placeholder="请输入顺序..."
-                        :min="1"
-                        :max="questions.length">
-                </el-input-number>
-            </el-card>
-            <div slot="footer" class="dialog-footer">
-                <el-button type="primary" size="small" @click="submitSeq">确定</el-button>
-                <el-button @click="dialogFormVisible1 = false">取 消</el-button>
-            </div>
-        </el-dialog>--%>
+
 
     </div>
 
@@ -193,17 +172,12 @@
         el: '#app',
         data: {
             conditionVo: {gradeId: null, subjectId: null, currentPage: 1, pageSize: 10},
-            dialogFormVisible: false,
-            dialogFormVisible1: false,
-            formLabelWidth: "120px",
             tableData: [],
             zujuansUrl: "<s:url value='/tiku/zujuan/list'/>",
-            deleteUrl: "<s:url value='/tiku/zujuan/delete'/>",
             gradesUrl: "<s:url value='/tiku/dict/grades'/>",
             subjectsUrl: "<s:url value='/tiku/dict/subjects'/>",
-            questionUpdateUrl: "<s:url value='/tiku/zujuan/questionUpdate'/>",
-            questionDeleteUrl: "<s:url value='/tiku/zujuan/questionDelete'/>",
             questionListUrl: "<s:url value='/tiku/zujuan/listQuestion'/>",
+            submitTestUrl: "<s:url value='/tiku/test/submitTest'/>",
             grades: [],
             subjects: [],
             currentPage: 1,
@@ -213,9 +187,8 @@
             zujuans: [],
             zujuan: {},
             listFlag: true,//展示or编辑
-            selectId: null,
             question: {},
-            questions: []
+            questions: [],
 
 
         },
@@ -276,34 +249,34 @@
                 this.$http.get(this.questionListUrl, {params: {zujuanId: id}}).then(
                     function (response) {
                         this.questions = response.data;
+
+
                     },
                     function (response) {
                     }
                 );
             },
-            handleEdit: function (index, row) {
+            gotoTest: function (index, row) {
+
                 this.listFlag = false;
                 this.zujuan = row;
                 this.getQuestionList(row.id);
 
             },
-            back: function () {
-                this.listFlag = true;
-                this.zujuan = {};
-                this.getZujuans();
 
+            submitTest: function () {
 
-            },
-            handleDelete: function (index, row) {
-                this.$confirm("确认删除吗？", "提示", {
+                this.$confirm("确认提交吗？", "提示", {
                     confirmButtonText: '确认',
                     cancleButtonText: '取消',
                     type: 'warning'
                 }).then(function () {
-                    app.$http.get(app.deleteUrl, {params: {id: row.id}}).then(
+                    app.$http.get(app.submitTestUrl, {params: {id: id}}).then(
                         function (response) {
-                            app.getZujuans();
-                            app.$message({type: 'info', message: '删除成功'})
+                            this.listFlag = true;
+                            this.zujuan = {};
+                            this.getZujuans();
+                            app.$message({type: 'info', message: '提交成功'})
 
                         },
                         function (response) {
@@ -314,81 +287,7 @@
                         app.$message({type: 'info', message: '已取消删除'})
                     });
 
-            },
 
-            mouserenter: function (id) {
-                this.selectId = id;
-                document.getElementById(id).style.border = "1px solid #20a0ff";
-            },
-            mouserleave: function (id) {
-                this.selectId = null;
-                document.getElementById(id).style.border = "";
-            },
-
-            removeQuestion: function (id) {
-
-
-                this.$confirm("确认删除吗？", "提示", {
-                    confirmButtonText: '确认',
-                    cancleButtonText: '取消',
-                    type: 'warning'
-                }).then(function () {
-                    app.$http.get(app.questionDeleteUrl, {params: {id: id}}).then(
-                        function (response) {
-                            app.getQuestionList(app.zujuan.id);
-                            app.$message({type: 'info', message: '删除成功'})
-
-                        },
-                        function (response) {
-                        }
-                    );
-                })
-                    .catch(function () {
-                        app.$message({type: 'info', message: '已取消删除'})
-                    });
-
-            },
-
-            setScore: function (question) {
-                this.dialogFormVisible = true;
-                this.question = question;
-            },
-
-            setSeq: function (question) {
-                this.dialogFormVisible1 = true;
-                this.question = question;
-
-
-            },
-
-            submitScore: function () {
-
-                this.$http.post(this.questionUpdateUrl, this.question).then(
-                    function (response) {
-                        this.getQuestionList(this.zujuan.id);
-                        this.question = {};
-                        this.dialogFormVisible = false;
-                        app.$message({type: 'info', message: '更新成功'})
-
-
-                    },
-                    function (response) {
-                    }
-                );
-            },
-            submitSeq: function () {
-                this.$http.post(this.questionUpdateUrl, this.question).then(
-                    function (response) {
-                        this.getQuestionList(this.zujuan.id);
-                        this.question = {};
-                        this.dialogFormVisible1 = false;
-                        app.$message({type: 'info', message: '更新成功'})
-
-
-                    },
-                    function (response) {
-                    }
-                );
             },
 
 

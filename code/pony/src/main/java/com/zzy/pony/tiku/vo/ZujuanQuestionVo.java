@@ -7,7 +7,7 @@ import java.math.BigDecimal;
  * @Date: 2018-01-22
  * @Description
  */
-public class ZujuanQuestionVo {
+public class ZujuanQuestionVo implements Comparable<ZujuanQuestionVo>{
 
     private int id;
     private int questionId;
@@ -17,6 +17,9 @@ public class ZujuanQuestionVo {
     private String question;
     private String items;
     private Object[] itemArr;//答案备选项
+    private String typeName ;
+    private int typeCode;
+    private Object answer;//答案  (单选填空等是string 多选是array)
 
 
 
@@ -84,5 +87,34 @@ public class ZujuanQuestionVo {
 
     public void setItemArr(Object[] itemArr) {
         this.itemArr = itemArr;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
+
+    public int getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(int typeCode) {
+        this.typeCode = typeCode;
+    }
+
+    public Object getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(Object answer) {
+        this.answer = answer;
+    }
+
+    @Override
+    public int compareTo(ZujuanQuestionVo o) {
+        return this.seq-o.getSeq();
     }
 }

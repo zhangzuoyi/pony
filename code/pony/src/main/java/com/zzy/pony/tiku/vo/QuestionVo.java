@@ -7,7 +7,7 @@ import java.util.Date;
  * @Date: 2018-01-18
  * @Description
  */
-public class QuestionVo {
+public class QuestionVo implements Comparable<QuestionVo>{
 
     private int id ;
     private String question;
@@ -38,6 +38,7 @@ public class QuestionVo {
     private boolean showPoint;
     private String paperName;
     private String paperCollectUrl;
+    private int typeCode;
 
 
     public QuestionVo(){}
@@ -272,5 +273,22 @@ public class QuestionVo {
 
     public void setPaperCollectUrl(String paperCollectUrl) {
         this.paperCollectUrl = paperCollectUrl;
+    }
+
+    public int getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(int typeCode) {
+        this.typeCode = typeCode;
+    }
+
+    @Override
+    public int compareTo(QuestionVo o) {
+        int seq = this.typeCode - o.typeCode;//先采用类型排序,类型一样,则根据Id排序
+        if (seq == 0){
+            return this.getId()-o.getId();
+        }
+        return seq;
     }
 }

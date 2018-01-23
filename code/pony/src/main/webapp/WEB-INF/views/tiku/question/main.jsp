@@ -161,6 +161,7 @@
                 <div class="exam-content" style="padding-top: 10px">
                     <span v-html="question.analysis"></span>
                 </div>
+
             </el-card>
         </el-dialog>
 
