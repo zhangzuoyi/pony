@@ -271,11 +271,13 @@
                     cancleButtonText: '取消',
                     type: 'warning'
                 }).then(function () {
-                    app.$http.get(app.submitTestUrl, {params: {id: id}}).then(
+                    app.$http.post
+                    (app.submitTestUrl, app.questions).then(
                         function (response) {
-                            this.listFlag = true;
-                            this.zujuan = {};
-                            this.getZujuans();
+                            app.listFlag = true;
+                            app.zujuan = {};
+                            app.getZujuans();
+                            app.questions = [];
                             app.$message({type: 'info', message: '提交成功'})
 
                         },

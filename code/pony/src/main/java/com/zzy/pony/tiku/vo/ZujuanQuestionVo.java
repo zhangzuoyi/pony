@@ -7,7 +7,7 @@ import java.math.BigDecimal;
  * @Date: 2018-01-22
  * @Description
  */
-public class ZujuanQuestionVo implements Comparable<ZujuanQuestionVo>{
+public class  ZujuanQuestionVo implements Comparable<ZujuanQuestionVo>{
 
     private int id;
     private int questionId;

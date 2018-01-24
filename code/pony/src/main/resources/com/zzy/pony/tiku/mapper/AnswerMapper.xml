@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zzy.pony.tiku.mapper.AnswerMapper" >
+  <resultMap id="BaseResultMap" type="com.zzy.pony.tiku.model.Answer" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="RECORD_ID" property="recordId" jdbcType="BIGINT" />
+    <result column="QUESTION_ID" property="questionId" jdbcType="BIGINT" />
+    <result column="SCORE" property="score" jdbcType="TINYINT" />
+    <result column="ANSWER" property="answer" jdbcType="LONGVARCHAR" />
+    <result column="COMMENTS" property="comments" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, RECORD_ID, QUESTION_ID, SCORE, ANSWER, COMMENTS
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from exam_answer
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from exam_answer
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.zzy.pony.tiku.model.Answer" >
+    insert into exam_answer (ID, RECORD_ID, QUESTION_ID, 
+      SCORE, ANSWER, COMMENTS
+      )
+    values (#{id,jdbcType=BIGINT}, #{recordId,jdbcType=BIGINT}, #{questionId,jdbcType=BIGINT}, 
+      #{score,jdbcType=TINYINT}, #{answer,jdbcType=LONGVARCHAR}, #{comments,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <update id="update" parameterType="com.zzy.pony.tiku.model.Answer" >
+    update exam_answer
+    set RECORD_ID = #{recordId,jdbcType=BIGINT},
+      QUESTION_ID = #{questionId,jdbcType=BIGINT},
+      SCORE = #{score,jdbcType=TINYINT},
+      ANSWER = #{answer,jdbcType=LONGVARCHAR},
+      COMMENTS = #{comments,jdbcType=LONGVARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+
+  <insert id="addBatch" parameterType="java.util.List" useGeneratedKeys="true">
+    insert into exam_answer (RECORD_ID, QUESTION_ID,
+    SCORE, ANSWER, COMMENTS
+    ) values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (
+      #{item.recordId}, #{item.questionId},
+      #{item.score},
+      #{item.answer},
+      #{item.comments}
+      )
+    </foreach>
+  </insert>
+</mapper>
