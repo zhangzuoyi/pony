@@ -810,17 +810,6 @@ public class AverageController {
 			}
 
 			if (workbook != null) {
-
-				String fileName = new String(title.getBytes("utf-8"), "ISO8859-1") + DateTimeUtil.dateToStr(new Date())
-						+ ".xls";
-				// String fileName = "Excel-" +
-				// String.valueOf(System.currentTimeMillis()).substring(4, 13) + ".xls";
-				String headStr = "attachment; filename=\"" + fileName + "\"";
-				// response = getResponse();
-				response.setContentType("APPLICATION/OCTET-STREAM");
-				response.setHeader("Content-Disposition", headStr);
-				 /*OutputStream out = response.getOutputStream();
-				 workbook.write(out);*/
 				String titleName = System.currentTimeMillis()+".xls";
 				File localFile = new File(averagePath, titleName);
 				FileOutputStream outputStream = new FileOutputStream(localFile);
