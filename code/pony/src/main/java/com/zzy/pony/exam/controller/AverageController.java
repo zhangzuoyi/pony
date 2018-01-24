@@ -12,6 +12,7 @@ import com.zzy.pony.util.ReadExcelUtils;
 import com.zzy.pony.util.TemplateUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -699,11 +700,12 @@ public class AverageController {
 	}
 
 	@RequestMapping(value = "exportAssignResultFile", method = RequestMethod.GET)
-	public void exportAssignResultFile(HttpServletRequest request, HttpServletResponse response) {
-		File localFile = new File(averageAssignPath, "averageAssignTmp.xls");
+	public void exportAssignResultFile(@RequestParam(value="name") String name, HttpServletRequest request, HttpServletResponse response) {
+		File localFile = new File(averageAssignPath, name);
 		try {
+		    String title = new  String("7选3赋分".getBytes("utf-8"), "ISO8859-1");
 			response.setContentType("APPLICATION/OCTET-STREAM");
-			String headStr = "attachment; filename=\"" + "averageAssignTmp.xls" + "\"";
+			String headStr = "attachment; filename=\"" + title+ ".xls" + "\"";
 			response.setHeader("Content-Disposition", headStr);
 			OutputStream outputStream = response.getOutputStream();
 			FileInputStream inputStream = new FileInputStream(localFile);
@@ -717,12 +719,14 @@ public class AverageController {
 	}
 
 	@RequestMapping(value = "exportAssignResult", method = RequestMethod.POST)
-	public void exportAssignResult(MultipartFile fileUpload, HttpServletRequest request, HttpServletResponse response)
+	@ResponseBody
+	public Map<String,String> exportAssignResult(MultipartFile fileUpload, HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
+	    Map<String,String> result = new HashMap<String, String>();
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 		MultipartFile file = multipartRequest.getFile("upoadfile");
 		if (file == null) {
-			return;
+			return null;
 		}
 		String title = "7选3赋分";
 		try {
@@ -815,22 +819,25 @@ public class AverageController {
 				// response = getResponse();
 				response.setContentType("APPLICATION/OCTET-STREAM");
 				response.setHeader("Content-Disposition", headStr);
-				// OutputStream out = response.getOutputStream();
-				// workbook.write(out);
-
-				File localFile = new File(averagePath, "averageAssignTmp.xls");
+				 /*OutputStream out = response.getOutputStream();
+				 workbook.write(out);*/
+				String titleName = System.currentTimeMillis()+".xls";
+				File localFile = new File(averagePath, titleName);
 				FileOutputStream outputStream = new FileOutputStream(localFile);
 				workbook.write(outputStream);
 				outputStream.close();
-
+                result.put("name",titleName);
 			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (Exception e) {
+		}catch (OldExcelFormatException e){
+            e.printStackTrace();
+            result.put("error","版本必须为2003及以上");
+        } catch (Exception e) {
 			e.printStackTrace();
 		}
-
+        return result;
 	}
 
 	@RequestMapping(value = "exportNewTemplate", method = RequestMethod.GET)
