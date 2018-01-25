@@ -742,7 +742,10 @@ public class AverageController {
 			List<AverageAssignExcelVo> averageAssignExcelVos = service.getAverageAssignExcelVo(wb, 2,
 					Constants.SCHOOL_NAME);
 
-			for (int i = 9; i < titles.length; i++) {
+			for (int i = 6; i < titles.length; i++) {
+			    if("语文".equals(titles[i])||"数学".equals(titles[i])||"英语".equals(titles[i])){
+                    continue;
+                }
 				List<AverageExcelVo> averageExcelVos = service.getAverageExcelVo(wb, i, 2);
 				service.sortAverageExcelVo(averageExcelVos);
 				Map<Integer, List<AverageExcelVo>> levelMap = service.getLevelAssignMap(averageExcelVos);
