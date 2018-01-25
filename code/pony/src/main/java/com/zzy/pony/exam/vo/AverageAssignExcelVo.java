@@ -13,6 +13,9 @@ public class AverageAssignExcelVo {
 	private Map<String, BigDecimal> assignScore;
 	private float totalScore;
 	private float assignTotalScore;
+
+	private String examineeNo;//考生号
+	private String studentNo;//学号
 	
 	
 	public AverageAssignExcelVo() {}
@@ -109,13 +112,20 @@ public class AverageAssignExcelVo {
 	public void setSex(String sex) {
 		this.sex = sex;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+	public String getExamineeNo() {
+		return examineeNo;
+	}
+
+	public void setExamineeNo(String examineeNo) {
+		this.examineeNo = examineeNo;
+	}
+
+	public String getStudentNo() {
+		return studentNo;
+	}
+
+	public void setStudentNo(String studentNo) {
+		this.studentNo = studentNo;
+	}
 }

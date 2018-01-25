@@ -700,22 +700,26 @@ public class AverageController {
 	}
 
 	@RequestMapping(value = "exportAssignResultFile", method = RequestMethod.GET)
-	public void exportAssignResultFile(@RequestParam(value="name") String name, HttpServletRequest request, HttpServletResponse response) {
-		File localFile = new File(averageAssignPath, name);
-		try {
-		    String title = new  String("7选3赋分".getBytes("utf-8"), "ISO8859-1");
-			response.setContentType("APPLICATION/OCTET-STREAM");
-			String headStr = "attachment; filename=\"" + title+ ".xls" + "\"";
-			response.setHeader("Content-Disposition", headStr);
-			OutputStream outputStream = response.getOutputStream();
-			FileInputStream inputStream = new FileInputStream(localFile);
-			IOUtils.copy(inputStream, outputStream);
-			inputStream.close();
+	public ResponseEntity<byte[]> exportAssignResultFile(@RequestParam(value="name") String name, HttpServletRequest request, HttpServletResponse response) {
 
+		File localFile = new File(averageAssignPath, name);
+		String fileName = "7选3赋分.xls";
+		HttpHeaders headers = new HttpHeaders();
+		byte[] content = new byte[0];
+
+		try {
+			headers.setContentDispositionFormData("attachment", new String(fileName.getBytes("utf-8"), "ISO8859-1"));
+			content = IOUtils.toByteArray(new FileInputStream(localFile));
+
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		return new ResponseEntity<byte[]>(content, headers, HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "exportAssignResult", method = RequestMethod.POST)
@@ -749,25 +753,29 @@ public class AverageController {
 			}
 
 			HSSFRow headRow = sheet.createRow(0);
-			headRow.createCell(0).setCellValue("学校");
-			headRow.createCell(1).setCellValue("班级");
-			headRow.createCell(2).setCellValue("姓名");
+            headRow.createCell(0).setCellValue("考生号");
+            headRow.createCell(1).setCellValue("学号");
+            headRow.createCell(2).setCellValue("学校");
+            headRow.createCell(3).setCellValue("班级");
+			headRow.createCell(4).setCellValue("姓名");
+			headRow.createCell(5).setCellValue("性别");
 			Row wbHeadRow = wb.getSheetAt(0).getRow(0);
-			int n = 6;
 			for (int i = 6; i < wbHeadRow.getLastCellNum(); i++) {
 				if (!"总分".equals(wbHeadRow.getCell(i).getStringCellValue())) {
-					headRow.createCell(n - 3).setCellValue(wbHeadRow.getCell(i).getStringCellValue());
-					n++;
+					headRow.createCell(i).setCellValue(wbHeadRow.getCell(i).getStringCellValue());
 				}
 			}
 
 			for (int j = 1; j <= averageAssignExcelVos.size(); j++) {
 				HSSFRow row = sheet.createRow(j);
 				AverageAssignExcelVo vo = averageAssignExcelVos.get(j - 1);
-				row.createCell(0).setCellValue(vo.getSchoolName());
-				row.createCell(1).setCellValue(vo.getClassCode());
-				row.createCell(2).setCellValue(vo.getName());
-				for (int m = 3; m < headRow.getLastCellNum(); m++) {
+				row.createCell(0).setCellValue(vo.getExamineeNo());
+                row.createCell(1).setCellValue(vo.getStudentNo());
+                row.createCell(2).setCellValue(vo.getSchoolName());
+                row.createCell(3).setCellValue(vo.getClassCode());
+				row.createCell(4).setCellValue(vo.getName());
+                row.createCell(5).setCellValue(vo.getSex());
+                for (int m = 6; m < headRow.getLastCellNum(); m++) {
 					if ("语文".equals(headRow.getCell(m).getStringCellValue())
 							|| "数学".equals(headRow.getCell(m).getStringCellValue())
 							|| "英语".equals(headRow.getCell(m).getStringCellValue())) {
