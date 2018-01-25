@@ -1392,8 +1392,9 @@ public class AverageServiceImpl implements AverageService {
 
 			// modify 不区分学校 姓名 名字 性别等
 			AverageAssignExcelVo vo = new AverageAssignExcelVo();
-			vo.setExamineeNo((Float.valueOf(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex-2)).toString())).intValue()+"");
-			vo.setStudentNo((Float.valueOf(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex-1)).toString())).intValue()+"");
+
+            vo.setExamineeNo(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex-2)).toString());
+            vo.setStudentNo(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex-1)).toString());
 			vo.setSchoolName(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex)).toString());
 			vo.setClassCode(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex + 1)).toString());
 			vo.setName(ReadExcelUtils.getCellFormatValue(row.getCell(schoolIndex + 2)).toString());
