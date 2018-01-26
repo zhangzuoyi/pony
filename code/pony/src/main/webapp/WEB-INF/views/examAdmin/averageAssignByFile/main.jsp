@@ -186,6 +186,8 @@
                 this.exportFlag = true;
                 if(this.$refs.uploadResult.uploadFiles.length <= 0){
                     this.$message({type: "info", message: "文件不能为空"});
+                    this.exportFlag = false;
+
                     return ;
                 }
 

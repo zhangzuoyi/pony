@@ -52,7 +52,7 @@ width:200px;
                </el-col>            	          		           	
             	<el-col :span="6" >
                		<el-button type="primary"  @click="downloadTemplate">下载模板</el-button>
-               		<el-button type="primary"  @click="importTemplate" :disabled="exportFlag" >导入模板</el-button>
+               		<el-button type="primary"  @click="importTemplate" :disabled="exportFlag" >导出</el-button>
                		
               	</el-col>                           
               </el-row>
@@ -127,21 +127,26 @@ var app = new Vue({
                 this.$http.post(this.exportResultUrl,formData).then(
                         function(response){ 
              				this.exportFlag = false;
-                            this.$message({type:"info",message:"生成成功"});  
-                            var url = "<s:url value='/examAdmin/average/exportNewAverageFile'/>";
-                		     window.open(encodeURI(encodeURI(url)));	
-                            
+                            this.$message({type: "info", message: "生成成功"});
+                            if(response.data.error != undefined && response.data.error != null ){
+                                this.$message({type: "info", message: response.data.error});
+                            }
+                            if (response.data.name != undefined && response.data.name != null) {
+                                var  exportParams = {name :response.data.name};
+                                window.location.href = "<s:url value='/examAdmin/average/exportNewAverageFile?'/>"+jQuery.param(exportParams);
+                            }
                             });
                 return false;           
           },
             upload  : function(){
-            	
-              if(this.$refs.upload.uploadFiles.length <= 0){
+                this.exportFlag = true;
+                if(this.$refs.upload.uploadFiles.length <= 0){
             	  this.$message({
 						type:"info",
-						message: "请选择文件"
+						message: "文件不能为空"
 				  });
-            	  return ;
+            	  this.exportFlag = false;
+                    return ;
               }        	
           	  this.$refs.upload.submit();
           	  this.$refs.upload.clearFiles();

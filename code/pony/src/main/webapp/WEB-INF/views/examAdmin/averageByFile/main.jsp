@@ -34,7 +34,7 @@ width:200px;
             <div slot="header" class="clearfix">
               <el-row>
               <el-col :span="4">
-              <b>均量值</b>
+              <b>均量值(全县)</b>
               </el-col>
               </el-row>
               <el-row>                            
@@ -65,8 +65,9 @@ width:200px;
            			 </el-select>				
                     </div>        
             	</el-col> --%>            	
-            	<el-col :span="6" >              		
-               		<el-button type="primary"  @click="exportAverageByFile" :disabled="exportFlag" >导出</el-button>              		             		
+            	<el-col :span="6" >
+					<el-button type="primary" @click="downloadTemplate">下载模板</el-button>
+					<el-button type="primary"  @click="exportAverageByFile" :disabled="exportFlag" >导出</el-button>
               	</el-col>                           
               </el-row>
             </div>        
@@ -150,10 +151,14 @@ var app = new Vue({
 	                          function(response){ 
 	                              this.gradeId = null;	
 	               				  this.exportFlag = false;
-
-	                              this.$message({type:"info",message:"生成成功"});  
-	                              var url = "<s:url value='/examAdmin/average/exportResultFile'/>";
-	                  		      window.open(encodeURI(encodeURI(url)));	
+	                              this.$message({type:"info",message:"生成成功"});
+                                  if(response.data.error != undefined && response.data.error != null ){
+                                      this.$message({type: "info", message: response.data.error});
+                                  }
+                                  if (response.data.name != undefined && response.data.name != null) {
+                                      var  exportParams = {name :response.data.name};
+                                      window.location.href = "<s:url value='/examAdmin/average/exportResultFile?'/>"+jQuery.param(exportParams);
+                                  }
 	                              
 	                              });
 	                  return false;           
@@ -172,6 +177,12 @@ var app = new Vue({
    			uploadResult : function(){  
    				
    				  this.exportFlag = true;
+                if(this.$refs.uploadResult.uploadFiles.length <= 0){
+                    this.$message({type: "info", message: "文件不能为空"});
+                    this.exportFlag = false;
+
+                    return ;
+                }
             	  this.$refs.uploadResult.submit();           	             	                                                               	  
             	  this.$refs.uploadResult.clearFiles();
             	  this.uploadResultDialogFormVisible = false;
@@ -181,6 +192,9 @@ var app = new Vue({
             
             	               	  
               },
+        downloadTemplate: function () {
+            window.location.href = "<s:url value='/examAdmin/average/exportNewAllTemplate' />";
+        },
    			
             
         }	        
