@@ -434,6 +434,7 @@ public class AverageController {
                 MSumRow.createCell(a * 2 + 3).setCellValue(schoolLevelSumMap.get(schoolName).get(999).toString());
                 a++;
             }
+            MSumRow.createCell(a * 2 + 3).setCellValue(schoolLevelSumMap.get("allM").get(999).toString());
             range3 += 25;
 
 
@@ -496,7 +497,7 @@ public class AverageController {
                 for (int j = 1; j <= classCodes.size(); j++) {
                     MRow.createCell(j * 2).setCellValue(innerMap.get(classCodes.get(j - 1)).get("M").toString());
                 }
-
+                MRow.createCell(classCodes.size() * 2 +2).setCellValue(innerMap.get("allM").get("allM").toString());
                 range += 26;
 
             }
@@ -778,7 +779,7 @@ public class AverageController {
             Row headSheetRow = dataSheet.getRow(0);
             for (int i = 2; i < headSheetRow.getLastCellNum(); i++) {
                 List<AverageNewVo> vos = new ArrayList<AverageNewVo>();
-                for (int j = 1; j < dataSheet.getLastRowNum(); j++) {
+                for (int j = 1; j <= dataSheet.getLastRowNum(); j++) {
                     AverageNewVo vo = new AverageNewVo();
                     dataSheetRow = dataSheet.getRow(j);
                     vo.setClassName(ReadExcelUtils.getCellFormatValue(dataSheetRow.getCell(0)).toString());
@@ -788,11 +789,12 @@ public class AverageController {
                     if (i == 2) {
                         schoolClasses.add(ReadExcelUtils.getCellFormatValue(dataSheetRow.getCell(0)).toString());
                     }
-                    if (StringUtils.isNoneEmpty(ReadExcelUtils.getCellFormatValue(dataSheetRow.getCell(i)).toString())) {
-                        vo.setSubjectScore(
-                                Float.valueOf(ReadExcelUtils.getCellFormatValue(dataSheetRow.getCell(i)).toString()));
+                    if (StringUtils.isNotEmpty(ReadExcelUtils.getCellFormatValue(dataSheetRow.getCell(i)).toString())
+                            &&Math.abs(Float.valueOf(ReadExcelUtils.getCellFormatValue(dataSheetRow.getCell(i)).toString()))>0.1) {
+                            vo.setSubjectScore(
+                                    Float.valueOf(ReadExcelUtils.getCellFormatValue(dataSheetRow.getCell(i)).toString()));
+                        // 0分或空不参与计算
                     } else {
-                        //vo.setSubjectScore(0f); // 0分或空不参与计算
                         continue;
                     }
                     vos.add(vo);
@@ -860,6 +862,7 @@ public class AverageController {
                     for (int j = 1; j <= schoolClasses.size(); j++) {
                         MRow.createCell(j * 2).setCellValue(innerMap.get(classList.get(j - 1)).get("M").toString());
                     }
+                    MRow.createCell(schoolClasses.size()*2+2).setCellValue(innerMap.get("allM").get("allM").toString());
 
                     range += 26;
                 }

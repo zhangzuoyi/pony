@@ -1347,7 +1347,7 @@ public class AverageServiceImpl implements AverageService {
 			Row row = sheet.getRow(i);
 
 			if (row.getCell(index) == null || row.getCell(index).getCellType() == Cell.CELL_TYPE_BLANK
-					|| row.getCell(index).getNumericCellValue() == 0) {
+					||  Math.abs(row.getCell(index).getNumericCellValue())  <= 0.000001) {
 				continue;
 			} else {
 				AverageExcelVo vo = new AverageExcelVo();
@@ -1889,22 +1889,7 @@ public class AverageServiceImpl implements AverageService {
 	 * 计算累数
 	 */
 	private void calculateSum(Map<String, Map<String, BigDecimal>> map) {
-		
-		/*for (int j=0;j<classCodes.size();j++) {
-            Map<String, BigDecimal> innerMap = map.get(classCodes.get(j));
-            BigDecimal classAllLevel = new BigDecimal("0");// 一个班的累数
-            BigDecimal M = new BigDecimal("0");
-            for (int i = 1; i <= levels.size(); i++) {
-                classAllLevel = classAllLevel.add(innerMap.get(levels.get(i-1)));
-                innerMap.put("classAllSum" + i, classAllLevel);
-                M = M.add(innerMap.get(levels.get(i-1)).multiply(new BigDecimal(levelWeight.get(levels.get(i-1)))).setScale(2,RoundingMode.HALF_UP));
-            }
-            if (classAllLevel.compareTo(new  BigDecimal("0"))<=0 ){
-                innerMap.put("M",new BigDecimal("0"));
-            }else{
-                innerMap.put("M",M.divide(classAllLevel,2,RoundingMode.HALF_UP));
-            }
-        }*/
+
 		
 		for (String classCode : map.keySet()) {
 			Map<String, BigDecimal> innerMap = map.get(classCode);
@@ -1925,18 +1910,30 @@ public class AverageServiceImpl implements AverageService {
 		BigDecimal allLevelSum = new BigDecimal("0");// 所有的累数
 		Map<String, BigDecimal> allLevelMap = new HashMap<String, BigDecimal>();
 		Map<String, BigDecimal> allLevelSumMap = new HashMap<String, BigDecimal>();
+		Map<String, BigDecimal> allMMap = new HashMap<String, BigDecimal>();
+
+
+		BigDecimal allM = new BigDecimal("0");
 
 		for (int i = 1; i <= Constants.AVERAGE_LEVELS.size(); i++) {
 			BigDecimal allLevel = new BigDecimal("0");// 所有的档数
 			for (String classCode : map.keySet()) {
 				allLevel = allLevel.add(map.get(classCode).get("A" + i));
 			}
+			allM = allM.add(allLevel.multiply((Constants.LEVEL_WEIGHT.get("A"+i)).setScale(2,RoundingMode.HALF_UP)));
 			allLevelSum = allLevelSum.add(allLevel);
 			allLevelMap.put("allLevel" + i, allLevel);
 			allLevelSumMap.put("allLevelSum" + i, allLevelSum);
 		}
+		if (allLevelSum.compareTo(new  BigDecimal("0"))<=0 ){
+			allMMap.put("allM",new BigDecimal("0"));
+		}else{
+			allMMap.put("allM",allM.divide(allLevelSum,2,RoundingMode.HALF_UP));
+		}
 		map.put("allLevel", allLevelMap);
 		map.put("allLevelSum", allLevelSumMap);
+		map.put("allM", allMMap);
+
 
 	}
 
@@ -1987,18 +1984,29 @@ public class AverageServiceImpl implements AverageService {
             BigDecimal allLevelSum = new BigDecimal("0");// 所有的累数
             Map<String, BigDecimal> allLevelMap = new HashMap<String, BigDecimal>();
             Map<String, BigDecimal> allLevelSumMap = new HashMap<String, BigDecimal>();
+			Map<String, BigDecimal> allMMap = new HashMap<String, BigDecimal>();
 
-            for (int i = 1; i <= levels.size(); i++) {
+
+			BigDecimal allM = new BigDecimal("0");
+			for (int i = 1; i <= levels.size(); i++) {
                 BigDecimal allLevel = new BigDecimal("0");// 所有的档数
                 for (String classCode : classCodes) {
                     allLevel = allLevel.add(map.get(classCode).get("A" + i));
                 }
+				allM = allM.add(allLevel.multiply(new BigDecimal(levelWeight.get(levels.get(i-1)))).setScale(2,RoundingMode.HALF_UP));
                 allLevelSum = allLevelSum.add(allLevel);
                 allLevelMap.put("allLevel" + i, allLevel);
                 allLevelSumMap.put("allLevelSum" + i, allLevelSum);
             }
+			if (allLevelSum.compareTo(new  BigDecimal("0"))<=0 ){
+				allMMap.put("allM",new BigDecimal("0"));
+			}else{
+				allMMap.put("allM",allM.divide(allLevelSum,2,RoundingMode.HALF_UP));
+			}
             map.put("allLevel", allLevelMap);
             map.put("allLevelSum", allLevelSumMap);
+			map.put("allM", allMMap);
+
 		}
 
 		@Override
@@ -2023,6 +2031,8 @@ public class AverageServiceImpl implements AverageService {
 			}			
 			Map<Integer, BigDecimal> allLevelMap = new HashMap<Integer, BigDecimal>();
 			Map<Integer, BigDecimal> allLevelMapSum = new HashMap<Integer, BigDecimal>();
+			Map<Integer, BigDecimal> allMMap = new HashMap<Integer, BigDecimal>();
+			BigDecimal allM = new BigDecimal("0");
 
 			BigDecimal allLevelSum = new BigDecimal("0");
 			for (int i = 1; i <=Constants.AVERAGE_LEVELS.size(); i++) {
@@ -2030,12 +2040,22 @@ public class AverageServiceImpl implements AverageService {
 				for (String schoolName : schoolLevelSumMap.keySet()) {
 					allLevel = allLevel.add(schoolLevelSumMap.get(schoolName).get(i));
 				}
+
+				allM = allM.add(allLevel.multiply((Constants.LEVEL_WEIGHT.get("A"+i)).setScale(2,RoundingMode.HALF_UP)));
 				allLevelMap.put(1000+i, allLevel);
 				allLevelSum = allLevelSum.add(allLevel);
 				allLevelMapSum.put(1000+i, allLevelSum);											
 			}
+
+			if (allLevelSum.compareTo(new  BigDecimal("0"))<=0 ){
+				allMMap.put(999,new BigDecimal("0"));
+			}else{
+				allMMap.put(999,allM.divide(allLevelSum,2,RoundingMode.HALF_UP));
+			}
 			schoolLevelSumMap.put("allLevel", allLevelMap);
-			schoolLevelSumMap.put("allLevelSum", allLevelMapSum);											
+			schoolLevelSumMap.put("allLevelSum", allLevelMapSum);
+			schoolLevelSumMap.put("allM", allMMap);
+
 		}
 		
 		
