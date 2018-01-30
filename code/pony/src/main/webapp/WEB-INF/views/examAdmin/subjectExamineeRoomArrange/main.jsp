@@ -269,10 +269,10 @@ var app = new Vue({
 										gradeId:this.gradeId,
 										subjectId:this.subjectId
 								};
-					var url = "<s:url value='/examAdmin/examineeRoomArrange/exportBySubjectId?'/>"+jQuery.param(exportParams);
-					/*  window.location.href = encodeURI(encodeURI(url));*/
-				    window.open(encodeURI(encodeURI(url)));	
-			}
+
+                window.location.href = "<s:url value='/examAdmin/examineeRoomArrange/exportBySubjectId?'/>"+jQuery.param(exportParams);
+
+            }
 			
 			}
 			

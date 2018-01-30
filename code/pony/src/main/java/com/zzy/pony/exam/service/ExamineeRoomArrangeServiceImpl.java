@@ -9,8 +9,11 @@ package com.zzy.pony.exam.service;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.zzy.pony.config.Constants;
+import com.zzy.pony.exam.dao.ExamineeDao;
 import com.zzy.pony.exam.dao.ExamineeRoomArrangeDao;
 import com.zzy.pony.exam.mapper.ExamineeRoomArrangeMapper;
+import com.zzy.pony.exam.model.Examinee;
+import com.zzy.pony.exam.model.ExamineeRoomArrange;
 import com.zzy.pony.exam.vo.ExamArrangeVo;
 import com.zzy.pony.exam.vo.ExamRoomAllocateVo;
 import com.zzy.pony.exam.vo.ExamineeVo;
@@ -23,6 +26,7 @@ import com.zzy.pony.service.TermService;
 import com.zzy.pony.util.CollectionsUtil;
 import com.zzy.pony.vo.ExamVo;
 import com.zzy.pony.vo.ExamineeRoomArrangeVo;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +66,8 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 	private StudentService studentService;
 	@Autowired
 	private ExamineeService examineeService;
+	@Autowired
+    private ExamineeDao examineeDao;
 
 	
 	
@@ -217,7 +223,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 				}														
 			}else{
 				Map<String, Object> innerMap = new HashMap<String, Object>();
-				innerMap.put("regNo", vo.getRegNo());
+				innerMap.put("seatNo", vo.getSeatNo());
 				/*if (Constants.SELECT.equalsIgnoreCase(type)) {
 					innerMap.put("regNo", vo.getRegNo());
 				}
@@ -242,7 +248,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		}					
 		List<Map<String, Object>> headList = new ArrayList<Map<String,Object>>();
 		Map<String, Object> regNoMap = new HashMap<String, Object>();
-		regNoMap.put("prop", "regNo");
+		regNoMap.put("prop", "seatNo");
 		regNoMap.put("label", "准考证号");
 		/*if (Constants.SELECT.equalsIgnoreCase(type)) {
 			regNoMap.put("prop", "regNo");
@@ -377,32 +383,32 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 					innerMap.put(arrangeHeadMap.get(vo.getArrangeId()), vo.getStudentName());
 					
 					if (Constants.SELECT.equalsIgnoreCase(type)) {
-						innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo());
+						innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getSeatNo());
 					}
 					if (Constants.EXPORT.equalsIgnoreCase(type)) {
-						innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));
+						innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getSeatNo().substring(vo.getSeatNo().length()-4, vo.getSeatNo().length()));
 					}
 					
 				}else {
 					if (innerMap.containsKey(groupHeadMap.get(vo.getGroupId()))
 							&&(!innerMap.get(groupHeadMap.get(vo.getGroupId())).toString().equalsIgnoreCase(vo.getStudentName()) 
-							||!innerMap.get(groupSeqHeadMap.get(vo.getGroupId())).toString().equalsIgnoreCase(vo.getRegNo()))
+							||!innerMap.get(groupSeqHeadMap.get(vo.getGroupId())).toString().equalsIgnoreCase(vo.getSeatNo()))
 							 ) {
 						innerMap.put(groupHeadMap.get(vo.getGroupId()),innerMap.get(groupHeadMap.get(vo.getGroupId()))+";"+vo.getStudentName() );
 						
 						if (Constants.SELECT.equalsIgnoreCase(type)) {
-							innerMap.put(groupSeqHeadMap.get(vo.getGroupId()),innerMap.get(groupSeqHeadMap.get(vo.getGroupId()))+";"+vo.getRegNo());
+							innerMap.put(groupSeqHeadMap.get(vo.getGroupId()),innerMap.get(groupSeqHeadMap.get(vo.getGroupId()))+";"+vo.getSeatNo());
 						}
 						if (Constants.EXPORT.equalsIgnoreCase(type)) {
-							innerMap.put(groupSeqHeadMap.get(vo.getGroupId()),innerMap.get(groupSeqHeadMap.get(vo.getGroupId()))+";"+vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));
+							innerMap.put(groupSeqHeadMap.get(vo.getGroupId()),innerMap.get(groupSeqHeadMap.get(vo.getGroupId()))+";"+vo.getSeatNo().substring(vo.getSeatNo().length()-4, vo.getSeatNo().length()));
 						}
 					}else {
 						innerMap.put(groupHeadMap.get(vo.getGroupId()), vo.getStudentName());
 						if (Constants.SELECT.equalsIgnoreCase(type)) {
-							innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo());
+							innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getSeatNo());
 						}
 						if (Constants.EXPORT.equalsIgnoreCase(type)) {
-							innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));
+							innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getSeatNo().substring(vo.getSeatNo().length()-4, vo.getSeatNo().length()));
 						}
 					}
 				}								
@@ -412,19 +418,19 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 				if(vo.getGroupId() == 0){
 				innerMap.put(arrangeHeadMap.get(vo.getArrangeId()), vo.getStudentName());
 				if (Constants.SELECT.equalsIgnoreCase(type)) {
-					innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo());
+					innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getSeatNo());
 				}
 				if (Constants.EXPORT.equalsIgnoreCase(type)) {
-					innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));
+					innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getSeatNo().substring(vo.getSeatNo().length()-4, vo.getSeatNo().length()));
 				}
 				
 				}else {
 				innerMap.put(groupHeadMap.get(vo.getGroupId()), vo.getStudentName());
 				if (Constants.SELECT.equalsIgnoreCase(type)) {
-					innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo());	
+					innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getSeatNo());
 				}
 				if (Constants.EXPORT.equalsIgnoreCase(type)) {
-					innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo().substring(vo.getRegNo().length()-4, vo.getRegNo().length()));	
+					innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getSeatNo().substring(vo.getSeatNo().length()-4, vo.getSeatNo().length()));
 				}
 				
 				}
@@ -571,7 +577,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 				Map<String, Object> innerMap = map.get(vo.getRoomId()+"#"+vo.getSeq());
 				if (vo.getGroupId() == 0) {
 					innerMap.put(arrangeHeadMap.get(vo.getArrangeId()), vo.getStudentName());
-					innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo());
+					innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getSeatNo());
 					/*if (Constants.SELECT.equalsIgnoreCase(type)) {
 						innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo());
 					}
@@ -582,10 +588,10 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 				}else {
 					if (innerMap.containsKey(groupHeadMap.get(vo.getGroupId()))
 							&&(!innerMap.get(groupHeadMap.get(vo.getGroupId())).toString().equalsIgnoreCase(vo.getStudentName()) 
-							||!innerMap.get(groupSeqHeadMap.get(vo.getGroupId())).toString().equalsIgnoreCase(vo.getRegNo()))
+							||!innerMap.get(groupSeqHeadMap.get(vo.getGroupId())).toString().equalsIgnoreCase(vo.getSeatNo()))
 							 ) {
 						innerMap.put(groupHeadMap.get(vo.getGroupId()),innerMap.get(groupHeadMap.get(vo.getGroupId()))+";"+vo.getStudentName() );
-						innerMap.put(groupSeqHeadMap.get(vo.getGroupId()),innerMap.get(groupSeqHeadMap.get(vo.getGroupId()))+";"+vo.getRegNo());
+						innerMap.put(groupSeqHeadMap.get(vo.getGroupId()),innerMap.get(groupSeqHeadMap.get(vo.getGroupId()))+";"+vo.getSeatNo());
 
 						/*if (Constants.SELECT.equalsIgnoreCase(type)) {
 							innerMap.put(groupSeqHeadMap.get(vo.getGroupId()),innerMap.get(groupSeqHeadMap.get(vo.getGroupId()))+";"+vo.getRegNo());
@@ -595,7 +601,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 						}*/
 					}else {
 						innerMap.put(groupHeadMap.get(vo.getGroupId()), vo.getStudentName());
-						innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo());
+						innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getSeatNo());
 						/*if (Constants.SELECT.equalsIgnoreCase(type)) {
 							innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo());
 						}
@@ -609,7 +615,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 				innerMap.put("studentNo", vo.getStudentNo());
 				if(vo.getGroupId() == 0){
 				innerMap.put(arrangeHeadMap.get(vo.getArrangeId()), vo.getStudentName());
-				innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo());
+				innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getSeatNo());
 				/*if (Constants.SELECT.equalsIgnoreCase(type)) {
 					innerMap.put(arrangeSeqHeadMap.get(vo.getArrangeId()),vo.getRegNo());
 				}
@@ -619,7 +625,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 				
 				}else {
 				innerMap.put(groupHeadMap.get(vo.getGroupId()), vo.getStudentName());
-				innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo());	
+				innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getSeatNo());
 				/*if (Constants.SELECT.equalsIgnoreCase(type)) {
 					innerMap.put(groupSeqHeadMap.get(vo.getGroupId()), vo.getRegNo());	
 				}
@@ -743,16 +749,31 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
         	
             List<ExamineeVo> averageExaminees = examinees.subList(fromIndex,toIndex);
             //List<ExamineeVo> averageExaminees = examinees.subList(i*averageExaminee,(i+1)*averageExaminee);
-            int seq=1;
+            //add  update seat_no
+			List<Examinee> examineeList = new ArrayList<Examinee>();
+			List<ExamineeRoomArrangeVo> examineeRoomArrangeVos = new ArrayList<ExamineeRoomArrangeVo>();
+
+			int seq=1;
             for (ExamineeVo examinee:
             averageExaminees) {
 				ExamineeRoomArrangeVo vo = new ExamineeRoomArrangeVo();
 				vo.setRoomId(era.getRoomId());
 				vo.setExamineeId(examinee.getExamineeId());
 				vo.setSeq(seq);
-				examineeRoomArrangeMapper.insertExamineeRoomArrange(vo);
+                examineeRoomArrangeVos.add(vo);
+			//	examineeRoomArrangeMapper.insertExamineeRoomArrange(vo);
+
+				Examinee ex = examineeDao.findOne(examinee.getExamineeId());
+				if (ex != null && StringUtils.isNotEmpty(ex.getRegNo())){
+				    //seatNo = regNo前四位+四位顺序
+                    ex.setSeatNo(ex.getRegNo().substring(0,4)+String.format("%04d",seq));
+                    examineeList.add(ex);
+                }
                 seq++;
             }
+            examineeRoomArrangeMapper.insertBatchExamineeRoomArrang(examineeRoomArrangeVos);
+            examineeDao.save(examineeList);
+
             i++;
             remainExaminee--;
         }

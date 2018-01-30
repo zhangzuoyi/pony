@@ -11,7 +11,7 @@
 	
 	<select id="findExamineeRoomArrangeByClassId" resultType="com.zzy.pony.vo.ExamineeRoomArrangeVo">
 		select t.id as id ,t.SEQ as seq,b.STUDENT_ID as studentId,
-		b.`NAME` as studentName,a.REG_NO as regNo,
+		b.`NAME` as studentName,a.REG_NO as regNo,a.SEAT_NO as seatNo,
 		c.CLASS_ID as classId,CONCAT(d.name,convert(c.SEQ,char),'班')  as className ,
 		e.ROOM_ID as roomId,e.ROOM_NAME as roomName,
 		e.CAPACITY as capacity,
@@ -33,7 +33,7 @@
 	
 	<select id="findExamineeRoomArrangeByRoomId" resultType="com.zzy.pony.vo.ExamineeRoomArrangeVo">
 		select t.id as id ,t.SEQ as seq,b.STUDENT_ID as studentId,
-		b.`NAME` as studentName,a.REG_NO as regNo,
+		b.`NAME` as studentName,a.REG_NO as regNo,a.SEAT_NO as seatNo,
 		c.CLASS_ID as classId,CONCAT(d.name,convert(c.SEQ,char),'班')  as className ,
 		e.ROOM_ID as roomId,e.ROOM_NAME as roomName,
 		e.CAPACITY as capacity,
@@ -56,7 +56,7 @@
 	
 	<select id="findExamineeRoomArrangeBySubjectId" resultType="com.zzy.pony.vo.ExamineeRoomArrangeVo">
 	select t.id as id ,t.SEQ as seq,b.STUDENT_ID as studentId,
-		b.`NAME` as studentName,a.REG_NO as regNo,
+		b.`NAME` as studentName,a.REG_NO as regNo,a.SEAT_NO as seatNo,
 		c.CLASS_ID as classId,CONCAT(d.name,convert(c.SEQ,char),'班')  as className ,
 		e.ROOM_ID as roomId,e.ROOM_NAME as roomName,
 		e.CAPACITY as capacity,
@@ -79,6 +79,15 @@
 	<insert id="insertExamineeRoomArrange" parameterType="com.zzy.pony.vo.ExamineeRoomArrangeVo" useGeneratedKeys="true" keyProperty="id">
 		insert into t_examinee_room_arrange(room_id,examinee_id,seq) values(#{roomId},#{examineeId},#{seq})
 	</insert>
+
+	<insert id="insertBatchExamineeRoomArrang" parameterType="java.util.List" useGeneratedKeys="true" >
+		insert into t_examinee_room_arrange(room_id,examinee_id,seq)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+		(#{item.roomId},#{item.examineeId},#{item.seq})
+		</foreach>
+	</insert>
+
 	
 	
 	

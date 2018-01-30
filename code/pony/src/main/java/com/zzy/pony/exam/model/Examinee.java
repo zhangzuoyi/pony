@@ -37,6 +37,10 @@ public class Examinee implements Serializable,Comparable<Examinee> {
 	@Column(name="REG_NO")
 	private String regNo;
 
+	//add seatNo
+	@Column(name="SEAT_NO")
+	private String seatNo;
+
 	//bi-directional many-to-one association to Student
 	@ManyToOne
 	@JoinColumn(name="STUDENT_ID")
@@ -156,7 +160,13 @@ public class Examinee implements Serializable,Comparable<Examinee> {
 		// TODO Auto-generated method stub			
 		return regNo.compareTo(o.regNo);
 	}
-	
-	
 
+
+    public String getSeatNo() {
+        return seatNo;
+    }
+
+    public void setSeatNo(String seatNo) {
+        this.seatNo = seatNo;
+    }
 }

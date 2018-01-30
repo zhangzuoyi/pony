@@ -13,6 +13,7 @@ public interface ExamineeRoomArrangeMapper {
 	List<ExamineeRoomArrangeVo> findExamineeRoomArrangeByRoomId(String roomId,int examId);
 	List<ExamineeRoomArrangeVo> findExamineeRoomArrangeBySubjectId(int subjectId,int examId);
 	void insertExamineeRoomArrange(ExamineeRoomArrangeVo vo);
+	void insertBatchExamineeRoomArrang(List<ExamineeRoomArrangeVo> examineeRoomArrangeVos);
 
 
 }

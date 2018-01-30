@@ -9,6 +9,7 @@ public class ExamineeRoomArrangeVo {
 	private int studentId;
 	private String studentName;
 	private String regNo;
+	private String seatNo;
 	private int classId;
 	private String className;
 	private int roomId;
@@ -140,5 +141,13 @@ public class ExamineeRoomArrangeVo {
 
 	public void setExamineeId(int examineeId) {
 		this.examineeId = examineeId;
+	}
+
+	public String getSeatNo() {
+		return seatNo;
+	}
+
+	public void setSeatNo(String seatNo) {
+		this.seatNo = seatNo;
 	}
 }
