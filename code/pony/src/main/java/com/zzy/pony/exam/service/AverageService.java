@@ -78,4 +78,10 @@ public interface AverageService {
 	void calculateAssign(Map<Integer,List<AverageExcelVo>> schoolLevelMap);
 	void calculateAssignScore(Map<Integer,List<AverageExcelVo>> schoolLevelMap,List<AverageAssignExcelVo> averageAssignExcelVos);
 	void calculateSchoolSum(Map<String,Map<Integer, BigDecimal>> schoolLevelSumMap);
+
+
+	Map<String,BigDecimal> calculateSchoolMap(Map<Integer, BigDecimal> schoolLevelMapDecimal);
+	void calculateSchoolM(Map<String,Map<String, BigDecimal>> schoolMap);
+
+
 }

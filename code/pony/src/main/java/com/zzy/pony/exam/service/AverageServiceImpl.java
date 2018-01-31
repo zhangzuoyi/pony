@@ -2057,7 +2057,67 @@ public class AverageServiceImpl implements AverageService {
 			schoolLevelSumMap.put("allM", allMMap);
 
 		}
-		
-		
 
+	@Override
+	public Map<String, BigDecimal> calculateSchoolMap(Map<Integer, BigDecimal> schoolLevelMapDecimal) {
+		Map<String,BigDecimal> result = new HashMap<String, BigDecimal>();
+
+		BigDecimal allSum = new BigDecimal("0");
+		for (Integer level:
+		schoolLevelMapDecimal.keySet()) {
+			allSum = allSum.add(schoolLevelMapDecimal.get(level));
+			result.put("A"+level,schoolLevelMapDecimal.get(level));
+			result.put("allSum"+level,allSum);
+		}
+		return result;
+	}
+
+	@Override
+	public void calculateSchoolM(Map<String, Map<String, BigDecimal>> schoolMap) {
+		//计算全部档数和累数
+
+        Map<String,BigDecimal> allLevelMap = new HashMap<String, BigDecimal>();
+        Map<String,BigDecimal> allLevelSumMap = new HashMap<String, BigDecimal>();
+
+        Set<String> schoolNames = new HashSet<String>();
+        schoolNames.addAll(schoolMap.keySet());
+
+        BigDecimal allM = new BigDecimal("0");
+        Map<String,BigDecimal> allMMap = new HashMap<String, BigDecimal>();
+        for (int i=1 ;i<=22;i++) {
+            BigDecimal allLevel = new BigDecimal("0");
+            BigDecimal allLevelSum = new BigDecimal("0");
+            for (String schoolName :
+                    schoolNames) {
+                allLevel = allLevel.add(schoolMap.get(schoolName).get("A"+i));
+                allLevelSum = allLevelSum.add(schoolMap.get(schoolName).get("allSum"+i));
+            }
+            allM = allM.add(allLevel.multiply((Constants.LEVEL_WEIGHT.get("A"+i)).setScale(2,RoundingMode.HALF_UP)));
+            allLevelMap.put("allLevel"+i,allLevel);
+            allLevelSumMap.put("allLevelSum"+i,allLevelSum);
+        }
+
+        if (allLevelSumMap.get("allLevelSum22").compareTo(BigDecimal.ZERO)<=0){
+            allMMap.put("allM",BigDecimal.ZERO);
+        }else{
+            allMMap.put("allM",allM.divide(allLevelSumMap.get("allLevelSum22"),2,RoundingMode.HALF_UP));
+        }
+        schoolMap.put("allLevel",allLevelMap);
+        schoolMap.put("allLevelSum",allLevelSumMap);
+        schoolMap.put("allM",allMMap);
+        //计算M值
+        for (String schoolName:
+                schoolNames) {
+            BigDecimal M = new BigDecimal("0");
+            Map<String,BigDecimal> innerMap = schoolMap.get(schoolName);
+            for (int i=1 ;i<=22;i++) {
+                M = M.add(innerMap.get("A"+i).multiply((Constants.LEVEL_WEIGHT.get("A"+i)).setScale(2,RoundingMode.HALF_UP)));
+            }
+            if (schoolMap.get(schoolName).get("allSum22").compareTo(BigDecimal.ZERO)<=0){
+                innerMap.put("M",BigDecimal.ZERO);
+            }else{
+                innerMap.put("M",M.divide(schoolMap.get(schoolName).get("allSum22"),2,RoundingMode.HALF_UP));
+            }
+        }
+    }
 }

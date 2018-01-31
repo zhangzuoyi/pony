@@ -339,170 +339,115 @@ public class AverageController {
             return null;
         }
         String title = "均量值统计";
-        //String title2 = "前十名均量值统计";
         String title3 = "学校统计表";
         List<String> subjectNames = new ArrayList<String>();
-        //Grade grade = gradeService.get(gradeId);
 
         try {
             HSSFWorkbook workbook = new HSSFWorkbook(); // 创建工作簿对象
             HSSFSheet sheet = workbook.createSheet(title); // 创建工作表
-            HSSFSheet sheet3 = workbook.createSheet(title3);
-
-            List<Map<String, Object>> headList = new ArrayList<Map<String, Object>>();
-            List<Map<String, Object>> datas = new ArrayList<Map<String, Object>>();
-
-
-            Map<String, Map<String, Map<String, BigDecimal>>> dataMap = new LinkedHashMap<String, Map<String, Map<String, BigDecimal>>>();
-
             Workbook wb = ReadExcelUtils.ReadExcelByFile(file);
             String[] titles = ReadExcelUtils.readExcelTitle(wb);
-            int range = 0;
-            int range2 = 0;
-            int range3 = 0;
-
-            //modify 不区分年级,总分计算所有的
-            for (int i = 3; i < titles.length; i++) {
-                subjectNames.add(titles[i]);
-            }
-
-
-            List<AverageExcelVo> averageExcelVoSum = service.getAverageExcelVoSum(wb, subjectNames);
-            List<String> classCodeSum = service.getClassCode(averageExcelVoSum, Constants.SCHOOL_NAME);
-            //获取学校名
-            Set<String> schoolNames = service.getSchoolName(averageExcelVoSum);
-            service.sortAverageExcelVoSum(averageExcelVoSum);
-            // 整体每个等级人数
-            Map<Integer, List<AverageExcelVo>> levelMapSum = service.getLevelMapSum(averageExcelVoSum);
-            // 整体每个等级指标
-            Map<Integer, BigDecimal> levelMapDecimalSum = service.getLevelMapDecimal(averageExcelVoSum);
-            Map<String, Map<Integer, BigDecimal>> schoolLevelSumMap = new HashMap<String, Map<Integer, BigDecimal>>();
-            for (String schoolName : schoolNames) {
-
-                // 学校每个等级指标
-                Map<Integer, BigDecimal> schoolLevelMapDecimalSum = service.getLevelMapDecimalBySchoolName(levelMapSum,
-                        levelMapDecimalSum, schoolName);
-                schoolLevelSumMap.put(schoolName, schoolLevelMapDecimalSum);
-            }
-            service.calculateSchoolSum(schoolLevelSumMap);
-            HSSFRow titleRowSum = sheet3.createRow(range3);
-            HSSFCell titleCellSum = titleRowSum.createCell(0);
-            sheet3.addMergedRegion(new Region(range3, (short) 0, range3, (short) (2)));
-            titleCellSum.setCellValue("总成绩");
-            HSSFRow headRowSum = sheet3.createRow(range3 + 1);
-            headRowSum.createCell(0).setCellValue("段名");
-            headRowSum.createCell(1).setCellValue("权重");
-            headRowSum.createCell(2).setCellValue("各档指标");
-            int colNumSum = 1;
-            int classSizeSum = 1;
-            for (String schoolName : schoolNames) {
-                HSSFCell classSeqCell = titleRowSum.createCell(classSizeSum * 2 + 1);
-                classSeqCell.setCellValue(schoolName);
-                headRowSum.createCell(classSizeSum * 2 + 1).setCellValue("档数");
-                headRowSum.createCell(classSizeSum * 2 + 2).setCellValue("累数");
-                classSizeSum++;
-                colNumSum++;
-            }
-            titleRowSum.createCell(classSizeSum * 2 + 1).setCellValue("全部");
-            headRowSum.createCell(classSizeSum * 2 + 1).setCellValue("档数");
-            headRowSum.createCell(classSizeSum * 2 + 2).setCellValue("累数");
-            int indexSum = 0;
-            for (int section = 1; section <= Constants.AVERAGE_LEVELS.size(); section++) {
-                HSSFRow dataRow = sheet3.createRow(range3 + indexSum + 2);
-                dataRow.createCell(0).setCellValue("A" + section);
-                dataRow.createCell(1).setCellValue(Constants.LEVEL_WEIGHT.get("A" + section).toString());
-                dataRow.createCell(2).setCellValue(Constants.AVERAGE_LEVELS.get(section - 1).toString());
-                int j = 1;
-
-                for (String schoolName : schoolNames) {
-                    dataRow.createCell(j * 2 + 1).setCellValue(schoolLevelSumMap.get(schoolName).get(section).toString());
-                    dataRow.createCell(j * 2 + 2)
-                            .setCellValue(schoolLevelSumMap.get(schoolName).get(100 + section).toString());
-                    j++;
-                }
-                dataRow.createCell(schoolNames.size() * 2 + 3)
-                        .setCellValue(schoolLevelSumMap.get("allLevel").get(1000 + section).toString());
-                dataRow.createCell(schoolNames.size() * 2 + 4)
-                        .setCellValue(schoolLevelSumMap.get("allLevelSum").get(1000 + section).toString());
-                indexSum++;
-            }
-
-            HSSFRow MSumRow = sheet3.createRow(range3 + indexSum + 2);
-            MSumRow.createCell(0).setCellValue("M值");
-            int a = 0;
-            for (String schoolName : schoolNames) {
-                MSumRow.createCell(a * 2 + 3).setCellValue(schoolLevelSumMap.get(schoolName).get(999).toString());
-                a++;
-            }
-            MSumRow.createCell(a * 2 + 3).setCellValue(schoolLevelSumMap.get("allM").get(999).toString());
-            range3 += 25;
-
-
+            int range = 26;
+            Map<String,Map<String,BigDecimal>>   pqSchool = new HashMap<String, Map<String, BigDecimal>>();
             for (int i = 3; i < titles.length; i++) {
                 List<AverageExcelVo> averageExcelVos = service.getAverageExcelVo(wb, i, 0);
-                List<String> classCodes = service.getClassCode(averageExcelVos, Constants.SCHOOL_NAME);
+                Set<String> schoolNames = service.getSchoolName(averageExcelVos);
                 service.sortAverageExcelVo(averageExcelVos);
                 Map<Integer, List<AverageExcelVo>> levelMap = service.getLevelMap(averageExcelVos);
                 Map<Integer, BigDecimal> levelMapDecimal = service.getLevelMapDecimal(averageExcelVos);
-                Map<Integer, List<AverageExcelVo>> schoolLevelMap = service.getLevelMapBySchoolName(levelMap,
-                        Constants.SCHOOL_NAME);
-                Map<Integer, BigDecimal> schoolLevelMapDecimal = service.getLevelMapDecimalBySchoolName(levelMap,
-                        levelMapDecimal, Constants.SCHOOL_NAME);
-                Map<String, Map<String, BigDecimal>> innerMap = service.calculate(schoolLevelMap, schoolLevelMapDecimal,
-                        classCodes);
-                dataMap.put(titles[i], innerMap);
+                Map<String,Map<String, BigDecimal>> schoolMap = new HashMap<String, Map<String, BigDecimal>>();
+                for (String schoolName:
+                     schoolNames) {
+                    Map<Integer, BigDecimal> schoolLevelMapDecimal = service.getLevelMapDecimalBySchoolName(levelMap,
+                            levelMapDecimal, schoolName);
+                    schoolMap.put(schoolName,service.calculateSchoolMap(schoolLevelMapDecimal));
+                }
+                service.calculateSchoolM(schoolMap);
+                pqSchool.put(titles[i],schoolMap.get(Constants.SCHOOL_NAME));
                 // 产生表格标题行
                 HSSFRow titleRow = sheet.createRow(range);
                 HSSFCell titleCell = titleRow.createCell(0);
-                sheet.addMergedRegion(new Region(range, (short) 0, range, (short) (1)));
+                sheet.addMergedRegion(new Region(range, (short) 0, range, (short) (2)));
                 titleCell.setCellValue(titles[i]);
+                int j = 0;
+                Iterator<String> it = schoolNames.iterator();
+                while (it.hasNext()){
+                    titleCell = titleRow.createCell(3+j*2);
+                    titleCell.setCellValue(it.next());
+                    j++;
+                }
+                titleCell = titleRow.createCell(3+j*2);
+                titleCell.setCellValue("全部");
+
                 HSSFRow headRow = sheet.createRow(range + 1);
                 headRow.createCell(0).setCellValue("段名");
-                headRow.createCell(1).setCellValue("各档指标");
-                int colNums = 2;
-                int classSize = 1;
-                for (String classCode : classCodes) {
-                    HSSFCell classSeqCell = titleRow.createCell(classSize * 2);
-                    classSeqCell.setCellValue(classCode);
-                    headRow.createCell(classSize * 2).setCellValue("档数");
-                    headRow.createCell(classSize * 2 + 1).setCellValue("累数");
-                    classSize++;
-                    colNums += 2;
+                headRow.createCell(1).setCellValue("权重");
+                headRow.createCell(2).setCellValue("各档指标");
+                int m = 0;
+                for(;m<schoolNames.size();m++){
+                    titleCell = headRow.createCell(3+m*2);
+                    titleCell.setCellValue("档数");
+                    titleCell = headRow.createCell(4+m*2);
+                    titleCell.setCellValue("累数");
                 }
-                titleRow.createCell(colNums).setCellValue("全部");
-                headRow.createCell(colNums).setCellValue("档数");
-                headRow.createCell(colNums + 1).setCellValue("累数");
+                titleCell = headRow.createCell(3+m*2);
+                titleCell.setCellValue("档数");
+                titleCell = headRow.createCell(4+m*2);
+                titleCell.setCellValue("累数");
+
                 int index = 0;
                 for (int section = 1; section <= Constants.AVERAGE_LEVELS.size(); section++) {
                     HSSFRow dataRow = sheet.createRow(range + index + 2);
                     dataRow.createCell(0).setCellValue("A" + section);
-                    dataRow.createCell(1).setCellValue(schoolLevelMapDecimal.get(index + 1).toString());
-                    int j = 1;
-                    for (String classCode : classCodes) {
-                        dataRow.createCell(j * 2).setCellValue(innerMap.get(classCode).get("A" + section).toString());
-                        dataRow.createCell(j * 2 + 1)
-                                .setCellValue(innerMap.get(classCode).get("classAllSum" + section).toString());
-                        j++;
+                    dataRow.createCell(1).setCellValue(Constants.LEVEL_WEIGHT.get("A" + section).toString());
+                    dataRow.createCell(2).setCellValue(Constants.AVERAGE_LEVELS.get(index).toString());
+                    int n=0;
+                    for (;n<schoolNames.size();n++){
+                        dataRow.createCell(3+n * 2).setCellValue(schoolMap.get(titleRow.getCell(3+n * 2).getStringCellValue()).get("A" + section).toString());
+                        dataRow.createCell(4+n * 2 )
+                                .setCellValue(schoolMap.get(titleRow.getCell(3+n * 2).getStringCellValue()).get("allSum" + section).toString());
                     }
-                    dataRow.createCell(classCodes.size() * 2 + 2)
-                            .setCellValue(innerMap.get("allLevel").get("allLevel" + section).toString());
-                    dataRow.createCell(classCodes.size() * 2 + 3)
-                            .setCellValue(innerMap.get("allLevelSum").get("allLevelSum" + section).toString());
+                    dataRow.createCell(schoolNames.size() * 2 + 3)
+                            .setCellValue(schoolMap.get("allLevel").get("allLevel" + section).toString());
+                    dataRow.createCell(schoolNames.size() * 2 + 4)
+                            .setCellValue(schoolMap.get("allLevelSum").get("allLevelSum" + section).toString());
                     index++;
                 }
                 //
                 //M值
                 HSSFRow MRow = sheet.createRow(range + index + 2);
                 MRow.createCell(0).setCellValue("M值");
-                for (int j = 1; j <= classCodes.size(); j++) {
-                    MRow.createCell(j * 2).setCellValue(innerMap.get(classCodes.get(j - 1)).get("M").toString());
+                m  = 0;
+                for (;m<schoolNames.size();m++){
+                    MRow.createCell(3+m * 2).setCellValue(schoolMap.get(titleRow.getCell(3+m * 2).getStringCellValue()).get("M").toString());
                 }
-                MRow.createCell(classCodes.size() * 2 +2).setCellValue(innerMap.get("allM").get("allM").toString());
+                MRow.createCell(schoolNames.size() * 2 +3).setCellValue(schoolMap.get("allM").get("allM").toString());
                 range += 26;
-
             }
-
-
+            //整体情况
+            HSSFRow titleRow = sheet.createRow(0);
+            HSSFCell titleCell = titleRow.createCell(0);
+            titleCell.setCellValue("段名");
+            titleCell = titleRow.createCell(1);
+            titleCell.setCellValue("权重");
+            for(int i = 3;i<titles.length;i++){
+                titleCell = titleRow.createCell(i-1);
+                titleCell.setCellValue(titles[i]);
+            }
+            HSSFRow dataRow = null;
+            for(int level = 1;level<=22;level++){
+                dataRow = sheet.createRow(level);
+                dataRow.createCell(0).setCellValue("A"+level);
+                dataRow.createCell(1).setCellValue(Constants.LEVEL_WEIGHT.get("A" + level).toString());
+                for(int i = 3;i<titles.length;i++){
+                    dataRow.createCell(i-1).setCellValue(pqSchool.get(titles[i]).get("A"+level).toString());
+                }
+            }
+            dataRow = sheet.createRow(23);
+            dataRow.createCell(0).setCellValue("M值");
+            for(int i = 3;i<titles.length;i++){
+                dataRow.createCell(i-1).setCellValue(pqSchool.get(titles[i]).get("M").toString());
+            }
             // 让列宽随着导出的列长自动适应
             for (int colNum = 0; colNum < 30; colNum++) {
                 int columnWidth = sheet.getColumnWidth(colNum) / 256;
@@ -729,7 +674,9 @@ public class AverageController {
     public Map<String, String> exportNewAverage(@RequestParam(value = "file") MultipartFile file, HttpServletResponse response) {
         Map<String, String> result = new HashMap<String, String>();
         try {
-            String title = "均量值统计";
+            String title = "各科均量值详表";
+            String title2 = "各科均量值简表";
+
 
             Workbook wb = ReadExcelUtils.ReadExcelByFile(file);
             String[] titles = ReadExcelUtils.readExcelTitle(wb);
@@ -808,9 +755,8 @@ public class AverageController {
             try {
                 HSSFWorkbook workbook = new HSSFWorkbook(); // 创建工作簿对象
                 HSSFSheet sheet = workbook.createSheet(title); // 创建工作表
-                List<Map<String, Object>> headList = new ArrayList<Map<String, Object>>();
-                List<Map<String, Object>> datas = new ArrayList<Map<String, Object>>();
-
+                HSSFSheet sheet2 = workbook.createSheet(title2); // 创建工作表
+                Map<String,Map<String,BigDecimal>> simpleMap = new HashMap<String, Map<String, BigDecimal>>();
                 int range = 0;
                 for (String subject : dataMap.keySet()) {
                     Map<String, Map<String, BigDecimal>> innerMap = dataMap.get(subject);
@@ -861,11 +807,31 @@ public class AverageController {
                     MRow.createCell(0).setCellValue("M值");
                     for (int j = 1; j <= schoolClasses.size(); j++) {
                         MRow.createCell(j * 2).setCellValue(innerMap.get(classList.get(j - 1)).get("M").toString());
+                        if (simpleMap.containsKey(classList.get(j - 1))){
+                            simpleMap.get(classList.get(j - 1)).put(subject,innerMap.get(classList.get(j - 1)).get("M"));
+                        }else{
+                            Map<String,BigDecimal> simpleInnerMap = new HashMap<String, BigDecimal>();
+                            simpleInnerMap.put(subject,innerMap.get(classList.get(j - 1)).get("M"));
+                            simpleMap.put(classList.get(j - 1),simpleInnerMap);
+                        }
                     }
                     MRow.createCell(schoolClasses.size()*2+2).setCellValue(innerMap.get("allM").get("allM").toString());
-
                     range += 26;
                 }
+                //sheet2
+                HSSFRow headRow = sheet2.createRow(0);
+                headRow.createCell(0).setCellValue("班级");
+                for(int i=1;i<=subjects.size();i++){
+                    headRow.createCell(i).setCellValue(subjects.get(i-1));
+                }
+               for(int index = 1;index<=classList.size();index++){
+                   headRow = sheet2.createRow(index);
+                   headRow.createCell(0).setCellValue(classList.get(index-1));
+                   for(int i=1;i<=subjects.size();i++){
+                       headRow.createCell(i).setCellValue(simpleMap.get(classList.get(index-1)).get(subjects.get(i-1)).toString());
+                   }
+               }
+
                 // 让列宽随着导出的列长自动适应
                 for (int colNum = 0; colNum < 30; colNum++) {
                     int columnWidth = sheet.getColumnWidth(colNum) / 256;
