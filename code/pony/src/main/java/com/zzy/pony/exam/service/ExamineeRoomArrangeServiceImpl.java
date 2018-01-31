@@ -736,6 +736,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
         int i=0;
         int fromIndex = 0;
         int toIndex = 0;
+        String pre = null;
         for (ExamRoomAllocateVo era:
         examRoomAllocates) {
         	
@@ -753,7 +754,13 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 			List<Examinee> examineeList = new ArrayList<Examinee>();
 			List<ExamineeRoomArrangeVo> examineeRoomArrangeVos = new ArrayList<ExamineeRoomArrangeVo>();
 
+
+
 			int seq=1;
+			//前缀抽取,需保证前缀最后一位不为0
+			if(i==0 && seq == 1){
+				pre = getPre(averageExaminees.get(0).getRegNo());
+			}
             for (ExamineeVo examinee:
             averageExaminees) {
 				ExamineeRoomArrangeVo vo = new ExamineeRoomArrangeVo();
@@ -761,12 +768,11 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 				vo.setExamineeId(examinee.getExamineeId());
 				vo.setSeq(seq);
                 examineeRoomArrangeVos.add(vo);
-			//	examineeRoomArrangeMapper.insertExamineeRoomArrange(vo);
 
 				Examinee ex = examineeDao.findOne(examinee.getExamineeId());
 				if (ex != null && StringUtils.isNotEmpty(ex.getRegNo())){
-				    //seatNo = regNo前四位+四位顺序
-                    ex.setSeatNo(ex.getRegNo().substring(0,4)+String.format("%04d",seq));
+				    //seatNo = pre+四位顺序
+					ex.setSeatNo(pre+String.format("%04d",seq));
                     examineeList.add(ex);
                 }
                 seq++;
@@ -820,6 +826,21 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 			}						
 		}				
 	}
+
+	private static   String getPre(String regNo){
+		StringBuilder pre = new StringBuilder();
+		char[] chars =  StringUtils.reverse(regNo).toCharArray();
+		int start = StringUtils.reverse(regNo).indexOf("0");
+		for (int index = start;index<chars.length;index++){
+			if (chars[index] != '0' ){
+				return pre.append(Arrays.copyOfRange(chars,index,chars.length)).reverse().toString() ;
+			}
+		}
+		return null;
+	}
+
+
+
 	
 	
 
