@@ -13,18 +13,14 @@ import com.zzy.pony.exam.dao.ExamineeDao;
 import com.zzy.pony.exam.dao.ExamineeRoomArrangeDao;
 import com.zzy.pony.exam.mapper.ExamineeRoomArrangeMapper;
 import com.zzy.pony.exam.model.Examinee;
-import com.zzy.pony.exam.model.ExamineeRoomArrange;
 import com.zzy.pony.exam.vo.ExamArrangeVo;
 import com.zzy.pony.exam.vo.ExamRoomAllocateVo;
 import com.zzy.pony.exam.vo.ExamineeVo;
 import com.zzy.pony.model.SchoolYear;
+import com.zzy.pony.model.Subject;
 import com.zzy.pony.model.Term;
-import com.zzy.pony.service.ExamService;
-import com.zzy.pony.service.SchoolYearService;
-import com.zzy.pony.service.StudentService;
-import com.zzy.pony.service.TermService;
+import com.zzy.pony.service.*;
 import com.zzy.pony.util.CollectionsUtil;
-import com.zzy.pony.vo.ExamVo;
 import com.zzy.pony.vo.ExamineeRoomArrangeVo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -68,6 +64,8 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 	private ExamineeService examineeService;
 	@Autowired
     private ExamineeDao examineeDao;
+	@Autowired
+    private SubjectService subjectService;
 
 	
 	
@@ -84,9 +82,39 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		//1 先将之前排的考场删除
 		examineeRoomArrangeMapper.deleteByExamId(examId);
 		//2 确定要排的考场，其中有组ID的一起排，没有组ID的单独排
-		List<ExamVo> examVos = examService.findByYearAndTermOrderByExamDate(year, term); 
-		ExamVo examVo = examVos.get(0);//当前考试
-		List<ExamArrangeVo> examArranges = examArrangeService.findVoByExamAndGradeAndGroupIsNull(examId,gradeId);//所有不在组里面的考试
+        //modify 只选取语文数学英语中一门作为座位号
+        ExamArrangeVo vo = null;
+        Subject subject =  subjectService.findByName("语文");
+        vo = examArrangeService.findVoByExamAndGradeAndSubject(examId,gradeId,subject.getSubjectId());
+        if (vo == null){
+            subject =  subjectService.findByName("数学");
+            vo = examArrangeService.findVoByExamAndGradeAndSubject(examId,gradeId,subject.getSubjectId());
+            if (vo == null){
+                subject =  subjectService.findByName("英语");
+                vo = examArrangeService.findVoByExamAndGradeAndSubject(examId,gradeId,subject.getSubjectId());
+                if (vo == null){
+                    log.info("必须参加语文数学英语任一科目");
+                    return ;
+                }
+            }
+        }
+        //根据examArrange分别去找考生以及考场
+        List<ExamineeVo> examinees = examineeService.findVoByArrangeId(vo.getArrangeId(),year.getYearId());//所有该门考试的考生
+        List<ExamRoomAllocateVo> examRoomAllocates = examRoomService.findByArrangeId(vo.getArrangeId());//所有该门考试的考场
+        //同班同学不相临
+        if (autoMode == Constants.AUTO_MODE_ONE) {
+            //考生平均分配到考场
+            autoModeOne(examinees, examRoomAllocates);
+        }
+        if (autoMode == Constants.AUTO_MODE_TWO) {
+            //按考场容量分配
+            autoModeTwo(examinees, examRoomAllocates);
+        }
+
+
+
+
+        /*List<ExamArrangeVo> examArranges = examArrangeService.findVoByExamAndGradeAndGroupIsNull(examId,gradeId);//所有不在组里面的考试
 		List<ExamArrangeVo> ExamArrangeVos = examArrangeService.findVoByExamAndGrade(examId, gradeId);//所有处于同一组的考试 
 		Map<Integer, String> groupMap = new HashMap<Integer, String>();
 		for (ExamArrangeVo vo : ExamArrangeVos) {
@@ -97,7 +125,9 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 					groupMap.put(vo.getGroupId(), vo.getArrangeId()+"");
 				}
 			}							
-		}		
+		}
+
+
 		//3排考场(排不在组里面的)
 		for (ExamArrangeVo vo : examArranges) {
 			//根据examArrange分别去找考生以及考场
@@ -131,7 +161,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 				
 			}
 			
-		}
+		}*/
 		
 		
 		
@@ -736,7 +766,8 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
         int i=0;
         int fromIndex = 0;
         int toIndex = 0;
-        String pre = null;
+        String pre = null;//前缀
+        int bit = 4 ;//位数
         for (ExamRoomAllocateVo era:
         examRoomAllocates) {
         	
@@ -760,6 +791,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 			//前缀抽取,需保证前缀最后一位不为0
 			if(i==0 && seq == 1){
 				pre = getPre(averageExaminees.get(0).getRegNo());
+                bit = getBit(averageExaminees.get(0).getRegNo());
 			}
             for (ExamineeVo examinee:
             averageExaminees) {
@@ -771,8 +803,8 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 
 				Examinee ex = examineeDao.findOne(examinee.getExamineeId());
 				if (ex != null && StringUtils.isNotEmpty(ex.getRegNo())){
-				    //seatNo = pre+四位顺序
-					ex.setSeatNo(pre+String.format("%04d",seq));
+				    //seatNo = pre+bit顺序
+					ex.setSeatNo(pre+String.format("%0"+bit+"d",seq));
                     examineeList.add(ex);
                 }
                 seq++;
@@ -827,7 +859,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		}				
 	}
 
-	private static   String getPre(String regNo){
+	private   String getPre(String regNo){
 		StringBuilder pre = new StringBuilder();
 		char[] chars =  StringUtils.reverse(regNo).toCharArray();
 		int start = StringUtils.reverse(regNo).indexOf("0");
@@ -838,6 +870,20 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		}
 		return null;
 	}
+	private  int getBit(String regNo){
+        StringBuilder pre = new StringBuilder();
+        char[] chars =  StringUtils.reverse(regNo).toCharArray();
+        int start = StringUtils.reverse(regNo).indexOf("0");
+        for (int index = start;index<chars.length;index++){
+            if (chars[index] != '0' ){
+                return index ;
+            }
+        }
+	    return 4;//默认4位
+    }
+
+
+
 
 
 
