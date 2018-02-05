@@ -12,6 +12,7 @@ import com.zzy.pony.config.Constants;
 import com.zzy.pony.exam.dao.ExamineeDao;
 import com.zzy.pony.exam.dao.ExamineeRoomArrangeDao;
 import com.zzy.pony.exam.mapper.ExamineeRoomArrangeMapper;
+import com.zzy.pony.exam.model.ExamArrange;
 import com.zzy.pony.exam.model.Examinee;
 import com.zzy.pony.exam.vo.ExamArrangeVo;
 import com.zzy.pony.exam.vo.ExamRoomAllocateVo;
@@ -83,7 +84,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 		examineeRoomArrangeMapper.deleteByExamId(examId);
 		//2 确定要排的考场，其中有组ID的一起排，没有组ID的单独排
         //modify 只选取语文数学英语中一门作为座位号
-        ExamArrangeVo vo = null;
+        /*ExamArrangeVo vo = null;
         Subject subject =  subjectService.findByName("语文");
         vo = examArrangeService.findVoByExamAndGradeAndSubject(examId,gradeId,subject.getSubjectId());
         if (vo == null){
@@ -109,12 +110,9 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
         if (autoMode == Constants.AUTO_MODE_TWO) {
             //按考场容量分配
             autoModeTwo(examinees, examRoomAllocates);
-        }
+        }*/
 
-
-
-
-        /*List<ExamArrangeVo> examArranges = examArrangeService.findVoByExamAndGradeAndGroupIsNull(examId,gradeId);//所有不在组里面的考试
+        List<ExamArrangeVo> examArranges = examArrangeService.findVoByExamAndGradeAndGroupIsNull(examId,gradeId);//所有不在组里面的考试
 		List<ExamArrangeVo> ExamArrangeVos = examArrangeService.findVoByExamAndGrade(examId, gradeId);//所有处于同一组的考试 
 		Map<Integer, String> groupMap = new HashMap<Integer, String>();
 		for (ExamArrangeVo vo : ExamArrangeVos) {
@@ -127,21 +125,29 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 			}							
 		}
 
-
+        boolean isNotExist = true;
 		//3排考场(排不在组里面的)
 		for (ExamArrangeVo vo : examArranges) {
 			//根据examArrange分别去找考生以及考场
-			List<ExamineeVo> examinees = examineeService.findVoByArrangeId(vo.getArrangeId(),year.getYearId());//所有该门考试的考生
+			boolean subjectFlag = false;
+            List<ExamineeVo> examinees = examineeService.findVoByArrangeId(vo.getArrangeId(),year.getYearId());//所有该门考试的考生
 			List<ExamRoomAllocateVo> examRoomAllocates = examRoomService.findByArrangeId(vo.getArrangeId());//所有该门考试的考场
-			//同班同学不相临			
+            Subject subject =   subjectService.get(vo.getSubjectId());
+            if ("语文".equals(subject.getName())||"数学".equals(subject.getName())||"英语".equals(subject.getName())){
+                subjectFlag = true;
+            }
+            //同班同学不相临
 			if (autoMode == Constants.AUTO_MODE_ONE) {
 				//考生平均分配到考场
-				autoModeOne(examinees, examRoomAllocates);
+				autoModeOne(examinees, examRoomAllocates,isNotExist&&subjectFlag);
 			}
 			if (autoMode == Constants.AUTO_MODE_TWO) {
 				//按考场容量分配
                 autoModeTwo(examinees, examRoomAllocates);
-			}								
+			}
+            if ("语文".equals(subject.getName())||"数学".equals(subject.getName())||"英语".equals(subject.getName())){
+                isNotExist = false;
+            }
 		}
 		//4排考场(在组里面的,默认按照组里面的第一个arrangeId取考生以及考场)
 		for (Integer groupId   : groupMap.keySet()) {
@@ -150,18 +156,27 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 			List<ExamineeVo> examinees = examineeService.findVoByArrangeId(Integer.valueOf(arrangeIds[0]),year.getYearId());///所有该门考试的考生
 			//Collections.sort(examinees);			
 			for (String arrangeId : arrangeIds) {
-				List<ExamRoomAllocateVo> examRoomAllocates = examRoomService.findByArrangeId(Integer.valueOf(arrangeId));//所有该门考试的考场
+                boolean subjectFlag = false;
+                ExamArrange vo = examArrangeService.get(Integer.valueOf(arrangeId));
+                Subject subject =  vo.getSubject();
+                if ("语文".equals(subject.getName())||"数学".equals(subject.getName())||"英语".equals(subject.getName())){
+                    subjectFlag = true;
+                }
+
+                List<ExamRoomAllocateVo> examRoomAllocates = examRoomService.findByArrangeId(Integer.valueOf(arrangeId));//所有该门考试的考场
 				
 	            if (autoMode == Constants.AUTO_MODE_ONE) {				
-					autoModeOne(examinees, examRoomAllocates);										
+					autoModeOne(examinees, examRoomAllocates,isNotExist&&subjectFlag);
 				}
 				if (autoMode == Constants.AUTO_MODE_TWO) {
 					autoModeTwo(examinees, examRoomAllocates);										
 				}
-				
-			}
+                if ("语文".equals(subject.getName())||"数学".equals(subject.getName())||"英语".equals(subject.getName())){
+                    isNotExist = false;
+                }
+            }
 			
-		}*/
+		}
 		
 		
 		
@@ -753,7 +768,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 	}
 
 	//考生平均分配到考场
-	private void autoModeOne(List<ExamineeVo> examinees,List<ExamRoomAllocateVo> examRoomAllocates){
+	private void autoModeOne(List<ExamineeVo> examinees,List<ExamRoomAllocateVo> examRoomAllocates,boolean flag){
 		int examineeCount = examinees.size();
 		int examRoomCount = examRoomAllocates.size();
 		int averageExaminee = examineeCount/examRoomCount;//每个考场分配多少考生
@@ -789,7 +804,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 
 			int seq=1;
 			//前缀抽取,需保证前缀最后一位不为0
-			if(i==0 && seq == 1){
+			if(flag && i==0 && seq == 1){
 				pre = getPre(averageExaminees.get(0).getRegNo());
                 bit = getBit(averageExaminees.get(0).getRegNo());
 			}
@@ -801,16 +816,20 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 				vo.setSeq(seq);
                 examineeRoomArrangeVos.add(vo);
 
-				Examinee ex = examineeDao.findOne(examinee.getExamineeId());
-				if (ex != null && StringUtils.isNotEmpty(ex.getRegNo())){
-				    //seatNo = pre+bit顺序
-					ex.setSeatNo(pre+String.format("%0"+bit+"d",seq));
-                    examineeList.add(ex);
-                }
+				if(flag) {
+					Examinee ex = examineeDao.findOne(examinee.getExamineeId());
+					if (ex != null && StringUtils.isNotEmpty(ex.getRegNo())) {
+						//seatNo = pre+bit顺序
+						ex.setSeatNo(pre + String.format("%0" + bit + "d", seq));
+						examineeList.add(ex);
+					}
+				}
                 seq++;
             }
             examineeRoomArrangeMapper.insertBatchExamineeRoomArrang(examineeRoomArrangeVos);
-            examineeDao.save(examineeList);
+            if (flag) {
+				examineeDao.save(examineeList);
+			}
 
             i++;
             remainExaminee--;
