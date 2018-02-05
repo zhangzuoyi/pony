@@ -1,5 +1,6 @@
 package com.zzy.pony.tiku.controller;
 
+import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.tiku.model.Zujuan;
 import com.zzy.pony.tiku.model.ZujuanQuestion;
 import com.zzy.pony.tiku.service.ZujuanQuestionService;
@@ -38,6 +39,7 @@ public class ZujuanController {
     @RequestMapping(value = "list", method = RequestMethod.POST)
     @ResponseBody
     public Page<ZujuanVo> list(@RequestBody ConditionVo cv) {
+        cv.setLoginName(ShiroUtil.getLoginName());
         return zujuanService.list(cv);
 
     }

@@ -33,6 +33,8 @@ public class ConditionVo {
 	private int pageSize;
 	private int startNum;//currentPage*pageSize
 
+	private String loginName;
+
 	
 	public ConditionVo(){
 		
@@ -209,5 +211,13 @@ public class ConditionVo {
 
 	public void setQuestionType(String questionType) {
 		this.questionType = questionType;
+	}
+
+	public String getLoginName() {
+		return loginName;
+	}
+
+	public void setLoginName(String loginName) {
+		this.loginName = loginName;
 	}
 }
