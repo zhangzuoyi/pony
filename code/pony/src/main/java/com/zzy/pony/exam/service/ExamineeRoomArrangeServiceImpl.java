@@ -783,6 +783,7 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
         int toIndex = 0;
         String pre = null;//前缀
         int bit = 4 ;//位数
+		int seatSeq = 1;
         for (ExamRoomAllocateVo era:
         examRoomAllocates) {
         	
@@ -820,11 +821,12 @@ public class ExamineeRoomArrangeServiceImpl implements ExamineeRoomArrangeServic
 					Examinee ex = examineeDao.findOne(examinee.getExamineeId());
 					if (ex != null && StringUtils.isNotEmpty(ex.getRegNo())) {
 						//seatNo = pre+bit顺序
-						ex.setSeatNo(pre + String.format("%0" + bit + "d", seq));
+						ex.setSeatNo(pre + String.format("%0" + bit + "d", seatSeq));
 						examineeList.add(ex);
 					}
 				}
                 seq++;
+				seatSeq++;
             }
             examineeRoomArrangeMapper.insertBatchExamineeRoomArrang(examineeRoomArrangeVos);
             if (flag) {
