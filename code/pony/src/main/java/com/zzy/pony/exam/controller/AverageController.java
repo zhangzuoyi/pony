@@ -695,11 +695,11 @@ public class AverageController {
                     if (subjectLevelMap.containsKey(headRowOne.getCell(j).getStringCellValue())) {
                         subjectLevelMap.get(headRowOne.getCell(j).getStringCellValue()).put(
                                 dataSheetRow.getCell(0).getStringCellValue(),
-                                new BigDecimal(ReadExcelUtils.getCellFormatValue(dataSheetRow.getCell(j)).toString()));
+                                new BigDecimal(ReadExcelUtils.getCellFormatValue(dataSheetRow.getCell(j)).toString()).setScale(2,BigDecimal.ROUND_HALF_UP));
                     } else {
                         Map<String, BigDecimal> innerMap = new LinkedHashMap<String, BigDecimal>();
                         innerMap.put(dataSheetRow.getCell(0).getStringCellValue(),
-                                new BigDecimal(ReadExcelUtils.getCellFormatValue(dataSheetRow.getCell(j)).toString()));
+                                new BigDecimal(ReadExcelUtils.getCellFormatValue(dataSheetRow.getCell(j)).toString()).setScale(2,BigDecimal.ROUND_HALF_UP));
                         subjectLevelMap.put(headRowOne.getCell(j).getStringCellValue(), innerMap);
                     }
                 }

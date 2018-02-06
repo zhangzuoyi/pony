@@ -527,8 +527,20 @@ public class AverageServiceImpl implements AverageService {
                 int first = 0;// 第一个的
                 int total = averageNewVoList.size();// 总人数
                 BigDecimal totalDecimal = new BigDecimal(total);
-                allCount = allCount.add(totalDecimal);
-                remainDecimal = allCount.subtract(allLevelCount);// 留给下一等级的
+
+                //add
+                if(allCount.add(totalDecimal).intValue() == averageNewVos.size()){
+                    levelDecimal =  new BigDecimal(averageNewVos.size()).subtract(allCount);
+                    remainDecimal = BigDecimal.ZERO;
+                    allCount = allCount.add(totalDecimal);
+                }else{
+                    allCount = allCount.add(totalDecimal);
+                    remainDecimal = allCount.subtract(allLevelCount);// 留给下一等级的
+                }
+
+
+
+
 
                 Map<String, BigDecimal> remainMap = new HashMap<String, BigDecimal>();
                 BigDecimal averageDecimal = zero;
@@ -1581,7 +1593,11 @@ public class AverageServiceImpl implements AverageService {
                 floor++;
             }
             if (floor + 1 >= averageNewVos.size()) {
-                result.put(list.get(i), averageNewVos.subList(previousLevelCount, averageNewVos.size()));
+            	if(previousLevelCount >= averageNewVos.size()){
+					result.put(list.get(i), new ArrayList<AverageNewVo>());
+				}else{
+					result.put(list.get(i), averageNewVos.subList(previousLevelCount, averageNewVos.size()));
+				}
             } else {
                 result.put(list.get(i), averageNewVos.subList(previousLevelCount, floor + 1));
             }
