@@ -94,7 +94,7 @@
             
         </el-card>  
         
-         <el-dialog     close-on-click-modal="false" close-on-press-escape="false" v-model="dialogFormVisible" >			
+         <el-dialog     close-on-click-modal="false" close-on-press-escape="false" :visible.sync="dialogFormVisible" >
 				
 				 <el-table 
 				    v-loading="loading" 

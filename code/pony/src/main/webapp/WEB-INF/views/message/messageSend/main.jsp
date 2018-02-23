@@ -131,7 +131,7 @@
         </el-card>
         
         
-        <el-dialog title="用户选择" v-model="dialogFormVisible" size="large">
+        <el-dialog title="用户选择" :visible.sync="dialogFormVisible" size="large">
                
                 <el-form>                   
                     <el-form-item label="用户组" :label-width="formLabelWidth">

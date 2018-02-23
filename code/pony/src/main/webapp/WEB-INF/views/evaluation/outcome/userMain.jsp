@@ -90,7 +90,7 @@ width:200px;
             </el-table> 
         </el-card>
         
-		<el-dialog  v-model="dialogFormVisible" >
+		<el-dialog  :visible.sync="dialogFormVisible" >
 			<div slot="title" class="dialog-title">
                   <b v-if=" ! outcome.outcomeId">新增成果</b>
                   <b v-if="outcome.outcomeId">修改成果</b>

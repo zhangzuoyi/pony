@@ -74,7 +74,7 @@ width:200px;
 			
 
         </el-card>
-			<el-dialog  v-model="dialogFormVisible" >
+			<el-dialog  :visible.sync="dialogFormVisible" >
 			<div slot="title" class="dialog-title">
                     <b>{{title}}</b>
                 </div>
@@ -92,7 +92,7 @@ width:200px;
 			</div>
 			</el-dialog>
 			
-			<el-dialog title="设置资源" v-model="dialogFormVisible2" >			
+			<el-dialog title="设置资源" :visible.sync="dialogFormVisible2" >
 			<el-tree           
             :data="treeData"
             :props="props"

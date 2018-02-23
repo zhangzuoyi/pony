@@ -133,7 +133,7 @@ width:100px;
                 :total="total"></el-pagination>
         </el-card>
 		</div>
-		<el-dialog  v-model="dialogFormVisible" >
+		<el-dialog  :visible.sync="dialogFormVisible" >
 			<div slot="title" class="dialog-title">
                   <b>新增巡课</b>
             </div>

@@ -116,7 +116,7 @@
         </el-card> 
         
         
-        <el-dialog  v-model="dialogFormVisible" size="large">
+        <el-dialog  :visible.sync="dialogFormVisible" size="large">
                <div slot="title" class="dialog-title">
                     <b>{{title}}</b>
                 </div>

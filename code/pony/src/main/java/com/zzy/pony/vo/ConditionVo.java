@@ -35,6 +35,8 @@ public class ConditionVo {
 
 	private String loginName;
 
+	private String taskName;
+
 	
 	public ConditionVo(){
 		
@@ -219,5 +221,13 @@ public class ConditionVo {
 
 	public void setLoginName(String loginName) {
 		this.loginName = loginName;
+	}
+
+	public String getTaskName() {
+		return taskName;
+	}
+
+	public void setTaskName(String taskName) {
+		this.taskName = taskName;
 	}
 }

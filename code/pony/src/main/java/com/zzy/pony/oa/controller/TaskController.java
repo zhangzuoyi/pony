@@ -28,7 +28,7 @@ public class TaskController {
     @RequestMapping(value = "list",method = RequestMethod.POST)
     @ResponseBody
     public Page<TaskVo> list(@RequestBody ConditionVo cv ){
-        cv.setStartNum((cv.getCurrentPage()-1)*cv.getPageSize());
+        cv.setStartNum(cv.getCurrentPage()*cv.getPageSize());
         return taskService.list(cv);
     }
 

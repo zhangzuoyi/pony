@@ -59,7 +59,7 @@ width:200px;
             </div>           
         </el-card>
 		
-		<el-dialog title="导入模板"  v-model="uploadDialogFormVisible" >
+		<el-dialog title="导入模板"  :visible.sync="uploadDialogFormVisible" >
 			<el-row>
 			<el-col>
 				<el-upload					

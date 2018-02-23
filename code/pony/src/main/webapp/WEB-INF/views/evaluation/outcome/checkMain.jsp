@@ -89,7 +89,7 @@ width:200px;
             </el-table> 
         </el-card>
         
-		<el-dialog  v-model="dialogFormVisible" >
+		<el-dialog  :visible.sync="dialogFormVisible" >
 			<div slot="title" class="dialog-title">
                   <b>成果审核</b>
             </div>

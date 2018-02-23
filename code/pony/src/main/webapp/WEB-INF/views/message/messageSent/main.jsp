@@ -81,7 +81,7 @@
         </el-card>
         
         
-        <el-dialog title="消息" v-model="dialogFormVisible" size="large">
+        <el-dialog title="消息" :visible.sync="dialogFormVisible" size="large">
                <el-form>                   
                     <el-form-item label="收件人" :label-width="formLabelWidth">                          			 
            			 <el-input v-model="selectMessage.receiveUser" :disabled="true"></el-input>          			          			 

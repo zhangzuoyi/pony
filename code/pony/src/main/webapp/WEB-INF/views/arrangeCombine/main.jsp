@@ -75,7 +75,7 @@ width:200px;
                 </el-table-column>
             </el-table> 			
         </el-card>
-			<el-dialog title="新增合班" v-model="dialogFormVisible" >			
+			<el-dialog title="新增合班" :visible.sync="dialogFormVisible" >
 			<el-input placeholder="请输入.." v-model="filterText"></el-input>
 			<el-tree  
 			class="filter-tree"         

@@ -85,7 +85,7 @@ width:200px;
 			
 
         </el-card>
-			<el-dialog  v-model="dialogFormVisible" >
+			<el-dialog  :visible.sync="dialogFormVisible" >
 			<div slot="title" class="dialog-title">
                     <b>{{title}}</b>
                 </div>

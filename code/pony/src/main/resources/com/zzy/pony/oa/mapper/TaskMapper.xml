@@ -10,7 +10,7 @@ t.UPDATE_TIME as updateTime,t.UPDATE_USER as updateUser,t.status
  from oa_task t
 	</sql>
 
-    <select id="findPage" resultType="com.zzy.pony.oa.vo.TaskVo">
+    <select id="findPage" resultType="com.zzy.pony.oa.vo.TaskVo" parameterType="com.zzy.pony.vo.ConditionVo" >
         <include refid="base_select"></include>
         where 1=1
 
