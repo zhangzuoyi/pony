@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>任务管理</title>
+    <title>我的任务</title>
     <link rel="stylesheet" type="text/css" href="<s:url value='/static/easyui/themes/default/easyui.css' />"/>
     <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/style.css' />"/>
     <link rel="stylesheet" type="text/css" href="<s:url value='/static/css/icon.css' />"/>
@@ -34,7 +34,7 @@
             <div slot="header" class="clearfix">
                 <el-row>
                     <el-col :span="4">
-                        <b>任务管理</b>
+                        <b>我的任务</b>
                     </el-col>
                 </el-row>
                 <el-row>
@@ -58,7 +58,6 @@
                     </el-col>
                     <el-col :offset="8" :span="4">
                         <el-button type="primary" @click="search">查询</el-button>
-                        <el-button type="primary" @click="addTask">新建任务</el-button>
                     </el-col>
                 </el-row>
             </div>
@@ -68,7 +67,6 @@
                     border
                     style="width: 100%"
                     highlight-current-row
-                    @selection-change="handleSelectionChange"
             >
                 <%--<el-table-column
                         type="selection"
@@ -114,8 +112,7 @@
                         label="操作"
                         >
                     <template slot-scope="scope">
-                        <%--<el-button size="mini" @click="handleEdit(scope.$indexmscope.row)">编辑</el-button>--%>
-                        <el-button size="mini" type="danger" @click="handleDelete(scope.$index,scope.row)">删除</el-button>
+                        <el-button size="mini" @click="handleEdit(scope.$indexmscope.row)">编辑</el-button>
                     </template>
                 </el-table-column>
 
@@ -136,8 +133,8 @@
 
         </el-card>
 
-        <el-dialog title="新建任务" :visible.sync="dialogFormVisible">
-            <el-form :model="task" :rules="rules">
+        <el-dialog title="编辑任务" :visible.sync="dialogFormVisible">
+            <el-form :model="task" >
                 <el-form-item label="名称" :label-width="formLabelWidth" prop="name">
                     <el-input v-model="task.name"></el-input>
                 </el-form-item>
@@ -151,54 +148,39 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="负责人" :label-width="formLabelWidth" prop="assignee">
-                    <el-input v-model="task.assignee" readonly ><el-button slot="append" icon="el-icon-plus" @click="openTransfer('assignee')"></el-button></el-input>
+                    <el-input v-model="task.assignee" readonly ></el-input>
                 </el-form-item>
                 <el-form-item label="时间" :label-width="formLabelWidth" >
-                    <el-time-picker v-model="task.startTime" prop="startTime"></el-time-picker>
+                    <el-input  v-model="task.startTime" prop="startTime" readonly></el-input >
                     --
-                    <el-time-picker v-model="task.endTime" prop="endTime"></el-time-picker>
+                    <el-input  v-model="task.endTime" prop="endTime" readonly></el-input >
                 </el-form-item>
-                <el-form-item label="任务成员" :label-width="formLabelWidth" prop="members">
-                    <el-input v-model="task.members" readonly ><el-button slot="append" icon="el-icon-plus" @click="openTransfer('members')"></el-button></el-input>
-                </el-form-item>
-                <el-form-item label="抄送人" :label-width="formLabelWidth" prop="endTime">
-                    <el-input v-model="task.cc" readonly><el-button slot="append" icon="el-icon-plus" @click="openTransfer('cc')"></el-button></el-input>
-                </el-form-item>
-                <%--<el-form-item label="标签" :label-width="formLabelWidth" prop="tags">
-                    <el-input v-model="task.tags" ></el-input>
-                </el-form-item>--%>
                 <el-form-item label="附件" :label-width="formLabelWidth">
-                <el-upload
-                        action="<s:url value='/examAdmin/examinee/fileUpload'/>"
-                        ref="upload"
-                        name="fileUpload"
-                        :before-upload="beforeUpload"
-                        :file-list="fileList"
-                        :auto-upload="false"
-                >
-                    <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                    <el-button style="margin-left:10px;" size="small" type="primary" @click="clearFiles">清空文件</el-button>
-                </el-upload>
+                    <el-upload
+                            action="<s:url value='/examAdmin/examinee/fileUpload'/>"
+                            ref="upload"
+                            name="fileUpload"
+                            :before-upload="beforeUpload"
+                            :file-list="fileList"
+                            :auto-upload="false"
+                    >
+                        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                        <el-button style="margin-left:10px;" size="small" type="primary" @click="clearFiles">清空文件</el-button>
+                    </el-upload>
+                </el-form-item>
+                <el-form-item label="进展" :label-width="formLabelWidth" prop="description" >
+                    <el-input v-model="content" type="textarea" ></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="onSubmit()">确定</el-button>
+                <el-button type="primary" @click="onSubmit()">添加进展</el-button>
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
             </div>
         </el-dialog>
 
-        <el-dialog title="选择人员" :visible.sync="dialogFormVisible2">
-            <el-transfer
-                    filterable
-                    :filter-method="filterMethod"
-                    filter-placeholder="请输入人员姓名"
-                    v-model="selected"
-                    :data="candidate">
-            </el-transfer>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible2 = false;closeTransfer(type)">确定</el-button>
-            </div>
-        </el-dialog>
+
+
+
 
 
     </div>
@@ -212,34 +194,20 @@
         data: {
             conditionVo: {currentPage: null, pageSize: 20, taskName: null,oaStatus:null},
             dialogFormVisible: false,
-            dialogFormVisible2:false,
             formLabelWidth: "120px",
             tableData: [],
-            tasksUrl: "<s:url value='/oa/task/list'/>",
-            deleteUrl: "<s:url value='/oa/task/delete'/>",
-            addUrl: "<s:url value='/oa/task/add'/>",
-            updateUrl: "<s:url value='/oa/task/update'/>",
-            teachersUrl: "<s:url value='/teacherAdmin/list'/>",
-            addFileUrl : "<s:url value='/oa/task/addFile'/>",
+            tasksUrl: "<s:url value='/oa/task/listMy'/>",
+            addUrl :"<s:url value='/oa/taskProgress/add'/>",
+            addFileUrl :"<s:url value='/oa/taskProgress/addFile'/>",
+            deleteUrl :"<s:url value='/oa/taskProgress/delete'/>",
             currentPage: 1,
             pageSizes: [20],
             pageSize: [20],
             total: null,
             task: {},
-            multipleSelection: [],
-            rules: {
-                name: [
-                    { required: true, message: '请输入任务名称', trigger: 'blur' },
-                ],
-                assignee: [
-                    { required: true, message: '请选择负责人', trigger: 'change' }
-                ]
-            },
-            candidate:[],
-            selected:[],
-            type:'',
             fileList:[],
-            taskId : null
+            content:'',
+            progressId : null,
 
 
 
@@ -255,24 +223,18 @@
 
         mounted: function () {
             this.getTasks();
-            this.getCandidate();
 
 
         },
         methods: {
 
-            filterMethod:function (query, item) {
-                    return item.label.indexOf(query) > -1;
 
-            },
             handleCurrentChange: function (val) {
                 this.currentPage = val;
                 this.conditionVo.currentPage = val;
                 this.getTasks();
             },
-            handleSelectionChange:function(val) {
-                this.multipleSelection = val;
-            },
+
             getTasks: function () {
                 this.$http.post(this.tasksUrl, this.conditionVo).then(
                     function (response) {
@@ -283,32 +245,16 @@
                     }
                 );
             },
-            getCandidate:function () {
-                this.$http.get(this.teachersUrl).then(
-                    function (response) {
 
-                        for(var idx in response.data){
-                            this.candidate.push({
-                                key: response.data[idx].name,//使用名字作为唯一标识
-                                label: response.data[idx].name,
-                                disabled: false
-                            });
-                        }
-
-                    },
-                    function (response) {
-                    }
-                );
-            },
             search: function () {
                 this.currentPage = 1;
                 this.getTasks();
             },
             onSubmit:function () {
 
-                this.$http.post(this.addUrl, this.task).then(
+                this.$http.get(this.addUrl, {params:{taskId: this.task.id,content:this.content}}).then(
                     function (response) {
-                        this.taskId = response.data;
+                        this.progressId = response.data;
                         this.$refs.upload.submit();
                         this.task = {};
                         this.dialogFormVisible = false;
@@ -320,36 +266,9 @@
                 );
 
             },
-            addTask:function () {
-                this.dialogFormVisible = true;
+            handleEdit :function (index,row) {
+                this.task = row;
             },
-            openTransfer:function (type) {
-                if(type == 'assignee'){
-                  this.selected = this.task.assignee;
-                }
-                if(type == 'members'){
-                    this.selected = this.task.members;
-                }
-                if(type == 'cc'){
-                    this.selected = this.task.cc;
-                }
-                this.type=type;
-                this.dialogFormVisible2 = true;
-            },
-            closeTransfer:function (type) {
-                if(type == 'assignee'){
-                    this.task.assignee = this.selected;
-                }
-                if(type == 'members'){
-                    this.task.members = this.selected;
-                }
-                if(type == 'cc'){
-                    this.task.cc = this.selected;
-                }
-            },
-            /*handleEdit :function (index,row) {
-
-            },*/
             handleDelete :function (index,row) {
                 this.$http.get(this.deleteUrl, {params:{id:row.id}}).then(
                     function (response) {
@@ -363,13 +282,13 @@
 
                 var formData = new FormData();
                 formData.append('fileUpload',file);
-                formData.append('id',this.taskId);
+                formData.append('id',this.progressId);
 
                 this.$http.post(this.addFileUrl,formData).then(
                     function(response){
                         this.clearFiles();
                         this.task = {};
-                        this.taskId = null;
+                        this.progressId = null;
                         this.dialogFormVisible = false;
                         this.getTasks();
                     });

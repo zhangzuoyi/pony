@@ -41,33 +41,30 @@
                         width="180">
                 </el-table-column>
                 <el-table-column
-                        inline-template
                         label="申请日期"
                         width="180">
-                        <div>{{row.applyDate | date}}</div>
+					<template slot-scope="scope">{{scope.row.applyDate | date }}</template>
                 </el-table-column>
 				<el-table-column
-						inline-template
                         label="请假类型"
                         width="180">
-                        <span>{{getLeaveType(row.leaveType)}}</span>
+					<template slot-scope="scope">{{getLeaveType(scope.row.leaveType)}}</template>
                 </el-table-column>
                 <el-table-column
-						inline-template
                         label="开始时间"
                         width="180">
-                        <div>{{row.startTime | date}}</div>
+					<template slot-scope="scope">{{scope.row.startTime | date }}</template>
                 </el-table-column>
                 <el-table-column
-						inline-template
                         label="结束时间"
                         width="180">
-                        <div>{{row.endTime | date}}</div>
+					<template slot-scope="scope">{{scope.row.endTime | date }}</template>
                 </el-table-column>
                 <el-table-column
-                        inline-template
                         label="当前流程">
-                        <a class="trace" href='#' @click="showGraph(row.processInstanceId)" :pid="row.processInstanceId" :pdid="row.processDefinitionId" title="点击查看流程图">{{row.taskName }}</a><!-- onclick="graphTrace(this)" -->
+                    <template slot-scope="scope"><a class="trace" href='#' @click="showGraph(scope.row.processInstanceId)" :pid="scope.row.processInstanceId" :pdid="scope.row.processDefinitionId" title="点击查看流程图">{{scope.row.taskName }}</a><!-- onclick="graphTrace(this)" -->
+                    </template>
+
                 </el-table-column>
                 <el-table-column                       
                         label="操作"

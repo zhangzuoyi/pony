@@ -121,8 +121,7 @@
                         width="70">
                 </el-table-column>                              
                 <el-table-column
-               			inline-template
-                       
+
                         label="每周课时"
                         show-overflow-tooltip>
                         <div>

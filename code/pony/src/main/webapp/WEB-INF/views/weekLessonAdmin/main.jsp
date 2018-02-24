@@ -46,22 +46,20 @@
                         width="120">
                 </el-table-column>
                 <el-table-column
-               			inline-template                  
                         label="是否上课"
                         width="120">
-                        <div>
-                          {{ row.haveClass | filter }}                                                      
-                      </div>
+                    <template slot-scope="scope">{{scope.row.haveClass | filter }}</template>
                 </el-table-column>
                 <el-table-column 
-                		inline-template                      
                         label="操作"
                         width="200"
                         >
+                    <template slot-scope="scope">
                       <div>            
-                        <el-button type="text" v-if="row.haveClass==0 " @click="weekdayUpdate(row.seq)">设为上课</el-button>
-                        <el-button type="text" v-if="row.haveClass==1 " @click="weekdayUpdate(row.seq)">设为不上课</el-button>                       
+                        <el-button type="text" v-if="scope.row.haveClass==0 " @click="weekdayUpdate(scope.row.seq)">设为上课</el-button>
+                        <el-button type="text" v-if="scope.row.haveClass==1 " @click="weekdayUpdate(scope.row.seq)">设为不上课</el-button>
                       </div>
+                    </template>
                 </el-table-column>                               
             </el-table>
             </el-col>          

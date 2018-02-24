@@ -45,29 +45,25 @@ width:200px;
                     style="width: 100%"
                     highlight-current-row> 
                 <el-table-column
-                         inline-template
                         label="老师姓名">
-                 <div>{{row.teacherName }}</div>       
+					<template slot-scope="scope">{{scope.row.teacherName   }}</template>
                 </el-table-column>
                 <el-table-column
-                         inline-template
                         label="提交时间">
-                 <div>{{row.createTime | date }}</div>       
+					<template slot-scope="scope">{{scope.row.createTime | date   }}</template>
                 </el-table-column>
                 <el-table-column
-                         inline-template
                         label="审核时间">
-                 <div v-if="row.checkTime">{{row.checkTime | date }}</div>
+					<template slot-scope="scope"><div v-if="scope.row.checkTime">{{scope.row.checkTime | date }}</div></template>
                 </el-table-column>
                 <el-table-column
                         prop="totalScore"
                         label="总分">
                 </el-table-column>
                 <el-table-column
-                         inline-template
                         label="状态"
                         >
-                 <div>{{row.status | statusFilter}}</div>
+					<template slot-scope="scope">{{scope.row.status | statusFilter   }}</template>
                 </el-table-column>
                 <el-table-column                       
                         label="操作">

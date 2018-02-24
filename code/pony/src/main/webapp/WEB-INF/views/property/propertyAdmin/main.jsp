@@ -58,10 +58,9 @@ width:200px;
                 </el-table-column>              
                  
                 <el-table-column
-                         inline-template
                         label="分类"
                         >
-                 <div>{{row.propertyTypeName }}</div>       
+                    <template slot-scope="scope">{{scope.row.propertyTypeName  }}</template>
                 </el-table-column>
                 <el-table-column
                 		prop="name"
@@ -84,22 +83,20 @@ width:200px;
                         >
                 </el-table-column>              
                 <el-table-column
-                         inline-template
                         label="责任人"
                         >
-                 <div>{{row.ownerName}}</div>       
+                    <template slot-scope="scope">{{scope.row.ownerName  }}</template>
+
                 </el-table-column>
                 <el-table-column
-                         inline-template
                         label="状态"
                         >
-                 <div>{{row.status | statusFilter}}</div>       
+                    <template slot-scope="scope">{{scope.row.status | statusFilter }}</template>
                 </el-table-column>
                 <el-table-column
-                         inline-template
                         label="使用人"
                         >
-                 <div>{{row.userName}}</div>       
+                    <template slot-scope="scope">{{scope.row.userName  }}</template>
                 </el-table-column>
                                              
                 

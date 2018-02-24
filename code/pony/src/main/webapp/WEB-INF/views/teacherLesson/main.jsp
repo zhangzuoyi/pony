@@ -129,7 +129,6 @@
                         width="50">
                 </el-table-column>
                 <!-- <el-table-column
-                        inline-template
                         label="老师编号"
                         width="120">
                     <div>{{ row.date }}</div>

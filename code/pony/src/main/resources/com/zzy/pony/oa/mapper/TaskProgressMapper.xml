@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.oa.mapper.TaskProgressMapper">
+    <sql id="base_select">
+		select t.id ,t.task_id as taskId ,t.content ,t.is_finished as isFinished,t.CREATE_TIME as createTime,t.CREATE_USER as createUser
+
+ from oa_task_progress t
+	</sql>
+
+
+    <select id="findOne" parameterType="java.lang.Long" resultType="com.zzy.pony.oa.model.TaskProgress">
+        <include refid="base_select"></include>
+        where ID = #{0}
+    </select>
+    <update id="update" parameterType="com.zzy.pony.oa.model.TaskProgress">
+        update oa_task_progress set task_id = #{taskId}, content = #{content} ,is_finished = #{isFinished},
+        WHERE  ID = #{id}
+    </update>
+
+    <insert id="add" parameterType="com.zzy.pony.oa.model.TaskProgress" useGeneratedKeys="true" keyProperty="id">
+        insert into oa_task_progress (task_id,content,is_finished,CREATE_TIME,CREATE_USER)
+		values(#{taskId},#{content},#{isFinished},#{createTime},#{createUser})
+    </insert>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        delete from oa_task_progress where ID = #{0}
+    </delete>
+
+
+</mapper>

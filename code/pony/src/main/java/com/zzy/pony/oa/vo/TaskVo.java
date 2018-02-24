@@ -13,17 +13,23 @@ public class TaskVo {
     private String name;
     private String description;
     private int access;
-    private String assignee;
+    private String[] assignee;
+    private String assigneeStr;
     private Date startTime;
     private Date endTime;
-    private String members;
-    private String cc;
+    private String startTimeStr;
+    private String endTimeStr;
+    private String[] members;
+    private String membersStr;
+    private String[] cc;
+    private String ccStr;
     private String createUser;
     private Date createTime;
     private String updateUser;
     private Date updateTime;
     private int status;
     private String statusName;
+    private String tags;
     public TaskVo(){}
 
     public int getId() {
@@ -58,14 +64,6 @@ public class TaskVo {
         this.access = access;
     }
 
-    public String getAssignee() {
-        return assignee;
-    }
-
-    public void setAssignee(String assignee) {
-        this.assignee = assignee;
-    }
-
     public Date getStartTime() {
         return startTime;
     }
@@ -80,22 +78,6 @@ public class TaskVo {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
-    }
-
-    public String getMembers() {
-        return members;
-    }
-
-    public void setMembers(String members) {
-        this.members = members;
-    }
-
-    public String getCc() {
-        return cc;
-    }
-
-    public void setCc(String cc) {
-        this.cc = cc;
     }
 
     public String getCreateUser() {
@@ -144,5 +126,77 @@ public class TaskVo {
 
     public void setStatusName(String statusName) {
         this.statusName = statusName;
+    }
+
+    public String[] getAssignee() {
+        return assignee;
+    }
+
+    public void setAssignee(String[] assignee) {
+        this.assignee = assignee;
+    }
+
+    public String[] getMembers() {
+        return members;
+    }
+
+    public void setMembers(String[] members) {
+        this.members = members;
+    }
+
+    public String[] getCc() {
+        return cc;
+    }
+
+    public void setCc(String[] cc) {
+        this.cc = cc;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
+    public String getStartTimeStr() {
+        return startTimeStr;
+    }
+
+    public void setStartTimeStr(String startTimeStr) {
+        this.startTimeStr = startTimeStr;
+    }
+
+    public String getEndTimeStr() {
+        return endTimeStr;
+    }
+
+    public void setEndTimeStr(String endTimeStr) {
+        this.endTimeStr = endTimeStr;
+    }
+
+    public String getAssigneeStr() {
+        return assigneeStr;
+    }
+
+    public void setAssigneeStr(String assigneeStr) {
+        this.assigneeStr = assigneeStr;
+    }
+
+    public String getMembersStr() {
+        return membersStr;
+    }
+
+    public void setMembersStr(String membersStr) {
+        this.membersStr = membersStr;
+    }
+
+    public String getCcStr() {
+        return ccStr;
+    }
+
+    public void setCcStr(String ccStr) {
+        this.ccStr = ccStr;
     }
 }

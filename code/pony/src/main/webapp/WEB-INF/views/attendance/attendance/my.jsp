@@ -41,16 +41,14 @@
                         width="180">
                 </el-table-column>
                 <el-table-column
-                        inline-template
                         label="开始时间"
                         width="180">
-                        <div>{{row.startTime | time}}</div>
+                    <template slot-scope="scope">{{scope.row.startTime | time }}</template>
                 </el-table-column>
 				<el-table-column
-						inline-template
                         label="结束时间"
                         width="180">
-                        <div>{{row.endTime | time}}</div>
+                    <template slot-scope="scope">{{scope.row.endTime | time }}</template>
                 </el-table-column>
                 <el-table-column
                         prop="status"

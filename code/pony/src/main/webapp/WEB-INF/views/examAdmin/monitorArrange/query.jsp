@@ -111,22 +111,20 @@ width:200px;
                     style="width: 100%"
                    >               
                 <el-table-column
-                			inline-template
 							label="日期">
-							<div>{{row.examDate | date}}</div>
+					<template slot-scope="scope">{{scope.row.examDate | date }}</template>
+
 				</el-table-column>
 				<el-table-column
-						inline-template
 						prop="startTime"
 						label="开始时间"
 						width="180">
-						<div>{{row.startTime | hhmm}}</div>
+					<template slot-scope="scope">{{scope.row.startTime | hhmm }}</template>
 				</el-table-column>
 				<el-table-column
-						inline-template
 						prop="endTime"
 						label="结束时间">
-						<div>{{row.endTime | hhmm}}</div>
+					<template slot-scope="scope">{{scope.row.endTime | hhmm }}</template>
 				</el-table-column>
 				<el-table-column
 						prop="gradeName"
