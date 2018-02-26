@@ -9,22 +9,32 @@ import com.zzy.pony.util.DateTimeUtil;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author: WANGCHAO262
  * @Date: 2018-02-24
  * @Description
  */
+@Service
+@Transactional
 public class TaskProgressServiceImpl implements TaskProgressService {
 
     @Autowired
     private TaskProgressMapper taskProgressMapper;
     @Value("${oaTaskAttatch.baseUrl}")
     private String attatchPath;
+
+    @Override
+    public TaskProgress get(long tpId) {
+        return taskProgressMapper.findOne(tpId);
+    }
 
     @Override
     public long add(TaskProgress taskProgress) {
@@ -41,5 +51,8 @@ public class TaskProgressServiceImpl implements TaskProgressService {
         taskProgressMapper.delete(tpId);
     }
 
-
+    @Override
+    public List<TaskProgress> findByTaskId(long taskId) {
+        return taskProgressMapper.findByTaskId(taskId);
+    }
 }

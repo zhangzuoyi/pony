@@ -35,6 +35,9 @@ public class TaskLog implements Serializable {
 	@Column(name="TYPE_NAME")
 	private String typeName;
 
+	@Column(name="TASK_ID")
+	private long taskId;
+
 	public TaskLog() {
 	}
 
@@ -86,4 +89,11 @@ public class TaskLog implements Serializable {
 		this.typeName = typeName;
 	}
 
+	public long getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(long taskId) {
+		this.taskId = taskId;
+	}
 }

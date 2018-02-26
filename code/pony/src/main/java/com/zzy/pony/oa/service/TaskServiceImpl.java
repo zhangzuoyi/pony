@@ -4,6 +4,7 @@ import com.zzy.pony.config.Constants;
 import com.zzy.pony.oa.mapper.TaskMapper;
 import com.zzy.pony.oa.model.Task;
 import com.zzy.pony.oa.model.TaskAttach;
+import com.zzy.pony.oa.model.TaskLog;
 import com.zzy.pony.oa.vo.TaskVo;
 import com.zzy.pony.security.ShiroUtil;
 import com.zzy.pony.util.DateTimeUtil;
@@ -36,6 +37,9 @@ public class TaskServiceImpl implements TaskService{
     private TaskMapper taskMapper;
     @Value("${oaTaskAttatch.baseUrl}")
     private String attatchPath;
+    @Autowired
+    private TaskLogService taskLogService;
+
 
     @Override
     public Page<TaskVo> list(ConditionVo cv) {
@@ -48,7 +52,7 @@ public class TaskServiceImpl implements TaskService{
 
     @Override
     public Page<TaskVo> listMy(ConditionVo cv) {
-        cv.setLoginName(ShiroUtil.getLoginName());
+        cv.setLoginName(ShiroUtil.getLoginUser().getShowName());
         List<TaskVo> list=taskMapper.findMyPage(cv);
         int count=taskMapper.findMyCount(cv);
         Pageable pageable = new PageRequest(cv.getCurrentPage(), cv.getPageSize());
@@ -69,6 +73,13 @@ public class TaskServiceImpl implements TaskService{
         task.setUpdateUser(ShiroUtil.getLoginName());
         task.setStatus(Constants.OA_STATUS_NEW);
         taskMapper.add(task);
+
+        TaskLog tl = new TaskLog();
+        tl.setTypeCode(Constants.OA_STATUS_NEW);
+        tl.setTypeName("新建");
+        tl.setTaskId(task.getId());
+        taskLogService.add(tl);
+
         return task.getId();
     }
 
@@ -129,5 +140,20 @@ public class TaskServiceImpl implements TaskService{
         ta.setSavePath(childPath);
         taskMapper.addFile(ta);
 
+    }
+
+    @Override
+    public List<TaskAttach> findByTypeAndTaskId(int type, long taskId) {
+        return taskMapper.findByTypeAndTaskId(type,taskId);
+    }
+
+    @Override
+    public List<TaskAttach> findByTaskId(long taskId) {
+        return taskMapper.findByTaskId(taskId);
+    }
+
+    @Override
+    public TaskAttach findByAttachId(long taId) {
+        return taskMapper.findByAttachId(taId);
     }
 }

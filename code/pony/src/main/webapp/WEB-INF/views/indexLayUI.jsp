@@ -551,6 +551,9 @@
                     <dd>
                         <a href="javascript:;" data-url="<s:url value='/oa/task/main' />"><label>任务管理</label></a>
                     </dd>
+                    <dd>
+                        <a href="javascript:;" data-url="<s:url value='/oa/taskProgress/main' />"><label>我的任务</label></a>
+                    </dd>
 
                 </dl>
             </li>

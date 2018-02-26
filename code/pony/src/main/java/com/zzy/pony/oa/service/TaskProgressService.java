@@ -7,6 +7,8 @@ import com.zzy.pony.vo.ConditionVo;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 
 /**
  * @Author: WANGCHAO262
@@ -15,8 +17,12 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface TaskProgressService {
 
+    TaskProgress get(long tpId);
     long add(TaskProgress taskProgress);
     void update(TaskProgress taskProgress);
     void delete(long tpId);
+    List<TaskProgress> findByTaskId(long taskId);
+
+
 
 }

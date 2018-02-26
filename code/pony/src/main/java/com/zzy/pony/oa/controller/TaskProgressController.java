@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author: WANGCHAO262
@@ -33,6 +34,10 @@ public class TaskProgressController {
     @Autowired
     private TaskService taskService;
 
+    @RequestMapping(value = "main")
+    public String main(){
+        return "oa/taskProgress/main";
+    }
 
     @RequestMapping(value = "add",method = RequestMethod.GET)
     @ResponseBody
@@ -42,6 +47,7 @@ public class TaskProgressController {
         tp.setTaskId(taskId);
         tp.setCreateTime(new Date());
         tp.setCreateUser(ShiroUtil.getLoginName());
+        tp.setIsFinished(Constants.OA_UNFINISH);
         return  taskProgressService.add(tp);
     }
 
@@ -53,12 +59,16 @@ public class TaskProgressController {
         taskService.addFile(file,id, Constants.OA_TARGETTYPE_TWO);
     }
 
-    @RequestMapping(value = "delete",method = RequestMethod.GET)
-    @ResponseBody
-    public void add(@RequestParam(value = "id") long id){
-        taskProgressService.delete(id);
-    }
 
+
+
+
+
+    @RequestMapping(value = "getTaskProgress",method = RequestMethod.GET)
+    @ResponseBody
+    public List<TaskProgress> getTaskProgress(@RequestParam(value = "id") long taskId){
+        return taskProgressService.findByTaskId(taskId);
+    }
 
 
 

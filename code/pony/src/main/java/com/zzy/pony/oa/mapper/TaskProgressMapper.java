@@ -20,5 +20,6 @@ public interface TaskProgressMapper {
     void update(TaskProgress tp);
     long add(TaskProgress tp);
     void delete(long tpId);
+    List<TaskProgress> findByTaskId(long taskId);
 
 }

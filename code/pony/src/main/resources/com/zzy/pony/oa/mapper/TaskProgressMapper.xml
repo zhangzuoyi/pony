@@ -15,7 +15,7 @@
         where ID = #{0}
     </select>
     <update id="update" parameterType="com.zzy.pony.oa.model.TaskProgress">
-        update oa_task_progress set task_id = #{taskId}, content = #{content} ,is_finished = #{isFinished},
+        update oa_task_progress set task_id = #{taskId}, content = #{content} ,is_finished = #{isFinished}
         WHERE  ID = #{id}
     </update>
 
@@ -27,6 +27,12 @@
     <delete id="delete" parameterType="java.lang.Long">
         delete from oa_task_progress where ID = #{0}
     </delete>
+
+    <select id="findByTaskId" parameterType="java.lang.Long" resultType="com.zzy.pony.oa.model.TaskProgress">
+        <include refid="base_select"></include>
+        where TASK_ID = #{0}
+        order by create_time desc
+    </select>
 
 
 </mapper>

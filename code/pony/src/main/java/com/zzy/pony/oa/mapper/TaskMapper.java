@@ -25,4 +25,9 @@ public interface TaskMapper {
     void delete(long taskId);
     void addFile(TaskAttach taskAttach);
 
+    List<TaskAttach> findByTypeAndTaskId(int type,long taskId);
+    List<TaskAttach> findByTaskId(long taskId);
+    TaskAttach findByAttachId(long taId);
+
+
 }

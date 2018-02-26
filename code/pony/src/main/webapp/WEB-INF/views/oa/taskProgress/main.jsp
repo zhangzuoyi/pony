@@ -112,7 +112,10 @@
                         label="操作"
                         >
                     <template slot-scope="scope">
-                        <el-button size="mini" @click="handleEdit(scope.$indexmscope.row)">编辑</el-button>
+                        <el-button size="mini" @click="handleEdit(scope.$index,scope.row)">编辑</el-button>
+                        <el-button size="mini" @click="handlePending(scope.$index,scope.row)">暂停</el-button>
+                        <el-button size="mini" @click="handleFinish(scope.$index,scope.row)">完成</el-button>
+
                     </template>
                 </el-table-column>
 
@@ -136,46 +139,65 @@
         <el-dialog title="编辑任务" :visible.sync="dialogFormVisible">
             <el-form :model="task" >
                 <el-form-item label="名称" :label-width="formLabelWidth" prop="name">
-                    <el-input v-model="task.name"></el-input>
+                    <el-input v-model="task.name" readonly></el-input>
                 </el-form-item>
                 <el-form-item label="详细信息" :label-width="formLabelWidth" prop="description" >
-                    <el-input v-model="task.description" type="textarea" ></el-input>
+                    <el-input v-model="task.description" type="textarea" readonly></el-input>
                 </el-form-item>
-                <el-form-item :label-width="formLabelWidth" prop="access">
-                    <el-radio-group v-model="task.access">
-                        <el-radio :label="1">公开</el-radio>
-                        <el-radio :label="0">私密</el-radio>
-                    </el-radio-group>
+                <el-form-item label="保密级别" :label-width="formLabelWidth" prop="access">
+                    <span v-if="task.access == 1">公开</span>
+                    <span v-if="task.access == 0">私密</span>
                 </el-form-item>
                 <el-form-item label="负责人" :label-width="formLabelWidth" prop="assignee">
-                    <el-input v-model="task.assignee" readonly ></el-input>
+                    <el-input v-model="task.assigneeStr" readonly ></el-input>
                 </el-form-item>
                 <el-form-item label="时间" :label-width="formLabelWidth" >
-                    <el-input  v-model="task.startTime" prop="startTime" readonly></el-input >
+                    <el-input  v-model="task.startTimeStr" prop="startTime" readonly></el-input >
                     --
-                    <el-input  v-model="task.endTime" prop="endTime" readonly></el-input >
+                    <el-input  v-model="task.endTimeStr" prop="endTime" readonly></el-input >
                 </el-form-item>
-                <el-form-item label="附件" :label-width="formLabelWidth">
-                    <el-upload
-                            action="<s:url value='/examAdmin/examinee/fileUpload'/>"
-                            ref="upload"
-                            name="fileUpload"
-                            :before-upload="beforeUpload"
-                            :file-list="fileList"
-                            :auto-upload="false"
-                    >
-                        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                        <el-button style="margin-left:10px;" size="small" type="primary" @click="clearFiles">清空文件</el-button>
-                    </el-upload>
-                </el-form-item>
-                <el-form-item label="进展" :label-width="formLabelWidth" prop="description" >
-                    <el-input v-model="content" type="textarea" ></el-input>
-                </el-form-item>
+                <el-tabs type="border-card">
+                    <el-tab-pane label="进展">
+                        <el-form-item label="附件" :label-width="formLabelWidth">
+                            <el-upload
+                                    action="<s:url value='/examAdmin/examinee/fileUpload'/>"
+                                    ref="upload"
+                                    name="fileUpload"
+                                    :before-upload="beforeUpload"
+                                    :file-list="fileList"
+                                    :auto-upload="false"
+                            >
+                                <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                                <el-button style="margin-left:10px;" size="small" type="primary" @click="clearFiles">清空文件</el-button>
+                            </el-upload>
+                        </el-form-item>
+                        <el-form-item label="进展" :label-width="formLabelWidth" prop="description" >
+                            <el-input v-model="content" type="textarea" ></el-input>
+                        </el-form-item>
+
+                        <div>
+                            <el-row>
+                                <el-col :offset="18" :span="6">
+                                    <el-button size="mini" type="primary" @click="onSubmit()">添加进展</el-button>
+                                    <el-button size="mini" type="primary" @click="dialogFormVisible = false">取 消</el-button>
+                                </el-col>
+                            </el-row>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane label="动态">
+                        <el-steps direction="vertical">
+                            <el-step v-for="item in taskProgress"  :description="item.content"></el-step>
+                        </el-steps>
+                    </el-tab-pane>
+                    <el-tab-pane label="附件">
+                        <div v-for="item in taskAttach"><a @click="downloadAttach(item.id)" >{{item.originalName}}</a></div>
+                    </el-tab-pane>
+
+                </el-tabs>
+
+
             </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="onSubmit()">添加进展</el-button>
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-            </div>
+
         </el-dialog>
 
 
@@ -199,7 +221,10 @@
             tasksUrl: "<s:url value='/oa/task/listMy'/>",
             addUrl :"<s:url value='/oa/taskProgress/add'/>",
             addFileUrl :"<s:url value='/oa/taskProgress/addFile'/>",
-            deleteUrl :"<s:url value='/oa/taskProgress/delete'/>",
+            pendingUrl :"<s:url value='/oa/task/pending'/>",
+            finishUrl :"<s:url value='/oa/task/finish'/>",
+            taskProgressUrl :"<s:url value='/oa/taskProgress/getTaskProgress'/>",
+            taskAttachUrl :"<s:url value='/oa/task/getTaskAttach'/>",
             currentPage: 1,
             pageSizes: [20],
             pageSize: [20],
@@ -208,6 +233,9 @@
             fileList:[],
             content:'',
             progressId : null,
+            taskProgress:[],
+            taskAttach:[],
+
 
 
 
@@ -255,6 +283,7 @@
                 this.$http.get(this.addUrl, {params:{taskId: this.task.id,content:this.content}}).then(
                     function (response) {
                         this.progressId = response.data;
+                        this.content = '';
                         this.$refs.upload.submit();
                         this.task = {};
                         this.dialogFormVisible = false;
@@ -268,21 +297,53 @@
             },
             handleEdit :function (index,row) {
                 this.task = row;
+                this.dialogFormVisible = true;
+                this.getTaskProgress(row.id);//获取动态
+                this.getTaskAttach(row.id);//获取附件
             },
-            handleDelete :function (index,row) {
-                this.$http.get(this.deleteUrl, {params:{id:row.id}}).then(
-                    function (response) {
-                        this.getTasks();
-                    },
-                    function (response) {
-                    }
-                );
+            handlePending :function (index,row) {
+                this.$confirm('确认暂停？','提示',{
+                    confirmButtonText : '确认',
+                    cancleButtonText : '取消',
+                    type : 'warning',
+                }).then(function(){
+                    app.$http.get(app.pendingUrl, {params:{id:row.id}}).then(
+                        function (response) {
+                            app.getTasks();
+                            this.$message({type:"info",message:"已暂停"});
+
+                        },
+                        function (response) {
+                        }
+                    );
+                }).catch(function(){ });
+
+
+
+            },
+            handleFinish :function (index,row) {
+                this.$confirm('确认完成？','提示',{
+                    confirmButtonText : '确认',
+                    cancleButtonText : '取消',
+                    type : 'warning',
+                }).then(function(){
+                    app.$http.get(app.finishUrl, {params:{id:row.id}}).then(
+                        function (response) {
+                            app.getTasks();
+                            this.$message({type:"info",message:"已完成"});
+
+                        },
+                        function (response) {
+                        }
+                    );
+                }).catch(function(){ });
+
             },
             beforeUpload : function(file){
 
                 var formData = new FormData();
                 formData.append('fileUpload',file);
-                formData.append('id',this.progressId);
+                formData.append('id',this.task.id);
 
                 this.$http.post(this.addFileUrl,formData).then(
                     function(response){
@@ -297,6 +358,27 @@
             clearFiles : function(){
                 this.$refs.upload.clearFiles();
             },
+            getTaskProgress : function (id) {
+                this.$http.get(this.taskProgressUrl, {params:{id:id}}).then(
+                    function (response) {
+                        this.taskProgress = response.data;
+                    },
+                    function (response) {
+                    }
+                );
+            },
+            getTaskAttach : function (id) {
+                this.$http.get(this.taskAttachUrl, {params:{id:id}}).then(
+                    function (response) {
+                        this.taskAttach = response.data;
+                    },
+                    function (response) {
+                    }
+                );
+            },
+            downloadAttach : function(id){
+                window.location.href = "<s:url value='/oa/task/downloadAttach?id='/>"+ id;
+            }
 
 
 
