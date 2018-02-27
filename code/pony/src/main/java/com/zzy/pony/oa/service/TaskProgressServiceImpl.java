@@ -28,8 +28,7 @@ public class TaskProgressServiceImpl implements TaskProgressService {
 
     @Autowired
     private TaskProgressMapper taskProgressMapper;
-    @Value("${oaTaskAttatch.baseUrl}")
-    private String attatchPath;
+
 
     @Override
     public TaskProgress get(long tpId) {

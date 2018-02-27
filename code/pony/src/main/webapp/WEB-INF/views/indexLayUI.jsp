@@ -554,6 +554,12 @@
                     <dd>
                         <a href="javascript:;" data-url="<s:url value='/oa/taskProgress/main' />"><label>我的任务</label></a>
                     </dd>
+                    <dd>
+                        <a href="javascript:;" data-url="<s:url value='/oa/workReport/main' />"><label>工作报告</label></a>
+                    </dd>
+                    <dd>
+                        <a href="javascript:;" data-url="<s:url value='/oa/workReportRemark/main' />"><label>报告审核</label></a>
+                    </dd>
 
                 </dl>
             </li>

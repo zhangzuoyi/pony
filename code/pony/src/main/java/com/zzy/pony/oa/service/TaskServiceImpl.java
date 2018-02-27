@@ -125,9 +125,9 @@ public class TaskServiceImpl implements TaskService{
                 }
 
             } catch (FileNotFoundException e) {
-                // TODO: handle exception
+                e.printStackTrace();
             } catch (IOException e) {
-                // TODO: handle exception
+                e.printStackTrace();
             }
         }
         TaskAttach ta = new TaskAttach();

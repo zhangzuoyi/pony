@@ -36,6 +36,8 @@ public class ConditionVo {
 	private String loginName;
 
 	private String taskName;
+	private String workReportName;
+
 
 	private int oaStatus;
 
@@ -239,5 +241,13 @@ public class ConditionVo {
 
 	public void setOaStatus(int oaStatus) {
 		this.oaStatus = oaStatus;
+	}
+
+	public String getWorkReportName() {
+		return workReportName;
+	}
+
+	public void setWorkReportName(String workReportName) {
+		this.workReportName = workReportName;
 	}
 }
