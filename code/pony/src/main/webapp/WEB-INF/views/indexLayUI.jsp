@@ -127,6 +127,11 @@
                                 <a href="javascript:;" data-url="<s:url value='/user/main/' />"><label>用户管理</label></a>
                             </dd>
                         </shiro:hasPermission>
+                        <shiro:hasPermission name="classhour_admin">
+                            <dd>
+                                <a href="javascript:;" data-url="<s:url value='/classHour/main/' />"><label>课时管理</label></a>
+                            </dd>
+                        </shiro:hasPermission>
                     </dl>
                 </li>
             </shiro:hasPermission>

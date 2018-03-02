@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.mapper.ClassHourMapper">
+	<select id="findByYearAndTerm" resultType="com.zzy.pony.vo.ClassHourPlanVo">
+	SELECT id,year_id yearId,term_id termId,t.teacher_id teacherId,hours,a.TEACHER_NO teacherNo,a.name teacherName 
+FROM class_hour_plan t left join t_teacher a on t.TEACHER_ID=a.TEACHER_ID 
+where year_id=#{0} and term_id=#{1}
+	</select>
+	<select id="businessDateList" resultType="string">
+	select distinct business_date from class_hour_actual 
+where year_id=#{0} and term_id=#{1}
+	</select>
+	<select id="findActual" resultType="com.zzy.pony.vo.ClassHourActualVo">
+	SELECT t.id,t.year_id yearId,t.term_id termId,t.teacher_id teacherId,
+t.business_date businessDate,t.plan_hours planHours,t.actual_hours actualHours,
+a.teacher_no teacherNo,a.name teacherName FROM class_hour_actual t
+left join t_teacher a on t.teacher_id=a.teacher_id
+where t.year_id=#{0} and t.term_id=#{1} and t.business_date=#{2}
+	</select>
+
+</mapper>
