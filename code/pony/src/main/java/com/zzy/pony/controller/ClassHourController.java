@@ -139,9 +139,23 @@ public class ClassHourController {
 		}
 		return "success";
 	}
-	
+	@RequestMapping(value = "export", method = RequestMethod.GET)
+	public ResponseEntity<byte[]> export(@RequestParam(value="businessDate") String businessDate,Model model) {
+		Date bd = DateTimeUtil.strToDate(businessDate, DateTimeUtil.FORMAL_FORMAT);
+		List<ClassHourActualVo> list=service.findActual(bd);
+		String reportName = "课时"+businessDate;
+		HttpHeaders headers = new HttpHeaders();
+		try {
+			headers.setContentDispositionFormData("attachment", new String(reportName.getBytes("utf-8"), "ISO8859-1")
+					+ ".xls");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		return new ResponseEntity<byte[]>(excelContent(list, reportName), headers, HttpStatus.CREATED);
+	}
 	@RequestMapping(value = "exportTemplate", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> export(Integer examId, Integer classId,Integer subjectId,Model model) {
+	public ResponseEntity<byte[]> exportTemplate(Model model) {
 		List<ClassHourPlanVo> vos=service.findCurrentPlan();
 		String reportName = "课时导入模板";
 		HttpHeaders headers = new HttpHeaders();
@@ -200,7 +214,7 @@ public class ClassHourController {
 		return out.toByteArray();
 	}
 
-	private byte[] excelContent(List<ExamResultVo> vos, String reportName) {
+	private byte[] excelContent(List<ClassHourActualVo> vos, String reportName) {
 		Workbook wb = new HSSFWorkbook();
 		String sheetName = reportName;
 		Sheet sheet = wb.createSheet(sheetName);
@@ -211,27 +225,35 @@ public class ClassHourController {
 
 		// 设置标题
 		Row titleRow = sheet.createRow(0);
-		getCell(titleRow, "学号", styleTitle, 0);
-		getCell(titleRow, "姓名", styleTitle, 1);
-		getCell(titleRow, "成绩", styleTitle, 2);
+		getCell(titleRow, "老师编号", styleTitle, 0);
+		getCell(titleRow, "老师姓名", styleTitle, 1);
+		getCell(titleRow, "业务日期", styleTitle, 2);
+		getCell(titleRow, "计划课时", styleTitle, 3);
+		getCell(titleRow, "实际课时", styleTitle, 4);
+		getCell(titleRow, "超出课时", styleTitle, 5);
 
 		// 设置内容
 		int voLen = vos.size();
 		for (int i = 0; i < voLen; i++) {
-			ExamResultVo vo = vos.get(i);
+			ClassHourActualVo vo = vos.get(i);
 			Row row = sheet.createRow(1 + i);
 			int cellIndex = 0;
-			// 学号
-			getCell(row, vo.getStudentNo(), style, cellIndex++);
-
-			// 姓名
-			getCell(row, vo.getStudentName(), style, cellIndex++);
-
-			// 成绩
+			// 老师编号
+			getCell(row, vo.getTeacherNo(), style, cellIndex++);
+			// 老师姓名
+			getCell(row, vo.getTeacherName(), style, cellIndex++);
+			// 业务日期
 			Cell cell=getCell(row, style, cellIndex++);
-			if(vo.getScore() != null){
-				cell.setCellValue(vo.getScore().doubleValue());
-			}
+			cell.setCellValue(DateTimeUtil.dateToStr(vo.getBusinessDate()));
+			// 计划课时
+			cell=getCell(row, style, cellIndex++);
+			cell.setCellValue(vo.getPlanHours());
+			//实际课时
+			cell=getCell(row, style, cellIndex++);
+			cell.setCellValue(vo.getActualHours());
+			//超出课时
+			cell=getCell(row, style, cellIndex++);
+			cell.setCellValue(vo.getActualHours()-vo.getPlanHours());
 		}
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

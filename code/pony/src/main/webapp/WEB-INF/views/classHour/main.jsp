@@ -154,6 +154,7 @@ var app = new Vue({
 		templateUrl:"<s:url value='/classHour/exportTemplate'/>",
 		businessDateUrl:"<s:url value='/classHour/businessDateList'/>",
 		findUrl:"<s:url value='/classHour/find'/>",
+		exportUrl:"<s:url value='/classHour/export'/>",
 		schoolYear :null,
 		term : null,
 		uploadDialogFormVisible : false,
@@ -227,27 +228,19 @@ var app = new Vue({
    				);
             },
             exportData : function(){
-   			 /* if(this.examId == null || this.examId == ""){
-                 	this.$alert("请选择考试","提示",{
+            	if(this.searchDate == null || this.searchDate == ""){
+                 	this.$alert("请业务日期","提示",{
    					type:"warning",
    					confirmButtonText:'确认'
-   				});
-   				return;
-                 }			
-   			if(this.gradeId == null || this.gradeId == ""){
-                 	this.$alert("请选择年级","提示",{
-   					type:"warning",
-   					confirmButtonText:'确认'
-   				});
-   				return;
-                 }              
+	   				});
+	   				return;
+                 }
    					var exportParams = {
-   										examId : this.examId,
-   										gradeId:this.gradeId
+   										businessDate : this.searchDate
    								};
-   					var url = "<s:url value='/examAdmin/average/exportAverage?'/>"+jQuery.param(exportParams);
-   					window.location.href = encodeURI(encodeURI(url));
-   				    window.open(encodeURI(encodeURI(url)));	 */
+   					var url = this.exportUrl+"?"+jQuery.param(exportParams);
+   					window.location.href = url;
+   				    //window.open(encodeURI(encodeURI(url)));
    			},
             
    			
