@@ -153,7 +153,7 @@
 
         </div>
 
-        <el-dialog title="解析" v-model="dialogFormVisible">
+        <el-dialog title="解析" :visible.sync="dialogFormVisible">
             <el-card>
                 <div class="exam-head">
                     <b>答案:</b> <span v-html="question.answer"></span>
@@ -165,7 +165,7 @@
             </el-card>
         </el-dialog>
 
-        <el-dialog title="生成试卷" v-model="dialogFormVisible2">
+        <el-dialog title="生成试卷" :visible.sync="dialogFormVisible2">
             <el-card>
                 <el-row>
                     <el-col :span="8">

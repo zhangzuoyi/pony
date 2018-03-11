@@ -61,17 +61,16 @@ width:200px;
                         >
                 </el-table-column>
                 <el-table-column
-                        inline-template
                         label="科目类型"
                         >
-                        <div>{{row.type | subjectTypeFilter }}</div>
+                    <template slot-scope="scope">{{scope.row.type | subjectTypeFilter }}</template>
+
                 </el-table-column>
                <el-table-column
-                        inline-template
                         label="重要程度"
                         >
-                        <div>{{row.importanceName}}</div>
-                </el-table-column>                              
+                   <template slot-scope="scope">{{scope.row.importanceName  }}</template>
+                </el-table-column>
                 <el-table-column                       
                         label="操作"
                         >
@@ -85,7 +84,7 @@ width:200px;
 			
 
         </el-card>
-			<el-dialog  v-model="dialogFormVisible" >
+			<el-dialog  :visible.sync="dialogFormVisible" >
 			<div slot="title" class="dialog-title">
                     <b>{{title}}</b>
                 </div>

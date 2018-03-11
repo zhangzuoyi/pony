@@ -121,8 +121,7 @@
                         width="70">
                 </el-table-column>                              
                 <el-table-column
-               			inline-template
-                       
+
                         label="每周课时"
                         show-overflow-tooltip>
                         <div>
@@ -156,7 +155,7 @@
             </el-row>   
         </el-card>
         
-        <el-dialog     close-on-click-modal="false" close-on-press-escape="false" v-model="dialogFormVisible" >			
+        <el-dialog     close-on-click-modal="false" close-on-press-escape="false" :visible.sync="dialogFormVisible" >
 				
 				 <el-table 
 				    v-loading="loading" 

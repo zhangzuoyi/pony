@@ -84,14 +84,13 @@
         </el-card>
         
         
-        <el-dialog title="任课列表" v-model="dialogFormVisible">                
+        <el-dialog title="任课列表" :visible.sync="dialogFormVisible">
                 <el-table
                     :data="tableData"
                     border
                     style="width: 100%"
                     >                
                 <!-- <el-table-column
-                        inline-template
                         label="老师编号"
                         width="120">
                     <div>{{ row.date }}</div>

@@ -35,6 +35,12 @@ public class ConditionVo {
 
 	private String loginName;
 
+	private String taskName;
+	private String workReportName;
+
+
+	private int oaStatus;
+
 	
 	public ConditionVo(){
 		
@@ -219,5 +225,29 @@ public class ConditionVo {
 
 	public void setLoginName(String loginName) {
 		this.loginName = loginName;
+	}
+
+	public String getTaskName() {
+		return taskName;
+	}
+
+	public void setTaskName(String taskName) {
+		this.taskName = taskName;
+	}
+
+	public int getOaStatus() {
+		return oaStatus;
+	}
+
+	public void setOaStatus(int oaStatus) {
+		this.oaStatus = oaStatus;
+	}
+
+	public String getWorkReportName() {
+		return workReportName;
+	}
+
+	public void setWorkReportName(String workReportName) {
+		this.workReportName = workReportName;
 	}
 }

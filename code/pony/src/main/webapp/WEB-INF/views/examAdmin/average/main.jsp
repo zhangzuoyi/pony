@@ -115,7 +115,7 @@ width:200px;
 				</el-table-column>
             </el-table> -->
         </el-card>
-		<el-dialog title="设置均量值指标"  v-model="setIndexDialogFormVisible" size="large">
+		<el-dialog title="设置均量值指标"  :visible.sync="setIndexDialogFormVisible" size="large">
 			<div slot="title" class="dialog-title">
                   <b>设置均量值指标</b>
             </div>
@@ -138,7 +138,7 @@ width:200px;
 				<el-button @click="setIndexDialogFormVisible = false">取消</el-button>
 			</div>
 		</el-dialog>
-		<el-dialog title="导入均量值指标"  v-model="uploadIndexDialogFormVisible" >
+		<el-dialog title="导入均量值指标"  :visible.sync="uploadIndexDialogFormVisible" >
 			<el-row>
 			<el-col>
 				<el-upload					

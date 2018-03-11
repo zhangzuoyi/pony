@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.oa.mapper.WorkReportRemarkMapper">
+    <sql id="base_select">
+		select t.id ,t.report_id as reportId ,t.content ,t.CREATE_TIME as createTime,t.CREATE_USER as createUser
+
+ from oa_work_report_remark t
+	</sql>
+
+
+    <select id="findOne" parameterType="java.lang.Long" resultType="com.zzy.pony.oa.model.WorkReportRemark">
+        <include refid="base_select"></include>
+        where ID = #{0}
+    </select>
+    <update id="update" parameterType="com.zzy.pony.oa.model.WorkReportRemark">
+        update oa_work_report_remark set report_id = #{reportId}, content = #{content}
+        WHERE  ID = #{id}
+    </update>
+
+    <insert id="add" parameterType="com.zzy.pony.oa.model.WorkReportRemark" useGeneratedKeys="true" keyProperty="id">
+        insert into oa_work_report_remark (report_id,content,CREATE_TIME,CREATE_USER)
+		values(#{reportId},#{content},#{createTime},#{createUser})
+    </insert>
+
+    <delete id="delete" parameterType="java.lang.Long">
+        delete from oa_work_report_remark where ID = #{0}
+    </delete>
+
+    <select id="findByReportId" parameterType="java.lang.Long" resultType="com.zzy.pony.oa.model.WorkReportRemark">
+        <include refid="base_select"></include>
+        where report_id = #{0}
+        order by create_time desc
+    </select>
+
+
+</mapper>

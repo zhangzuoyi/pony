@@ -110,9 +110,9 @@ width:100px;
 						label="节次">
 				</el-table-column>
 				<el-table-column
-						inline-template
 						label="日期">
-						<div>{{row.tourDate | date}}</div>
+					<template slot-scope="scope">{{scope.row.tourDate | date }}</template>
+
 				</el-table-column>
 				<el-table-column
 						prop="itemSummary"
@@ -133,7 +133,7 @@ width:100px;
                 :total="total"></el-pagination>
         </el-card>
 		</div>
-		<el-dialog  v-model="dialogFormVisible" >
+		<el-dialog  :visible.sync="dialogFormVisible" >
 			<div slot="title" class="dialog-title">
                   <b>新增巡课</b>
             </div>

@@ -50,9 +50,8 @@ width:200px;
                     style="width: 100%"
                     highlight-current-row> 
                 <el-table-column
-                         inline-template
                         label="分类">
-                 <div>{{row.category }}</div>       
+					<template slot-scope="scope">{{scope.row.category}}</template>
                 </el-table-column>
                 <el-table-column
                 		prop="level1"
@@ -70,15 +69,13 @@ width:200px;
                         >
                 </el-table-column>
                 <el-table-column
-                        inline-template
                         label="日期">
-                        <div>{{row.occurDate | date}}</div>
+					<template slot-scope="scope">{{scope.row.occurDate | date}}</template>
                 </el-table-column>
                 <el-table-column
-                         inline-template
                         label="状态"
                         >
-                 <div>{{row.status | statusFilter}}</div>
+					<template slot-scope="scope">{{scope.row.status | statusFilter}}</template>
                 </el-table-column>
                 <el-table-column                       
                         label="操作">
@@ -90,7 +87,7 @@ width:200px;
             </el-table> 
         </el-card>
         
-		<el-dialog  v-model="dialogFormVisible" >
+		<el-dialog  :visible.sync="dialogFormVisible" >
 			<div slot="title" class="dialog-title">
                   <b v-if=" ! outcome.outcomeId">新增成果</b>
                   <b v-if="outcome.outcomeId">修改成果</b>

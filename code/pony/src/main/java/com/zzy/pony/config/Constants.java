@@ -48,6 +48,18 @@ public class Constants {
 	public static final Map<Integer, Float> ASSIGN_LEVEL;//赋分映射 
 	public static final Map<String,BigDecimal> LEVEL_WEIGHT;//指标权重
 
+	public static final int OA_STATUS_NEW = 0;
+	public static final int OA_STATUS_HANDLING = 1;
+	public static final int OA_STATUS_PENDING = 2;
+	public static final int OA_STATUS_FINISH = 3;
+    public static final int OA_STATUS_DELETE = 4;
+
+
+    public static final int OA_TARGETTYPE_ONE = 1; //发布任务的附件
+    public static final int OA_TARGETTYPE_TWO = 2;//执行任务的附件
+
+	public static final int OA_UNFINISH = 0;//未完成
+	public static final int OA_FINISH = 1;//完成
 
 
 
@@ -57,7 +69,11 @@ public class Constants {
 
 
 
-	
+
+
+
+
+
 	public static final String MESSAGE_ATTACH_UPLOADPATH = "/home/upload";
 	//public static final String AVERAGE_PATH = "D:\\tmp";
 	 //public static final String AVERAGE_PATH = "/home/upload";

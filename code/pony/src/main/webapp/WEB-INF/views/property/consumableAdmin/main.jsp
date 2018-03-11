@@ -54,10 +54,9 @@ width:200px;
                              
                  
                 <el-table-column
-                         inline-template
                         label="分类"
                         >
-                 <div>{{row.propertyTypeName }}</div>       
+                    <template slot-scope="scope">{{scope.row.propertyTypeName}}</template>
                 </el-table-column>
                 <el-table-column
                 		prop="name"
@@ -80,10 +79,10 @@ width:200px;
                         >
                 </el-table-column>              
                 <el-table-column
-                         inline-template
                         label="责任人"
                         >
-                 <div>{{row.ownerName}}</div>       
+                    <template slot-scope="scope">{{scope.row.ownerName}}</template>
+
                 </el-table-column>
              
             </el-table> 
@@ -91,7 +90,7 @@ width:200px;
 			
 
         </el-card>
-		<el-dialog  v-model="dialogFormVisible" >
+		<el-dialog  :visible.sync="dialogFormVisible" >
 		<div slot="title" class="dialog-title">
                     <b>{{title}}</b>
         </div>			

@@ -61,16 +61,15 @@ width:200px;
                         >
                 </el-table-column>
                 <el-table-column
-                		inline-template
                         label="开始时间"
                         >
-                        <div>{{row.startTime | date}}</div>
+                    <template slot-scope="scope">{{scope.row.startTime | date }}</template>
+
                 </el-table-column>
                 <el-table-column
-                        inline-template
                         label="结束时间"
-                        >       
-                        <div>{{row.endTime | date}}</div>               
+                        >
+                    <template slot-scope="scope">{{scope.row.endTime | date }}</template>
                 </el-table-column>
                 <el-table-column
                 		prop="selectNum"
@@ -78,10 +77,9 @@ width:200px;
                         >
                 </el-table-column>
                 <el-table-column
-                        inline-template
                         label="是否当前"
-                        >        
-                        <div>{{getIsCurrentName(row.isCurrent)}}</div>              
+                        >
+                    <template slot-scope="scope">{{getIsCurrentName(scope.row.isCurrent)}}</template>
                 </el-table-column>
                 </el-table-column>                              
                 <el-table-column                       
@@ -95,7 +93,7 @@ width:200px;
             </el-table> 
         </el-card>
         
-		<el-dialog  v-model="dialogFormVisible" >
+		<el-dialog  :visible.sync="dialogFormVisible" >
 			<div slot="title" class="dialog-title">
                     <b>{{title}}</b>
                 </div>

@@ -99,14 +99,10 @@
                         width="70">
                 </el-table-column>                              
                 <el-table-column
-               			inline-template
-                       
                         label="每周课时"
                         show-overflow-tooltip>
-                        <div>
-                       <!--  {{selectData.length}}/ -->
-                        {{row.weekArrange}}</div>
-                        
+                    <template slot-scope="scope">{{scope.row.weekArrange }}</template>
+
                 </el-table-column>
             </el-table>        
             </el-col>

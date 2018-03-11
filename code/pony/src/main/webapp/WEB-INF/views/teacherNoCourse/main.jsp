@@ -83,7 +83,7 @@
             </el-col>          
             </el-row>   
         </el-card>
-        <el-dialog title="查看"  v-model="dialogFormVisible" >         
+        <el-dialog title="查看"  :visible.sync="dialogFormVisible" >
           <el-row>
               <el-table
                       :data="tableData2"

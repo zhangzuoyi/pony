@@ -155,7 +155,7 @@ width:200px;
 			</el-row>			
         </el-card>
         
-		<el-dialog title="设置考生"  v-model="setExamineeDialogFormVisible" size="large">
+		<el-dialog title="设置考生"  :visible.sync="setExamineeDialogFormVisible" size="large">
                 <el-row>
                     <el-select v-model="flag" @change="selectModelChange">
                         <el-option :label="'按班级'" value="a"><span style="float: left">按班级</span></el-option>
@@ -293,7 +293,7 @@ width:200px;
             </div>
 		</el-dialog>
 
-      	<el-dialog title="查看考生"  v-model="findExamineeDialogFormVisible" >
+      	<el-dialog title="查看考生"  :visible.sync="findExamineeDialogFormVisible" >
           <el-row>
           <el-col :span="4">
           <b>年级:{{gradeName}}</b>
@@ -358,7 +358,7 @@ width:200px;
           </el-col>
           </el-row>
           </el-dialog>
-          <el-dialog title="设置考生号"  v-model="generateExamineeNoDialogFormVisible" >
+          <el-dialog title="设置考生号"  :visible.sync="generateExamineeNoDialogFormVisible" >
           <el-row>
           <el-col :span="4">
           <b>考生号前缀:</b>

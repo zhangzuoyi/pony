@@ -131,7 +131,7 @@ width:200px;
 				</el-table-column>
             </el-table>
         </el-card>
-		<el-dialog title="设置监考老师"  v-model="setTeacherDialogFormVisible" >
+		<el-dialog title="设置监考老师"  :visible.sync="setTeacherDialogFormVisible" >
 			<el-row>
 			<el-col>
 				<el-input placeholder="请输入.." v-model="filterText"></el-input>
@@ -167,7 +167,7 @@ width:200px;
 			<el-button type="primary" size="small" @click="submit">提交</el-button>
 			</el-row>
 		</el-dialog>
-		<el-dialog title="设置监考次数"  v-model="setonitorCountDialogFormVisible" >
+		<el-dialog title="设置监考次数"  :visible.sync="setonitorCountDialogFormVisible" >
 			<el-row>
 			<el-col>
 				监考次数：<el-input v-model="monitorCountSet"></el-input>
@@ -177,7 +177,7 @@ width:200px;
 			<el-button type="primary" size="small" @click="setMonitorCount">提交</el-button>
 			</el-row>
 		</el-dialog>
-		<el-dialog title="导入监考老师"  v-model="uploadTeacherDialogFormVisible" >
+		<el-dialog title="导入监考老师"  :visible.sync="uploadTeacherDialogFormVisible" >
 			<el-row>
 			<el-col>
 				<el-upload					

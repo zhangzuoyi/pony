@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.oa.mapper.TaskMapper">
+    <sql id="base_select">
+		select t.id ,t.name ,t.description ,t.access,t.assignee as assigneeStr ,DATE_FORMAT(t.START_TIME,"%Y-%m-%d %T") as startTimeStr,
+DATE_FORMAT(t.END_TIME,"%Y-%m-%d %T")  as endTimeStr,t.members as  membersStr,t.cc as ccStr,t.tags,t.CREATE_TIME as createTime,t.CREATE_USER as createUser,
+t.UPDATE_TIME as updateTime,t.UPDATE_USER as updateUser,t.status
+ from oa_task t
+	</sql>
+
+    <select id="findPage" resultType="com.zzy.pony.oa.vo.TaskVo" parameterType="com.zzy.pony.vo.ConditionVo" >
+        <include refid="base_select"></include>
+        where 1=1
+
+        <if test="taskName != null and taskName != ''">
+            and t.name like CONCAT('%',#{taskName},'%')
+        </if>
+        <if test="oaStatus != null and oaStatus != ''">
+            and t.status = #{oaStatus}
+        </if>
+        limit #{startNum},#{pageSize}
+    </select>
+    <select id="findCount" resultType="int">
+        select count(1) from (
+        <include refid="base_select"></include>
+        where 1=1
+        <if test="taskName != null and taskName != ''">
+            and t.name like CONCAT('%',#{taskName},'%')
+        </if>
+        <if test="oaStatus != null and oaStatus != ''">
+            and t.status = #{oaStatus}
+        </if>
+        ) t
+    </select>
+    <select id="findMyPage" resultType="com.zzy.pony.oa.vo.TaskVo" parameterType="com.zzy.pony.vo.ConditionVo" >
+        <include refid="base_select"></include>
+        where 1=1
+        and (t.assignee like CONCAT('%',#{loginName},'%') or  t.members like CONCAT('%',#{loginName},'%') or t.cc like CONCAT('%',#{loginName},'%'))
+        <if test="taskName != null and taskName != ''">
+            and t.name like CONCAT('%',#{taskName},'%')
+        </if>
+        <if test="oaStatus != null and oaStatus != ''">
+            and t.status = #{oaStatus}
+        </if>
+
+        limit #{startNum},#{pageSize}
+    </select>
+    <select id="findMyCount" resultType="int">
+        select count(1) from (
+        <include refid="base_select"></include>
+        where 1=1
+        and (t.assignee like CONCAT('%',#{loginName},'%') or  t.members like CONCAT('%',#{loginName},'%') or t.cc like CONCAT('%',#{loginName},'%'))
+        <if test="taskName != null and taskName != ''">
+            and t.name like CONCAT('%',#{taskName},'%')
+        </if>
+        <if test="oaStatus != null and oaStatus != ''">
+            and t.status = #{oaStatus}
+        </if>
+        ) t
+    </select>
+    <select id="findOne" parameterType="java.lang.Long" resultType="com.zzy.pony.oa.model.Task">
+        select t.id ,t.name ,t.description ,t.access,t.assignee,t.START_TIME as startTime,
+t.END_TIME  as endTime,t.members,t.cc ,t.tags,t.CREATE_TIME as createTime,t.CREATE_USER as createUser,
+t.UPDATE_TIME as updateTime,t.UPDATE_USER as updateUser,t.status
+ from oa_task t
+        where ID = #{0}
+    </select>
+
+    <insert id="add" parameterType="com.zzy.pony.oa.model.Task" useGeneratedKeys="true" keyProperty="id">
+        insert into oa_task (NAME,DESCRIPTION,ACCESS,ASSIGNEE,START_TIME,END_TIME,MEMBERS,CC,TAGS,CREATE_TIME,CREATE_USER,UPDATE_TIME,UPDATE_USER,STATUS)
+		values(#{name},#{description},#{access},#{assignee},#{startTime},#{endTime},#{members},#{cc},#{tags},#{createTime},#{createUser},#{updateTime},#{updateUser},#{status})
+    </insert>
+    <update id="update" parameterType="com.zzy.pony.oa.model.Task">
+        update oa_task set NAME = #{name}, DESCRIPTION = #{description} ,ACCESS = #{access},
+        ASSIGNEE = #{assignee},START_TIME = #{startTime}, END_TIME = #{endTime},MEMBERS = #{members},
+        CC = #{cc},TAGS = #{tags} ,UPDATE_TIME = #{updateTime},UPDATE_USER = #{updateUser},STATUS = #{status}
+        WHERE  ID = #{id}
+    </update>
+    <delete id="delete" parameterType="java.lang.Long">
+        delete from oa_task where ID = #{0}
+    </delete>
+    <insert id="addFile" parameterType="com.zzy.pony.oa.model.TaskAttach" useGeneratedKeys="true" keyProperty="id">
+        insert into oa_task_attach (TARGET_TYPE,TARGET_ID,SAVE_PATH,FILE_NAME,ORIGINAL_NAME,CREATE_USER,CREATE_TIME)
+        values(#{targetType},#{targetId},#{savePath},#{fileName},#{originalName},#{createUser},#{createTime})
+    </insert>
+
+    <select id="findByTypeAndTaskId"  resultType="com.zzy.pony.oa.model.TaskAttach">
+        select t.id,t.target_type as targetType,target_id as targetId,
+         save_path as savePath,file_name as fileName,original_name as originalName,
+         create_user as createUser,create_time as createTime
+         from oa_task_attach t
+        where target_type = #{0} and target_id = #{1}
+    </select>
+
+    <select id="findByTaskId"  resultType="com.zzy.pony.oa.model.TaskAttach">
+        select t.id,t.target_type as targetType,target_id as targetId,
+        save_path as savePath,file_name as fileName,original_name as originalName,
+        create_user as createUser,create_time as createTime
+        from oa_task_attach t
+        where  target_id = #{0}
+    </select>
+
+    <select id="findByAttachId"  resultType="com.zzy.pony.oa.model.TaskAttach">
+        select t.id,t.target_type as targetType,target_id as targetId,
+        save_path as savePath,file_name as fileName,original_name as originalName,
+        create_user as createUser,create_time as createTime
+        from oa_task_attach t
+        where  id = #{0}
+    </select>
+
+
+
+</mapper>

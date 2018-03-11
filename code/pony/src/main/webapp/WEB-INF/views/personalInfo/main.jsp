@@ -53,7 +53,7 @@ width:200px;
                 </el-row>
 
         </el-card>
-			 <el-dialog title="重置密码" v-model="dialogFormVisible" >
+			 <el-dialog title="重置密码" :visible.sync="dialogFormVisible" >
 			 <el-form :model="psw" >		 
 			 <el-form-item label="初始密码" :label-width="formLabelWidth" >
 			 <el-input v-model="psw.initPsw" type="password" auto-complete="off"   required></el-input>

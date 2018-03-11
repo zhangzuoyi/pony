@@ -49,22 +49,20 @@
                         width="50">
                 </el-table-column>
                 <!-- <el-table-column
-                        inline-template
                         label="老师编号"
                         width="120">
                     <div>{{ row.date }}</div>
                 </el-table-column> -->
                  <el-table-column
-                        inline-template                        
                         label="标题"
                         >
-                        <div><a href="javascript:void(0)" @click="watchMessage(row.id)">{{row.title}}</a></div>
+                     <template slot-scope="scope"> <div><a href="javascript:void(0)" @click="watchMessage(scope.row.id)">{{scope.row.title}}</a></div></template>
+
                 </el-table-column>
                 <el-table-column
-               			inline-template                       
                         label="发送时间"
                        >
-                       <div>{{row.sendTime}}</div>
+                    <template slot-scope="scope">{{scope.row.sendTime }}</template>
                 </el-table-column>
                 <el-table-column
                         prop="receiveUser"
@@ -72,16 +70,17 @@
                         >
                 </el-table-column>                                               
                 <el-table-column
-                        inline-template
                         label="附件"
                         show-overflow-tooltip>
-                        <div><a v-for="attach in row.attachs"  href="javascript:void(0)" @click="downloadAttach(row.messageId,attach)" >{{attach}}&nbsp;</a></div>
+                    <template slot-scope="scope"><div><a v-for="attach in scope.row.attachs"  href="javascript:void(0)" @click="downloadAttach(scope.row.messageId,attach)" >{{attach}}&nbsp;</a></div></template>
+
+
                 </el-table-column>
             </el-table>
         </el-card>
         
         
-        <el-dialog title="消息" v-model="dialogFormVisible" size="large">
+        <el-dialog title="消息" :visible.sync="dialogFormVisible" size="large">
                <el-form>                   
                     <el-form-item label="收件人" :label-width="formLabelWidth">                          			 
            			 <el-input v-model="selectMessage.receiveUser" :disabled="true"></el-input>          			          			 

@@ -1,19 +1,26 @@
 package com.zzy.pony.oa.service;
 
+import com.zzy.pony.config.Constants;
 import com.zzy.pony.oa.mapper.TaskMapper;
 import com.zzy.pony.oa.model.Task;
+import com.zzy.pony.oa.model.TaskAttach;
+import com.zzy.pony.oa.model.TaskLog;
 import com.zzy.pony.oa.vo.TaskVo;
 import com.zzy.pony.security.ShiroUtil;
+import com.zzy.pony.util.DateTimeUtil;
 import com.zzy.pony.vo.ConditionVo;
-import com.zzy.pony.vo.UserVo;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.*;
 import java.util.Date;
 import java.util.List;
 
@@ -28,10 +35,26 @@ public class TaskServiceImpl implements TaskService{
 
     @Autowired
     private TaskMapper taskMapper;
+    @Value("${oaTaskAttatch.baseUrl}")
+    private String attatchPath;
+    @Autowired
+    private TaskLogService taskLogService;
+
+
     @Override
     public Page<TaskVo> list(ConditionVo cv) {
         List<TaskVo> list=taskMapper.findPage(cv);
         int count=taskMapper.findCount(cv);
+        Pageable pageable = new PageRequest(cv.getCurrentPage(), cv.getPageSize());
+        Page<TaskVo> result = new PageImpl<TaskVo>(list, pageable, count);
+        return result;
+    }
+
+    @Override
+    public Page<TaskVo> listMy(ConditionVo cv) {
+        cv.setLoginName(ShiroUtil.getLoginUser().getShowName());
+        List<TaskVo> list=taskMapper.findMyPage(cv);
+        int count=taskMapper.findMyCount(cv);
         Pageable pageable = new PageRequest(cv.getCurrentPage(), cv.getPageSize());
         Page<TaskVo> result = new PageImpl<TaskVo>(list, pageable, count);
         return result;
@@ -43,8 +66,21 @@ public class TaskServiceImpl implements TaskService{
     }
 
     @Override
-    public void add(Task task) {
+    public long add(Task task) {
+        task.setCreateTime(new Date());
+        task.setCreateUser(ShiroUtil.getLoginName());
+        task.setUpdateTime(new Date());
+        task.setUpdateUser(ShiroUtil.getLoginName());
+        task.setStatus(Constants.OA_STATUS_NEW);
         taskMapper.add(task);
+
+        TaskLog tl = new TaskLog();
+        tl.setTypeCode(Constants.OA_STATUS_NEW);
+        tl.setTypeName("新建");
+        tl.setTaskId(task.getId());
+        taskLogService.add(tl);
+
+        return task.getId();
     }
 
     @Override
@@ -58,5 +94,66 @@ public class TaskServiceImpl implements TaskService{
     @Override
     public void delete(long taskId) {
         taskMapper.delete(taskId);
+    }
+
+    @Override
+    public void addFile(MultipartFile file, long taskId,int typeId) {
+        String childPath = DateTimeUtil.dateToStr(new Date());//子路径
+        File childDir = null;
+        File localFile = null;
+        String fileName ="";
+        if (file!=null && !file.isEmpty()) {
+            try {
+                fileName = childPath+File.separator +file.getOriginalFilename();
+                InputStream inputStream = file.getInputStream();
+                childDir = new File(attatchPath, childPath);//根路径+子路径
+                if (childDir.exists()) {
+                    //子文件夹存在
+                    localFile = new File(childDir,file.getOriginalFilename());
+                    FileOutputStream outputStream = new FileOutputStream(localFile);
+                    IOUtils.copy(inputStream, outputStream);
+                    inputStream.close();
+                    outputStream.close();
+                }else {
+                    childDir.mkdirs();
+                    localFile = new File(childDir,file.getOriginalFilename());
+                    FileOutputStream outputStream = new FileOutputStream(localFile);
+                    IOUtils.copy(inputStream, outputStream);
+                    inputStream.close();
+                    outputStream.close();
+
+                }
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        TaskAttach ta = new TaskAttach();
+        ta.setCreateTime(new Date());
+        ta.setCreateUser(ShiroUtil.getLoginName());
+        ta.setTargetId(taskId);
+        ta.setTargetType(typeId);
+        ta.setFileName(fileName);
+        ta.setOriginalName(file.getOriginalFilename());
+        ta.setSavePath(childPath);
+        taskMapper.addFile(ta);
+
+    }
+
+    @Override
+    public List<TaskAttach> findByTypeAndTaskId(int type, long taskId) {
+        return taskMapper.findByTypeAndTaskId(type,taskId);
+    }
+
+    @Override
+    public List<TaskAttach> findByTaskId(long taskId) {
+        return taskMapper.findByTaskId(taskId);
+    }
+
+    @Override
+    public TaskAttach findByAttachId(long taId) {
+        return taskMapper.findByAttachId(taId);
     }
 }

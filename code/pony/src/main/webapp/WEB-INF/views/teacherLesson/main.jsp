@@ -106,7 +106,7 @@
                 </el-col>              
             </el-row>
 
-            <el-dialog title="每周课时设置" v-model="dialogFormVisible">
+            <el-dialog title="每周课时设置" :visible.sync="dialogFormVisible">
                 <el-form :model="selectTeachers">
                     <el-form-item label="课时数" :label-width="formLabelWidth">
                         <el-input v-model="selectTeachers.weekArrange"  style="width:200px;" ></el-input>
@@ -129,7 +129,6 @@
                         width="50">
                 </el-table-column>
                 <!-- <el-table-column
-                        inline-template
                         label="老师编号"
                         width="120">
                     <div>{{ row.date }}</div>

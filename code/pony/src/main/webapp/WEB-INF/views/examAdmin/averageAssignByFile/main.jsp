@@ -73,7 +73,7 @@
                 </el-row>
             </div>
         </el-card>
-        <el-dialog title="导入全量成绩" v-model="uploadResultDialogFormVisible">
+        <el-dialog title="导入全量成绩" :visible.sync="uploadResultDialogFormVisible">
             <el-row>
                 <el-col>
                     <el-upload

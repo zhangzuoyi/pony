@@ -56,6 +56,8 @@ public class Task implements Serializable {
 	@Column(name="UPDATE_USER")
 	private String updateUser;
 
+	private Integer status;
+
 	public Task() {
 	}
 
@@ -171,4 +173,11 @@ public class Task implements Serializable {
 		this.updateUser = updateUser;
 	}
 
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
 }

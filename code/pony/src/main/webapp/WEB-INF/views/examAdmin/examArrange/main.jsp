@@ -164,7 +164,7 @@ width:100px;
             </el-col>          
 			</el-row>			
         </el-card>
-			<el-dialog title="设置科目"  v-model="subjectDialogFormVisible" >		
+			<el-dialog title="设置科目"  :visible.sync="subjectDialogFormVisible" >
 			<el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
 			<div style="margin:15px 0;"></div>
 			<el-checkbox-group v-model="checkedSubjects" @change="handleCheckedSubjectChange">
@@ -176,7 +176,7 @@ width:100px;
 			</div>
 			</el-dialog>
 			
-			<el-dialog title="设置日期"  v-model="examDateDialogFormVisible" >		
+			<el-dialog title="设置日期"  :visible.sync="examDateDialogFormVisible" >
 			<el-row>
 			<el-col :span="12" :offset="6">
 			<el-date-picker
@@ -193,7 +193,7 @@ width:100px;
 			</div>
 			</el-dialog>
 			
-			<el-dialog title="设置时间"  v-model="examTimeDialogFormVisible" >		
+			<el-dialog title="设置时间"  :visible.sync="examTimeDialogFormVisible" >
 			<el-row>
 			<el-col :span="8" :offset="4">
 			<!-- <el-time-picker
@@ -265,7 +265,7 @@ width:100px;
 			</div>
 			</el-dialog> --%>
 			
-			<el-dialog title="加入组合"  v-model="examGroupDialogFormVisible" >		
+			<el-dialog title="加入组合"  :visible.sync="examGroupDialogFormVisible" >
 			<el-row>
 			<el-col :span="4" >
                     <b>组合名:</b>                                    

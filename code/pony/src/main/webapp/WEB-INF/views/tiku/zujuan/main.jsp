@@ -155,7 +155,7 @@
                 </div>
             </div>
         </div>
-        <el-dialog title="设置得分" v-model="dialogFormVisible">
+        <el-dialog title="设置得分" :visible.sync="dialogFormVisible">
             <el-card>
                 <el-input-number
                         v-model="question.score"
