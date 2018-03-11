@@ -1,5 +1,6 @@
 package com.zzy.pony.crm.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,15 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public List<Customer> findAll() {
 		return dao.findAll();
+	}
+
+	@Override
+	public void add(Customer customer, String user) {
+		customer.setCreateTime(new Date());
+		customer.setCreateUser(user);
+		customer.setUpdateTime(new Date());
+		customer.setUpdateUser(user);
+		dao.save(customer);
 	}
 
 }

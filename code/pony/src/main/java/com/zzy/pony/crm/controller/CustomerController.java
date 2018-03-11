@@ -5,12 +5,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zzy.pony.crm.model.Customer;
 import com.zzy.pony.crm.service.CustomerService;
+import com.zzy.pony.security.ShiroUtil;
 
 @Controller
 @RequestMapping(value = "/crm/customer")
@@ -27,5 +29,12 @@ public class CustomerController {
 	@ResponseBody
 	public List<Customer> list(Model model) {
 		return service.findAll();
+	}
+	@RequestMapping(value="add",method = RequestMethod.POST)
+	@ResponseBody
+	public String add(@RequestBody Customer customer){		
+		service.add(customer, ShiroUtil.getLoginName());
+		
+		return "success";
 	}
 }

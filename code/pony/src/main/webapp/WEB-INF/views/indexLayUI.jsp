@@ -554,6 +554,15 @@
 
                 </dl>
             </li>
+            <li class="layui-nav-item"><a><i class="layui-icon"
+                                             style="font-size: 25px; padding-right: 10px;">&#xe624;</i>客户关系管理</a>
+                <dl class="layui-nav-child">
+                    <dd>
+                        <a href="javascript:;" data-url="<s:url value='/crm/customer/main' />"><label>客户管理</label></a>
+                    </dd>
+
+                </dl>
+            </li>
             <shiro:hasPermission name="teacher_page">
                 <li class="layui-nav-item"><a><i class="layui-icon"
                                                  style="font-size: 25px; padding-right: 10px;">&#xe612;</i>任课管理</a>
