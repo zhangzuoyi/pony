@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.oa.mapper.WorkReportLogMapper">
+
+
+    <insert id="add" parameterType="com.zzy.pony.oa.model.WorkReportLog" useGeneratedKeys="true" keyProperty="id">
+        insert into oa_work_report_log (TYPE_CODE,TYPE_NAME,DESCRIPTION,CREATE_USER,CREATE_TIME,REPORT_ID)
+		values(#{typeCode},#{typeName},#{description},#{createUser},#{createTime},#{reportId})
+    </insert>
+
+
+
+
+
+
+
+
+</mapper>

@@ -99,12 +99,12 @@
                 >
                 </el-table-column>
                 <el-table-column
-                        prop="startDate"
+                        prop="startDateStr"
                         label="开始时间"
                 >
                 </el-table-column>
                 <el-table-column
-                        prop="endDate"
+                        prop="endDateStr"
                         label="结束时间"
                 >
                 </el-table-column>

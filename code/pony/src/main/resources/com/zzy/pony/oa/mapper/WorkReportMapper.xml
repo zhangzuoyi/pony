@@ -4,8 +4,8 @@
 
 <mapper namespace="com.zzy.pony.oa.mapper.WorkReportMapper">
     <sql id="base_select">
-		select t.id ,t.name ,t.access,t.period, t.reporter as reporterStr ,t.START_DATE as startDate,
-t.END_DATE as endDate,t.content, t.auditor as  auditorStr,t.status,t.CREATE_TIME as createTime,
+		select t.id ,t.name ,t.access,t.period, t.reporter as reporterStr ,t.START_DATE as startDate,DATE_FORMAT(t.START_DATE,"%Y-%m-%d") as startDateStr,
+t.END_DATE as endDate,DATE_FORMAT(t.END_DATE,"%Y-%m-%d") as endDateStr,t.content, t.auditor as  auditorStr,t.status,t.CREATE_TIME as createTime,
 t.UPDATE_TIME as updateTime
  from oa_work_report t
 	</sql>
@@ -34,7 +34,7 @@ t.UPDATE_TIME as updateTime
         </if>
         ) t
     </select>
-    <select id="findMyPage" resultType="com.zzy.pony.oa.vo.TaskVo" parameterType="com.zzy.pony.vo.ConditionVo" >
+    <select id="findMyPage" resultType="com.zzy.pony.oa.vo.WorkReportVo" parameterType="com.zzy.pony.vo.ConditionVo" >
         <include refid="base_select"></include>
         where 1=1
         and (t.reporter like CONCAT('%',#{loginName},'%') or  t.auditor like CONCAT('%',#{loginName},'%') )
@@ -60,7 +60,7 @@ t.UPDATE_TIME as updateTime
         </if>
         ) t
     </select>
-    <select id="findOne" parameterType="java.lang.Long" resultType="com.zzy.pony.oa.model.Task">
+    <select id="findOne" parameterType="java.lang.Long" resultType="com.zzy.pony.oa.model.WorkReport">
         select t.id ,t.name ,t.access,t.period, t.reporter  ,t.START_DATE as startDate,
 t.END_DATE as endDate,t.content, t.auditor ,t.status,t.CREATE_TIME as createTime,
 t.UPDATE_TIME as updateTime

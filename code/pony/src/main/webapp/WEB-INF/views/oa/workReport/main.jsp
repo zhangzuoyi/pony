@@ -100,12 +100,12 @@
                 >
                 </el-table-column>
                 <el-table-column
-                        prop="startDate"
+                        prop="startDateStr"
                         label="开始时间"
                 >
                 </el-table-column>
                 <el-table-column
-                        prop="endDate"
+                        prop="endDateStr"
                         label="结束时间"
                 >
                 </el-table-column>
@@ -310,7 +310,7 @@
             },
             onSubmit:function () {
 
-                this.$http.post(this.addUrl, this.task).then(
+                this.$http.post(this.addUrl, this.workReport).then(
                     function (response) {
                         this.reportId = response.data;
                         this.$refs.upload.submit();

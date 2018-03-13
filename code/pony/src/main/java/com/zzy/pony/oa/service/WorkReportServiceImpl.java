@@ -67,6 +67,8 @@ public class WorkReportServiceImpl implements WorkReportService {
         WorkReportLog log = new WorkReportLog();
         log.setTypeCode(Constants.OA_STATUS_NEW);
         log.setTypeName("新建");
+        log.setCreateTime(new Date());
+        log.setCreateUser(ShiroUtil.getLoginName());
         log.setReportId(workReport.getId());
         workReportLogService.add(log);
 
