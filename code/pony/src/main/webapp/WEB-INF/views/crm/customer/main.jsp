@@ -76,19 +76,16 @@ width:200px;
                         >
                 </el-table-column>
                 <el-table-column
-                        inline-template
                         label="客户类型">
-                        <div>{{getTypeName( row.type )}}</div>
+                        <template slot-scope="scope">{{ getTypeName( scope.row.type ) }}</template>
                 </el-table-column>
                 <el-table-column
-                		inline-template
                         label="客户状态">
-                        <div>{{getStatusName( row.status )}}</div>
+                        <template slot-scope="scope">{{ getStatusName( scope.row.status ) }}</template>
                 </el-table-column>
                 <el-table-column
-                        inline-template
                         label="客户级别">
-                        <div>{{getLevelName( row.level )}}</div>
+                        <template slot-scope="scope">{{ getLevelName( scope.row.level ) }}</template>
                 </el-table-column>
                 <el-table-column
                         prop="manager"
@@ -96,26 +93,34 @@ width:200px;
                         >
                 </el-table-column>
                 <el-table-column
-                		inline-template
-                        label="创建日期"
-                        >
-                        <div>{{row.createTime | date}}</div>
+                        label="创建日期">
+                        <template slot-scope="scope">{{ scope.row.createTime | date }}</template>
                 </el-table-column>
                 <el-table-column
-                		inline-template
-                        label="更新日期"
-                        >
-                        <div>{{row.updateTime | date}}</div>
+                        label="更新日期">
+                        <template slot-scope="scope">{{ scope.row.updateTime | date }}</template>
                 </el-table-column>
                 <el-table-column                       
                         label="操作"
                         >
                  <template scope="scope">
                  <el-button size="small" @click="showEdit(scope.row)">编辑</el-button>
-                 <!-- <el-button size="small" type="danger" @click="handleDelete(scope.$index,scope.row)">删除</el-button>  -->              
+                 <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>               
                  </template>                             
                 </el-table-column>
             </el-table> 
+            <el-row>
+                <el-col :offset="10" :span="14">
+                    <el-pagination
+                            @current-change="handleCurrentChange"
+                            :current-page="currentPage"
+                            :page-sizes="pageSizes"
+                            :page-size="pageSize"
+                            layout="total,sizes,prev,pager,next,jumper"
+                            :total="total"
+                    ></el-pagination>
+                </el-col>
+            </el-row>
         </el-card>
         
 		<el-dialog  :visible.sync="dialogFormVisible" >
@@ -179,8 +184,8 @@ width:200px;
 				</el-form-item>				
 				<el-row>
 					<el-col :span="12">
-						<el-form-item label="所属地区" prop="area">
-						    <el-select v-model="customer.area" placeholder="请选择.."  > 
+						<el-form-item label="所属地区" prop="areaCode">
+						    <el-select v-model="customer.areaCode" placeholder="请选择.."  > 
 								<el-option v-for="d in areaList" :label="d.name"         
 			                        :value="d.code">
 			               		 </el-option>
@@ -188,8 +193,8 @@ width:200px;
 						</el-form-item>	
 					</el-col>
 					<el-col :span="12"> 
-						<el-form-item label="省市" prop="province">
-			            	<el-select v-model="customer.province" placeholder="请选择.."  > 
+						<el-form-item label="省市" prop="provinceCode">
+			            	<el-select v-model="customer.provinceCode" placeholder="请选择.."  > 
 								<el-option v-for="d in provinceList" :label="d.name"         
 			                        :value="d.code">
 			               		 </el-option>
@@ -217,7 +222,7 @@ width:200px;
 				</el-form-item>
 		    </el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button type="primary" @click="addCustomer()"  >确定</el-button>
+				<el-button type="primary" @click="onSubmit()"  >确定</el-button>
 				<el-button @click="dialogFormVisible = false">取 消</el-button>
 				
 			</div>
@@ -233,12 +238,17 @@ width:200px;
 	var app = new Vue({ 
 	el : '#app' ,
 	data : { 		
+		conditionVo: {currentPage: 1, pageSize: 20},
+		currentPage: 1,
+        pageSizes: [20],
+        pageSize: [20],
+        total: null,
 		dialogFormVisible:false,
 		tableData:[],
 		listUrl: "<s:url value='/crm/customer/list'/>",
-		//deleteUrl :"<s:url value='/ss/config/delete'/>",
+		deleteUrl :"<s:url value='/crm/customer/delete'/>",
 		addUrl :"<s:url value='/crm/customer/add'/>",
-		updateUrl :"<s:url value='/ss/admin/edit'/>",
+		updateUrl :"<s:url value='/crm/customer/update'/>",
 		dictUrl :"<s:url value='/commonDict/listByDictType'/>",
 		areaUrl :"<s:url value='/region/areaList'/>",
 		provinceUrl :"<s:url value='/region/provinceList'/>",
@@ -360,23 +370,52 @@ width:200px;
 			this.customer = obj;
 			
 		},
-		list : function(){
-			this.$http.get(this.listUrl).then(
+		handleDelete : function(obj){
+			this.$confirm("确认删除吗？","提示",{
+				confirmButtonText:'确认',
+				cancleButtonText:'取消',
+				type:'warning'			
+			}).then(function(){  
+			  app.$http.post(app.deleteUrl+"/"+obj.id).then(
 					function(response){
-						this.tableData=response.data;
-					},
+						app.$message({ type:'info',message:'删除成功'})
+						app.list();
+						
+					 },
 					function(response){}  			
-			);
+					);  						
+			}).catch(function(){ app.$message({ type:'info',message:'已取消删除'})});
 		},
-		addCustomer : function(){
+		list : function(){
+			this.$http.post(this.listUrl, this.conditionVo).then(
+                function (response) {
+                    this.tableData = response.data.content;
+                    this.total = response.data.totalElements;
+                },
+                function (response) {
+                }
+            );
+		},
+		handleCurrentChange: function (val) {
+            this.currentPage = val;
+            this.conditionVo.currentPage = val;
+            this.list();
+        },
+		onSubmit : function(){
+			var url=app.addUrl;
+			var title="新增成功";
+			if(app.customer.id != null){
+				url=app.updateUrl;
+				title="修改成功";
+			}
 			app.$refs["ruleForm"].validate(function(result){
 				if(result){
-					app.$http.post(app.addUrl, app.customer).then(
+					app.$http.post(url, app.customer).then(
 						function(response){
 							app.dialogFormVisible=false;
 							app.$message({
 								type:"info",
-								message:"新增成功"
+								message:title
 							});
 							app.list();
 						},
