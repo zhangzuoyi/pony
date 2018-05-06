@@ -81,10 +81,9 @@ width:200px;
                         >
                 </el-table-column>
                 <el-table-column
-                		inline-template
                         label="用户类型"
                         >
-                        <div>{{row.userType | userTypeFilter }}</div>
+                    <template slot-scope="scope">{{scope.row.userType | userTypeFilter }}</template>
                 </el-table-column>
                 <el-table-column
                 		prop="lastLoginTime"

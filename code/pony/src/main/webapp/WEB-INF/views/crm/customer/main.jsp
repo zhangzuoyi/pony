@@ -27,6 +27,7 @@
 .el-input {
 width:200px;
 }
+.long-input {width:500px;}
 </style>
 </head>
 <body>
@@ -38,11 +39,16 @@ width:200px;
 	              <el-col :span="4">
 	              <b>客户管理</b>
 	              </el-col>
-              </el-row>               
+              </el-row>
+              <el-row>             
+               <el-col :offset="18" :span="6">
+               <el-button type="primary" @click="showAdd">新增</el-button>       
+               </el-col>             
+              </el-row>
               <el-row>  
-              <el-col :span="2" >
-                    <b>学生:</b>                                    
-              </el-col>            
+	              <!-- <el-col :span="2" >
+	                    <b>学生:</b>                                    
+	              </el-col>
                 <el-col :span="4">
 					<el-select v-model="studentId" clearable filterable placeholder="请选择..">           		 
                		 <el-option
@@ -51,24 +57,12 @@ width:200px;
                         :value="student.studentId">
                		 </el-option>
            			 </el-select>				
-                </el-col>
-                <el-col :span="2" >
-                    <b>组合形式:</b>                                    
-              </el-col> 
-                <el-col :span="4">
-					<el-select v-model="group" clearable filterable placeholder="请选择..">           		 
-               		 <el-option
-                        v-for="x in groups" 
-                        :label="x.group"                      
-                        :value="x.group">
-               		 </el-option>
-           			 </el-select>				
-                </el-col>
+                </el-col> -->
                 
                 
-                <el-col  :span="4" :offset="4">
-                <el-button type="primary" @click="list">查询</el-button> 
-                </el-col>                                
+                <!-- <el-col  :span="4" :offset="4">
+                	<el-button type="primary" @click="list">查询</el-button> 
+                </el-col> -->                                
               </el-row>
             </div>
             <el-table
@@ -77,47 +71,158 @@ width:200px;
                     style="width: 100%"
                     highlight-current-row>               
                 <el-table-column
-                        prop="studentName"
-                        label="学生"
+                        prop="name"
+                        label="客户名称"
                         >
                 </el-table-column>
                 <el-table-column
-                        prop="group"
-                        label="选课结果"
+                        label="客户类型">
+                        <template slot-scope="scope">{{ getTypeName( scope.row.type ) }}</template>
+                </el-table-column>
+                <el-table-column
+                        label="客户状态">
+                        <template slot-scope="scope">{{ getStatusName( scope.row.status ) }}</template>
+                </el-table-column>
+                <el-table-column
+                        label="客户级别">
+                        <template slot-scope="scope">{{ getLevelName( scope.row.level ) }}</template>
+                </el-table-column>
+                <el-table-column
+                        prop="manager"
+                        label="负责人"
                         >
-                </el-table-column>                                           
+                </el-table-column>
+                <el-table-column
+                        label="创建日期">
+                        <template slot-scope="scope">{{ scope.row.createTime | date }}</template>
+                </el-table-column>
+                <el-table-column
+                        label="更新日期">
+                        <template slot-scope="scope">{{ scope.row.updateTime | date }}</template>
+                </el-table-column>
                 <el-table-column                       
                         label="操作"
                         >
                  <template scope="scope">
-                 <el-button size="small" @click="handleEdit(scope.$index,scope.row)">编辑</el-button>
-                 <!-- <el-button size="small" type="danger" @click="handleDelete(scope.$index,scope.row)">删除</el-button>  -->              
+                 <el-button size="small" @click="showEdit(scope.row)">编辑</el-button>
+                 <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>               
                  </template>                             
                 </el-table-column>
             </el-table> 
+            <el-row>
+                <el-col :offset="10" :span="14">
+                    <el-pagination
+                            @current-change="handleCurrentChange"
+                            :current-page="currentPage"
+                            :page-sizes="pageSizes"
+                            :page-size="pageSize"
+                            layout="total,sizes,prev,pager,next,jumper"
+                            :total="total"
+                    ></el-pagination>
+                </el-col>
+            </el-row>
         </el-card>
         
 		<el-dialog  :visible.sync="dialogFormVisible" >
 			<div slot="title" class="dialog-title">
                     <b>{{title}}</b>
-                </div>
-			<el-form :model="rowData" :rules="rules" ref="ruleForm">					 
-			 <el-form-item  :label-width="formLabelWidth" >             	          	
-            	<el-row > 
-            	<el-col :span="2"> 
-            	<b>科目:</b> 
-            	</el-col> 
-            	<el-col :span="22"> 
-            	<el-checkbox-group v-model="rowData.selectSubjects" id="subjectsGroup"> 
-            	<el-checkbox v-for="x in config.subjectArray" :label="x">{{x}}</el-checkbox> 
-            	</el-checkbox-group> 
-            	</el-col> 
+            </div>
+			<el-form :model="customer" :rules="rules" ref="ruleForm" label-width="90px">	
+				<el-form-item label="客户名称" prop="name">
+				    <el-input v-model="customer.name"></el-input>
+				</el-form-item>				 
+				<el-row>
+					<el-col :span="12">
+						<el-form-item label="负责人" prop="manager">
+						    <el-input v-model="customer.manager"></el-input>
+						</el-form-item>	
+					</el-col>
+					<el-col :span="12"> 
+						<el-form-item label="客户状态" prop="status">
+			            	<el-select v-model="customer.status" placeholder="请选择.."  > 
+								<el-option v-for="d in statusList" :label="d.value"         
+			                        :value="d.code">
+			               		 </el-option>
+							</el-select> 
+						</el-form-item>
+	            	</el-col>
 				</el-row>
-			 </el-form-item> 
-             
+				<el-row>
+					<el-col :span="12">
+						<el-form-item label="客户类型" prop="type">
+						    <el-select v-model="customer.type" placeholder="请选择.."  > 
+								<el-option v-for="d in typeList" :label="d.value"         
+			                        :value="d.code">
+			               		 </el-option>
+							</el-select> 
+						</el-form-item>	
+					</el-col>
+					<el-col :span="12"> 
+						<el-form-item label="客户级别" prop="level">
+			            	<el-select v-model="customer.level" placeholder="请选择.."  > 
+								<el-option v-for="d in levelList" :label="d.value"         
+			                        :value="d.code">
+			               		 </el-option>
+							</el-select> 
+						</el-form-item>
+	            	</el-col>
+				</el-row>
+				<!-- <el-row > 
+	            	<el-col :span="2"> 
+	            		<b>共享人:</b> 
+	            	</el-col> 
+	            	<el-col :span="22"> 
+		            	<el-input v-model="customer.shares"></el-input>
+	            	</el-col> 
+				</el-row> -->
+				<el-form-item label="所属行业" prop="industryId">
+				    <el-select v-model="customer.industryId" placeholder="请选择.."  > 
+						<el-option v-for="d in industryList" :label="d.name"         
+	                        :value="d.id">
+	               		 </el-option>
+					</el-select>
+				</el-form-item>				
+				<el-row>
+					<el-col :span="12">
+						<el-form-item label="所属地区" prop="areaCode">
+						    <el-select v-model="customer.areaCode" placeholder="请选择.."  > 
+								<el-option v-for="d in areaList" :label="d.name"         
+			                        :value="d.code">
+			               		 </el-option>
+							</el-select> 
+						</el-form-item>	
+					</el-col>
+					<el-col :span="12"> 
+						<el-form-item label="省市" prop="provinceCode">
+			            	<el-select v-model="customer.provinceCode" placeholder="请选择.."  > 
+								<el-option v-for="d in provinceList" :label="d.name"         
+			                        :value="d.code">
+			               		 </el-option>
+							</el-select> 
+						</el-form-item>
+	            	</el-col>
+				</el-row>
+				<el-row>
+					<el-col :span="12">
+						<el-form-item label="联系电话" prop="phone">
+						    <el-input v-model="customer.phone"></el-input>
+						</el-form-item>	
+					</el-col>
+					<el-col :span="12"> 
+						<el-form-item label="网站" prop="website">
+			            	<el-input v-model="customer.website"></el-input>
+						</el-form-item>
+	            	</el-col>
+				</el-row>
+				<el-form-item label="联系地址" prop="addr">
+				    <el-input v-model="customer.addr" class="long-input"></el-input>
+				</el-form-item>
+				<el-form-item label="补充说明" prop="comments">
+				    <el-input type="textarea" :rows="5" v-model="customer.comments"></el-input>
+				</el-form-item>
 		    </el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button type="primary" @click="onSubmit('ruleForm')"  >确定</el-button>
+				<el-button type="primary" @click="onSubmit()"  >确定</el-button>
 				<el-button @click="dialogFormVisible = false">取 消</el-button>
 				
 			</div>
@@ -133,107 +238,194 @@ width:200px;
 	var app = new Vue({ 
 	el : '#app' ,
 	data : { 		
-		config:{configId:null,subjects:null,selectNum:null,startTime:null,endTime:null,isCurrent:null,schoolYear:{}},
+		conditionVo: {currentPage: 1, pageSize: 20},
+		currentPage: 1,
+        pageSizes: [20],
+        pageSize: [20],
+        total: null,
 		dialogFormVisible:false,
-		formLabelWidth:"50px",
 		tableData:[],
-		studentId : "",
-		students : [],
-		group : "",
-		groups : [],
-		rowData :{studentId:"",studentName:"",group:"",selectSubjects:[]},
-		currentConfigUrl:"<s:url value='/ss/config/current'/>",
-		studentUrl: "<s:url value='/studentAdmin/list'/>",
-		groupsUrl: "<s:url value='/ss/statistics/group'/>",
-		listUrl: "<s:url value='/ss/admin/list'/>",
-		//deleteUrl :"<s:url value='/ss/config/delete'/>",
-		//addUrl :"<s:url value='/ss/config/add'/>",
-		updateUrl :"<s:url value='/ss/admin/edit'/>",
+		listUrl: "<s:url value='/crm/customer/list'/>",
+		deleteUrl :"<s:url value='/crm/customer/delete'/>",
+		addUrl :"<s:url value='/crm/customer/add'/>",
+		updateUrl :"<s:url value='/crm/customer/update'/>",
+		dictUrl :"<s:url value='/commonDict/listByDictType'/>",
+		areaUrl :"<s:url value='/region/areaList'/>",
+		provinceUrl :"<s:url value='/region/provinceList'/>",
+		industryUrl :"<s:url value='/industry/list'/>",
 		title:"",
+		customer : {},
 		rules :{
-		/* seq: [{required :true,message:"请填写顺序..",trigger:"blur"}]	 */			
-		}
+			name : [
+				{ required: true, message: '请输入客户名称', trigger: 'blur' }
+			] 
+		},
+		statusList : [],
+		typeList : [],
+		levelList : [],
+		areaList : [],
+		provinceList : [],
+		industryList : []
 		
 	}, 
 	
 	mounted : function() { 
-		this.getCurrentConfig();
-		this.getStudents();
-		this.getGroups();
+		this.getDicts();
+		this.getAreaList();
+		this.getProvinceList();
+		this.getIndustryList();
+		this.list();
 	
 	}, 
 	methods : { 
-		getCurrentConfig : function(){
-				this.$http.get(this.currentConfigUrl).then(
+		getDicts : function(){
+			this.$http.get(this.dictUrl+"?dictType=customer_status").then(
 				function(response){
-					this.config=response.data;
+					this.statusList=[];
+					for(var i in response.data){
+						var obj={code: parseInt(response.data[i].code), value: response.data[i].value};
+						this.statusList.push(obj);
+					}
 				},
-				function(response){}  			
-				); 
-			},
-			getStudents : function(){
-				this.$http.get(this.studentUrl).then(
+				function(response){}
+			);
+			this.$http.get(this.dictUrl+"?dictType=customer_type").then(
 				function(response){
-					this.students=response.data;
+					this.typeList=[];
+					for(var i in response.data){
+						var obj={code: parseInt(response.data[i].code), value: response.data[i].value};
+						this.typeList.push(obj);
+					}
 				},
-				function(response){}  			
-				); 
-			},
-			getGroups : function(){
-				this.$http.get(this.groupsUrl).then(
-						function(response){
-							this.groups=response.data;
-						},
-						function(response){}  			
-						); 
-					},
-									
-		handleEdit : function(index,row){
-			this.title="修改选课";
+				function(response){}
+			);
+			this.$http.get(this.dictUrl+"?dictType=customer_level").then(
+				function(response){
+					this.levelList=[];
+					for(var i in response.data){
+						var obj={code: parseInt(response.data[i].code), value: response.data[i].value};
+						this.levelList.push(obj);
+					}
+				},
+				function(response){}
+			);
+		},
+		getStatusName : function(code){
+			for(var i=0;i<this.statusList.length;i++){
+				if(this.statusList[i].code == code){
+					return this.statusList[i].value;
+				}
+			}
+			return null;
+		},
+		getTypeName : function(code){
+			for(var i=0;i<this.typeList.length;i++){
+				if(this.typeList[i].code == code){
+					return this.typeList[i].value;
+				}
+			}
+			return null;
+		},
+		getLevelName : function(code){
+			for(var i=0;i<this.levelList.length;i++){
+				if(this.levelList[i].code == code){
+					return this.levelList[i].value;
+				}
+			}
+			return null;
+		},
+		getAreaList : function(){
+			this.$http.get(this.areaUrl).then(
+				function(response){
+					this.areaList=response.data;
+				},
+				function(response){}
+			);
+		},
+		getProvinceList : function(){
+			this.$http.get(this.provinceUrl).then(
+				function(response){
+					this.provinceList=response.data;
+				},
+				function(response){}
+			);
+		},
+		getIndustryList : function(){
+			this.$http.get(this.industryUrl).then(
+				function(response){
+					this.industryList=response.data;
+				},
+				function(response){}
+			);
+		},
+		showAdd:function(){
 			this.dialogFormVisible = true;
-			this.rowData = row;
+			this.title="新增客户";
+			this.customer = {name:null, manager:null, status:null, type:null, level:null, industryId:null, area:null, province:null, phone:null, website:null, addr:null, comments:null};
 			
 		},
-		/* handleDelete : function(index,row){
+		showEdit:function(obj){
+			this.dialogFormVisible = true;
+			this.title="修改客户";
+			this.customer = obj;
+			
+		},
+		handleDelete : function(obj){
 			this.$confirm("确认删除吗？","提示",{
-			confirmButtonText:'确认',
-			cancleButtonText:'取消',
-			type:'warning'			
+				confirmButtonText:'确认',
+				cancleButtonText:'取消',
+				type:'warning'			
 			}).then(function(){  
-			  app.$http.post(app.deleteUrl+"/"+row.configId).then(
+			  app.$http.post(app.deleteUrl+"/"+obj.id).then(
 					function(response){
-						app.getConfigList();
+						app.$message({ type:'info',message:'删除成功'})
+						app.list();
+						
 					 },
 					function(response){}  			
 					);  						
-			})
-			.catch(function(){ app.$message({ type:'info',message:'已取消删除'})});
-			
-		}, */
-			
-		onSubmit :function(formName){		
-				this.update(formName);				
+			}).catch(function(){ app.$message({ type:'info',message:'已取消删除'})});
 		},
-		update : function(formName){
-			app.$http.post(app.updateUrl,app.rowData).then(
-					function(response){
-						app.dialogFormVisible=false;
-						this.$message({type:"info",  message:"更新成功"});
-						app.studentId="";
-						app.list();
-					 },
-					function(response){console.log("error submit!");}
-					);
-		},
-		
-		
 		list : function(){
-			this.$http.get(this.listUrl,{params:{studentId:this.studentId,group:this.group}}).then(
-					function(response){
-						this.tableData=response.data;
-					},
-					function(response){}  			
-					);
+			this.$http.post(this.listUrl, this.conditionVo).then(
+                function (response) {
+                    this.tableData = response.data.content;
+                    this.total = response.data.totalElements;
+                },
+                function (response) {
+                }
+            );
+		},
+		handleCurrentChange: function (val) {
+            this.currentPage = val;
+            this.conditionVo.currentPage = val;
+            this.list();
+        },
+		onSubmit : function(){
+			var url=app.addUrl;
+			var title="新增成功";
+			if(app.customer.id != null){
+				url=app.updateUrl;
+				title="修改成功";
+			}
+			app.$refs["ruleForm"].validate(function(result){
+				if(result){
+					app.$http.post(url, app.customer).then(
+						function(response){
+							app.dialogFormVisible=false;
+							app.$message({
+								type:"info",
+								message:title
+							});
+							app.list();
+						},
+						function(response){}
+					 ); 
+				}else{
+					return;
+				}
+			});
+			
 		}
 		
       }

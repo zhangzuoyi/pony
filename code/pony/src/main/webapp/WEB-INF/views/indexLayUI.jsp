@@ -127,6 +127,11 @@
                                 <a href="javascript:;" data-url="<s:url value='/user/main/' />"><label>用户管理</label></a>
                             </dd>
                         </shiro:hasPermission>
+                        <shiro:hasPermission name="classhour_admin">
+                            <dd>
+                                <a href="javascript:;" data-url="<s:url value='/classHour/main/' />"><label>课时管理</label></a>
+                            </dd>
+                        </shiro:hasPermission>
                     </dl>
                 </li>
             </shiro:hasPermission>
@@ -550,6 +555,24 @@
                 <dl class="layui-nav-child">
                     <dd>
                         <a href="javascript:;" data-url="<s:url value='/oa/task/main' />"><label>任务管理</label></a>
+                    </dd>
+                    <dd>
+                        <a href="javascript:;" data-url="<s:url value='/oa/taskProgress/main' />"><label>我的任务</label></a>
+                    </dd>
+                    <dd>
+                        <a href="javascript:;" data-url="<s:url value='/oa/workReport/main' />"><label>工作报告</label></a>
+                    </dd>
+                    <dd>
+                        <a href="javascript:;" data-url="<s:url value='/oa/workReportRemark/main' />"><label>报告审核</label></a>
+                    </dd>
+
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a><i class="layui-icon"
+                                             style="font-size: 25px; padding-right: 10px;">&#xe624;</i>客户关系管理</a>
+                <dl class="layui-nav-child">
+                    <dd>
+                        <a href="javascript:;" data-url="<s:url value='/crm/customer/main' />"><label>客户管理</label></a>
                     </dd>
 
                 </dl>

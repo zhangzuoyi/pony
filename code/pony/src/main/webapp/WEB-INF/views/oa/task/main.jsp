@@ -38,25 +38,27 @@
                     </el-col>
                 </el-row>
                 <el-row>
-                    <%--<el-col :span="2" >
-                        <b>任务状态:</b>
-                    </el-col>
-                    <el-col :span="4" >
-                        <el-select v-model="userType" placeholder="请选择" clearable>
-                            <el-option v-for="x in userTypes" :label="x.name" :value="x.type"></el-option>
-                        </el-select>
-                    </el-col>--%>
+
                     <el-col :span="2">
                         <b>任务名称:</b>
                     </el-col>
                     <el-col :span="4">
                         <el-input v-model="conditionVo.taskName"/>
                     </el-col>
-                    <el-col :offset="14" :span="4">
+                    <el-col :span="2" >
+                        <b>任务状态:</b>
+                    </el-col>
+                    <el-col :span="4" >
+                        <el-select v-model="conditionVo.oaStatus" placeholder="请选择" clearable>
+                            <el-option  value="0" label="新建"></el-option>
+                            <el-option  value="1" label="进行中"></el-option>
+                            <el-option  value="2" label="已暂停"></el-option>
+                            <el-option  value="3" label="已完成"></el-option>
+                        </el-select>
+                    </el-col>
+                    <el-col :offset="8" :span="4">
                         <el-button type="primary" @click="search">查询</el-button>
                         <el-button type="primary" @click="addTask">新建任务</el-button>
-
-                        <!-- <el-button type="primary"  @click="showAdd">新增</el-button> -->
                     </el-col>
                 </el-row>
             </div>
@@ -68,28 +70,28 @@
                     highlight-current-row
                     @selection-change="handleSelectionChange"
             >
-                <el-table-column
+                <%--<el-table-column
                         type="selection"
                         width="55"
-                >
+                >--%>
                 </el-table-column>
-               <%-- <el-table-column type="expand">
+                <el-table-column type="expand">
                     <template slot-scope="props">
                         <span>{{props.row.description}}</span>
                     </template>
-                </el-table-column>--%>
+                </el-table-column>
                 <el-table-column
                         prop="name"
                         label="名称"
                 >
                 </el-table-column>
                 <el-table-column
-                        prop="status"
                         label="状态"
                 >
+                    <template slot-scope="scope">{{scope.row.status | statusFilter }}</template>
                 </el-table-column>
                 <el-table-column
-                        prop="assignee"
+                        prop="assigneeStr"
                         label="负责人"
                 >
                 </el-table-column>
@@ -99,21 +101,23 @@
                 >
                 </el-table-column>
                 <el-table-column
-                        prop="startTime"
+                        prop="startTimeStr"
                         label="开始时间"
                 >
                 </el-table-column>
                 <el-table-column
-                        prop="endTime"
+                        prop="endTimeStr"
                         label="结束时间"
                 >
                 </el-table-column>
-                <%--<el-table-column
-                		inline-template
-                        label="用户类型"
+                <el-table-column
+                        label="操作"
                         >
-                        <div>{{row.userType | userTypeFilter }}</div>
-                </el-table-column>--%>
+                    <template slot-scope="scope">
+                        <%--<el-button size="mini" @click="handleEdit(scope.$indexmscope.row)">编辑</el-button>--%>
+                        <el-button size="mini" type="danger" @click="handleDelete(scope.$index,scope.row)">删除</el-button>
+                    </template>
+                </el-table-column>
 
             </el-table>
             <el-row>
@@ -163,6 +167,19 @@
                 <%--<el-form-item label="标签" :label-width="formLabelWidth" prop="tags">
                     <el-input v-model="task.tags" ></el-input>
                 </el-form-item>--%>
+                <el-form-item label="附件" :label-width="formLabelWidth">
+                <el-upload
+                        action="<s:url value='/examAdmin/examinee/fileUpload'/>"
+                        ref="upload"
+                        name="fileUpload"
+                        :before-upload="beforeUpload"
+                        :file-list="fileList"
+                        :auto-upload="false"
+                >
+                    <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                    <el-button style="margin-left:10px;" size="small" type="primary" @click="clearFiles">清空文件</el-button>
+                </el-upload>
+                </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="onSubmit()">确定</el-button>
@@ -193,7 +210,7 @@
     var app = new Vue({
         el: '#app',
         data: {
-            conditionVo: {currentPage: null, pageSize: 20, taskName: null},
+            conditionVo: {currentPage: null, pageSize: 20, taskName: null,oaStatus:null},
             dialogFormVisible: false,
             dialogFormVisible2:false,
             formLabelWidth: "120px",
@@ -203,6 +220,7 @@
             addUrl: "<s:url value='/oa/task/add'/>",
             updateUrl: "<s:url value='/oa/task/update'/>",
             teachersUrl: "<s:url value='/teacherAdmin/list'/>",
+            addFileUrl : "<s:url value='/oa/task/addFile'/>",
             currentPage: 1,
             pageSizes: [20],
             pageSize: [20],
@@ -220,18 +238,25 @@
             candidate:[],
             selected:[],
             type:'',
+            fileList:[],
+            taskId : null
+
 
 
         },
         filters: {
-
+            statusFilter: function (value) {
+                if(value == 0){return "新建"; }
+                if(value == 1){return "进行中"; }
+                if(value == 2){return "已暂停"; }
+                if(value == 3){return "已完成"; }
+            }
         },
 
         mounted: function () {
             this.getTasks();
             this.getCandidate();
 
-            //this.dialogFormVisible2 = false;//解决el-dialog中的el-tree第一次的动态渲染问题
 
         },
         methods: {
@@ -279,7 +304,20 @@
                 this.currentPage = 1;
                 this.getTasks();
             },
-            submit:function () {
+            onSubmit:function () {
+
+                this.$http.post(this.addUrl, this.task).then(
+                    function (response) {
+                        this.taskId = response.data;
+                        this.$refs.upload.submit();
+                        this.task = {};
+                        this.dialogFormVisible = false;
+                        this.getTasks();
+
+                    },
+                    function (response) {
+                    }
+                );
 
             },
             addTask:function () {
@@ -309,9 +347,38 @@
                     this.task.cc = this.selected;
                 }
             },
-            add :function () {
-                
-            }
+            /*handleEdit :function (index,row) {
+
+            },*/
+            handleDelete :function (index,row) {
+                this.$http.get(this.deleteUrl, {params:{id:row.id}}).then(
+                    function (response) {
+                        this.getTasks();
+                    },
+                    function (response) {
+                    }
+                );
+            },
+            beforeUpload : function(file){
+
+                var formData = new FormData();
+                formData.append('fileUpload',file);
+                formData.append('id',this.taskId);
+
+                this.$http.post(this.addFileUrl,formData).then(
+                    function(response){
+                        this.clearFiles();
+                        this.task = {};
+                        this.taskId = null;
+                        this.dialogFormVisible = false;
+                        this.getTasks();
+                    });
+                return false;
+            },
+            clearFiles : function(){
+                this.$refs.upload.clearFiles();
+            },
+
 
 
         }

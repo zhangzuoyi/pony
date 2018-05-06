@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.oa.mapper.WorkReportAttachMapper">
+    <sql id="base_select">
+		select t.id,t.target_type as targetType,target_id as targetId,
+        save_path as savePath,file_name as fileName,original_name as originalName,
+        create_user as createUser,create_time as createTime
+        from oa_work_report_attach t
+	</sql>
+
+    <insert id="addFile" parameterType="com.zzy.pony.oa.model.WorkReportAttach" useGeneratedKeys="true" keyProperty="id">
+        insert into oa_work_report_attach (TARGET_TYPE,TARGET_ID,SAVE_PATH,FILE_NAME,ORIGINAL_NAME,CREATE_USER,CREATE_TIME)
+        values(#{targetType},#{targetId},#{savePath},#{fileName},#{originalName},#{createUser},#{createTime})
+    </insert>
+
+    <select id="findByTypeAndReportId"  resultType="com.zzy.pony.oa.model.WorkReportAttach">
+       <include refid="base_select"/>
+        where target_type = #{0} and target_id = #{1}
+    </select>
+
+    <select id="findByReportId"  resultType="com.zzy.pony.oa.model.WorkReportAttach">
+        <include refid="base_select"/>
+        where  target_id = #{0}
+    </select>
+
+    <select id="findByAttachId"  resultType="com.zzy.pony.oa.model.WorkReportAttach">
+        <include refid="base_select"/>
+        where  id = #{0}
+    </select>
+
+
+
+</mapper>

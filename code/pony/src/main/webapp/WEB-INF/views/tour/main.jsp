@@ -110,9 +110,9 @@ width:100px;
 						label="节次">
 				</el-table-column>
 				<el-table-column
-						inline-template
 						label="日期">
-						<div>{{row.tourDate | date}}</div>
+					<template slot-scope="scope">{{scope.row.tourDate | date }}</template>
+
 				</el-table-column>
 				<el-table-column
 						prop="itemSummary"

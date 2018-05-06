@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zzy.pony.oa.mapper.WorkReportMapper">
+    <sql id="base_select">
+		select t.id ,t.name ,t.access,t.period, t.reporter as reporterStr ,t.START_DATE as startDate,DATE_FORMAT(t.START_DATE,"%Y-%m-%d") as startDateStr,
+t.END_DATE as endDate,DATE_FORMAT(t.END_DATE,"%Y-%m-%d") as endDateStr,t.content, t.auditor as  auditorStr,t.status,t.CREATE_TIME as createTime,
+t.UPDATE_TIME as updateTime
+ from oa_work_report t
+	</sql>
+
+    <select id="findPage" resultType="com.zzy.pony.oa.vo.WorkReportVo" parameterType="com.zzy.pony.vo.ConditionVo" >
+        <include refid="base_select"></include>
+        where 1=1
+
+        <if test="workReportName != null and workReportName != ''">
+            and t.name like CONCAT('%',#{workReportName},'%')
+        </if>
+        <if test="oaStatus != null and oaStatus != ''">
+            and t.status = #{oaStatus}
+        </if>
+        limit #{startNum},#{pageSize}
+    </select>
+    <select id="findCount" resultType="int">
+        select count(1) from (
+        <include refid="base_select"></include>
+        where 1=1
+        <if test="workReportName != null and workReportName != ''">
+            and t.name like CONCAT('%',#{workReportName},'%')
+        </if>
+        <if test="oaStatus != null and oaStatus != ''">
+            and t.status = #{oaStatus}
+        </if>
+        ) t
+    </select>
+    <select id="findMyPage" resultType="com.zzy.pony.oa.vo.WorkReportVo" parameterType="com.zzy.pony.vo.ConditionVo" >
+        <include refid="base_select"></include>
+        where 1=1
+        and (t.reporter like CONCAT('%',#{loginName},'%') or  t.auditor like CONCAT('%',#{loginName},'%') )
+        <if test="workReportName != null and workReportName != ''">
+            and t.name like CONCAT('%',#{workReportName},'%')
+        </if>
+        <if test="oaStatus != null and oaStatus != ''">
+            and t.status = #{oaStatus}
+        </if>
+
+        limit #{startNum},#{pageSize}
+    </select>
+    <select id="findMyCount" resultType="int">
+        select count(1) from (
+        <include refid="base_select"></include>
+        where 1=1
+        and (t.reporter like CONCAT('%',#{loginName},'%') or  t.auditor like CONCAT('%',#{loginName},'%') )
+        <if test="workReportName != null and workReportName != ''">
+            and t.name like CONCAT('%',#{workReportName},'%')
+        </if>
+        <if test="oaStatus != null and oaStatus != ''">
+            and t.status = #{oaStatus}
+        </if>
+        ) t
+    </select>
+    <select id="findOne" parameterType="java.lang.Long" resultType="com.zzy.pony.oa.model.WorkReport">
+        select t.id ,t.name ,t.access,t.period, t.reporter  ,t.START_DATE as startDate,
+t.END_DATE as endDate,t.content, t.auditor ,t.status,t.CREATE_TIME as createTime,
+t.UPDATE_TIME as updateTime
+ from oa_work_report t
+        where ID = #{0}
+    </select>
+
+    <insert id="add" parameterType="com.zzy.pony.oa.model.WorkReport" useGeneratedKeys="true" keyProperty="id">
+        insert into oa_work_report (NAME,ACCESS,PERIOD,REPORTER,START_DATE,END_DATE,CONTENT,AUDITOR,STATUS,CREATE_TIME,UPDATE_TIME)
+		values(#{name},#{access},#{period},#{reporter},#{startDate},#{endDate},#{content},#{auditor},#{status},#{createTime},#{updateTime})
+    </insert>
+    <update id="update" parameterType="com.zzy.pony.oa.model.WorkReport">
+        update oa_work_report set NAME = #{name}, ACCESS = #{access} ,PERIOD = #{period},
+        REPORTER = #{reporter},START_DATE = #{startDate}, END_DATE = #{endDate},CONTENT = #{content},
+        AUDITOR = #{auditor},STATUS = #{status} ,UPDATE_TIME = #{updateTime}
+        WHERE  ID = #{id}
+    </update>
+    <delete id="delete" parameterType="java.lang.Long">
+        delete from oa_work_report where ID = #{0}
+    </delete>
+
+
+
+
+
+
+
+</mapper>

@@ -93,9 +93,9 @@
                         >
                 </el-table-column>
                 <el-table-column
-                		inline-template
                         label="类型"
-                        ><div>{{row.groupType | typeFilter}}</div>
+                        >
+                    <template slot-scope="scope">{{scope.row.groupType | typeFilter }}</template>
                 </el-table-column>
                 <el-table-column
                         prop="groupName"

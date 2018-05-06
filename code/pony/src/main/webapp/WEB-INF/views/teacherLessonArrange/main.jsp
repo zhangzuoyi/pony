@@ -91,7 +91,6 @@
                     style="width: 100%"
                     >                
                 <!-- <el-table-column
-                        inline-template
                         label="老师编号"
                         width="120">
                     <div>{{ row.date }}</div>
