@@ -99,14 +99,20 @@ public class Constants {
 	public static final String DICT_PROPERTY_STATUS= "property_status";
 	public static final String DICT_SUBJECT_TYPE= "subject_type";
 	public static final String DICT_IMPORTANCE= "importance";
-	
+
+
+	public static final BigDecimal  ENTRANCE_LEVEL_A = new BigDecimal("0.15");
+	public static final BigDecimal  ENTRANCE_LEVEL_B = new BigDecimal("0.45");
+	public static final BigDecimal  ENTRANCE_LEVEL_C = new BigDecimal("0.75");
+	public static final BigDecimal  ENTRANCE_LEVEL_D = new BigDecimal("0.95");
+	public static final BigDecimal  ENTRANCE_LEVEL_E = new BigDecimal("1");
 
 
 
 
 
-	
-	
+
+
 	public static Map<String, String> getDictTypes(){
 		if (dictTypes == null) {
 			dictTypes=new LinkedHashMap<String, String>();
@@ -251,6 +257,10 @@ public class Constants {
 		LEVEL_WEIGHT.put("A20", new BigDecimal("35"));
 		LEVEL_WEIGHT.put("A21", new BigDecimal("25"));
 		LEVEL_WEIGHT.put("A22", new BigDecimal("15"));
+
+
+
+
 
 		
 		

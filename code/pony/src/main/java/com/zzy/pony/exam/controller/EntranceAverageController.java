@@ -1,9 +1,12 @@
 package com.zzy.pony.exam.controller;
 
 import com.zzy.pony.exam.service.AverageService;
+import com.zzy.pony.exam.service.EntranceAverageService;
+import com.zzy.pony.util.ReadExcelUtils;
 import com.zzy.pony.util.TemplateUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.hssf.OldExcelFormatException;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -12,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,7 +36,7 @@ import java.util.Map;
 public class EntranceAverageController {
 
     @Autowired
-    private AverageService service;
+    private EntranceAverageService entranceAverageService;
     @Value("${entranceAveragePath}")
     private String entranceAveragePath;
 
@@ -83,6 +87,12 @@ public class EntranceAverageController {
     public Map<String, String> exportNewAverage(@RequestParam(value = "file") MultipartFile file, HttpServletResponse response) {
         Map<String, String> result = new HashMap<String, String>();
         try {
+            Workbook wb = ReadExcelUtils.ReadExcelByFile(file);
+            String[] titles = ReadExcelUtils.readExcelTitle(wb);
+
+
+
+
 
         } catch (OldExcelFormatException e) {
             e.printStackTrace();
