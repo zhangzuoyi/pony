@@ -104,6 +104,6 @@ public class EntranceExcelVo implements Comparable<EntranceExcelVo> {
 
     @Override
     public int compareTo(EntranceExcelVo o) {
-        return this.getSubjectResult().compareTo(o.getSubjectResult());
+        return o.getSubjectResult().compareTo(this.getSubjectResult());
     }
 }

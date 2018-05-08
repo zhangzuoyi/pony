@@ -3,7 +3,9 @@ package com.zzy.pony.exam.service;
 import com.zzy.pony.exam.vo.EntranceExcelVo;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: WANGCHAO262
@@ -13,14 +15,14 @@ import java.util.List;
 public interface EntranceAverageService {
 
 
-    List<EntranceExcelVo> getEntranceExcelVo(Workbook wb)  ;
+    List<EntranceExcelVo> getEntranceExcelVo(Workbook wb) throws Exception  ;
     /**
      * Author: WANGCHAO262
      * Date  : 2018-05-07
      * Description: 计算总分以及排名
      */
-    void sort(List<EntranceExcelVo> vos,List<String> subjects);
+    void sort(List<EntranceExcelVo> vos,String subject);
 
-    void calculate(List<EntranceExcelVo> vos,String subject,List<String> schoolNames);
+    List<Map<String,Map<String,BigDecimal>>> calculate(List<EntranceExcelVo> vos, String subject);
 
 }

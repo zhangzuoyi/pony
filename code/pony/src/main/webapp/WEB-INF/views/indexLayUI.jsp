@@ -175,6 +175,10 @@
                             <a href="javascript:;"
                                data-url="<s:url value='/examAdmin/average/mainAssign/' />"><label>7选3赋分</label></a>
                         </dd>
+                        <dd>
+                            <a href="javascript:;"
+                               data-url="<s:url value='/examAdmin/entranceAverage/main/' />"><label>入学均量值</label></a>
+                        </dd>
                     </dl>
                 </li>
             </shiro:hasPermission>
