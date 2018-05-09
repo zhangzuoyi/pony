@@ -8,6 +8,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.velocity.runtime.directive.Foreach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -176,9 +177,9 @@ public class EntranceAverageServiceImpl implements EntranceAverageService {
         }
         Map<String,Map<String,BigDecimal>> levelAResult =  calculateLevel(levelAVos,subject,levelA,new HashMap<String, BigDecimal>());
         Map<String,Map<String,BigDecimal>> levelBResult =  calculateLevel(levelBVos,subject,levelB.subtract(levelA),levelAResult.get("remain"));
-        Map<String,Map<String,BigDecimal>> levelCResult =  calculateLevel(levelCVos,subject,levelC.subtract(levelA).subtract(levelB),levelBResult.get("remain"));
-        Map<String,Map<String,BigDecimal>> levelDResult =  calculateLevel(levelDVos,subject,levelD.subtract(levelA).subtract(levelB).subtract(levelC),levelCResult.get("remain"));
-        Map<String,Map<String,BigDecimal>> levelEResult =  calculateLevel(levelEVos,subject,levelE.subtract(levelA).subtract(levelB).subtract(levelC).subtract(levelD),levelDResult.get("remain"));
+        Map<String,Map<String,BigDecimal>> levelCResult =  calculateLevel(levelCVos,subject,levelC.subtract(levelB),levelBResult.get("remain"));
+        Map<String,Map<String,BigDecimal>> levelDResult =  calculateLevel(levelDVos,subject,levelD.subtract(levelC),levelCResult.get("remain"));
+        Map<String,Map<String,BigDecimal>> levelEResult =  calculateLevel(levelEVos,subject,levelE.subtract(levelD),levelDResult.get("remain"));
         List<Map<String,Map<String,BigDecimal>>> list = new ArrayList<Map<String, Map<String, BigDecimal>>>();
         list.add(levelAResult);
         list.add(levelBResult);
@@ -189,14 +190,37 @@ public class EntranceAverageServiceImpl implements EntranceAverageService {
         return list;
     }
 
+    @Override
+    public List<String> getSchoolName(List<EntranceExcelVo> vos) {
+        HashSet<String> set = new HashSet<String>();
+        for (EntranceExcelVo vo:
+        vos) {
+            set.add(vo.getSchoolName());
+        }
+        List<String> result = new ArrayList<String>(set);
+        Collections.sort(result);
+        return result;
+    }
+
     /**
      * Author: WANGCHAO262
      * Date  : 2018-05-08
      * Description: lastMap 上一等级遗留
      */
     private Map<String,Map<String,BigDecimal>> calculateLevel(List<EntranceExcelVo> vos, String subject,BigDecimal level, Map<String,BigDecimal> lastMap){
-        Map<String,Map<String,BigDecimal>> result = new HashMap<String, Map<String, BigDecimal>>();
+
+
+        //先减去上已等级遗留
+        BigDecimal remainBg = BigDecimal.ZERO;
+        for (String schoolName:
+             lastMap.keySet()) {
+            remainBg = remainBg.add(lastMap.get(schoolName));
+        }
         int levelFloor = level.intValue();
+
+        level = level.subtract(remainBg);
+        Map<String,BigDecimal> currentMap = new HashMap<String, BigDecimal>(lastMap);
+        Map<String,Map<String,BigDecimal>> result = new HashMap<String, Map<String, BigDecimal>>();
         //最后一名同名次人数
         int lastRank = 0;
         if ("total".equals(subject)){
@@ -210,10 +234,10 @@ public class EntranceAverageServiceImpl implements EntranceAverageService {
              vos) {
             if ("total".equals(subject)){
                 if (vo.getTotalRank() < lastRank){
-                    if (lastMap.containsKey(vo.getSchoolName())){
-                        lastMap.put(vo.getSchoolName(),lastMap.get(vo.getSchoolName()).add(BigDecimal.ONE));
+                    if (currentMap.containsKey(vo.getSchoolName())){
+                        currentMap.put(vo.getSchoolName(),currentMap.get(vo.getSchoolName()).add(BigDecimal.ONE));
                     }else{
-                        lastMap.put(vo.getSchoolName(),BigDecimal.ONE);
+                        currentMap.put(vo.getSchoolName(),BigDecimal.ONE);
                     }
                 }else if (vo.getTotalRank() == lastRank){
                     sameCount ++ ;
@@ -225,10 +249,10 @@ public class EntranceAverageServiceImpl implements EntranceAverageService {
                 }
             }else{
                 if (vo.getSubjectRankMap().get(subject) < lastRank){
-                    if (lastMap.containsKey(vo.getSchoolName())){
-                        lastMap.put(vo.getSchoolName(),lastMap.get(vo.getSchoolName()).add(BigDecimal.ONE));
+                    if (currentMap.containsKey(vo.getSchoolName())){
+                        currentMap.put(vo.getSchoolName(),currentMap.get(vo.getSchoolName()).add(BigDecimal.ONE));
                     }else{
-                        lastMap.put(vo.getSchoolName(),BigDecimal.ONE);
+                        currentMap.put(vo.getSchoolName(),BigDecimal.ONE);
                     }
                 }else if (vo.getSubjectRankMap().get(subject) == lastRank){
                     sameCount ++ ;
@@ -249,15 +273,15 @@ public class EntranceAverageServiceImpl implements EntranceAverageService {
         for (String schoolName:
         sameMap.keySet()) {
             BigDecimal tmp =  average.multiply(new BigDecimal(sameMap.get(schoolName)));
-            if (lastMap.containsKey(schoolName)){
-                lastMap.put(schoolName,lastMap.get(schoolName).add(tmp));
+            if (currentMap.containsKey(schoolName)){
+                currentMap.put(schoolName,currentMap.get(schoolName).add(tmp));
             }else{
-                lastMap.put(schoolName,tmp);
+                currentMap.put(schoolName,tmp);
             }
             remainMap.put(schoolName,averageRemain.multiply(new BigDecimal(sameMap.get(schoolName))));
         }
         //当前level
-        result.put("current",lastMap);
+        result.put("current",currentMap);
         //遗留给下一level
         result.put("remain",remainMap);
         return result;
@@ -271,14 +295,23 @@ public class EntranceAverageServiceImpl implements EntranceAverageService {
     private void calculateAcc(List<Map<String,Map<String,BigDecimal>>> list){
 
         BigDecimal accBg = BigDecimal.ZERO;
+        Map<String,BigDecimal> sumMap = new HashMap<String, BigDecimal>();
         for (Map<String,Map<String,BigDecimal>> map:
         list) {
-           Map<String,BigDecimal> innerMap =   map.get("current");
+            Map<String,BigDecimal> innerSumMap =   new HashMap<String, BigDecimal>();
+            Map<String,BigDecimal> innerMap =   map.get("current");
            BigDecimal innerAccBg = BigDecimal.ZERO;
             for (String schoolName:
             innerMap.keySet()) {
                 innerAccBg = innerAccBg.add(innerMap.get(schoolName));
+                if (sumMap.containsKey(schoolName)){
+                    sumMap.put(schoolName,sumMap.get(schoolName).add(innerMap.get(schoolName)));
+                }else{
+                    sumMap.put(schoolName,innerMap.get(schoolName));
+                }
+                innerSumMap.put(schoolName+"Sum",sumMap.get(schoolName));
             }
+            innerMap.putAll(innerSumMap);
             accBg = accBg.add(innerAccBg);
             innerMap.put("acc",innerAccBg);
             innerMap.put("accSum",accBg);

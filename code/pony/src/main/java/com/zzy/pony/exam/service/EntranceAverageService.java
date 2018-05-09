@@ -25,4 +25,6 @@ public interface EntranceAverageService {
 
     List<Map<String,Map<String,BigDecimal>>> calculate(List<EntranceExcelVo> vos, String subject);
 
+    List<String> getSchoolName(List<EntranceExcelVo> vos);
+
 }
