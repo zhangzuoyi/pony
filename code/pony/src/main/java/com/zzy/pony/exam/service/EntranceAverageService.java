@@ -26,5 +26,14 @@ public interface EntranceAverageService {
     List<Map<String,Map<String,BigDecimal>>> calculate(List<EntranceExcelVo> vos, String subject);
 
     List<String> getSchoolName(List<EntranceExcelVo> vos);
+    List<String> getClassName(List<EntranceExcelVo> vos,String schoolName);
+
+
+    /**
+     * Author: WANGCHAO262
+     * Date  : 2018-05-10
+     * Description: 计算某个学校的均量值
+     */
+    List<Map<String,Map<String,BigDecimal>>> calculateSchool( List<EntranceExcelVo> vos,String subject,String schoolName);
 
 }

@@ -1,5 +1,6 @@
 package com.zzy.pony.exam.controller;
 
+import com.zzy.pony.config.Constants;
 import com.zzy.pony.exam.service.AverageService;
 import com.zzy.pony.exam.service.EntranceAverageService;
 import com.zzy.pony.exam.vo.EntranceExcelVo;
@@ -111,19 +112,29 @@ public class EntranceAverageController {
             List<String> schoolNames = entranceAverageService.getSchoolName(vos);
             List<Map<String,Map<String,BigDecimal>>> list = new ArrayList<Map<String, Map<String, BigDecimal>>>();
             Map<String,List<Map<String,Map<String,BigDecimal>>>> dataMap = new HashMap<String, List<Map<String, Map<String, BigDecimal>>>>();
+            List<Map<String,Map<String,BigDecimal>>> schoolList = new ArrayList<Map<String, Map<String, BigDecimal>>>();
+            Map<String,List<Map<String,Map<String,BigDecimal>>>> schoolDataMap = new HashMap<String, List<Map<String, Map<String, BigDecimal>>>>();
+
             for (String subject:
             subjects) {
                 entranceAverageService.sort(vos,subject);
                 list =  entranceAverageService.calculate(vos,subject);
+                schoolList = entranceAverageService.calculateSchool(vos,subject, Constants.SCHOOL_NAME);
                 dataMap.put(subject,list);
+                schoolDataMap.put(subject,schoolList);
             }
             //计算总分情况,应放在进行单科计算之后
             List<Map<String,Map<String,BigDecimal>>> totalList = new ArrayList<Map<String, Map<String, BigDecimal>>>();
             entranceAverageService.sort(vos,"total");
             totalList =  entranceAverageService.calculate(vos,"total");
 
+            List<Map<String,Map<String,BigDecimal>>> schoolTotalList = new ArrayList<Map<String, Map<String, BigDecimal>>>();
+            //entranceAverageService.sort(vos,"total");
+            schoolTotalList =  entranceAverageService.calculateSchool(vos,"total",Constants.SCHOOL_NAME);
+
 
             HSSFWorkbook workbook = new HSSFWorkbook();
+            //sheet1
             HSSFSheet sheet = workbook.createSheet();
             int index = 0;
             for (String subject:
@@ -236,6 +247,123 @@ public class EntranceAverageController {
                 }
                 dataRow.createCell(idx).setCellValue(totalList.get(j-1).get("current").get("acc").toString());
                 dataRow.createCell(idx+1).setCellValue(totalList.get(j-1).get("current").get("accSum").toString());
+            }
+
+            //sheet2 校内均量值
+            //sheet1
+            List<String> classNames = entranceAverageService.getClassName(vos, Constants.SCHOOL_NAME);
+            HSSFSheet sheet2 = workbook.createSheet();
+            int index2 = 0;
+            for (String subject:
+                    subjects) {
+                List<Map<String,Map<String,BigDecimal>>> dataList = schoolDataMap.get(subject);
+                HSSFRow titleClassRow = sheet2.createRow(index2);
+                HSSFRow titleClassRow2 = sheet2.createRow(index2+1);
+                titleClassRow.createCell(0).setCellValue(subject);
+                titleClassRow2.createCell(0).setCellValue("段名");
+                titleClassRow2.createCell(1).setCellValue("分段%");
+                int m = 0;
+                for (String className:
+                        classNames) {
+                    titleClassRow.createCell(2*m+2).setCellValue(className);
+                    titleClassRow2.createCell(2*m+2).setCellValue("档数");
+                    titleClassRow2.createCell(2*m+3).setCellValue("累数");
+                    m++;
+                }
+                titleClassRow.createCell(2*m+2).setCellValue("全部");
+                titleClassRow2.createCell(2*m+2).setCellValue("档数");
+                titleClassRow2.createCell(2*m+3).setCellValue("累数");
+                HSSFRow  dataClassRow = null;
+                for(int j = 1;j<=5;j++){
+                    dataClassRow = sheet2.createRow(index2+j+1);
+
+                    switch (j){
+                        case 1 :
+                            dataClassRow.createCell(0).setCellValue("A");
+                            dataClassRow.createCell(1).setCellValue("(0,15]"); break;
+                        case 2 :
+                            dataClassRow.createCell(0).setCellValue("B");
+                            dataClassRow.createCell(1).setCellValue("(15,45]"); break;
+                        case 3 :
+                            dataClassRow.createCell(0).setCellValue("C");
+                            dataClassRow.createCell(1).setCellValue("(45,75]"); break;
+                        case 4 :
+                            dataClassRow.createCell(0).setCellValue("D");
+                            dataClassRow.createCell(1).setCellValue("(75,95]"); break;
+                        case 5 :
+                            dataClassRow.createCell(0).setCellValue("E");
+                            dataClassRow.createCell(1).setCellValue("(95,100]"); break;
+                        default: ;
+                    }
+                    int idx = 2;
+                    for (String className:
+                            classNames) {
+                        if(dataList.get(j-1).get("current").get(className) != null){
+                            dataClassRow.createCell(idx).setCellValue(dataList.get(j-1).get("current").get(className).toString());
+                            dataClassRow.createCell(idx+1).setCellValue(dataList.get(j-1).get("current").get(className+"Sum").toString());
+                        }else{
+                            dataClassRow.createCell(idx).setCellValue("0");
+                            dataClassRow.createCell(idx+1).setCellValue("0");
+                        }
+                        idx+=2;
+                    }
+                    dataClassRow.createCell(idx).setCellValue(dataList.get(j-1).get("current").get("acc").toString());
+                    dataClassRow.createCell(idx+1).setCellValue(dataList.get(j-1).get("current").get("accSum").toString());
+                }
+                index2 += 8;
+            }
+            //总分
+            HSSFRow titleClassRow = sheet2.createRow(index2);
+            HSSFRow titleClassRow2 = sheet2.createRow(index2+1);
+            titleClassRow.createCell(0).setCellValue("总分");
+            titleClassRow2.createCell(0).setCellValue("段名");
+            titleClassRow2.createCell(1).setCellValue("分段%");
+            int n = 0;
+            for (String className:
+                    classNames) {
+                titleClassRow.createCell(2*n+2).setCellValue(className);
+                titleClassRow2.createCell(2*n+2).setCellValue("档数");
+                titleClassRow2.createCell(2*n+3).setCellValue("累数");
+                n++;
+            }
+            titleClassRow.createCell(2*n+2).setCellValue("全部");
+            titleClassRow2.createCell(2*n+2).setCellValue("档数");
+            titleClassRow2.createCell(2*n+3).setCellValue("累数");
+            HSSFRow  dataClassRow = null;
+            for(int j = 1;j<=5;j++){
+                dataClassRow = sheet2.createRow(index+j+1);
+                switch (j){
+                    case 1 :
+                        dataClassRow.createCell(0).setCellValue("A");
+                        dataClassRow.createCell(1).setCellValue("(0,15]"); break;
+                    case 2 :
+                        dataClassRow.createCell(0).setCellValue("B");
+                        dataClassRow.createCell(1).setCellValue("(15,45]"); break;
+                    case 3 :
+                        dataClassRow.createCell(0).setCellValue("C");
+                        dataClassRow.createCell(1).setCellValue("(45,75]"); break;
+                    case 4 :
+                        dataClassRow.createCell(0).setCellValue("D");
+                        dataClassRow.createCell(1).setCellValue("(75,95]"); break;
+                    case 5 :
+                        dataClassRow.createCell(0).setCellValue("E");
+                        dataClassRow.createCell(1).setCellValue("(95,100]"); break;
+                    default: ;
+                }
+                int idx = 2;
+                for (String className:
+                        classNames) {
+                    if(schoolTotalList.get(j-1).get("current").get(className) != null){
+                        dataClassRow.createCell(idx).setCellValue(schoolTotalList.get(j-1).get("current").get(className).toString());
+                        dataClassRow.createCell(idx+1).setCellValue(schoolTotalList.get(j-1).get("current").get(className+"Sum").toString());
+                    }else{
+                        dataClassRow.createCell(idx).setCellValue("0");
+                        dataClassRow.createCell(idx+1).setCellValue("0");
+                    }
+                    idx+=2;
+                }
+                dataClassRow.createCell(idx).setCellValue(schoolTotalList.get(j-1).get("current").get("acc").toString());
+                dataClassRow.createCell(idx+1).setCellValue(schoolTotalList.get(j-1).get("current").get("accSum").toString());
             }
 
 
