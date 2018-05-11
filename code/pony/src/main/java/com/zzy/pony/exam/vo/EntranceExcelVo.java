@@ -27,6 +27,8 @@ public class EntranceExcelVo implements Comparable<EntranceExcelVo> {
     private Integer totalRank;
     //缓存某一科目成绩,排序使用
     private BigDecimal subjectResult;
+    //科目级别
+    private Map<String,String> levelMap;
 
     public EntranceExcelVo(){}
 
@@ -100,6 +102,14 @@ public class EntranceExcelVo implements Comparable<EntranceExcelVo> {
 
     public void setSubjectResult(BigDecimal subjectResult) {
         this.subjectResult = subjectResult;
+    }
+
+    public Map<String, String> getLevelMap() {
+        return levelMap;
+    }
+
+    public void setLevelMap(Map<String, String> levelMap) {
+        this.levelMap = levelMap;
     }
 
     @Override

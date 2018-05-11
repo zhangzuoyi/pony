@@ -179,6 +179,10 @@
                             <a href="javascript:;"
                                data-url="<s:url value='/examAdmin/entranceAverage/main/' />"><label>入学均量值</label></a>
                         </dd>
+                        <dd>
+                            <a href="javascript:;"
+                               data-url="<s:url value='/examAdmin/entranceClassAverage/main/' />"><label>入学分班均量值</label></a>
+                        </dd>
                     </dl>
                 </li>
             </shiro:hasPermission>
