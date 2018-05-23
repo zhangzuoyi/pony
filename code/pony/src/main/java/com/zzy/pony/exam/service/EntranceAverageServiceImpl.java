@@ -37,6 +37,8 @@ public class EntranceAverageServiceImpl implements EntranceAverageService {
         // 得到总行数
         int rowNum = sheet.getLastRowNum();
         Row headRow = sheet.getRow(0);
+        int colNum = headRow.getPhysicalNumberOfCells();
+
         Row row = null;
         //考生存在空的成绩或者0分成绩均不记录整体统计范围
         boolean absent = false;
@@ -44,14 +46,16 @@ public class EntranceAverageServiceImpl implements EntranceAverageService {
         try {
             for (int i = 1; i <= rowNum; i++) {
                 row = sheet.getRow(i);
-                int colNum = row.getPhysicalNumberOfCells();
                 EntranceExcelVo vo = new EntranceExcelVo();
                 vo.setSubjectResultMap(new HashMap<String, BigDecimal>());
                 vo.setSubjectRankMap(new HashMap<String, Integer>());
                 for (int j = 0; j < colNum; j++) {
-                    if (row.getCell(j) == null || Cell.CELL_TYPE_BLANK == row.getCell(j).getCellType() || (Cell.CELL_TYPE_NUMERIC == row.getCell(j).getCellType() && row.getCell(j).getNumericCellValue() <= 0.00001f)) {
-                        absent = true;
-                        break;
+                    if (row.getCell(j) == null || Cell.CELL_TYPE_BLANK == row.getCell(j).getCellType() /*|| (Cell.CELL_TYPE_NUMERIC == row.getCell(j).getCellType() && row.getCell(j).getNumericCellValue() <= 0.00001f)*/) {
+                        //姓名和学号可为空
+                        if(j!=2&&j!=3){
+                            absent = true;
+                            break;
+                        }
                     } else {
                         switch (j) {
                             case 0:

@@ -39,6 +39,7 @@ public class EntranceClassAverageServiceImpl implements EntranceClassAverageServ
         // 得到总行数
         int rowNum = sheet.getLastRowNum();
         Row headRow = sheet.getRow(0);
+        int colNum = headRow.getPhysicalNumberOfCells();
         Row row = null;
         //考生存在空的成绩或者0分成绩均不记录整体统计范围
         boolean absent = false;
@@ -46,15 +47,17 @@ public class EntranceClassAverageServiceImpl implements EntranceClassAverageServ
         try {
             for (int i = 1; i <= rowNum; i++) {
                 row = sheet.getRow(i);
-                int colNum = row.getPhysicalNumberOfCells();
                 EntranceExcelVo vo = new EntranceExcelVo();
                 vo.setSubjectResultMap(new HashMap<String, BigDecimal>());
                 vo.setSubjectRankMap(new HashMap<String, Integer>());
                 vo.setLevelMap(new HashMap<String, String>());
                 for (int j = 0; j < colNum; j++) {
-                    if (row.getCell(j) == null || Cell.CELL_TYPE_BLANK == row.getCell(j).getCellType() || (Cell.CELL_TYPE_NUMERIC == row.getCell(j).getCellType() && row.getCell(j).getNumericCellValue() <= 0.00001f)) {
-                        absent = true;
-                        break;
+                    //班级名和学号可为空
+                    if (row.getCell(j) == null || Cell.CELL_TYPE_BLANK == row.getCell(j).getCellType()/* || (Cell.CELL_TYPE_NUMERIC == row.getCell(j).getCellType() && row.getCell(j).getNumericCellValue() <= 0.00001f)*/) {
+                        if (j != 0 && j != 2) {
+                            absent = true;
+                            break;
+                        }
                     } else {
                         switch (j) {
                             case 0:
@@ -68,7 +71,7 @@ public class EntranceClassAverageServiceImpl implements EntranceClassAverageServ
                                 break;
                             //成绩
                             default:
-                                vo.getSubjectResultMap().put(headRow.getCell(j).toString(), new BigDecimal(row.getCell(j).getNumericCellValue()));
+                                vo.getSubjectResultMap().put(headRow.getCell(j).toString(), new BigDecimal(row.getCell(j).getNumericCellValue()).setScale(3,RoundingMode.HALF_UP));
                         }
                     }
                     vo.setTotalResult(BigDecimal.ZERO);
@@ -84,7 +87,8 @@ public class EntranceClassAverageServiceImpl implements EntranceClassAverageServ
             throw new Exception("excel解析出错");
         }
 
-        return result;    }
+        return result;
+    }
 
     @Override
     public void sort(List<EntranceExcelVo> vos, String subject) {
@@ -132,9 +136,11 @@ public class EntranceClassAverageServiceImpl implements EntranceClassAverageServ
     }
 
     @Override
-    public void calculate(List<EntranceExcelVo> vos, String subject) {
+    public void calculate(List<EntranceExcelVo> vos, String subject, List<BigDecimal> levels) {
         // A 0.15 B 0.3 C 0.3 E 0.2 F 0.5
-         getLevelMap(vos, subject);
+        if (levels != null && levels.size() > 0) {
+            getLevelMapByExcel(vos, subject, levels);
+        }
 
     }
 
@@ -143,13 +149,78 @@ public class EntranceClassAverageServiceImpl implements EntranceClassAverageServ
         HashSet<String> set = new HashSet<String>();
         for (EntranceExcelVo vo :
                 vos) {
-            if(StringUtils.isNotBlank(vo.getClassName())){
+            if (StringUtils.isNotBlank(vo.getClassName())) {
                 set.add(vo.getClassName());
             }
         }
         List<String> result = new ArrayList<String>(set);
         Collections.sort(result);
-        return result;     }
+        return result;
+    }
+
+    @Override
+    public Map<String, List<BigDecimal>> getLevelByExcel(Workbook wb) {
+        Map<String, List<BigDecimal>> result = new HashMap<String, List<BigDecimal>>();
+        Sheet sheet = wb.getSheetAt(1);
+        Row headRow = sheet.getRow(0);
+        for (int i = 2; i < headRow.getPhysicalNumberOfCells(); i++) {
+            result.put(headRow.getCell(i).getStringCellValue(), new ArrayList<BigDecimal>());
+        }
+        Row dataRow = null;
+        for (int i = 1; i <= 5; i++) {
+            dataRow = sheet.getRow(i);
+            for (int j = 2; j < headRow.getPhysicalNumberOfCells(); j++) {
+                result.get(headRow.getCell(j).getStringCellValue()).add(new BigDecimal(dataRow.getCell(j).getStringCellValue()));
+            }
+        }
+        return result;
+    }
+
+    //通过excel中的均量值计算等级
+    private void getLevelMapByExcel(List<EntranceExcelVo> vos, String subject, List<BigDecimal> levels) {
+
+        BigDecimal total = new BigDecimal(vos.size());
+        BigDecimal levelA = levels.get(0);
+        int levelAFloor = levelA.intValue() + 1;
+        BigDecimal levelB = levelA.add(levels.get(1));
+        int levelBFloor = levelB.intValue() + 1;
+        BigDecimal levelC = levelB.add(levels.get(2));
+        int levelCFloor = levelC.intValue() + 1;
+        BigDecimal levelD = levelC.add(levels.get(3));
+        int levelDFloor = levelD.intValue() + 1;
+        BigDecimal levelE = levelD.add(levels.get(4));
+        int levelEFloor = levelE.intValue();
+        for (EntranceExcelVo vo :
+                vos) {
+            if ("total".equals(subject)) {
+                if (vo.getTotalRank() <= levelAFloor) {
+                    vo.getLevelMap().put(subject, "A");
+                } else if (vo.getTotalRank() <= levelBFloor) {
+                    vo.getLevelMap().put(subject, "B");
+                } else if (vo.getTotalRank() <= levelCFloor) {
+                    vo.getLevelMap().put(subject, "C");
+                } else if (vo.getTotalRank() <= levelDFloor) {
+                    vo.getLevelMap().put(subject, "D");
+                } else if (vo.getTotalRank() <= levelEFloor) {
+                    vo.getLevelMap().put(subject, "E");
+                }
+            } else {
+                if (vo.getSubjectRankMap().get(subject) <= levelAFloor) {
+                    vo.getLevelMap().put(subject, "A");
+                } else if (vo.getSubjectRankMap().get(subject) <= levelBFloor) {
+                    vo.getLevelMap().put(subject, "B");
+                } else if (vo.getSubjectRankMap().get(subject) <= levelCFloor) {
+                    vo.getLevelMap().put(subject, "C");
+                } else if (vo.getSubjectRankMap().get(subject) <= levelDFloor) {
+                    vo.getLevelMap().put(subject, "D");
+                } else if (vo.getSubjectRankMap().get(subject) <= levelEFloor) {
+                    vo.getLevelMap().put(subject, "E");
+                }
+            }
+        }
+
+
+    }
 
     private void getLevelMap(List<EntranceExcelVo> vos, String subject) {
 
@@ -168,27 +239,27 @@ public class EntranceClassAverageServiceImpl implements EntranceClassAverageServ
                 vos) {
             if ("total".equals(subject)) {
                 if (vo.getTotalRank() <= levelAFloor) {
-                    vo.getLevelMap().put(subject,"A");
+                    vo.getLevelMap().put(subject, "A");
                 } else if (vo.getTotalRank() <= levelBFloor) {
-                    vo.getLevelMap().put(subject,"B");
+                    vo.getLevelMap().put(subject, "B");
                 } else if (vo.getTotalRank() <= levelCFloor) {
-                    vo.getLevelMap().put(subject,"C");
+                    vo.getLevelMap().put(subject, "C");
                 } else if (vo.getTotalRank() <= levelDFloor) {
-                    vo.getLevelMap().put(subject,"D");
+                    vo.getLevelMap().put(subject, "D");
                 } else if (vo.getTotalRank() <= levelEFloor) {
-                    vo.getLevelMap().put(subject,"E");
+                    vo.getLevelMap().put(subject, "E");
                 }
             } else {
                 if (vo.getSubjectRankMap().get(subject) <= levelAFloor) {
-                    vo.getLevelMap().put(subject,"A");
+                    vo.getLevelMap().put(subject, "A");
                 } else if (vo.getSubjectRankMap().get(subject) <= levelBFloor) {
-                    vo.getLevelMap().put(subject,"B");
+                    vo.getLevelMap().put(subject, "B");
                 } else if (vo.getSubjectRankMap().get(subject) <= levelCFloor) {
-                    vo.getLevelMap().put(subject,"C");
+                    vo.getLevelMap().put(subject, "C");
                 } else if (vo.getSubjectRankMap().get(subject) <= levelDFloor) {
-                    vo.getLevelMap().put(subject,"D");
+                    vo.getLevelMap().put(subject, "D");
                 } else if (vo.getSubjectRankMap().get(subject) <= levelEFloor) {
-                    vo.getLevelMap().put(subject,"E");
+                    vo.getLevelMap().put(subject, "E");
                 }
             }
         }

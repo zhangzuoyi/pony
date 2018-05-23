@@ -109,15 +109,18 @@ public class EntranceClassAverageController {
             }
             List<String> className = entranceClassAverageService.getClassName(vos);
 
+            Map<String, List<BigDecimal>> levelMap = entranceClassAverageService.getLevelByExcel(wb);
 
             for (String subject:
             subjects) {
+
                 entranceClassAverageService.sort(vos,subject);
-                entranceClassAverageService.calculate(vos,subject);
+                entranceClassAverageService.calculate(vos,subject,levelMap.get(subject));
             }
+            //modify 不计算总分
             //计算总分情况,应放在进行单科计算之后
-            entranceClassAverageService.sort(vos,"total");
-            entranceClassAverageService.calculate(vos,"total");
+            /*entranceClassAverageService.sort(vos,"total");
+            entranceClassAverageService.calculate(vos,"total",levelMap.get("total"));*/
 
 
             HSSFWorkbook workbook = new HSSFWorkbook();
@@ -133,7 +136,7 @@ public class EntranceClassAverageController {
                 titleRow.createCell(index).setCellValue(subject);
                 index ++;
             }
-            titleRow.createCell(index).setCellValue("总分");
+            /*titleRow.createCell(index).setCellValue("总分");
 
             Collections.sort(vos, new Comparator<EntranceExcelVo>() {
                 @Override
@@ -143,23 +146,23 @@ public class EntranceClassAverageController {
                     }
                     return o1.getClassName().compareTo(o2.getClassName());
                 }
-            });
+            });*/
 
             HSSFRow dataRow = null;
             int idx = 1;
             for (EntranceExcelVo vo:
                  vos) {
                 dataRow = sheet.createRow(idx);
-                dataRow.createCell(0).setCellValue(vo.getClassName().toString());
+                dataRow.createCell(0).setCellValue(vo.getClassName()==null?"":vo.getClassName().toString());
                 dataRow.createCell(1).setCellValue(vo.getStudentName().toString());
-                dataRow.createCell(2).setCellValue(vo.getStudentNo().toString());
+                dataRow.createCell(2).setCellValue(vo.getStudentNo()==null?"":vo.getStudentNo().toString());
                 index = 3;
                 for (String subject:
                      subjects) {
                     dataRow.createCell(index).setCellValue(vo.getLevelMap().get(subject));
                     index++;
                 }
-                dataRow.createCell(index).setCellValue(vo.getLevelMap().get("total"));
+            //    dataRow.createCell(index).setCellValue(vo.getLevelMap().get("total"));
                 idx++;
             }
             if (workbook != null) {

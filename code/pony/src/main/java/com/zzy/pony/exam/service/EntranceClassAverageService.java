@@ -23,9 +23,16 @@ public interface EntranceClassAverageService {
      */
     void sort(List<EntranceExcelVo> vos, String subject);
 
-    void calculate(List<EntranceExcelVo> vos, String subject);
+    void calculate(List<EntranceExcelVo> vos,String subject, List<BigDecimal> levels);
 
     List<String> getClassName(List<EntranceExcelVo> vos);
+
+    /**
+     * Author: WANGCHAO262
+     * Date  : 2018-05-23
+     * Description: 根据excel获取均量值指标
+     */
+    Map<String,List<BigDecimal>> getLevelByExcel(Workbook wb);
 
 
   
