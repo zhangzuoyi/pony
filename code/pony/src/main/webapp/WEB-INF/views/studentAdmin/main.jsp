@@ -546,11 +546,11 @@
 			
 		});
 		$("#exportButton").click(function(){
-			var classId=$("select[name='schoolClass']").children('option:selected').val();
-			if(classId){
-				window.location.href="<s:url value='/studentAdmin/exportByClass' />"+"?classId="+classId;
+			var gradeId=$("select[name='gradeId']").children('option:selected').val();
+			if(gradeId){
+				window.location.href="<s:url value='/studentAdmin/exportByGrade' />"+"?gradeId="+gradeId;
 			}else{
-				alert("请选择班级");
+				alert("请选择年级");
 			}
 			
 		});
