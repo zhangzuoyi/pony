@@ -12,6 +12,8 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import com.zzy.pony.model.Grade;
+import com.zzy.pony.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -47,10 +49,6 @@ import com.zzy.pony.model.CommonDict;
 import com.zzy.pony.model.SchoolClass;
 import com.zzy.pony.model.Student;
 import com.zzy.pony.security.ShiroUtil;
-import com.zzy.pony.service.DictService;
-import com.zzy.pony.service.SchoolClassService;
-import com.zzy.pony.service.StudentService;
-import com.zzy.pony.service.SubjectService;
 import com.zzy.pony.util.DateTimeUtil;
 import com.zzy.pony.util.ExcelUtil;
 import com.zzy.pony.util.TemplateUtil;
@@ -63,6 +61,8 @@ public class StudentAdminController {
 	private StudentService service;
 	@Autowired
 	private SchoolClassService classService;
+	@Autowired
+	private GradeService gradeService;
 	@Autowired
 	private DictService dictService;
 	@Autowired
@@ -143,12 +143,12 @@ public class StudentAdminController {
 		}
 		return list;
 	}
-	@RequestMapping(value="exportByClass",method = RequestMethod.GET)
+	@RequestMapping(value="exportByGrade",method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<byte[]> exportByClass(@RequestParam(value="classId") int classId, Model model){
-		SchoolClass sc=classService.get(classId);
-		List<Student> list=service.findByGrade(sc.getGrade().getGradeId());
-		String reportName = sc.getName()+"学生名单";
+	public ResponseEntity<byte[]> exportByGrade(@RequestParam(value="gradeId") int gradeId, Model model){
+		Grade grade=gradeService.get(gradeId);
+		List<Student> list=service.findByGrade(grade.getGradeId());
+		String reportName = grade.getName()+"学生名单";
 		HttpHeaders headers = new HttpHeaders();
 		try {
 			headers.setContentDispositionFormData("attachment", new String(reportName.getBytes("utf-8"), "ISO8859-1")
@@ -161,6 +161,7 @@ public class StudentAdminController {
 	}
 	private byte[] excelContent(List<Student> list, String reportName) {
 		List<CommonDict> sexes=dictService.findSexes();
+		List<CommonDict> studentStatusList=dictService.findStudentStatus();
 		Workbook wb = new HSSFWorkbook();
 		String sheetName = reportName;
 		Sheet sheet = wb.createSheet(sheetName);
@@ -172,7 +173,7 @@ public class StudentAdminController {
 		// 设置标题
 		Row titleRow = sheet.createRow(0);
 		int colIndex=0;
-		String[] titles=new String[]{"学号","姓名","性别","班级"};
+		String[] titles=new String[]{"学号","姓名","性别","状态","班级"};
 		for(String title : titles){
 			getCell(titleRow, title, styleTitle, colIndex);
 			colIndex++;
@@ -190,6 +191,8 @@ public class StudentAdminController {
 			getCell(row, vo.getName(), style, cellIndex++);
 			// 性别
 			getCell(row, getSex(sexes, vo.getSex()), style, cellIndex++);
+			// 学生状态
+			getCell(row, getStudentStatus(studentStatusList, vo.getStatus()), style, cellIndex++);
 			//班级
 			getCell(row, vo.getSchoolClass().getName(), style, cellIndex++);
 		}
@@ -201,6 +204,14 @@ public class StudentAdminController {
 			e.printStackTrace();
 		}
 		return out.toByteArray();
+	}
+	private String getStudentStatus(List<CommonDict> list, String code){
+		for(CommonDict sex: list){
+			if(sex.getCode().equals(code)){
+				return sex.getValue();
+			}
+		}
+		return null;
 	}
 	private String getSex(List<CommonDict> sexes, String code){
 		for(CommonDict sex: sexes){
