@@ -14,7 +14,6 @@ import com.zzy.pony.service.SchoolYearService;
 import com.zzy.pony.service.SubjectService;
 import com.zzy.pony.util.ReadExcelUtils;
 import com.zzy.pony.vo.ExamResultVo;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -1776,6 +1775,9 @@ public class AverageServiceImpl implements AverageService {
 					schoolLevelMapDecimal.put(level, remain);
 					schoolRemainDecimal = schoolRemainDecimal.subtract(remain);
 					remainDecimal = remainDecimal.subtract(levelMapDecimal.get(level));
+				}else{
+					//add 若当前为0且无遗留则将当前置0
+					schoolLevelMapDecimal.put(level, BigDecimal.ZERO);
 				}
 			} else {
 				// 最后一名名次
