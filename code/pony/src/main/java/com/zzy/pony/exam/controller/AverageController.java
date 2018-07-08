@@ -5,7 +5,10 @@ import com.zzy.pony.exam.mapper.AverageIndexMapper;
 import com.zzy.pony.exam.model.AverageIndex;
 import com.zzy.pony.exam.service.AverageService;
 import com.zzy.pony.exam.vo.*;
-import com.zzy.pony.model.*;
+import com.zzy.pony.model.Exam;
+import com.zzy.pony.model.SchoolClass;
+import com.zzy.pony.model.SchoolYear;
+import com.zzy.pony.model.Subject;
 import com.zzy.pony.service.*;
 import com.zzy.pony.util.DateTimeUtil;
 import com.zzy.pony.util.ReadExcelUtils;
@@ -26,7 +29,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -692,15 +694,17 @@ public class AverageController {
                 levels.add(dataSheetRow.getCell(0).getStringCellValue());
                 levelWeight.put(dataSheetRow.getCell(0).getStringCellValue(), (int) dataSheetRow.getCell(1).getNumericCellValue());
                 for (int j = 2; j < headRowOne.getLastCellNum(); j++) {
-                    if (subjectLevelMap.containsKey(headRowOne.getCell(j).getStringCellValue())) {
-                        subjectLevelMap.get(headRowOne.getCell(j).getStringCellValue()).put(
-                                dataSheetRow.getCell(0).getStringCellValue(),
-                                new BigDecimal(ReadExcelUtils.getCellFormatValue(dataSheetRow.getCell(j)).toString()).setScale(2,BigDecimal.ROUND_HALF_UP));
-                    } else {
-                        Map<String, BigDecimal> innerMap = new LinkedHashMap<String, BigDecimal>();
-                        innerMap.put(dataSheetRow.getCell(0).getStringCellValue(),
-                                new BigDecimal(ReadExcelUtils.getCellFormatValue(dataSheetRow.getCell(j)).toString()).setScale(2,BigDecimal.ROUND_HALF_UP));
-                        subjectLevelMap.put(headRowOne.getCell(j).getStringCellValue(), innerMap);
+                    if (Cell.CELL_TYPE_STRING == headRowOne.getCell(j).getCellType()) {
+                        if (subjectLevelMap.containsKey(headRowOne.getCell(j).getStringCellValue())) {
+                            subjectLevelMap.get(headRowOne.getCell(j).getStringCellValue()).put(
+                                    dataSheetRow.getCell(0).getStringCellValue(),
+                                    new BigDecimal(ReadExcelUtils.getCellFormatValue(dataSheetRow.getCell(j)).toString()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                        } else {
+                            Map<String, BigDecimal> innerMap = new LinkedHashMap<String, BigDecimal>();
+                            innerMap.put(dataSheetRow.getCell(0).getStringCellValue(),
+                                    new BigDecimal(ReadExcelUtils.getCellFormatValue(dataSheetRow.getCell(j)).toString()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                            subjectLevelMap.put(headRowOne.getCell(j).getStringCellValue(), innerMap);
+                        }
                     }
                 }
             }

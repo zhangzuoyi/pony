@@ -1761,6 +1761,8 @@ public class AverageServiceImpl implements AverageService {
 		BigDecimal allLevelCount = new BigDecimal(0);// 指标累加
 
 		BigDecimal remainCount = new BigDecimal("0");
+		BigDecimal remainAllCount = new BigDecimal("0");
+
 
 		for (int level : levelMap.keySet()) {
 			List<AverageExcelVo> averageExcelVos = levelMap.get(level);
@@ -1770,14 +1772,18 @@ public class AverageServiceImpl implements AverageService {
 			if (averageExcelVos == null || averageExcelVos.size() == 0) {
 				// 如果为空，则应该把remainDecimal置值,如果remainDecimal高于可分配的
 				if (remainDecimal.compareTo(levelMapDecimal.get(level)) >= 0) {
-					BigDecimal remain = levelMapDecimal.get(level).divide(remainDecimal, RoundingMode.HALF_UP)
+					BigDecimal remain = levelMapDecimal.get(level).divide(remainAllCount, RoundingMode.HALF_UP)
 							.multiply(remainCount).setScale(2, RoundingMode.HALF_UP);
 					schoolLevelMapDecimal.put(level, remain);
 					schoolRemainDecimal = schoolRemainDecimal.subtract(remain);
 					remainDecimal = remainDecimal.subtract(levelMapDecimal.get(level));
 				}else{
-					//add 若当前为0且无遗留则将当前置0
-					schoolLevelMapDecimal.put(level, BigDecimal.ZERO);
+					//add 若当前为0且遗留小于可分配的
+					BigDecimal remain = levelMapDecimal.get(level).divide(remainAllCount, RoundingMode.HALF_UP)
+							.multiply(remainCount).setScale(2, RoundingMode.HALF_UP);
+					schoolLevelMapDecimal.put(level, remain);
+					schoolRemainDecimal = schoolRemainDecimal.subtract(schoolRemainDecimal);
+					remainDecimal = remainDecimal.subtract(remainDecimal);
 				}
 			} else {
 				// 最后一名名次
@@ -1814,7 +1820,8 @@ public class AverageServiceImpl implements AverageService {
 				schoolLevelMapDecimal.put(level, bigDecimal.add(start).add(schoolRemainDecimal));
 				schoolRemainDecimal = schoolCountDecimal.subtract(bigDecimal);// 该校留给下一个等级的
 				remainDecimal = allCount.subtract(allLevelCount);// 整体留给下一个等级的
-				remainCount = schoolCountDecimal;
+				remainCount = schoolCountDecimal;//// 该校同分总人数
+				remainAllCount = countDecimal;// 同分总人数
 			}
 			start = zero;// 清0
 
