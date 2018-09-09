@@ -45,9 +45,10 @@ public class StudentImportTest {
 	
 	@Test
 	public void testImport() throws Exception{
-		int grade=3;//年级
-		Date entryDate=DateTimeUtil.strToDate("2015-09-01", "yyyy-MM-dd");//入学日期
-		String path="D:\\教育软件\\平桥中学\\学生数据\\2015入学高三名单信息.xlsx";
+		int grade=2;//年级
+		Date entryDate=DateTimeUtil.strToDate("2016-09-01", "yyyy-MM-dd");//入学日期
+//		String path="D:\\教育软件\\平桥中学\\学生数据\\2015入学高三名单信息.xlsx";
+		String path="/Users/zhangzuoyi/zzy/pony/高二学生信息_整理.xlsx";
 		List<Student> list=new ArrayList<Student>();
 		List<CommonDict> sexList=dictService.findSexes();
 		List<SchoolClass> scList=scService.findByGrade(grade);

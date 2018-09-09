@@ -27,10 +27,11 @@ public class StudentExamSubjectsSetTest {
 	public void testSet() throws Exception{
 //		Workbook wb=WorkbookFactory.create(new FileInputStream("D:\\教育软件\\平桥中学\\2015入学高三学生信息 - 副本.xls"));
 //		Workbook wb=WorkbookFactory.create(new FileInputStream("D:\\教育软件\\平桥中学\\学生导入\\2017学年第一学期高二名单.xls"));
-		Workbook wb=WorkbookFactory.create(new FileInputStream("D:\\教育软件\\平桥中学\\学生数据\\2015入学高三名单信息.xlsx"));
+//		Workbook wb=WorkbookFactory.create(new FileInputStream("D:\\教育软件\\平桥中学\\学生数据\\2015入学高三名单信息.xlsx"));
+		Workbook wb=WorkbookFactory.create(new FileInputStream("/Users/zhangzuoyi/zzy/pony/高二学生信息_整理.xlsx"));
 		Sheet sheet=wb.getSheetAt(0);
 		int subjectStart=3;//学科开始的列
-		int subjectLen=10;//学科的数量
+		int subjectLen=5;//学科的数量
 		int studentNoIndex=0;//学号的位置
 		String[] subjects=new String[subjectLen];
 		Row titleRow=sheet.getRow(0);
@@ -53,7 +54,7 @@ public class StudentExamSubjectsSetTest {
 			StringBuilder sb=new StringBuilder();
 			for(int k=subjectStart;k<subjectStart+subjects.length;k++){
 				String selected=row.getCell(k)==null ? null : row.getCell(k).getStringCellValue();
-				if("选考".equals(selected)){
+				if("选考".equals(selected) || "必考".equals(selected)){
 					sb.append(getSubject(subjects[k-subjectStart]));
 				}
 			}

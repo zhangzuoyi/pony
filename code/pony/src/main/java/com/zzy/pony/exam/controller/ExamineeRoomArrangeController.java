@@ -252,6 +252,213 @@ public class ExamineeRoomArrangeController {
         }  
           
     }
+
+    /**
+     * 可打印的准考证格式
+     * @param request
+     * @param response
+     * @throws Exception
+     */
+    @SuppressWarnings("deprecation")
+    @RequestMapping(value="exportByClassId2",method = RequestMethod.GET)
+    public void exportByClassId2(HttpServletRequest request,HttpServletResponse response) throws Exception{
+
+        int examId = Integer.valueOf(request.getParameter("examId"));
+        int gradeId = Integer.valueOf(request.getParameter("gradeId"));
+        SchoolYear year = schoolYearService.getCurrent();
+        List<SchoolClass> schoolClasses = schoolClassService.findByYearAndGradeOrderBySeq(year.getYearId(), gradeId);
+        Exam exam = examService.get(examId);
+        String sheetTitle = exam.getName()+"(班级)"+"考场安排表";
+
+
+
+        try{
+            HSSFWorkbook workbook = new HSSFWorkbook();                     // 创建工作簿对象
+            HSSFSheet sheet = workbook.createSheet(sheetTitle);                  // 创建工作表
+            List<Map<String, Object>> headList = new ArrayList<Map<String,Object>>();
+            List<Map<String, Object>> datas = new ArrayList<Map<String,Object>>();
+
+
+
+
+
+            for (SchoolClass schoolClass : schoolClasses) {
+                String gsonString = examineeRoomArrangeService.findExamineeRoomArrangeByClassId(schoolClass.getClassId(),gradeId, examId,Constants.EXPORT);
+                Gson gson = new Gson();
+                GsonVo gsonVo = gson.fromJson(gsonString, GsonVo.class);
+                datas.addAll(gsonVo.getRows()) ;
+                if (headList ==null || headList.size()<=0) {
+                    headList.addAll(gsonVo.getTitle());
+                }
+
+            }
+
+            int columnLength = headList.size();
+            //HSSFSheet sheet = workbook.createSheet(schoolClass.getName());                  // 创建工作表
+            //sheet样式定义【getColumnTopStyle()/getStyle()均为自定义方法 - 在下面  - 可扩展】
+            HSSFCellStyle columnTopStyle = this.getColumnTopStyle2(workbook);//获取列头样式对象
+            HSSFCellStyle style = this.getStyle(workbook);                  //单元格样式对象
+            HSSFRow row = null;
+            HSSFCell cell = null;
+            for (int i = 0; i < 2; i++) {
+                row = sheet.createRow(i);
+                for (int j = 0; j < columnLength; j++) {
+                    cell = row.createCell(j);
+                    cell.setCellStyle(columnTopStyle);
+                }
+            }
+
+            // 产生表格标题行
+//            HSSFRow titleRow = sheet.getRow(0);
+//            HSSFCell titleCell = titleRow.getCell(0);
+//            sheet.addMergedRegion(new Region(0, (short)0,1, (short)(columnLength-1)));
+//            titleCell.setCellValue(title);
+//            HSSFRow headRow = sheet.createRow(2);
+            int m = 0;
+            String[] keys = new String[headList.size()];
+            List<String> subjects=new ArrayList<String>();
+            for (Map<String, Object> head : headList) {
+//                HSSFCell headCell = headRow.createCell(m);
+//                headCell.setCellValue(head.get("label").toString());
+//                headCell.setCellStyle(columnTopStyle);
+                if(m>3 && (m-4)%2==0){
+                    subjects.add(head.get("label").toString());//科目
+                }
+                keys[m] = head.get("prop").toString();
+                m++;
+            }
+            List<Object[]> dataList  = new ArrayList<Object[]>();
+            for (Map<String, Object> data : datas) {
+                Object[] objects = new Object[columnLength];
+                for (int n = 0; n < objects.length; n++) {
+                    if(data.get(keys[n]) instanceof Double){
+                        objects[n] = ((Double)(data.get(keys[n]))).intValue();
+                    } else {
+                        objects[n] = data.get(keys[n]);
+                    } //处理Gson反序列化时将int默认转换为double
+                }
+                dataList.add(objects);
+            }
+            int rowLen=8;//每张准考证占8行，包括空行
+            String title=exam.getName()+"准考证";
+            //将查询出的数据设置到sheet对应的单元格中
+            for(int i=0;i<dataList.size();i++){
+                Object[] obj = dataList.get(i);//遍历每个对象
+                int firstRow=i*rowLen;
+                HSSFRow row0 = sheet.createRow(firstRow);
+                HSSFRow row1 = sheet.createRow(firstRow+1);
+                HSSFRow row2 = sheet.createRow(firstRow+2);
+                HSSFRow row3 = sheet.createRow(firstRow+3);
+                HSSFRow row4 = sheet.createRow(firstRow+4);
+                HSSFRow row5 = sheet.createRow(firstRow+5);
+                HSSFRow row6 = sheet.createRow(firstRow+6);
+                HSSFCell titleCell = row0.createCell(0);
+                titleCell.setCellStyle(style);
+                for(int j=1;j<6;j++){
+                    row0.createCell(j).setCellStyle(style);
+                }
+                sheet.addMergedRegion(new Region(firstRow, (short)0,firstRow, (short)5));
+                titleCell.setCellValue(title);
+                String examineeNo=obj[0].toString();
+                String name=obj[1].toString();
+                String className=obj[2].toString();
+                setCell(row1.createCell(0),"班级", style);
+                setCell(row1.createCell(1),"科目", columnTopStyle);
+                setCell(row2.createCell(0),className, style);
+                setCell(row2.createCell(1),"试场", style);
+                setCell(row3.createCell(0),"姓名", style);
+                setCell(row3.createCell(1),"座号", style);
+                setCell(row4.createCell(0),name, style);
+                setCell(row4.createCell(1),"科目", columnTopStyle);
+                setCell(row5.createCell(0),"考生号", style);
+                setCell(row5.createCell(1),"试场", style);
+                setCell(row6.createCell(0),examineeNo, style);
+                setCell(row6.createCell(1),"座号", style);
+                for(int j=0;j<subjects.size()&&j<4;j++){//第一行最多四门学科
+                    setCell(row1.createCell(j+2),subjects.get(j), columnTopStyle);
+                    createCellString(row2,getObj(obj,4+j*2),2+j, style);
+                    createCellString(row3,getObj(obj,5+j*2),2+j, style);
+                }
+                for(int j=4;j<subjects.size();j++){//第二行放四门学科外的其它学科
+                    int first=j-4;
+                    setCell(row4.createCell(first+2),subjects.get(j), columnTopStyle);
+                    createCellString(row5,getObj(obj,4+j*2),2+first, style);
+                    createCellString(row6,getObj(obj,5+j*2),2+first, style);
+                }
+            }
+
+
+
+            //让列宽随着导出的列长自动适应
+//            for (int colNum = 0; colNum < columnLength; colNum++) {
+//                int columnWidth = sheet.getColumnWidth(colNum) / 256;
+//                for (int rowNum = 3; rowNum < sheet.getLastRowNum(); rowNum++) {
+//                    HSSFRow currentRow;
+//                    //当前行未被使用过
+//                    if (sheet.getRow(rowNum) == null) {
+//                        currentRow = sheet.createRow(rowNum);
+//                    } else {
+//                        currentRow = sheet.getRow(rowNum);
+//                    }
+//                    if (currentRow.getCell(colNum) != null&&!"".equals(currentRow.getCell(colNum))) {
+//                        HSSFCell currentCell = currentRow.getCell(colNum);
+//                        if (currentCell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
+//                            int length = currentCell.getStringCellValue().getBytes().length;
+//                            if (columnWidth < length) {
+//                                columnWidth = length;
+//                            }
+//                        }
+//                    }
+//                }
+//                sheet.setColumnWidth(colNum, (columnWidth+4) * 256);
+//            }
+
+
+            if(workbook !=null){
+                try
+                {
+                    String fileName = new String(title.getBytes("utf-8"), "ISO8859-1")+DateTimeUtil.dateToStr(new Date()) + ".xls" ;
+                    //  String fileName = "Excel-" + String.valueOf(System.currentTimeMillis()).substring(4, 13) + ".xls";
+                    String headStr = "attachment; filename=\"" + fileName + "\"";
+                    //  response = getResponse();
+                    response.setContentType("APPLICATION/OCTET-STREAM");
+                    response.setHeader("Content-Disposition", headStr);
+                    OutputStream out = response.getOutputStream();
+                    workbook.write(out);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+    }
+    private void setCell(HSSFCell cell, String value, HSSFCellStyle style){
+        cell.setCellStyle(style);
+        cell.setCellValue(value);
+    }
+    private Object getObj(Object[] obj, int index){
+        if(index<obj.length){
+            return obj[index];
+        }
+        return "";
+    }
+    private void createCellString(HSSFRow dataRow, Object obj, int j,HSSFCellStyle style){
+        HSSFCell  dataCell = null;   //设置单元格的数据类型
+        dataCell = dataRow.createCell(j,HSSFCell.CELL_TYPE_STRING);
+        if(!"".equals(obj) && obj != null){
+            dataCell.setCellValue(obj.toString());                       //设置单元格的值
+        }
+        else {
+            dataCell.setCellValue("");
+        }
+
+        dataCell.setCellStyle(style);                                   //设置单元格样式
+    }
 	
 	@SuppressWarnings("deprecation")
 	@RequestMapping(value="exportByRoomId",method = RequestMethod.GET)	 
@@ -590,8 +797,54 @@ public class ExamineeRoomArrangeController {
             
           return style;  
             
-    }  
-      
+    }
+
+    /*
+     * 列头单元格样式
+     */
+    public HSSFCellStyle getColumnTopStyle2(HSSFWorkbook workbook) {
+
+        // 设置字体
+        HSSFFont font = workbook.createFont();
+        //设置字体大小
+        font.setFontHeightInPoints((short)11);
+        //设置字体名字
+        font.setFontName("Courier New");
+        //设置样式;
+        HSSFCellStyle style = workbook.createCellStyle();
+        //设置底边框;
+        style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+        //设置底边框颜色;
+        style.setBottomBorderColor(HSSFColor.BLACK.index);
+        //设置左边框;
+        style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+        //设置左边框颜色;
+        style.setLeftBorderColor(HSSFColor.BLACK.index);
+        //设置右边框;
+        style.setBorderRight(HSSFCellStyle.BORDER_THIN);
+        //设置右边框颜色;
+        style.setRightBorderColor(HSSFColor.BLACK.index);
+        //设置顶边框;
+        style.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        //设置顶边框颜色;
+        style.setTopBorderColor(HSSFColor.BLACK.index);
+        //在样式用应用设置的字体;
+        style.setFont(font);
+        //设置自动换行;
+        style.setWrapText(false);
+        //设置水平对齐的样式为居中对齐;
+        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        //设置垂直对齐的样式为居中对齐;
+        style.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+        //设置背景颜色
+//        style.setFillBackgroundColor(HSSFColor.GREY_25_PERCENT.index);
+        style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        style.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
+
+        return style;
+
+    }
+
     /*   
      * 列数据信息单元格样式 
      */    
